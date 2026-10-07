@@ -1,0 +1,21 @@
+site_name: Strata
+site_description: Layered configuration and entity-aware decisions — foundations under review
+docs_dir: docs
+theme:
+  name: material
+nav:
+  - Overview: index.md
+  - Contributing: contributing.md
+  - Phase 0 review: phase-0-review.md
+  - Amended build brief: build-brief.md
+  - Prompt review recommendations: recommendations-review.md
+  - Claude consultation: claude-consultation.md
+  - Semantic questions: open-questions.md
+  - RFC template: rfc-template.md
+  - Decisions:
+      - Phase boundaries: adr/0001-phase-boundaries.md
+      - Foundation tooling: adr/0002-foundation-tooling.md
+      - Project identity: adr/0003-provisional-identity.md
+      - Prompt review: adr/0004-adopt-prompt-review.md
+      - Node admission and artifacts: adr/0005-node-admission-and-canonical-artifacts.md
+# The documentation toolchain is not installed or pinned until dependency approval.

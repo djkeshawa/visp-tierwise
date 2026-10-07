@@ -1,0 +1,30 @@
+{
+  "name": "@strata/evaluator",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Phase 0 evaluator placeholder; no public API yet",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "sideEffects": false,
+  "strata": {
+    "supportedSpecVersions": [],
+    "supportedBundleFormatVersions": []
+  }
+}

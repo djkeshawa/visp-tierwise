@@ -1,0 +1,12 @@
+**/target/
+**/dist/
+**/node_modules/
+site/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

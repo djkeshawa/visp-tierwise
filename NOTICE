@@ -1,0 +1,11 @@
+Strata
+
+An unreleased foundation for a layered configuration and decision library.
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+Strata is a working name. This notice makes no claim to a registered
+trademark, publishing namespace or public repository identity.
+
+No third-party runtime code is included in the Phase 0 foundation.
+Third-party notices must be reviewed as dependencies are introduced.

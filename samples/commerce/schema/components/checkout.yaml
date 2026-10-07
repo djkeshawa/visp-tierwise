@@ -1,0 +1,38 @@
+namespace: checkout
+
+keys:
+  checkout.shipping.allowed_methods:
+    kind: capability
+    combine: intersect
+    universe: [GROUND, PICKUP, NEXT_DAY]
+    settable_at: [global, channel, division, site, account, seller]
+
+  checkout.container_order.allowed:
+    kind: capability
+    type: boolean
+    combine: all
+    settable_at: [channel, division, site, account]
+
+  checkout.order.max_lines:
+    kind: capability
+    type: integer
+    combine: min
+    settable_at: [global, division, site]
+
+  checkout.pickup.lead_hours:
+    kind: configuration
+    type: integer
+    combine: override
+    min: 0
+    max: 168
+    default: 4
+    settable_at: [global, division, site, seller]
+    combine_across_axes: max
+
+features:
+  checkout.order_submission:
+    decided_per: order
+    returns: { enum: [ALLOW, DENY] }
+    hit_policy: FIRST
+    if_fact_missing: DENY
+    binding_settable_at: [global, division, site]

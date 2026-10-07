@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.strata</groupId>
+  <artifactId>strata-parent</artifactId>
+  <version>0.1.0-dev.0</version>
+  <packaging>pom</packaging>
+  <name>Strata — provisional foundations</name>
+  <description>Phase 0 reactor; no reviewed specification or production APIs yet.</description>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <modules>
+    <module>strata-core</module>
+    <module>strata-cli</module>
+    <module>strata-spring-boot-starter</module>
+    <module>strata-server</module>
+    <module>strata-openfeature</module>
+  </modules>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.build.outputTimestamp>2026-01-01T00:00:00Z</project.build.outputTimestamp>
+    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <strata.supported.spec.versions>none</strata.supported.spec.versions>
+    <strata.supported.bundle.format.versions>none</strata.supported.bundle.format.versions>
+  </properties>
+  <!-- Pinned lifecycle plugins will be added only after tooling approval. -->
+</project>

@@ -1,0 +1,14 @@
+name: Feature request
+description: Describe a use case and the smallest behavior that supports it.
+body:
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case and proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and alternatives
+      description: Separate a universal engine guarantee from an optional modeling choice.
