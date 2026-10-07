@@ -12,4 +12,42 @@
   <artifactId>tierwise-core</artifactId>
   <packaging>jar</packaging>
   <name>tierwise-core</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- requirements §3.2: no Spring, no networking, no logging framework in core. -->
+            <id>enforce-core-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.springframework*</exclude>
+                    <exclude>io.micrometer</exclude>
+                    <exclude>org.slf4j</exclude>
+                    <exclude>ch.qos.logback</exclude>
+                    <exclude>org.apache.logging.log4j</exclude>
+                    <exclude>commons-logging</exclude>
+                    <exclude>com.squareup.okhttp3</exclude>
+                    <exclude>org.apache.httpcomponents*</exclude>
+                    <exclude>io.netty</exclude>
+                    <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
+                    <exclude>com.fasterxml.jackson.dataformat</exclude>
+                    <exclude>org.yaml:snakeyaml</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

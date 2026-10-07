@@ -1,8 +1,6 @@
 # ADR 0012: Parsing, canonical JSON and the dependency baseline
 
-- Status: **proposed, awaiting owner approval of the dependencies**. The technical
-  choices are delegated; adding dependencies needs the owner's approval
-  (see `AGENTS.md`).
+- Status: **accepted**. The owner approved the dependency baseline on 2026-10-08.
 - Date: 2026-10-08
 - Supersedes: the dependency column of the component table in the original brief; the
   interim build adapters of [ADR 0002](0002-foundation-tooling.md) once approved
@@ -82,10 +80,24 @@ two weeks old. Dependabot proposes updates after that.
 later split into `tierwise-evaluator` and `tierwise-compiler` modules stays
 possible if consumers ask for a smaller evaluation-only JAR.
 
+## Pinned versions (Phase 0 close-out, 2026-10-08)
+
+| Tool | Version | Notes |
+| --- | --- | --- |
+| Maven | 3.9.16 | Through Maven Wrapper 3.3.4 (`only-script`), with `distributionSha256Sum` |
+| maven-clean / resources / compiler / surefire / jar | 3.5.0 / 3.5.0 / 3.16.0 / 3.6.0 / 3.5.1 | |
+| maven-install / deploy / site / enforcer | 3.2.0 / 3.2.0 / 3.22.0 / 3.6.3 | Enforcer requires every plugin version to be pinned |
+| TypeScript | 7.0.2 | The native compiler. `moduleResolution: node10` has been removed, so the CJS build uses `Bundler` and the ESM build uses `NodeNext`. |
+| pnpm | 11.3.0 | Needs Node ≥22.13 as a tool; packages still target Node 20+ |
+
+Every version is the latest stable release that is at least two weeks old. Maven 4
+and the 4.0 plugin line are still at release-candidate or beta stage, so they were
+not chosen. Library versions for later phases are pinned when those phases start.
+
 ## Consequences
 
 - YAML 1.1 coercions can't reach the validator.
 - Canonical JSON and hashing are fully specified by vectors, with no dependency on
   library float formatting.
-- Once the Maven Wrapper and TypeScript are approved and in place, the Phase 0
-  adapters (`scripts/build-java.mjs`, `scripts/build-js.mjs`) are deleted.
+- The Maven Wrapper and TypeScript replaced the Phase 0
+  adapters (`scripts/build-java.mjs`, `scripts/build-js.mjs`), which were deleted in the Phase 0 close-out.

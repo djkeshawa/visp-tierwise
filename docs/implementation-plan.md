@@ -11,8 +11,7 @@ one focused contributor.
 
 ## Phase 0 close-out: toolchain and CI
 
-**Blocked on:** owner approval of the Phase 0 rows in
-[ADR 0012](adr/0012-parsing-and-dependency-baseline.md) (open question O1).
+**Status:** items 0.1–0.5 are done locally (2026-10-08). Item 0.6 needs the owner (O2).
 
 | # | Work item | Size | Output |
 | --- | --- | --- | --- |
@@ -20,7 +19,7 @@ one focused contributor.
 | 0.2 | Parent POM `pluginManagement`: compiler (`release` 17/21 per module), surefire, jar, enforcer (Java ≥17, Maven ≥3.9, dependency convergence, banned dependencies in core) | S | `java/pom.xml` |
 | 0.3 | Pin `typescript` as a root dev dependency; build with two `tsconfig` targets (ESM, CJS) plus a 10-line post-step that writes `dist/cjs/package.json` | S | `js/package.json`, `js/*/tsconfig.*.json` |
 | 0.4 | Delete `scripts/build-java.mjs` and `scripts/build-js.mjs`; update `check-foundation.py` | S | |
-| 0.5 | CI: Java matrix (JDK 17 for core, CLI and OpenFeature; JDK 21 for everything) running `./mvnw -B verify`; JS job running `pnpm install --frozen-lockfile`, `pnpm -r build` and `pnpm -r test`; foundation check | S | `.github/workflows/ci.yml` |
+| 0.5 | CI: Java on JDK 21 running `./mvnw -B verify` (`--release 17` enforces the Java 17 API, so a JDK 17 runtime test job is added in Phase 2, once there are tests); JS installs, checks and builds with pnpm on Node 22 and runs the packaging tests on Node 22 and 20; foundation check | S | `.github/workflows/ci.yml` |
 | 0.6 | Push to the `tierwise` GitHub organisation (after O2), get hosted CI green, enable private vulnerability reporting | S | Owner action plus verification |
 
 **Exit:** a clean clone builds with `./mvnw verify` and `pnpm -r build`, and hosted CI

@@ -11,7 +11,12 @@ No package has been released. No specification or bundle format version is suppo
 - Monorepo foundation for the planned Java reference toolchain and TypeScript workspace.
 - Apache-2.0 project licensing and contributor policies, with DCO sign-off.
 - Phase 0 documentation, governance proposal and review boundary ADR.
-- Installed-compiler adapters and locally compiled empty Java/TypeScript targets; no runtime implementation or conformance claim.
+- Maven Wrapper (Maven 3.9.16) with pinned plugins, enforcer rules (pinned plugins, dependency convergence, banned core dependencies) and reproducible JARs.
+- TypeScript 7.0.2 builds emitting ESM, CommonJS and declarations, with packaging tests on Node 20 and 22.
+
+### Removed
+
+- Phase 0 installed-compiler build adapters (`scripts/build-java.mjs`, `scripts/build-js.mjs`).
 
 ### Changed
 
@@ -36,6 +41,5 @@ No package has been released. No specification or bundle format version is suppo
 ### Pending review
 
 - Claiming the GitHub organisation and npm scope; maintainer assignments.
-- Approval of the dependency baseline (ADR 0012).
 - Private security and conduct reporting channels.
 - Clean-toolchain foundation verification, hosted CI and authorization to begin Phase 1.

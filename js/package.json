@@ -5,9 +5,15 @@
   "type": "module",
   "license": "Apache-2.0",
   "packageManager": "pnpm@11.3.0",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "check": "node ../scripts/check-workspace.mjs",
-    "build": "node ../scripts/build-js.mjs"
+    "build": "pnpm -r run build",
+    "test": "node --test test/packaging.test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
   }
 }

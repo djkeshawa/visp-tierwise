@@ -1,4 +1,4 @@
-name: Foundation checks
+name: CI
 on:
   push:
   pull_request:
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: foundation-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   foundation:
@@ -19,29 +19,28 @@ jobs:
       - run: python3 scripts/check-foundation.py
   java:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+      # The reactor builds on JDK 21; --release 17 enforces the Java 17 API for core, CLI and OpenFeature.
       - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: temurin
           java-version: '21'
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: '22'
-      - name: Validate the Maven reactor descriptors
-        run: mvn -B -ntp -f java/pom.xml validate
-      - name: Compile empty package documentation with release checks
-        run: node scripts/build-java.mjs
+          cache: maven
+      - name: Build and verify
+        working-directory: java
+        run: ./mvnw -B -ntp verify
   javascript:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+      # pnpm 11 needs Node 22.13+ for tooling; packages target Node 20+ and are also tested there.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
@@ -49,7 +48,14 @@ jobs:
         with:
           version: '11.3.0'
           run_install: false
-      - run: pnpm --dir js install --offline --frozen-lockfile --ignore-scripts
+      - run: pnpm --dir js install --frozen-lockfile
       - run: pnpm --dir js run check
-      - name: Compiler status
-        run: echo 'Full TypeScript CI is pending approval of a pinned development compiler. This job checks foundation metadata only.'
+      - run: pnpm --dir js run build
+      - name: Packaging tests (Node 22)
+        run: pnpm --dir js test
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+      - name: Packaging tests (Node 20)
+        working-directory: js
+        run: node --test test/packaging.test.mjs

@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ES2020",
-    "moduleResolution": "Bundler",
-    "lib": ["ES2020", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": [
+      "ES2020",
+      "DOM"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
@@ -12,6 +15,8 @@
     "noEmitOnError": true,
     "skipLibCheck": false,
     "declaration": true,
-    "newLine": "lf"
+    "newLine": "lf",
+    "sourceMap": false,
+    "declarationMap": false
   }
 }

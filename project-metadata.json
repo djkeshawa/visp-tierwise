@@ -6,7 +6,7 @@
   "supportedSpecVersions": [],
   "supportedBundleFormatVersions": [],
   "phase": 0,
-  "phaseStatus": "phase-0-close-out: awaiting dependency approval and GitHub/npm claims",
+  "phaseStatus": "phase-0-close-out: local toolchain complete; awaiting GitHub/npm claims and hosted CI",
   "npmScope": "@tierwise",
   "mavenGroupId": "io.github.tierwise",
   "githubOwner": "tierwise (proposed, unclaimed)",

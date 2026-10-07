@@ -7,7 +7,7 @@ All 19 technical questions from the Phase 0 review are resolved by ADRs 0005 and
 
 | # | Question | Needed by | Proposed answer |
 | --- | --- | --- | --- |
-| O1 | Approve the dependency baseline in [ADR 0012](adr/0012-parsing-and-dependency-baseline.md) (Maven Wrapper, build plugins, TypeScript; later snakeyaml-engine, jackson-core, JUnit, jqwik, `yaml`, fast-check) | Phase 0 close-out | Approve the Phase 0 and Phase 2 rows now; approve later rows when each phase starts |
+| ~~O1~~ | ~~Approve the dependency baseline~~ | — | **Approved 2026-10-08** ([ADR 0012](adr/0012-parsing-and-dependency-baseline.md)) |
 | O2 | Claim the `tierwise` GitHub organisation and the `@tierwise` npm scope | Before announcing the name; required by Phase 9 | Claim both now (free) |
 | O3 | Who are the initial maintainers? | Before external contributions | The owner, as sole maintainer to start |
 | O4 | Private security and conduct contacts | Before the repository is public | GitHub private vulnerability reporting, plus a dedicated email |

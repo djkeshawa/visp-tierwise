@@ -22,7 +22,7 @@ settled. Phase 1 (the normative spec and conformance suite) is next.
 | ADR | Decision |
 | --- | --- |
 | [0001](adr/0001-phase-boundaries.md) | Review stop at every phase boundary |
-| [0002](adr/0002-foundation-tooling.md) | Interim Phase 0 build adapters (superseded by 0012 once approved) |
+| [0002](adr/0002-foundation-tooling.md) | Interim Phase 0 build adapters (superseded by 0012) |
 | [0003](adr/0003-provisional-identity.md) | Keep publishing identity unclaimed until the owner confirms |
 | [0004](adr/0004-adopt-prompt-review.md) | Adopt the prompt review recommendations |
 | [0005](adr/0005-node-admission-and-canonical-artifacts.md) | Ignored scopes are skipped entirely; canonical bundles with separate provenance |
@@ -32,7 +32,7 @@ settled. Phase 1 (the normative spec and conformance suite) is next.
 | [0009](adr/0009-providers-and-evaluation-errors.md) | Provider contract and evaluation errors |
 | [0010](adr/0010-entities-facts-and-rules.md) | Entity graph, FactSets, settings, effects, traces |
 | [0011](adr/0011-source-format-and-types.md) | Type grammar, normalisation, namespaces, presets |
-| [0012](adr/0012-parsing-and-dependency-baseline.md) | YAML 1.2, in-house JCS and SHA-256, dependency baseline (proposed) |
+| [0012](adr/0012-parsing-and-dependency-baseline.md) | YAML 1.2, in-house JCS and SHA-256, approved dependency baseline and pinned toolchain |
 
 ## Browser use
 

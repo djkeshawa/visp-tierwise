@@ -26,5 +26,8 @@
   "tierwise": {
     "supportedSpecVersions": [],
     "supportedBundleFormatVersions": []
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs"
   }
 }

@@ -80,7 +80,8 @@ Contributions use DCO sign-off under Apache-2.0. Structural checks:
 
 ```sh
 python3 scripts/check-foundation.py
-pnpm --dir js run check
+(cd java && ./mvnw verify)
+pnpm --dir js install --frozen-lockfile && pnpm --dir js run build && pnpm --dir js test
 ```
 
 ## License

@@ -8,6 +8,9 @@ const workspace = readJson('package.json');
 assert.equal(workspace.private, true, 'The foundation workspace must be private.');
 assert.match(workspace.packageManager, /^pnpm@\d+\.\d+\.\d+$/, 'Pin pnpm exactly.');
 assert.equal(readJson('tsconfig.base.json').compilerOptions.strict, true);
+for (const [name, version] of Object.entries(workspace.devDependencies ?? {})) {
+  assert.match(version, /^\d+\.\d+\.\d+$/, `Pin ${name} to an exact version.`);
+}
 
 for (const name of ['evaluator', 'node', 'openfeature']) {
   const manifest = readJson(`${name}/package.json`);
@@ -19,6 +22,8 @@ for (const name of ['evaluator', 'node', 'openfeature']) {
   assert.deepEqual(manifest.tierwise.supportedSpecVersions, []);
   assert.deepEqual(manifest.tierwise.supportedBundleFormatVersions, []);
   assert.equal(readJson(`${name}/tsconfig.json`).extends, '../tsconfig.base.json');
+  assert.equal(readJson(`${name}/tsconfig.cjs.json`).extends, './tsconfig.json');
+  assert.deepEqual(manifest.devDependencies ?? {}, {}, 'Declare development tools once, at the workspace root.');
   console.log(`Checked ${manifest.name}: private, strict TypeScript, no runtime dependencies.`);
 }
-console.log(`Workspace metadata verified at ${fileURLToPath(root)}. This is not a compiler check.`);
+console.log(`Workspace metadata verified at ${fileURLToPath(root)}. Run pnpm build and pnpm test to compile and load the packages.`);

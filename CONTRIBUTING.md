@@ -15,13 +15,19 @@ its work items.
 
 ## Checks
 
+Prerequisites: JDK 21 (a full JDK, not a runtime image), Node 22.13+ and pnpm
+11.3.0. Maven is downloaded by the wrapper.
+
 ```sh
-python3 scripts/check-foundation.py   # repository structure, Maven metadata, action pins
-pnpm --dir js run check               # JS workspace metadata and strict config
+python3 scripts/check-foundation.py          # structure, Maven metadata, approved dependencies, action pins
+(cd java && ./mvnw verify)                    # Java build: release 17/21, enforcer rules, reproducible JARs
+pnpm --dir js install --frozen-lockfile
+pnpm --dir js run check                       # JS workspace metadata and strict config
+pnpm --dir js run build                       # ESM, CommonJS and type declarations
+pnpm --dir js test                            # packaging tests
 ```
 
-Full builds (`./mvnw verify`, `pnpm -r build`) arrive with the approved toolchain in
-the Phase 0 close-out ([ADR 0012](docs/adr/0012-parsing-and-dependency-baseline.md)).
+The toolchain and its pinned versions are recorded in [ADR 0012](docs/adr/0012-parsing-and-dependency-baseline.md).
 
 ## Developer Certificate of Origin
 

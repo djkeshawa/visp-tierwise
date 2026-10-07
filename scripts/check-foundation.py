@@ -16,6 +16,12 @@ MODULES = {
     "tierwise-server": 21,
     "tierwise-openfeature": 17,
 }
+# ADR 0012. Later phases extend these sets when their dependencies are approved.
+APPROVED_DEPENDENCIES = {
+    "tierwise-core": {"org.snakeyaml:snakeyaml-engine", "com.fasterxml.jackson.core:jackson-core"},
+    "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli"},
+}
+APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik"}
 
 
 def require(condition, message):
@@ -48,8 +54,14 @@ def check_java():
         require(model.findtext("m:parent/m:version", namespaces=NS) == version, f"Version drift: {name}")
         release = model.findtext("m:properties/m:maven.compiler.release", namespaces=NS)
         require(int(release or "17") == baseline, f"Wrong Java baseline: {name}")
-        require(not model.findall("m:dependencies/m:dependency", NS), f"Unapproved dependency: {name}")
-    require(not parent.findall("m:dependencies/m:dependency", NS), "Unapproved parent dependency")
+        for dependency in model.findall("m:dependencies/m:dependency", NS):
+            coordinate = ":".join(dependency.findtext(f"m:{part}", namespaces=NS) for part in ("groupId", "artifactId"))
+            require(coordinate in APPROVED_DEPENDENCIES.get(name, set()) | APPROVED_TEST_DEPENDENCIES,
+                    f"Dependency not approved in ADR 0012 for {name}: {coordinate}")
+    require(not parent.findall("m:dependencies/m:dependency", NS), "Declare dependencies in modules, not the parent")
+    wrapper = (ROOT / "java/.mvn/wrapper/maven-wrapper.properties").read_text()
+    require("distributionSha256Sum=" in wrapper, "The Maven Wrapper must verify its distribution checksum")
+    require((ROOT / "java/mvnw").stat().st_mode & 0o111, "java/mvnw must be executable")
 
 
 def check_ci():
@@ -58,8 +70,9 @@ def check_ci():
         for ref in re.findall(r"^\s*- uses: ([^\s#]+)", text, re.MULTILINE):
             require(re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref), f"Unpinned action in {workflow.name}: {ref}")
     ci = (ROOT / ".github/workflows/ci.yml").read_text()
-    require("mvn -B -ntp -f java/pom.xml validate" in ci, "Missing Maven descriptor CI")
-    require("pnpm --dir js run check" in ci, "Missing JS workspace CI")
+    for command in ("./mvnw -B -ntp verify", "pnpm --dir js install --frozen-lockfile",
+                    "pnpm --dir js run check", "pnpm --dir js run build", "pnpm --dir js test"):
+        require(command in ci, f"CI is missing: {command}")
 
 
 def main():
@@ -70,7 +83,7 @@ def main():
     check_java()
     check_ci()
     print("Foundation files, Maven reactor metadata and CI action pins verified.")
-    print("This check does not compile Java/TypeScript or verify runtime semantics or hosted CI.")
+    print("This check does not compile anything; run ./mvnw verify and pnpm build/test for that.")
 
 
 if __name__ == "__main__":

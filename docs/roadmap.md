@@ -20,7 +20,7 @@ contributor they can run in parallel, each with its own review stop.
 
 | # | Phase | Deliverables | Exit criteria |
 | --- | --- | --- | --- |
-| 0 | **Foundations** (close-out) | Owner items; approved dependency baseline ([ADR 0012](adr/0012-parsing-and-dependency-baseline.md)); Maven Wrapper and pinned TypeScript; Phase 0 build adapters removed; genericity check stub | Owner questions answered; `./mvnw verify` and `pnpm -r build` pass on a clean machine; hosted CI green |
+| 0 | **Foundations** (close-out) | Owner items; approved dependency baseline ([ADR 0012](adr/0012-parsing-and-dependency-baseline.md)); Maven Wrapper and pinned TypeScript; Phase 0 build adapters removed | Owner questions answered; `./mvnw verify` and `pnpm -r build` pass on a clean machine; hosted CI green |
 | 1 | **Spec v0.1** | `spec/spec.md`; `error-codes.md`; JSON Schemas (manifest, sources, bundle, vectors); presets; samples A, B and entitlements; hand-built canonical bundles; evaluate, canonical and compile vectors; stdlib-only spec tooling | Spec reviewed and accepted. Every rule in requirements §4 maps to ≥1 vector. Every code in §6 has a positive and a negative compile vector. **The most important review.** |
 | 2 | **Java validation** | Source loader (YAML 1.2, positions), manifest and preset composition, model, every engine check, lint framework | All compile *error* vectors pass; every §6 rule has positive and negative tests; golden file/path/line output |
 | 3 | **Java evaluation** | Compiler (canonical bundles), bundle loader, resolver, decision engine, provenance, `EvaluationListener` | Compiled samples are byte-identical to the Phase 1 bundles; all evaluate and canonical vectors pass; JMH baseline reported |

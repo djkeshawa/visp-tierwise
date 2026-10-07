@@ -1,6 +1,6 @@
 # ADR 0002: Verify empty builds without installing dependencies
 
-Status: interim; superseded by [ADR 0012](0012-parsing-and-dependency-baseline.md) once its dependency baseline is approved
+Status: superseded by [ADR 0012](0012-parsing-and-dependency-baseline.md) on 2026-10-08. The adapters were removed in the Phase 0 close-out.
 
 ## Context
 
