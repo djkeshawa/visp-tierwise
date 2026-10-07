@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Strata adopts the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/), incorporated by reference. Its pledge, standards, scope, enforcement responsibilities and impact guidelines apply to project spaces and official representation.
+Tierwise adopts the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/), incorporated by reference. Its pledge, standards, scope, enforcement responsibilities and impact guidelines apply to project spaces and official representation.
 
 Participation must respect people's dignity and privacy. Harassment, intimidation, discriminatory attacks and disclosure of another person's private information are unacceptable. Give feedback with care and address disagreements constructively.
 

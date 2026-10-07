@@ -3,8 +3,9 @@ namespace: checkout
 keys:
   checkout.shipping.allowed_methods:
     kind: capability
-    combine: intersect
+    type: set
     universe: [GROUND, PICKUP, NEXT_DAY]
+    combine: intersect
     settable_at: [global, channel, division, site, account, seller]
 
   checkout.container_order.allowed:
@@ -16,15 +17,16 @@ keys:
   checkout.order.max_lines:
     kind: capability
     type: integer
+    min: 1
     combine: min
     settable_at: [global, division, site]
 
   checkout.pickup.lead_hours:
     kind: configuration
     type: integer
-    combine: override
     min: 0
     max: 168
+    combine: override
     default: 4
     settable_at: [global, division, site, seller]
     combine_across_axes: max

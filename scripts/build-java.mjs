@@ -7,11 +7,11 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const java = process.env.JAVA_HOME ? join(process.env.JAVA_HOME, 'bin', 'java') : 'java';
 const foundationSourceTarget = process.argv.includes('--foundation-source-target');
 const modules = [
-  ['strata-core', 17],
-  ['strata-cli', 17],
-  ['strata-spring-boot-starter', 21],
-  ['strata-server', 21],
-  ['strata-openfeature', 17],
+  ['tierwise-core', 17],
+  ['tierwise-cli', 17],
+  ['tierwise-spring-boot-starter', 21],
+  ['tierwise-server', 21],
+  ['tierwise-openfeature', 17],
 ];
 
 function run(args) {

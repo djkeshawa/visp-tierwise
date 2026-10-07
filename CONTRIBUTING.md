@@ -1,73 +1,60 @@
-# Contributing to Strata
+# Contributing to Tierwise
 
-The project is in Phase 0 and awaits its first review. Review the current phase before proposing work. There is no accepted normative specification or public API yet.
+Tierwise is pre-release. Start with the [roadmap](docs/roadmap.md) to see the
+current phase, and with the [implementation plan](docs/implementation-plan.md) for
+its work items.
 
-## Contribution process
+## Process
 
-1. Explain the problem and the current phase it belongs to in an issue or pull request when a public repository is configured.
-2. Keep changes focused and preserve unrelated work. Use the repository's existing scripts and package manager.
-3. Add behavior tests alongside implementation. Use the shared conformance fixtures directly; never copy them into individual packages.
-4. Run the focused checks for the change and the applicable repository checks. Report actual results and any limitations in the pull request.
-5. Sign off every commit and request maintainer review.
+1. Open an issue that names the problem and the phase it belongs to.
+2. Keep changes focused. Use the repository's scripts and package managers.
+3. Write tests alongside the code. Read conformance vectors directly from
+   `spec/conformance/`; never copy them.
+4. Run the relevant checks and report the actual results in the pull request.
+5. Sign off every commit (DCO) and request a maintainer review.
 
-During Phase 0, contribute to foundations and open questions. Specification semantics, presets and conformance vectors are Phase 1 work. Production implementation starts only after the specification review.
-
-## Foundation checks
-
-From the project root:
-
-```sh
-python3 scripts/check-foundation.py
-pnpm --dir js run check
-```
-
-These inspect repository structure, Maven metadata and JavaScript workspace/strict configuration. The separate build adapters use installed compiler tooling:
+## Checks
 
 ```sh
-node scripts/build-java.mjs
-pnpm --dir js run build
+python3 scripts/check-foundation.py   # repository structure, Maven metadata, action pins
+pnpm --dir js run check               # JS workspace metadata and strict config
 ```
 
-The Java adapter requires a complete Java 21+ installation. The JavaScript adapter requires an existing TypeScript compiler, resolved normally or supplied through `STRATA_TYPESCRIPT_PATH`.
-
-Local empty builds passed using the placeholder-only Java `--foundation-source-target` fallback and an existing TypeScript 6.0.3 compiler, which emitted ESM, CJS and types. The fallback does not establish Java 17 API compatibility; strict `--release` remains unverified because the local runtime lacks `ct.sym`. No evaluator or other functional runtime is implemented.
-
-The local offline frozen pnpm install passed with an explicit writable store and no dependencies to install. Maven validation/verification, reproducible clean-machine builds and remote CI remain unverified. Pinned build tooling and docs generation remain pending approval. Review [the Phase 0 validation record](docs/phase-0-review.md) before interpreting check results.
+Full builds (`./mvnw verify`, `pnpm -r build`) arrive with the approved toolchain in
+the Phase 0 close-out ([ADR 0012](docs/adr/0012-parsing-and-dependency-baseline.md)).
 
 ## Developer Certificate of Origin
 
-Contributions use the [Developer Certificate of Origin 1.1](https://developercertificate.org/). By adding a `Signed-off-by` trailer, you certify your contribution under that certificate. A CLA is not required.
-
-Use your own name and email:
+Contributions use the [Developer Certificate of Origin 1.1](https://developercertificate.org/).
+No CLA is required.
 
 ```sh
 git commit --signoff
 ```
 
-This adds a trailer such as:
+This adds a trailer such as `Signed-off-by: Your Name <you@example.invalid>`. Sign
+off only your own work. DCO sign-off is not the same as cryptographic commit
+signing.
 
-```text
-Signed-off-by: Your Name <your-email@example.invalid>
-```
+## Design and spec changes
 
-Do not add someone else's sign-off. A DCO sign-off is distinct from cryptographic commit signing.
-
-## Design and specification changes
-
-The accepted language-neutral specification will be the source of truth. Any implementation disagreement must be resolved against it.
-
-Record non-trivial design decisions in `docs/adr/`. Explain each new dependency in an ADR before adding it. Specification changes require an RFC as a pull request against `spec/`, with rationale, compatibility impact and conformance changes. Breaking specification changes require a major specification version and maintainer approval.
-
-If a requirement is ambiguous or contradictory, ask for review before choosing an interpretation. At the end of every phase, summarize the deliverables and every unspecified decision, then wait for review.
+- Non-trivial design decisions need a short ADR in `docs/adr/`. Each new dependency
+  needs an ADR before it is added.
+- Once Phase 1 is accepted, spec changes need an RFC: a pull request against
+  `spec/` using the [RFC template](docs/rfc-template.md), with rationale,
+  compatibility impact and conformance changes. Breaking changes need a major spec
+  version.
+- If a requirement is ambiguous, resolve it explicitly in an ADR. Never pick an
+  interpretation silently.
 
 ## Genericity and scope
 
-Production code must use runtime-declared model names. Domain-specific levels, axes, entities, facts, keys, features and effects belong only in samples and fixtures. Kind names and naming recommendations belong in presets. No company-specific content belongs in this repository.
-
-Keep the public API small and documented. No general-purpose expression language, JavaScript compiler, editing UI or browser enforcement is planned in the initial scope.
+Production code uses only model names declared at runtime. Domain names belong in
+samples and fixtures; kind names and naming patterns belong in presets. No
+company-specific content belongs in this repository. Out-of-scope items are listed
+in [requirements §10](docs/requirements.md#10-out-of-scope).
 
 ## Conduct and security
 
-Follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Report vulnerabilities using [SECURITY.md](SECURITY.md), without disclosing exploit details in a public issue.
-
-Maintainer identities and private reporting contacts are not assigned yet. The [maintainer register](MAINTAINERS.md) must be populated before the project starts accepting external contributions.
+Follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Report vulnerabilities as
+described in [SECURITY.md](SECURITY.md), never in a public issue.

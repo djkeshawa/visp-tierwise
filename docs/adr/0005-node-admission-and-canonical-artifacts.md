@@ -22,9 +22,9 @@ to export potentially sensitive project data. The abstract prompt was separately
 approved. Raw consultation streams stay outside deliverables.
 
 Claude recommended complete runtime skipping and an immutable canonical artifact
-with separate provenance. Codex assessed those recommendations against Strata's
+with separate provenance. Codex assessed those recommendations against Tierwise's
 existing requirements and an independent consistency review. The selected
-decisions below are integrated into [the amended brief](../build-brief.md).
+decisions below are integrated into [the amended brief](../history/build-brief-2026-10-07.md).
 
 ## Decision: node admission
 
@@ -64,7 +64,7 @@ newline. Enforce strict parsing, including rejection of duplicate property names
 and unknown envelope fields.
 
 JCS specifies canonical serialization and preserves string data; it does not
-normalize Unicode. Strata's declared source normalization therefore precedes
+normalize Unicode. Tierwise's declared source normalization therefore precedes
 canonicalization. [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785)
 
 Put variable `gitCommit`, `createdAt` and publisher metadata in separate sidecars
@@ -86,7 +86,7 @@ and timestamp semantics remain Phase 1 format work.
 | Advice or option | Assessment |
 |---|---|
 | Ignore only static values, but still call a provider | Reject: an ignored scope would still affect evaluation or cause failures. |
-| Prune descendants of an ignored scope | Reject: conflicts with Strata's explicit absence of inferred node parents. |
+| Prune descendants of an ignored scope | Reject: conflicts with Tierwise's explicit absence of inferred node parents. |
 | Add implicit required scopes or root fallback | Reject: root inclusion has not been defined; full skipping must not invent it. |
 | Enforce a universal node-name pattern | Reject: naming conventions are user/preset policy. Structural validity still needs a defined contract. |
 | Rename `bundleVersion` to `digest` | Reject: preserve the existing proposed API name. |
@@ -100,7 +100,7 @@ These are selected requirements for specification work, not implemented runtime
 behavior. Add shared vectors in Phase 1 for skip equivalence, independent scopes,
 provider call counts, whole-context rejection before calls, strict source
 membership, no effective binding, deterministic artifacts and provenance linkage.
-The [consultation review](../claude-consultation.md) records the test inventory.
+The [consultation review](../history/claude-consultation.md) records the test inventory.
 
 No production source, build adapter or dependency has changed. Phase 0 acceptance
 and approval of a complete Phase 1 specification remain required by the brief.

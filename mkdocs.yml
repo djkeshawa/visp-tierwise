@@ -1,21 +1,34 @@
-site_name: Strata
-site_description: Layered configuration and entity-aware decisions — foundations under review
+site_name: Tierwise
+site_description: Typed, layered configuration and entity-aware decisions with provenance, for Java and JavaScript
 docs_dir: docs
 theme:
   name: material
 nav:
   - Overview: index.md
+  - Vision and strategy: vision.md
+  - Requirements: requirements.md
+  - Roadmap: roadmap.md
+  - Implementation plan: implementation-plan.md
+  - Open questions: open-questions.md
   - Contributing: contributing.md
-  - Phase 0 review: phase-0-review.md
-  - Amended build brief: build-brief.md
-  - Prompt review recommendations: recommendations-review.md
-  - Claude consultation: claude-consultation.md
-  - Semantic questions: open-questions.md
   - RFC template: rfc-template.md
   - Decisions:
-      - Phase boundaries: adr/0001-phase-boundaries.md
-      - Foundation tooling: adr/0002-foundation-tooling.md
-      - Project identity: adr/0003-provisional-identity.md
-      - Prompt review: adr/0004-adopt-prompt-review.md
-      - Node admission and artifacts: adr/0005-node-admission-and-canonical-artifacts.md
-# The documentation toolchain is not installed or pinned until dependency approval.
+      - 0001 Phase boundaries: adr/0001-phase-boundaries.md
+      - 0002 Foundation tooling: adr/0002-foundation-tooling.md
+      - 0003 Provisional identity: adr/0003-provisional-identity.md
+      - 0004 Prompt review: adr/0004-adopt-prompt-review.md
+      - 0005 Node admission and artifacts: adr/0005-node-admission-and-canonical-artifacts.md
+      - 0006 Rename to Tierwise: adr/0006-rename-to-tierwise.md
+      - 0007 Root, scopes and context: adr/0007-hierarchy-root-and-admission.md
+      - 0008 Merge semantics: adr/0008-merge-semantics.md
+      - 0009 Providers and evaluation errors: adr/0009-providers-and-evaluation-errors.md
+      - 0010 Entities, facts and rules: adr/0010-entities-facts-and-rules.md
+      - 0011 Types, sources and presets: adr/0011-source-format-and-types.md
+      - 0012 Parsing and dependencies: adr/0012-parsing-and-dependency-baseline.md
+  - History:
+      - Original brief (2026-10-07): history/build-brief-2026-10-07.md
+      - Prompt review coverage: history/recommendations-review.md
+      - Claude consultation: history/claude-consultation.md
+      - Phase 0 review: history/phase-0-review.md
+      - Original open questions: history/open-questions-2026-10-07.md
+# The documentation toolchain is pinned in the release phase (ADR 0012).

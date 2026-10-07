@@ -1,35 +1,40 @@
-# Strata documentation
+# Tierwise documentation
 
-**Phase 0 foundations, awaiting review.** There is no accepted specification, compiled bundle, evaluator or CLI. These docs describe project intent and the contribution process; they do not document usable runtime behavior.
+Tierwise is a type checker and evaluator for layered business configuration, with
+Java and JavaScript evaluators that follow one language-neutral spec.
 
-The user-authorized prompt review is integrated into the
-[amended brief](build-brief.md). Read the [recommendation coverage](recommendations-review.md)
-and remaining [questions](open-questions.md) before starting specification work.
-The completed [Claude Opus 5.5 xhigh consultation](claude-consultation.md) selects
-full skipping for ignored scopes and separate provenance for canonical bundles.
-[ADR 0005](adr/0005-node-admission-and-canonical-artifacts.md) records the rationale.
+**Status:** pre-specification. Direction, requirements and semantic decisions are
+settled. Phase 1 (the normative spec and conformance suite) is next.
 
-Strata is intended to combine typed values across user-declared levels and evaluate entity-aware decisions. Each key declares how its values combine. Java and JavaScript will share a language-neutral specification and the same evaluator conformance fixtures. Every answer will carry provenance and a bundle version.
-
-The engine must remain generic. Hierarchies, entities, facts, features and effects come from each user's model. Presets offer optional guidance, while engine guarantees remain mandatory.
-
-## Documentation roadmap
-
-| Phase | Documentation |
+| Read | For |
 | --- | --- |
-| 0 | Contribution process, governance, open questions and phase boundaries |
-| 1 | Normative specification, source and bundle schemas, presets, stable diagnostics and conformance vectors |
-| 2–8 | Validated examples and API references alongside the Java toolchain, JavaScript evaluator and integrations |
-| 9 | Verified five-minute Java and JavaScript quickstarts, generated Javadoc and TypeDoc, release and operations guides |
+| [Vision and strategy](vision.md) | Why Tierwise exists, who it's for, principles, risks |
+| [Requirements](requirements.md) | What 0.1.0 must do, including the normative draft (§4) |
+| [Roadmap](roadmap.md) | Phases, exit criteria, milestones |
+| [Implementation plan](implementation-plan.md) | Work items for each phase |
+| [Open questions](open-questions.md) | What only the project owner can decide |
+| [Decisions (ADRs)](adr/) | Why each non-obvious choice was made |
+| [Contributing](contributing.md), [RFC template](rfc-template.md) | How to propose changes |
+| [History](history/) | The original brief, prompt review and Phase 0 records (frozen) |
 
-The docs site tool is provisionally MkDocs Material; approval of its pinned build dependencies is pending. No site has been generated or published, and API references are unavailable until there is code to document. Package names, public repository ownership, maintainers and private reporting methods still need review.
+## Decision index
 
-CI is configured for Java placeholder compilation and JavaScript workspace checks; remote CI has not run. Local empty builds passed through installed compilers: Java's explicit source/target fallback compiled package placeholders, and TypeScript 6.0.3 emitted ESM, CJS and types. The stripped local Java runtime lacks `ct.sym`, so strict release checks and Java 17 API compatibility remain unverified. No functional evaluator behavior has been implemented or tested.
-
-The local offline frozen pnpm install passed with an explicit writable store and no dependencies to install. Maven verification and reproducible clean-machine builds with approved compiler tooling remain open. Read the [Phase 0 review record](phase-0-review.md) for exact validation and the [open questions](open-questions.md) before beginning Phase 1.
-
-Read the [contribution guide](contributing.md) and the [phase-boundary ADR](adr/0001-phase-boundaries.md).
+| ADR | Decision |
+| --- | --- |
+| [0001](adr/0001-phase-boundaries.md) | Review stop at every phase boundary |
+| [0002](adr/0002-foundation-tooling.md) | Interim Phase 0 build adapters (superseded by 0012 once approved) |
+| [0003](adr/0003-provisional-identity.md) | Keep publishing identity unclaimed until the owner confirms |
+| [0004](adr/0004-adopt-prompt-review.md) | Adopt the prompt review recommendations |
+| [0005](adr/0005-node-admission-and-canonical-artifacts.md) | Ignored scopes are skipped entirely; canonical bundles with separate provenance |
+| [0006](adr/0006-rename-to-tierwise.md) | Rename to Tierwise |
+| [0007](adr/0007-hierarchy-root-and-admission.md) | Singleton root, per-scope declarations, context validation |
+| [0008](adr/0008-merge-semantics.md) | Strategies, axes, defaults, `deny`, contribution effects |
+| [0009](adr/0009-providers-and-evaluation-errors.md) | Provider contract and evaluation errors |
+| [0010](adr/0010-entities-facts-and-rules.md) | Entity graph, FactSets, settings, effects, traces |
+| [0011](adr/0011-source-format-and-types.md) | Type grammar, normalisation, namespaces, presets |
+| [0012](adr/0012-parsing-and-dependency-baseline.md) | YAML 1.2, in-house JCS and SHA-256, dependency baseline (proposed) |
 
 ## Browser use
 
-Browser evaluation is for display only. Client-side inputs and outputs can be altered; decisions must be enforced on the server.
+Browser evaluation is for display only. Client-side inputs and outputs can be
+altered, so decisions must be enforced on the server.

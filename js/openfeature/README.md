@@ -1,4 +1,4 @@
-# @strata/openfeature
+# @tierwise/openfeature
 
 Private Phase 0 placeholder. No runtime implementation or supported spec
 version is claimed. Build-tool approval and phase reviews precede publication.

@@ -10,9 +10,9 @@ const packages = ['evaluator', 'node', 'openfeature'];
 function compiler() {
   let ts;
   try {
-    ts = require(process.env.STRATA_TYPESCRIPT_PATH || 'typescript');
+    ts = require(process.env.TIERWISE_TYPESCRIPT_PATH || 'typescript');
   } catch {
-    throw new Error('TypeScript compiler unavailable. Use an existing TypeScript installation via STRATA_TYPESCRIPT_PATH, or approve adding a development dependency.');
+    throw new Error('TypeScript compiler unavailable. Use an existing TypeScript installation via TIERWISE_TYPESCRIPT_PATH, or approve adding a development dependency.');
   }
   const major = Number.parseInt(ts.version, 10);
   if (typeof ts.createProgram !== 'function' || !Number.isInteger(major) || major < 5) {

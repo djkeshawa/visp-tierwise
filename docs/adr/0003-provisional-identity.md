@@ -1,6 +1,6 @@
 # ADR 0003: Keep publication identity unclaimed
 
-Status: provisional; owner confirmation required
+Status: naming superseded by [ADR 0006](0006-rename-to-tierwise.md); the rule against claiming unverified identities still applies
 
 ## Context
 

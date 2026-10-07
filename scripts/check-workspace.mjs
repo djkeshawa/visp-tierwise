@@ -11,13 +11,13 @@ assert.equal(readJson('tsconfig.base.json').compilerOptions.strict, true);
 
 for (const name of ['evaluator', 'node', 'openfeature']) {
   const manifest = readJson(`${name}/package.json`);
-  assert.equal(manifest.name, `@strata/${name}`);
+  assert.equal(manifest.name, `@tierwise/${name}`);
   assert.equal(manifest.version, workspace.version);
   assert.equal(manifest.private, true, 'Phase 0 packages must not be publishable.');
   assert.equal(manifest.license, 'Apache-2.0');
   assert.deepEqual(manifest.dependencies ?? {}, {}, 'Phase 0 adds no runtime dependencies.');
-  assert.deepEqual(manifest.strata.supportedSpecVersions, []);
-  assert.deepEqual(manifest.strata.supportedBundleFormatVersions, []);
+  assert.deepEqual(manifest.tierwise.supportedSpecVersions, []);
+  assert.deepEqual(manifest.tierwise.supportedBundleFormatVersions, []);
   assert.equal(readJson(`${name}/tsconfig.json`).extends, '../tsconfig.base.json');
   console.log(`Checked ${manifest.name}: private, strict TypeScript, no runtime dependencies.`);
 }

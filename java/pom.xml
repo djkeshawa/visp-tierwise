@@ -3,11 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.strata</groupId>
-  <artifactId>strata-parent</artifactId>
+  <groupId>io.github.tierwise</groupId>
+  <artifactId>tierwise-parent</artifactId>
   <version>0.1.0-dev.0</version>
   <packaging>pom</packaging>
-  <name>Strata — provisional foundations</name>
+  <name>Tierwise — provisional foundations</name>
   <description>Phase 0 reactor; no reviewed specification or production APIs yet.</description>
   <licenses>
     <license>
@@ -17,11 +17,11 @@
     </license>
   </licenses>
   <modules>
-    <module>strata-core</module>
-    <module>strata-cli</module>
-    <module>strata-spring-boot-starter</module>
-    <module>strata-server</module>
-    <module>strata-openfeature</module>
+    <module>tierwise-core</module>
+    <module>tierwise-cli</module>
+    <module>tierwise-spring-boot-starter</module>
+    <module>tierwise-server</module>
+    <module>tierwise-openfeature</module>
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,8 +30,8 @@
     <maven.compiler.release>17</maven.compiler.release>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <strata.supported.spec.versions>none</strata.supported.spec.versions>
-    <strata.supported.bundle.format.versions>none</strata.supported.bundle.format.versions>
+    <tierwise.supported.spec.versions>none</tierwise.supported.spec.versions>
+    <tierwise.supported.bundle.format.versions>none</tierwise.supported.bundle.format.versions>
   </properties>
   <!-- Pinned lifecycle plugins will be added only after tooling approval. -->
 </project>

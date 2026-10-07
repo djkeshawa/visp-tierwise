@@ -1,4 +1,3 @@
 # samples/retail-pos
 
-Reserved for Phase 1. No normative schema, preset, bundle or conformance
-vector is defined until the Phase 0 review resolves the open questions.
+Reserved for Phase 1 (see docs/implementation-plan.md, work item 1.10).

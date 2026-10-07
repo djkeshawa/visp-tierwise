@@ -1,26 +1,14 @@
 {
-  "name": "Strata",
-  "identityStatus": "provisional-unclaimed",
+  "name": "Tierwise",
+  "identityStatus": "chosen-unclaimed",
   "packageVersion": "0.1.0-dev.0",
   "proposedSpecVersion": "0.1",
   "supportedSpecVersions": [],
   "supportedBundleFormatVersions": [],
   "phase": 0,
-  "phaseStatus": "awaiting-review-and-tooling-approval",
-  "promptReview": {
-    "source": "strata-prompt-review.docx",
-    "recommendationsStatus": "applied-to-amended-brief-and-source-excerpts",
-    "runtimeChoicesStatus": "node-ignore-and-provenance-resolved-via-claude",
-    "consultation": {
-      "model": "claude-opus-5-5",
-      "effort": "xhigh",
-      "scope": "abstract-node-admission-and-canonical-artifacts",
-      "status": "completed-and-assessed",
-      "decisionRecord": "docs/adr/0005-node-admission-and-canonical-artifacts.md"
-    },
-    "phase1Accepted": false
-  },
-  "npmScope": "@strata",
-  "mavenGroupId": "org.strata",
-  "githubOwner": null
+  "phaseStatus": "phase-0-close-out: awaiting dependency approval and GitHub/npm claims",
+  "npmScope": "@tierwise",
+  "mavenGroupId": "io.github.tierwise",
+  "githubOwner": "tierwise (proposed, unclaimed)",
+  "decisionRecords": "docs/adr/"
 }

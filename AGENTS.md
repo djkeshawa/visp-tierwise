@@ -1,36 +1,39 @@
-# Strata contributor instructions
+# Tierwise contributor and agent instructions
 
-The project is at the Phase 0 review gate. Stop after each phase and wait for
-explicit review before starting the next, as required by the supplied brief.
+## Where things are
 
-- Write and review the language-neutral specification in Phase 1 before any
-  production implementation. Empty build placeholders are not implementation.
-- For future technical clarifications, consult Claude Opus 5.5 at xhigh effort,
-  assess the advice against the specification, and choose the best supported
-  approach. The user explicitly delegated these choices. Record the consultation
-  and decisions in `docs/adr/`; do not repeatedly ask the user routine design
-  questions. Report a consultation failure honestly and do not silently substitute
-  a different model. Human ownership, account access, dependency approval,
-  publishing and phase acceptance remain governed by the user's instructions.
-  Start with abstract questions and the minimum necessary context. Sending full
-  project documents to an external service requires separately authorized export;
-  do not work around an automatic approval rejection.
-- Keep domain names in samples and test fixtures. Engine guarantees are fixed;
-  kinds, naming, ownership and file layout are declared by users or presets.
-- Preserve unrelated changes. Do not add dependencies, publish, push or open a
-  pull request without user approval.
-- Keep the core free of Spring and networking. Keep the JS evaluator free of
-  runtime dependencies. JavaScript does not compile source projects in v1.
-- Java and JS must eventually read the same conformance vectors directly.
-- Report checks accurately. Foundation checks do not prove runtime semantics,
-  Maven verification, conformance, hosted CI or release readiness.
+- Direction: `docs/vision.md`. Requirements (with the normative draft in §4):
+  `docs/requirements.md`. Sequencing: `docs/roadmap.md`. Work items:
+  `docs/implementation-plan.md`.
+- Decisions: `docs/adr/`. Owner-only questions: `docs/open-questions.md`.
+  `docs/history/` is a frozen record; don't edit it.
+- Once Phase 1 is accepted, `spec/spec.md` is authoritative. When code and spec
+  disagree, the code is wrong.
 
-The project identity and supported spec/bundle versions are provisional.
-Review `docs/phase-0-review.md` before continuing.
+## How to work
 
-The user has authorized applying the prompt review recommendations. Read
-`docs/build-brief.md` and `docs/recommendations-review.md` for the amended brief
-and remaining decisions. This update has not accepted Phase 1 or authorized
-dependencies or publication. The user subsequently delegated technical
-clarification to Claude Opus 5.5 at xhigh effort and Codex's assessment of the
-best approach.
+- Work in the roadmap's phases. Stop at the end of each phase with a summary, the
+  evidence for its exit criteria, and every decision the requirements didn't
+  dictate. Wait for review before starting the next phase.
+- Write the spec before the code. Implement only accepted spec, and write tests
+  alongside the code.
+- **Technical clarifications are delegated.** Choose the best-supported option,
+  record it in an ADR with the alternatives considered, and continue. Escalate only
+  ownership, accounts, dependency additions, publishing and phase acceptance to the
+  owner.
+- Never silently pick an interpretation. If the spec is ambiguous, resolve it with
+  an ADR or RFC and update the spec and vectors first.
+
+## Hard rules
+
+- No domain names (levels, axes, nodes, entities, facts, keys, features, effects)
+  in `java/**/src/main` or `js/**/src`. They belong in `samples/` and test fixtures.
+  Kind names and naming patterns belong in presets.
+- Engine guarantees are fixed. No preset or setting may disable an engine error.
+- `tierwise-core`: no Spring, no networking, no logging framework.
+  `@tierwise/evaluator`: zero runtime dependencies. JS never compiles sources in v1.
+- Java and JS read the same `spec/conformance/` files directly. Never copy vectors.
+- Don't add dependencies, publish, push or open pull requests without the owner's
+  approval. Preserve unrelated changes.
+- Report checks accurately. Structural checks don't prove semantics, conformance or
+  hosted CI.

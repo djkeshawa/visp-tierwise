@@ -1,6 +1,6 @@
 # ADR 0002: Verify empty builds without installing dependencies
 
-Status: provisional; tooling approval pending
+Status: interim; superseded by [ADR 0012](0012-parsing-and-dependency-baseline.md) once its dependency baseline is approved
 
 ## Context
 
@@ -21,7 +21,7 @@ adapter normally uses `--release` for 17/21. An explicitly requested
 `--foundation-source-target` mode is limited to package-info.java placeholders:
 this stripped runtime has no ct.sym signatures, so source/target checks do not
 establish Java 17 API compatibility. The JS adapter accepts an installed compiler
-via `STRATA_TYPESCRIPT_PATH` or normal package resolution and emits ESM, CJS and
+via `TIERWISE_TYPESCRIPT_PATH` or normal package resolution and emits ESM, CJS and
 declarations; absent tooling fails loudly. These adapters do not replace the
 reviewed Maven/pnpm release toolchain.
 

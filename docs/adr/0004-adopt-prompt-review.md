@@ -22,8 +22,8 @@ extensions. The project must still stop for review at each phase.
 
 ## Decision
 
-Update [the build brief](../build-brief.md) and record the ten recommendation
-groups in [the recommendation review](../recommendations-review.md):
+Update [the build brief](../history/build-brief-2026-10-07.md) and record the ten recommendation
+groups in [the recommendation review](../history/recommendations-review.md):
 
 - Admit inline, generated and open node sources, with required per-level
   `on_unknown_node: error | ignore`; reconcile unconditional node-rejection

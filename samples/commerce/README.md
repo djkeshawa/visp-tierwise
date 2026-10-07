@@ -1,14 +1,9 @@
-# samples/commerce
+# samples/commerce (domain A)
 
-The files in `schema/` are reviewed source excerpts from the build brief,
-including the recommended sample corrections. They are not a complete or
-validated Strata project.
+Sample domain A: `global → channel → division → site → account → user`, axis
+`seller`, service-sourced `account` and `user`, and an order-level decision over
+child items.
 
-The key excerpt declares each merge strategy, adds explicit boolean and
-integer types, and uses `universe` to declare a set-valued key. The core excerpt
-does not repeat the project manifest's `specVersion`.
-
-Node policies, root-node selection, provider details, and the actual
-`strata.yaml`, rules, and values follow the accepted Phase 1 specification.
-The current excerpts preserve the original node lists and do not introduce
-an implicit root. No compiled bundle or conformance result is supplied.
+`schema/` holds the excerpts from [requirements §5](../../docs/requirements.md#5-file-formats-sample-domain-a)
+in the ADR 0007/0011 format. The complete project (manifest, catalogs, values,
+rules and examples) is Phase 1 work item 1.9. It isn't a validated project yet.

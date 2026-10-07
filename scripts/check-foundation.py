@@ -10,11 +10,11 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parent.parent
 NS = {"m": "http://maven.apache.org/POM/4.0.0"}
 MODULES = {
-    "strata-core": 17,
-    "strata-cli": 17,
-    "strata-spring-boot-starter": 21,
-    "strata-server": 21,
-    "strata-openfeature": 17,
+    "tierwise-core": 17,
+    "tierwise-cli": 17,
+    "tierwise-spring-boot-starter": 21,
+    "tierwise-server": 21,
+    "tierwise-openfeature": 17,
 }
 
 
@@ -27,7 +27,8 @@ def check_documents():
     required = [
         "LICENSE", "NOTICE", "README.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
         "SECURITY.md", "GOVERNANCE.md", "MAINTAINERS.md", "CHANGELOG.md", "AGENTS.md",
-        "docs/phase-0-review.md", "docs/open-questions.md", "mkdocs.yml",
+        "docs/vision.md", "docs/requirements.md", "docs/roadmap.md",
+        "docs/implementation-plan.md", "docs/open-questions.md", "mkdocs.yml",
         ".github/PULL_REQUEST_TEMPLATE.md", ".github/ISSUE_TEMPLATE/bug_report.yml",
         ".github/ISSUE_TEMPLATE/feature_request.yml", ".github/dependabot.yml",
     ]
