@@ -1,0 +1,687 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/bundle.schema.json",
+  "title": "Tierwise bundle",
+  "description": "Structure of the canonical bundle {bundleVersion, content} (section 10, [BUNDLE-1] to [BUNDLE-108]). The schema checks shape only. It does check that every number is an integer within plus or minus (2^53 - 1) ([BUNDLE-12], [DET-4]). It does not check the JCS byte form, the digest, or the text form of integers, for example 1.0, an exponent or -0, which draft 2020-12 integer accepts ([BUNDLE-2] to [BUNDLE-11], [BUNDLE-113], [BUNDLE-116]), and it does not check semantic rules: cross-references between members, the order of arrays, uniqueness across members, catalog membership, the validity of values for their types, the strategy-dependent members of a key, which effects may be null, or the derived requiredFacts. The loader checks those ([BUNDLE-111] to [BUNDLE-136]). The members bundleFormatVersion and specVersion are required but their values are not constrained here, whatever their JSON type, because the loader reports any present value other than exactly \"1\" or \"0.1\" as E_BUNDLE_UNSUPPORTED, and a structure check excludes them ([BUNDLE-118], [BUNDLE-115], [BUNDLE-137], [EVAL-56]). The name grammars of POL-20, ENTITY-18, FACT-3 and SCOPE-8 are checked here only as far as the propertyNames and minLength constraints state. Numbers are JSON integers: the schema uses type integer, never number ([BUNDLE-11]).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bundleVersion", "content"],
+  "properties": {
+    "bundleVersion": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "The digest that names the bundle: the string sha256: followed by 64 lowercase hexadecimal digits, the SHA-256 of the JCS serialisation of content alone ([BUNDLE-5], [BUNDLE-6])."
+    },
+    "content": {
+      "$ref": "#/$defs/content",
+      "description": "The compiled content: the hierarchy, entities, facts, keys, values and features of one project ([BUNDLE-14] to [BUNDLE-108])."
+    }
+  },
+  "$defs": {
+    "jsonInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991,
+      "description": "A JSON integer within plus or minus (2^53 - 1) ([BUNDLE-11], [BUNDLE-12], [DET-4])."
+    },
+    "scalarValue": {
+      "description": "A value of a scalar type: boolean, integer, or string. A decimal value is a string in its canonical form, and an enum value is a string ([BUNDLE-68] to [BUNDLE-71], [BUNDLE-70]). Its validity for the declared type is checked by the loader ([BUNDLE-131]).",
+      "anyOf": [
+        { "type": "boolean" },
+        { "$ref": "#/$defs/jsonInteger" },
+        { "type": "string" }
+      ]
+    },
+    "value": {
+      "description": "A value in the JSON encoding of its type: a boolean, an integer, a string (also used for enum and decimal values), an array (list or set value, in the order that [BUNDLE-72] and [BUNDLE-74] give) or an object (object value, [BUNDLE-73]). JSON null is not a value of any type ([BUNDLE-23], [TYPE-76]).",
+      "anyOf": [
+        { "type": "boolean" },
+        { "$ref": "#/$defs/jsonInteger" },
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/value" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/value" }
+        }
+      ]
+    },
+    "effect": {
+      "description": "An effect: the value a decision returns. Its form is a string from an enum list, an object of an object form, or null. Null is permitted only as a rule's then, a policy's default or a feature's ifFactMissing, and only where the feature's returns is nullable ([BUNDLE-24], [FEAT-9]). That relation is checked by the loader, not here.",
+      "anyOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/value" }
+        },
+        { "type": "null" }
+      ]
+    },
+    "scalarLiteral": {
+      "description": "A literal in a condition that is not a setting reference: a boolean, an integer, or a string that does not begin with $ ([BUNDLE-102], [BUNDLE-104]).",
+      "anyOf": [
+        { "type": "boolean" },
+        { "$ref": "#/$defs/jsonInteger" },
+        {
+          "type": "string",
+          "not": { "pattern": "^\\$" }
+        }
+      ]
+    },
+    "settingReference": {
+      "type": "string",
+      "pattern": "^\\$[^$.]+$",
+      "description": "A setting reference: the string $ followed by a setting name, which contains no $ or . ([BUNDLE-103], [BUNDLE-104], [POL-20])."
+    },
+    "eqValue": {
+      "description": "The value of an eq condition: a literal of the fact's type, or a setting reference to a valueOf setting ([BUNDLE-100]).",
+      "anyOf": [
+        { "$ref": "#/$defs/scalarLiteral" },
+        { "$ref": "#/$defs/settingReference" }
+      ]
+    },
+    "listOperand": {
+      "description": "The value of an in, all_in or any_in condition: an array of distinct literals, which may be empty, or a setting reference to a listOf setting ([BUNDLE-101], [RULE-21]). A setting reference never appears inside a literal list ([BUNDLE-126]). The order of the literals is checked by the loader: code point order for strings, ascending for integers, false before true for booleans ([BUNDLE-75], [BUNDLE-152]).",
+      "anyOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/scalarLiteral" }
+        },
+        { "$ref": "#/$defs/settingReference" }
+      ]
+    },
+    "nameArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" },
+      "description": "An array of names with no repeated element. Its order is fixed by the clause that owns it, which the loader checks ([BUNDLE-75])."
+    },
+    "settingName": {
+      "type": "string",
+      "pattern": "^[^$.]+$",
+      "not": { "const": "policy" },
+      "description": "A setting name: non-empty, with no $ or . and not the reserved name policy ([POL-20], [BUNDLE-104])."
+    },
+    "nonEmptyName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A level or axis name. It is never empty ([SCOPE-8])."
+    },
+    "nodeId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A node ID. It is never empty ([BUNDLE-129], [BUNDLE-66])."
+    },
+    "typeDeclCore": {
+      "description": "The members of a type declaration for each of the eight types, with the type member that selects the form. A member that the type does not define is not allowed here; the closing rule is applied by the typeDecl and fieldDecl wrappers, which also decide whether optional is allowed ([TYPE-7], [TYPE-8], [BUNDLE-82]).",
+      "oneOf": [
+        {
+          "description": "The boolean type, with no type members ([TYPE-7]).",
+          "properties": {
+            "type": { "const": "boolean", "description": "The type name boolean ([TYPE-2])." }
+          },
+          "required": ["type"]
+        },
+        {
+          "description": "The integer type, with optional inclusive bounds min and max ([TYPE-13], [TYPE-19]).",
+          "properties": {
+            "type": { "const": "integer", "description": "The type name integer ([TYPE-2])." },
+            "min": { "$ref": "#/$defs/jsonInteger", "description": "The inclusive lower bound, a source integer within the range of [TYPE-13]." },
+            "max": { "$ref": "#/$defs/jsonInteger", "description": "The inclusive upper bound, a source integer within the range of [TYPE-13]." }
+          },
+          "required": ["type"]
+        },
+        {
+          "description": "The decimal type, with no type members ([TYPE-7]).",
+          "properties": {
+            "type": { "const": "decimal", "description": "The type name decimal ([TYPE-2])." }
+          },
+          "required": ["type"]
+        },
+        {
+          "description": "The string type, with an optional format ([TYPE-31]).",
+          "properties": {
+            "type": { "const": "string", "description": "The type name string ([TYPE-2])." },
+            "format": {
+              "enum": ["time_hhmm", "iana_tz"],
+              "description": "The format that a string value must satisfy ([TYPE-31] to [TYPE-33])."
+            }
+          },
+          "required": ["type"]
+        },
+        {
+          "description": "The enum type, with a non-empty list of distinct string values ([TYPE-40] to [TYPE-43]).",
+          "properties": {
+            "type": { "const": "enum", "description": "The type name enum ([TYPE-2])." },
+            "values": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string" },
+              "description": "The enum values, in code point order ([BUNDLE-75])."
+            }
+          },
+          "required": ["type", "values"]
+        },
+        {
+          "description": "The set type, with a non-empty list of distinct string members in declared order ([TYPE-40] to [TYPE-43]).",
+          "properties": {
+            "type": { "const": "set", "description": "The type name set ([TYPE-2])." },
+            "universe": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string" },
+              "description": "The members of the set type, in declared order ([BUNDLE-75])."
+            }
+          },
+          "required": ["type", "universe"]
+        },
+        {
+          "description": "The list type, whose items is a type declaration of any type ([TYPE-53], [TYPE-54]).",
+          "properties": {
+            "type": { "const": "list", "description": "The type name list ([TYPE-2])." },
+            "items": {
+              "$ref": "#/$defs/typeDecl",
+              "description": "The type of each element of a list value ([TYPE-54])."
+            }
+          },
+          "required": ["type", "items"]
+        },
+        {
+          "description": "The object type, with at least one field, each a field declaration ([TYPE-59], [TYPE-68]).",
+          "properties": {
+            "type": { "const": "object", "description": "The type name object ([TYPE-2])." },
+            "fields": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "minLength": 1 },
+              "additionalProperties": { "$ref": "#/$defs/fieldDecl" },
+              "description": "A map from field name to field declaration. A field name is never empty ([TYPE-68])."
+            }
+          },
+          "required": ["type", "fields"]
+        }
+      ]
+    },
+    "typeDecl": {
+      "description": "A type declaration for a key, or the items declaration of a list, with no optional member ([KEY-2], [TYPE-54]). The optional member is allowed only on an object field declaration ([TYPE-8], [TYPE-5]).",
+      "$ref": "#/$defs/typeDeclCore",
+      "unevaluatedProperties": false
+    },
+    "fieldDecl": {
+      "description": "An object field declaration: a type declaration that may carry optional, present only when its value is true ([TYPE-60], [BUNDLE-82]).",
+      "allOf": [
+        { "$ref": "#/$defs/typeDeclCore" },
+        {
+          "properties": {
+            "optional": {
+              "const": true,
+              "description": "Present only when the field is optional, with the value true ([BUNDLE-82], [TYPE-9] to [TYPE-10])."
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "factTypeDecl": {
+      "description": "The type declaration of a fact: one of boolean, integer, decimal, string or enum, with no optional member ([BUNDLE-50], [FACT-7]).",
+      "allOf": [
+        { "$ref": "#/$defs/typeDeclCore" },
+        {
+          "properties": {
+            "type": {
+              "enum": ["boolean", "integer", "decimal", "string", "enum"],
+              "description": "A fact type is one of these five names ([BUNDLE-50])."
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "returns": {
+      "description": "The returns of a feature: an enum form, with an optional nullable member that is true only when declared, or an object form with at least one field, and no nullable member ([BUNDLE-82], [FEAT-9], [FEAT-12]).",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enum"],
+          "properties": {
+            "enum": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string" },
+              "description": "The effects of the feature, in code point order ([BUNDLE-75], [TYPE-6])."
+            },
+            "nullable": {
+              "const": true,
+              "description": "Present only when the source declares nullable: true, with the value true ([FEAT-9])."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["object"],
+          "properties": {
+            "object": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "minLength": 1 },
+              "additionalProperties": { "$ref": "#/$defs/fieldDecl" },
+              "description": "A map from field name to field declaration, for the object form of returns ([FEAT-11])."
+            }
+          }
+        }
+      ]
+    },
+    "condition": {
+      "description": "One condition of a rule's when: a fact, an operator and a value. The value form depends on the operator ([BUNDLE-98] to [BUNDLE-101]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fact", "op", "value"],
+      "properties": {
+        "fact": {
+          "type": "string",
+          "description": "The name of the fact that the source condition names ([BUNDLE-98])."
+        },
+        "op": {
+          "enum": ["eq", "in", "all_in", "any_in"],
+          "description": "The operator, spelled as in the source ([BUNDLE-99], [BUNDLE-27])."
+        },
+        "value": {
+          "description": "The operand. Its form is set by op in the allOf below."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "op": { "const": "eq", "description": "Selects the eq branch: the operand is a literal or a setting reference to a valueOf setting ([BUNDLE-100])." } },
+            "required": ["op"]
+          },
+          "then": {
+            "properties": {
+              "value": { "$ref": "#/$defs/eqValue", "description": "The operand of an eq condition ([BUNDLE-100])." }
+            }
+          },
+          "else": {
+            "properties": {
+              "value": { "$ref": "#/$defs/listOperand", "description": "The operand of an in, all_in or any_in condition ([BUNDLE-101])." }
+            }
+          }
+        }
+      ]
+    },
+    "rule": {
+      "description": "One rule of a policy: an id, a name kept for the reason of a decision, its conditions and its then effect ([BUNDLE-94], [BUNDLE-95]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "when", "then"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The rule ID. It is a non-empty string ([POL-25]), and unique within its policy ([BUNDLE-132])."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The rule name. It is a non-empty string ([POL-25]), kept in the content because evaluation returns it ([BUNDLE-95])."
+        },
+        "when": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/condition" },
+          "description": "The conditions, one for each fact that the source when names, sorted by fact ([BUNDLE-96]). An empty list is written [] ([BUNDLE-97])."
+        },
+        "then": {
+          "$ref": "#/$defs/effect",
+          "description": "The effect that the rule returns when its conditions hold ([BUNDLE-24])."
+        }
+      }
+    },
+    "setting": {
+      "description": "A setting of a policy: a default and exactly one of valueOf, for a single value of a fact, and listOf, for a list of distinct values of a fact ([BUNDLE-86] to [BUNDLE-89]).",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["default", "valueOf"],
+          "properties": {
+            "default": {
+              "$ref": "#/$defs/scalarValue",
+              "description": "The default value, a value of the type of the fact ([BUNDLE-88])."
+            },
+            "valueOf": {
+              "type": "string",
+              "description": "The name of the fact whose single value the setting holds ([BUNDLE-86])."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["default", "listOf"],
+          "properties": {
+            "default": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/scalarValue" },
+              "description": "The default list of distinct values of the type of the fact, in the order of [BUNDLE-90] ([BUNDLE-89])."
+            },
+            "listOf": {
+              "type": "string",
+              "description": "The name of the fact whose values the setting lists ([BUNDLE-86])."
+            }
+          }
+        }
+      ]
+    },
+    "policy": {
+      "description": "A named, ordered rule list with settings and a default effect ([BUNDLE-83] to [BUNDLE-93]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["settings", "default", "requiredFacts", "rules"],
+      "properties": {
+        "settings": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/settingName" },
+          "additionalProperties": { "$ref": "#/$defs/setting" },
+          "description": "The settings of the policy, keyed by setting name. It may be empty ([BUNDLE-84])."
+        },
+        "default": {
+          "$ref": "#/$defs/effect",
+          "description": "The effect that applies when no rule matches ([BUNDLE-85], [BUNDLE-24])."
+        },
+        "requiredFacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "The distinct fact names that appear in any condition of any rule, in code point order. It is the only derived member in content ([BUNDLE-91], [BUNDLE-92], [BUNDLE-110])."
+        },
+        "rules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/rule" },
+          "description": "The rules in source order ([BUNDLE-93])."
+        }
+      }
+    },
+    "settingValue": {
+      "description": "The value of a setting in a binding: a scalar for a valueOf setting, or a list of distinct scalars for a listOf setting ([BUNDLE-89], [BUNDLE-108]).",
+      "anyOf": [
+        { "$ref": "#/$defs/scalarValue" },
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/scalarValue" }
+        }
+      ]
+    },
+    "binding": {
+      "description": "A binding: the name of its policy and the setting values that the source writes ([BUNDLE-107], [BUNDLE-108]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "settings"],
+      "properties": {
+        "policy": {
+          "type": "string",
+          "description": "The name of the policy that the binding selects ([BUNDLE-107])."
+        },
+        "settings": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/settingName" },
+          "additionalProperties": { "$ref": "#/$defs/settingValue" },
+          "description": "The setting values that the source binding writes, keyed by setting name. The policy's defaults are not copied in ([BUNDLE-108])."
+        }
+      }
+    },
+    "feature": {
+      "description": "A declared decision made per entity ([BUNDLE-76] to [BUNDLE-82]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decidedPer", "returns", "hitPolicy", "ifFactMissing", "bindingSettableAt", "policies", "bindings"],
+      "properties": {
+        "decidedPer": {
+          "type": "string",
+          "description": "The name of the entity that the decision is about ([BUNDLE-77])."
+        },
+        "returns": {
+          "$ref": "#/$defs/returns",
+          "description": "The form of the feature's effects ([BUNDLE-82])."
+        },
+        "hitPolicy": {
+          "const": "FIRST",
+          "description": "The hit policy. FIRST is the only hit policy in this version ([BUNDLE-78])."
+        },
+        "ifFactMissing": {
+          "$ref": "#/$defs/effect",
+          "description": "The effect returned when the missing-fact precheck fails ([BUNDLE-79], [BUNDLE-80])."
+        },
+        "bindingSettableAt": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "The level names at which a binding may select this feature's policies, in level order ([BUNDLE-81], [BUNDLE-54]). It always holds the root level, so it is never empty ([FEAT-18], [BUNDLE-128])."
+        },
+        "policies": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/policy" },
+          "description": "The policies of the feature, keyed by policy name ([BUNDLE-83])."
+        },
+        "bindings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": { "$ref": "#/$defs/binding" },
+            "description": "The node bindings of one level, keyed by node key. A level with no node entries is absent ([BUNDLE-22], [BUNDLE-66])."
+          },
+          "description": "The bindings of this feature, keyed by level name. Only levels carry bindings ([BUNDLE-105], [BUNDLE-106])."
+        }
+      }
+    },
+    "valuesScopeMap": {
+      "description": "The node entries of one scope, keyed by node key. The empty string is the root level's implicit node ([BUNDLE-66]).",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "description": "The key values of one node, keyed by key name. A node with no key values is absent ([BUNDLE-22]).",
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": { "$ref": "#/$defs/value" }
+      }
+    },
+    "hierarchy": {
+      "description": "The decision hierarchy: the levels in declared order, the axes, and the scopes with their catalogs ([BUNDLE-29] to [BUNDLE-43]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["levels", "axes", "scopes"],
+      "properties": {
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nonEmptyName" },
+          "description": "The level names in declared order, with the root level first ([BUNDLE-30])."
+        },
+        "axes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nonEmptyName" },
+          "description": "The axis names in declared order. Empty when no axis is declared ([BUNDLE-31])."
+        },
+        "scopes": {
+          "type": "object",
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "$ref": "#/$defs/scope" },
+          "description": "One scope for each non-root level and each axis, keyed by scope name ([BUNDLE-32])."
+        }
+      }
+    },
+    "scope": {
+      "description": "A scope with its values source and its catalog. onUnknownNode is present exactly when nodes is an array ([BUNDLE-33] to [BUNDLE-43]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["values", "nodes"],
+      "properties": {
+        "values": {
+          "enum": ["files", "service"],
+          "description": "Where the scope's values come from. service appears only on a level ([BUNDLE-34], [BUNDLE-36])."
+        },
+        "nodes": {
+          "description": "The catalog: the string open for an open catalog, or the complete list of admitted node IDs for a closed catalog ([BUNDLE-37], [BUNDLE-38]).",
+          "oneOf": [
+            {
+              "const": "open",
+              "description": "An open catalog admits every structurally valid node ID."
+            },
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/nodeId" },
+              "description": "A closed catalog, with each admitted node ID exactly once. An empty catalog is [] ([BUNDLE-41])."
+            }
+          ]
+        },
+        "onUnknownNode": {
+          "enum": ["error", "ignore"],
+          "description": "The behaviour for a node ID that the catalog does not admit. Present exactly when nodes is an array ([BUNDLE-42], [BUNDLE-43])."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["nodes"],
+            "properties": { "nodes": { "type": "array", "description": "Selects the closed-catalog branch, in which onUnknownNode is required ([BUNDLE-42])." } }
+          },
+          "then": {
+            "required": ["onUnknownNode"]
+          },
+          "else": {
+            "not": { "required": ["onUnknownNode"] }
+          }
+        }
+      ]
+    },
+    "entity": {
+      "description": "A declared entity with its direct edges only ([BUNDLE-44], [BUNDLE-45], [BUNDLE-47]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["belongsTo", "hasMany"],
+      "properties": {
+        "belongsTo": {
+          "$ref": "#/$defs/nameArray",
+          "description": "The direct parent entities, written as an array even when there is one, and [] when there are none ([BUNDLE-46])."
+        },
+        "hasMany": {
+          "$ref": "#/$defs/nameArray",
+          "description": "The direct child entities, written as an array, and [] when there are none ([BUNDLE-46])."
+        }
+      }
+    },
+    "fact": {
+      "description": "A declared fact, named <entity>.<attribute> in its parent map ([BUNDLE-48], [BUNDLE-49]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity", "type"],
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "The declared entity that the prefix of the fact's name names ([BUNDLE-49], [BUNDLE-122])."
+        },
+        "type": {
+          "$ref": "#/$defs/factTypeDecl",
+          "description": "The type of the fact ([BUNDLE-50])."
+        }
+      }
+    },
+    "key": {
+      "description": "A declared configuration item with its type, merge strategy, settable scopes and optional members ([BUNDLE-52] to [BUNDLE-63]). The other members are fixed by the strategy and the scope, and the loader checks them ([BUNDLE-55], [BUNDLE-57], [BUNDLE-59]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "combine", "settableAt"],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/typeDecl",
+          "description": "The key's type declaration, with the type members that its type allows, such as min and max ([BUNDLE-52])."
+        },
+        "combine": {
+          "enum": ["all", "any", "intersect", "union", "min", "max", "override", "deep_merge"],
+          "description": "The merge strategy, spelled as in the source ([BUNDLE-52], [BUNDLE-27], [MERGE-1])."
+        },
+        "default": {
+          "$ref": "#/$defs/value",
+          "description": "The default value, a value of the key's type, present only when the key declares one ([BUNDLE-55], [BUNDLE-56])."
+        },
+        "settableAt": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "The scope names at which the key may be set: the levels in declared order, then the axes in declared order ([BUNDLE-54]). It is never empty ([KEY-7])."
+        },
+        "combineAcrossAxes": {
+          "enum": ["axis_wins", "hierarchy_wins", "max", "min"],
+          "description": "How the hierarchy result and the axis result combine. Present exactly when the key is order-dependent and settable at an axis ([BUNDLE-57], [BUNDLE-58])."
+        },
+        "onSourceFailure": {
+          "enum": ["skip", "deny"],
+          "description": "The behaviour on a source failure at a service-sourced level. Present exactly when the key is settable at such a level ([BUNDLE-59], [BUNDLE-60], [BUNDLE-61])."
+        },
+        "kind": {
+          "type": "string",
+          "description": "The name of the kind that the key opts into, and nothing else. Present exactly when the key opts into a kind ([BUNDLE-62], [BUNDLE-63])."
+        }
+      }
+    },
+    "content": {
+      "description": "The content of a bundle: exactly the members of [BUNDLE-14], each present even when empty ([BUNDLE-15], [BUNDLE-19]).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundleFormatVersion", "specVersion", "hierarchy", "entities", "facts", "keys", "values", "features"],
+      "properties": {
+        "bundleFormatVersion": {
+          "description": "The bundle format version, the string \"1\" in a bundle that conforms to this version ([BUNDLE-16]). Any JSON type is accepted here: the loader checks the value and reports a present value other than \"1\" as E_BUNDLE_UNSUPPORTED ([BUNDLE-115], [BUNDLE-118], [BUNDLE-137], [EVAL-56])."
+        },
+        "specVersion": {
+          "description": "The spec version that the manifest declared, the string \"0.1\" in a bundle that conforms to this version ([BUNDLE-17], [BUNDLE-18]). Any JSON type is accepted here: the loader checks the value and reports a present value other than \"0.1\" as E_BUNDLE_UNSUPPORTED ([BUNDLE-115], [BUNDLE-118], [BUNDLE-137], [EVAL-56])."
+        },
+        "hierarchy": {
+          "$ref": "#/$defs/hierarchy",
+          "description": "The decision hierarchy ([BUNDLE-29])."
+        },
+        "entities": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[^.]+$" },
+          "additionalProperties": { "$ref": "#/$defs/entity" },
+          "description": "The declared entities, keyed by entity name. A name is non-empty and has no . ([BUNDLE-44], [ENTITY-18])."
+        },
+        "facts": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[^.]+\\.[\\s\\S]+$" },
+          "additionalProperties": { "$ref": "#/$defs/fact" },
+          "description": "The declared facts, keyed by <entity>.<attribute>, split at the first . with a non-empty entity part and a non-empty attribute part ([BUNDLE-48], [FACT-3])."
+        },
+        "keys": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/key" },
+          "description": "The declared keys, keyed by key name ([BUNDLE-51])."
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/valuesScopeMap" },
+          "description": "The key values of the non-service levels and the axes, keyed by scope name. A scope with no node entries is absent ([BUNDLE-64] to [BUNDLE-67], [BUNDLE-22])."
+        },
+        "features": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/feature" },
+          "description": "The declared features, keyed by feature name ([BUNDLE-76])."
+        }
+      }
+    }
+  }
+}

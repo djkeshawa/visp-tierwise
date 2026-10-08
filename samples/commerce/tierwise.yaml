@@ -1,0 +1,29 @@
+# Manifest for sample domain A (commerce). Layout per requirements section 5.1.
+# Presets: tierwise:recommended supplies the kinds (configuration, capability),
+# the naming patterns and the lint severities (presets/recommended.yaml).
+
+specVersion: "0.1"
+
+# MANIFEST-19, MANIFEST-21: built-in preset reference.
+extends:
+  - tierwise:recommended
+
+# MANIFEST-10, MANIFEST-11: source lists. Each item is a glob (SRC-18) or a values
+# entry (SRC-21).
+sources:
+  schema:
+    - "schema/**/*.yaml"
+  values:
+    # SRC-26: root values file. Holds values for the root level, global.
+    - file: "values/global.yaml"
+      scope: global
+    # SRC-22, SRC-23: path-mapped entry. Captures scope from segment 2 and node
+    # from segment 3, e.g. values/division/south.yaml -> division, south.
+    - pattern: "values/{scope}/{node}.yaml"
+  rules:
+    - "rules/**/*.yaml"
+
+# NS-1, NS-2: schema/components/checkout.yaml is a namespaced file (NS-3). It is
+# selected once, under the namespace (SRC-20 (c)).
+namespaces:
+  checkout: { schema: "schema/components/checkout.yaml" }

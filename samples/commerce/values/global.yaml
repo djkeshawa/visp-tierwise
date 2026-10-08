@@ -1,0 +1,10 @@
+# Root values file (SRC-26). The root level has no node.
+# checkout.shipping.allowed_methods: intersect narrowing: the contributed sets are intersected (MERGE-17).
+# checkout.order.allowed_max_lines: min narrowing: the smallest contributed bound wins (MERGE-17).
+# checkout.pickup.lead_hours: override: the most specific level that sets a value wins (MERGE-19), so this root value applies only where none does.
+# checkout.pickup.window: deep_merge, a partial object over the default (MERGE-11).
+checkout.shipping.allowed_methods: [GROUND, PICKUP]
+checkout.order.allowed_max_lines: 500
+checkout.pickup.lead_hours: 2
+checkout.pickup.window:
+  open: "09:00"

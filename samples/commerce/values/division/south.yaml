@@ -1,0 +1,6 @@
+# Path-mapped values file: scope division, node south (SRC-22, SRC-25).
+# Shipping methods: intersect narrowing again. Lead hours: override (MERGE-19).
+# Max lines: min narrowing (MERGE-17).
+checkout.shipping.allowed_methods: [GROUND, PICKUP]
+checkout.order.allowed_max_lines: 100
+checkout.pickup.lead_hours: 6

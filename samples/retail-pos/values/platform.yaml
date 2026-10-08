@@ -1,0 +1,7 @@
+# Root values file ([SRC-26]). Each entry is a value for the root level, which has no node.
+pos.basket.line_limit: 200
+pos.tender.allowed: [CASH, CARD]
+pos.fraud.review_reasons: [VELOCITY]
+pos.pricing.max_discount_percent: 10
+pos.receipt.header: { show_store_address: false }
+pos.receipt.tax_label: "Sales Tax"

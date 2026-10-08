@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/vector-compile.schema.json",
+  "title": "Tierwise compile case expected.yaml",
+  "description": "The expected.yaml of one compile case (spec section 12.5). It states either the bundle file that the compile must produce, or the complete list of findings. A findings entry is a finding key (code, file, path, line) and carries no severity, message or suggestion ([VEC-97], [FIND-24]). This schema checks structure only. Semantic checks, such as that bundle names a file in bundles/, that codes are engine codes or lint rules, and that finding keys are compared as sets, are done by the runner and the check tool.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "specVersion", "clauses", "description", "expect"],
+  "properties": {
+    "id": {
+      "description": "Case identifier. It equals the name of the case directory directly under compile/ ([VEC-13]).",
+      "type": "string",
+      "minLength": 1
+    },
+    "specVersion": {
+      "description": "Version of this specification that the case targets. The value for this version is \"0.1\" ([VEC-14]).",
+      "type": "string",
+      "const": "0.1"
+    },
+    "clauses": {
+      "description": "Clause IDs that define the behaviour the case checks ([VEC-16]).",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/clauseId" }
+    },
+    "description": {
+      "description": "One non-empty, single-line sentence that says what the case checks ([VEC-17]).",
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "project": {
+      "description": "Relative path, from the directory of this file, to a sample project directory inside the repository's samples/ directory. The case then compiles that sample in place, and the case has no project/ directory ([VEC-91]). Omitted when the case has its own project/ directory ([VEC-5]). The pattern checks only that the path is relative, uses / and has a samples/ segment followed by at least one more segment. The runner checks that it resolves to a directory in the repository's samples/ directory.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\\\)(?:.*/)?samples/[^/]+(?:/.*)?$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "build": {
+      "description": "Optional build record that the runner passes to the provenance writer ([VEC-107]). It affects only the sidecar, never the bundle bytes ([DET-3]). Each member is optional.",
+      "$ref": "#/$defs/build"
+    },
+    "expect": {
+      "description": "The expected outcome. It has exactly one of two members: bundle, or findings ([VEC-90]).",
+      "$ref": "#/$defs/expect"
+    }
+  },
+  "$defs": {
+    "clauseId": {
+      "description": "A clause ID: an area prefix from spec.md, a hyphen and a number from 1 ([VEC-16]).",
+      "type": "string",
+      "pattern": "^(MANIFEST|SRC|NS|SCOPE|CTX|ENTITY|FACT|TYPE|NORM|KEY|MERGE|AXIS|KIND|SVC|FEAT|POL|BIND|RULE|PROV|BUNDLE|DET|EVAL|VEC|FIND|LINT)-[1-9][0-9]*$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "build": {
+      "description": "Build members for the sidecar. Each value takes the form that [BUNDLE-150] gives. Any other member is a runner failure ([VEC-107], [VEC-19]).",
+      "type": "object",
+      "properties": {
+        "gitCommit": {
+          "description": "Full commit identifier: 40 or 64 lowercase hexadecimal digits. Quote it, so that YAML does not read an all-digit value as a number ([BUNDLE-150]).",
+          "type": "string",
+          "minLength": 40,
+          "maxLength": 64,
+          "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$"
+        },
+        "createdAt": {
+          "description": "RFC 3339 time in UTC, with an uppercase T separator, a Z offset, and seconds without fractional seconds ([BUNDLE-150], [BUNDLE-141]).",
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 20,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        },
+        "publisher": {
+          "description": "Opaque label that names the publisher ([BUNDLE-150], [BUNDLE-142]).",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expect": {
+      "description": "Exactly one of bundle or findings ([VEC-90]).",
+      "oneOf": [
+        {
+          "description": "A bundle expectation: the compile produces no finding of any severity, and its output bytes equal the named bundle file ([VEC-94], [DET-1]).",
+          "type": "object",
+          "properties": {
+            "bundle": {
+              "description": "Relative path, from the directory of this file, to a canonical bundle file directly inside bundles/ and not inside bundles/invalid/ ([VEC-93], [VEC-9]). The pattern checks only that the path is relative, uses / and ends in bundles/ followed by one file name, which excludes bundles/invalid/. The runner checks that the path resolves to the suite's bundles/ directory.",
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^(?!/)(?!.*\\\\)(?:[^/]+/)*bundles/[^/]+$",
+              "not": { "pattern": "[\\n\\r]" }
+            }
+          },
+          "required": ["bundle"],
+          "additionalProperties": false
+        },
+        {
+          "description": "A findings expectation: the complete set of finding keys that the compiler reports, of every severity ([VEC-95], [VEC-98]).",
+          "type": "object",
+          "properties": {
+            "findings": {
+              "description": "A non-empty list in which no two entries are equal ([VEC-96]).",
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/finding" }
+            }
+          },
+          "required": ["findings"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "finding": {
+      "description": "One expected finding key: (code, file, path, line) ([VEC-97], [FIND-24]). Messages, suggestions and severities are not compared ([VEC-101]).",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "An engine error code of requirements 6.1 (the engine errors of spec/error-codes.md), or a lint rule identifier of [LINT-1]: one of the fixed identifiers, or naming/<name> for a naming pattern, where <name> is non-empty and has no /, * or white space ([LINT-14]). The evaluation-only codes of requirements 6.2 and E_PROVENANCE_INVALID are not finding codes. Codes are compared exactly ([VEC-99], [VEC-100]).",
+          "type": "string",
+          "not": { "pattern": "\\s" },
+          "anyOf": [
+            {
+              "description": "An engine error code of requirements 6.1 ([FIND-12]).",
+              "enum": [
+                "E_AXIS_COMBINE_INVALID",
+                "E_BINDING_NOT_ALLOWED",
+                "E_DEFAULT_NOT_ALLOWED",
+                "E_DENY_BOUND_REQUIRED",
+                "E_DENY_NOT_NARROWING",
+                "E_DEPTH_UNSUPPORTED",
+                "E_DUPLICATE_DEFINITION",
+                "E_DUPLICATE_KEY",
+                "E_DUPLICATE_NODE",
+                "E_DUPLICATE_RULE_ID",
+                "E_DUPLICATE_VALUE",
+                "E_EFFECT_MISMATCH",
+                "E_ENTITY_GRAPH",
+                "E_EXAMPLE_FAILED",
+                "E_FACT_NOT_IN_SCOPE",
+                "E_ILLEGAL_FACT_VALUE",
+                "E_INTEGER_RANGE",
+                "E_INVALID_DECLARATION",
+                "E_INVALID_NODE_ID",
+                "E_INVALID_SETTING",
+                "E_KIND_DEFINITION",
+                "E_KIND_VIOLATION",
+                "E_MANIFEST",
+                "E_MISSING_AXIS_COMBINE",
+                "E_MISSING_DEFAULT",
+                "E_MISSING_SOURCE_FAILURE",
+                "E_NAMESPACE_VIOLATION",
+                "E_NOT_IN_UNIVERSE",
+                "E_NOT_SETTABLE_HERE",
+                "E_OUT_OF_RANGE",
+                "E_PARSE",
+                "E_PRESET",
+                "E_QUANTIFIER_NOT_ALLOWED",
+                "E_QUANTIFIER_REQUIRED",
+                "E_ROOT_BINDING_MISSING",
+                "E_ROOT_BINDING_NOT_ALLOWED",
+                "E_SCOPE_DECLARATION",
+                "E_SOURCE_MAPPING",
+                "E_STRATEGY_TYPE",
+                "E_TYPE_MISMATCH",
+                "E_TYPE_REQUIRED",
+                "E_UNKNOWN_ENTITY",
+                "E_UNKNOWN_FACT",
+                "E_UNKNOWN_FEATURE",
+                "E_UNKNOWN_KEY",
+                "E_UNKNOWN_KIND",
+                "E_UNKNOWN_NODE",
+                "E_UNKNOWN_POLICY",
+                "E_UNKNOWN_SCOPE",
+                "E_UNKNOWN_SETTING",
+                "E_YAML_FEATURE"
+              ]
+            },
+            {
+              "description": "A fixed lint rule identifier of [LINT-1] ([FIND-13]).",
+              "enum": [
+                "examples/mixed-collection",
+                "examples/required-per-binding",
+                "presets/override",
+                "rules/dead-rule",
+                "schema/description-required",
+                "schema/owner-required",
+                "schema/unused",
+                "values/no-op"
+              ]
+            },
+            {
+              "description": "A naming rule naming/<name>, one for each naming pattern ([LINT-12], [LINT-14]).",
+              "pattern": "^naming/[^/*\\s]+$"
+            }
+          ]
+        },
+        "file": {
+          "description": "Source path relative to the project root, with / as the separator ([VEC-102], [FIND-17]).",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*\\\\)"
+        },
+        "path": {
+          "description": "The path to the node that the finding names, as a list ([VEC-104], [FIND-20]). A string item is a mapping key, compared by exact code point. A non-negative integer item is a zero-based sequence index. The root is the empty list. Example: [features, \"a.b\", rules, 1].",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "description": "A mapping key.",
+                "type": "string"
+              },
+              {
+                "description": "A zero-based sequence index.",
+                "type": "integer",
+                "minimum": 0
+              }
+            ]
+          }
+        },
+        "line": {
+          "description": "The 1-based line of the finding ([VEC-103], [FIND-21]). A duplicate key is reported at its second occurrence ([SRC-9]).",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["code", "file", "path", "line"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,154 @@
+# Rules for pos.basket_check ([POL-1], [POL-2]). Conditions in a rule are ANDed,
+# and the first matching rule wins ([RULE-7], [RULE-47]).
+feature: pos.basket_check
+
+policies:
+  standard:
+    settings:
+      restricted_categories: { list_of: line.category, default: [ALCOHOL, PHARMACY] }
+      cash_categories: { list_of: line.category, default: [GROCERY, GENERAL] }
+      trusted_tiers: { list_of: shopper.tier, default: [GOLD, STAFF] }
+      trusted_tender: { value_of: basket.tender, default: CARD }
+    default: REVIEW
+    rules:
+      - id: flagged-shopper
+        name: "Flagged shopper is rejected"
+        when:
+          shopper.fraud_flag: true
+        then: REJECT
+      - id: restricted-line
+        name: "A restricted line sends the basket to review"
+        when:
+          line.category: { any_in: $restricted_categories }
+        then: REVIEW
+      - id: cash-simple-basket
+        name: "A cash basket of cash categories is approved"
+        when:
+          basket.tender: CASH
+          line.category: { all_in: $cash_categories }
+        then: APPROVE
+      - id: trusted-shopper-tender
+        name: "A trusted shopper paying with the trusted tender is approved"
+        when:
+          shopper.tier: { in: $trusted_tiers }
+          basket.tender: $trusted_tender
+        then: APPROVE
+
+  strict:
+    settings:
+      restricted_categories: { list_of: line.category, default: [ALCOHOL, PHARMACY] }
+      cash_categories: { list_of: line.category, default: [GROCERY] }
+    default: REVIEW
+    rules:
+      - id: flagged-shopper
+        name: "Flagged shopper is rejected"
+        when:
+          shopper.fraud_flag: true
+        then: REJECT
+      - id: restricted-line
+        name: "A restricted line sends the basket to review"
+        when:
+          line.category: { any_in: $restricted_categories }
+        then: REVIEW
+      - id: cash-simple-basket
+        name: "A cash basket of cash categories is approved"
+        when:
+          basket.tender: CASH
+          line.category: { all_in: $cash_categories }
+        then: APPROVE
+
+bindings:
+  platform:
+    policy: standard
+  store:
+    harbor_street:
+      policy: strict
+      restricted_categories: [ALCOHOL, PHARMACY, GIFT_CARD_SALE]
+
+examples:
+  - name: "Mixed basket with a restricted line is reviewed"
+    context: { levels: { region: inland }, axes: { brand: harbor_foods } }
+    facts:
+      shopper.fraud_flag: false
+      shopper.tier: STANDARD
+      basket.tender: CASH
+      line.category: [GROCERY, ALCOHOL]
+    expect: REVIEW
+
+  - name: "Cash basket of cash categories is approved"
+    context: { levels: { region: inland } }
+    facts:
+      shopper.fraud_flag: false
+      shopper.tier: STANDARD
+      basket.tender: CASH
+      line.category: [GROCERY, GENERAL]
+    expect: APPROVE
+
+  - name: "Empty basket on cash is reviewed by default"
+    context: { levels: { region: inland } }
+    facts:
+      shopper.fraud_flag: false
+      shopper.tier: STANDARD
+      basket.tender: CASH
+      line.category: []
+    expect: REVIEW
+
+  - name: "Flagged shopper is rejected"
+    context: { levels: { region: inland } }
+    facts:
+      shopper.fraud_flag: true
+      shopper.tier: STANDARD
+      basket.tender: CARD
+      line.category: [GENERAL]
+    expect: REJECT
+
+  - name: "Trusted shopper paying by card is approved"
+    context: { levels: { region: inland } }
+    facts:
+      shopper.fraud_flag: false
+      shopper.tier: GOLD
+      basket.tender: CARD
+      line.category: [GENERAL, GIFT_CARD_SALE]
+    expect: APPROVE
+
+  - name: "Missing shopper tier rejects the basket"
+    context: { levels: { region: inland } }
+    facts:
+      shopper.fraud_flag: false
+      basket.tender: CASH
+      line.category: [GROCERY]
+    expect: REJECT
+
+  - name: "Missing line children reject the basket"
+    context: { levels: { region: inland } }
+    facts:
+      shopper.fraud_flag: false
+      shopper.tier: GOLD
+      basket.tender: CARD
+    expect: REJECT
+
+  - name: "Strict store reviews a general cash basket"
+    context: { levels: { region: inland, store: harbor_street } }
+    facts:
+      shopper.fraud_flag: false
+      basket.tender: CASH
+      line.category: [GROCERY, GENERAL]
+    expect: REVIEW
+
+  - name: "Strict store approves a grocery-only cash basket"
+    context: { levels: { region: inland, store: harbor_street } }
+    facts:
+      shopper.fraud_flag: false
+      basket.tender: CASH
+      line.category: [GROCERY]
+    expect: APPROVE
+
+  - name: "Terminal in context does not change the store decision"
+    context:
+      levels: { region: inland, store: harbor_street, terminal: till_3 }
+      axes: { brand: meadow_goods }
+    facts:
+      shopper.fraud_flag: false
+      basket.tender: CASH
+      line.category: [GROCERY, GENERAL]
+    expect: REVIEW

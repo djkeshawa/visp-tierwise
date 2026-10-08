@@ -1,0 +1,503 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/rules-file.schema.json",
+  "title": "Tierwise rules file",
+  "description": "Structure of a rules file, or of one item of inline manifest rules (MANIFEST-16, POL-1, POL-2). A rules file configures exactly one feature, named by 'feature'. It declares its policies, its bindings and optionally its examples. This schema checks structure only. The compiler checks the cross-references and the semantic codes, for example that a setting reference names a setting of the same policy (RULE-22), that a binding names a declared policy (BIND-6), that a root binding exists (BIND-13), that each effect is valid for the feature (FEAT-13), and that every example passes (POL-41, POL-42). Setting references are strings that begin with '$' (RULE-4). Error codes: this schema does not assign codes. Where it rejects a document, the compiler reports the code that the clause cited in the failing definition's description names (for example E_INVALID_SETTING for a setting declaration, E_EFFECT_MISMATCH for an effect, E_INVALID_NODE_ID for a node ID). Where a definition names none, the generic E_INVALID_DECLARATION of FEAT-2 applies. Where the code of a case depends on the feature or on the declared type of a fact (for example the legality of a literal, RULE-17, or of an effect, FEAT-13), the schema accepts the case and the compiler reports it.",
+  "type": "object",
+  "required": [
+    "feature",
+    "policies",
+    "bindings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "feature": {
+      "$ref": "#/$defs/nonEmptyString",
+      "description": "The name of the feature this rules file configures (POL-2). The compiler reports an unknown name as E_UNKNOWN_FEATURE (POL-3)."
+    },
+    "policies": {
+      "type": "object",
+      "description": "A map from policy name to policy. The map keys are policy names, and every policy is declared here (POL-6).",
+      "propertyNames": {
+        "type": "string",
+        "description": "A policy name. It must be a YAML string."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/policy"
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "description": "A map from level name to the bindings written at that level (BIND-1). The root level's entry is one binding with no node ID (BIND-2). Each other level's entry maps node IDs to bindings (BIND-3). The schema cannot tell the root level name, so it accepts either form at each level key. The compiler selects the form from the declared levels and reports a mismatch (BIND-2, BIND-3).",
+      "propertyNames": {
+        "type": "string",
+        "description": "A level name, or the root level name. It must be a YAML string."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/levelBindings"
+      }
+    },
+    "examples": {
+      "$ref": "#/$defs/examples",
+      "description": "Optional examples of decisions for this feature (POL-28). Each one is run at compile time, and a failing one fails validation (POL-47)."
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A non-empty YAML string."
+    },
+    "effect": {
+      "description": "An effect. Its validity depends on the feature's 'returns', which this schema cannot see: a string for the enum form, a mapping for the object form (FEAT-7, FEAT-11), or null only when the enum form declares nullable (FEAT-9). The schema therefore places no restriction on the type, and the compiler reports every value that is not valid for the feature, of any type, as E_EFFECT_MISMATCH (FEAT-13, FEAT-14, POL-40). A rule's 'then' must not begin with '$'; the compiler reports that as E_INVALID_SETTING (POL-27)."
+    },
+    "policy": {
+      "type": "object",
+      "description": "A named, ordered rule list with an optional set of settings and a default effect (POL-7 to POL-9).",
+      "required": [
+        "default",
+        "rules"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "$ref": "#/$defs/effect",
+          "description": "The effect when no rule matches (POL-7, RULE-50)."
+        },
+        "rules": {
+          "type": "array",
+          "description": "The ordered rule list. The first rule whose conditions all hold is the winner (RULE-46, RULE-47). The list may be empty (POL-8).",
+          "items": {
+            "$ref": "#/$defs/rule"
+          }
+        },
+        "settings": {
+          "type": "object",
+          "description": "Optional map from setting name to setting declaration (POL-9). When absent, the policy has no settings.",
+          "propertyNames": {
+            "$ref": "#/$defs/settingName"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/setting"
+          }
+        }
+      }
+    },
+    "settingName": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^$.]+$",
+      "not": {
+        "const": "policy"
+      },
+      "description": "A setting name. It is non-empty, contains neither '$' nor '.', and is not the reserved name 'policy'. A declaration with another name is reported as E_INVALID_SETTING (POL-20). The compiler NFC-normalises the name before comparison."
+    },
+    "setting": {
+      "type": "object",
+      "description": "A named, fact-typed policy parameter. Its value comes from the selected binding, or from 'default' when the binding omits it (BIND-23). It holds exactly one of 'value_of' (one value) or 'list_of' (a list of distinct values) (POL-12). 'default' is required (POL-11) and is never null (POL-18). A setting that is not a mapping is E_INVALID_DECLARATION (FEAT-2). A missing default, both or neither of value_of and list_of, an extra member, a null or mistyped default and an invalid setting name are each reported as E_INVALID_SETTING (POL-11 to POL-13, POL-17, POL-18, POL-20).",
+      "required": [
+        "default"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array"
+          ],
+          "description": "The value used when the selected binding does not set this setting (POL-11). It is a scalar for 'value_of' and a list of scalars for 'list_of'. A null or mistyped default is E_INVALID_SETTING (POL-17, POL-18). A list that repeats an element is reported as E_DUPLICATE_VALUE by the compiler (POL-19), not here."
+        },
+        "value_of": {
+          "$ref": "#/$defs/factName",
+          "description": "The fact whose single value this setting holds (POL-12). The fact must be an eligible fact of the decided entity (POL-16)."
+        },
+        "list_of": {
+          "$ref": "#/$defs/factName",
+          "description": "The fact whose values this setting holds as a list (POL-12). The fact must be an eligible fact of the decided entity (POL-16)."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "value_of"
+          ],
+          "not": {
+            "required": [
+              "list_of"
+            ]
+          }
+        },
+        {
+          "required": [
+            "list_of"
+          ],
+          "not": {
+            "required": [
+              "value_of"
+            ]
+          }
+        }
+      ],
+      "if": {
+        "required": [
+          "list_of"
+        ]
+      },
+      "then": {
+        "properties": {
+          "default": {
+            "type": "array",
+            "description": "For 'list_of', the default is a list of scalar values.",
+            "items": {
+              "$ref": "#/$defs/scalar"
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "default": {
+            "$ref": "#/$defs/scalar",
+            "description": "For 'value_of', the default is one scalar value."
+          }
+        }
+      }
+    },
+    "scalar": {
+      "type": [
+        "string",
+        "number",
+        "boolean"
+      ],
+      "description": "A scalar YAML value that is not null. A decimal value is a string (TYPE-24, TYPE-25), and an integer is a number."
+    },
+    "rule": {
+      "type": "object",
+      "description": "One entry of a policy's rules: an id, a display name, a condition mapping and an effect (POL-21, POL-22). The name is for display and does not affect evaluation (POL-23).",
+      "required": [
+        "id",
+        "name",
+        "when",
+        "then"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "The rule identifier, unique within its policy (POL-24). It must be a non-empty YAML string, so an integer such as 1 is rejected (POL-25)."
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "A display name for the rule. It must be a non-empty YAML string (POL-25)."
+        },
+        "when": {
+          "$ref": "#/$defs/conditionMap",
+          "description": "The conditions of the rule, as a mapping from fact name to condition (RULE-1). The rule matches only when every condition holds (RULE-7). An empty mapping always matches (RULE-2)."
+        },
+        "then": {
+          "$ref": "#/$defs/effect",
+          "description": "The effect returned when this rule wins (RULE-48). It must be a valid effect for the feature and must not be a setting reference (POL-27)."
+        }
+      }
+    },
+    "factName": {
+      "type": "string",
+      "description": "A fact name, written '<entity>.<attribute>' (FACT-1, FACT-3). The schema checks only that it is a string. The compiler checks the form and that the entity and the fact are declared: a name with no '.' (including the empty name) is E_UNKNOWN_ENTITY, and an empty attribute part is E_INVALID_DECLARATION (FACT-3). The attribute may contain '.'."
+    },
+    "entityName": {
+      "type": "string",
+      "description": "A child entity name. It must be a YAML string. The compiler checks that it names a child of the decided entity (FACT-29)."
+    },
+    "conditionMap": {
+      "type": "object",
+      "description": "A mapping from fact name to condition (RULE-1). A fact may appear at most once in one mapping, which YAML enforces (SRC-3).",
+      "propertyNames": {
+        "$ref": "#/$defs/factName"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/condition"
+      }
+    },
+    "condition": {
+      "description": "One condition, in one of the four forms of table 8.1 (RULE-3). The 'eq' form is a bare scalar operand, which is either a literal or a setting reference. The other forms use exactly one operator key: 'in' for a single-value fact, 'all_in' or 'any_in' for a child fact. An operand that is a setting reference is a string that begins with '$' (RULE-4). A setting reference must be the whole operand (RULE-23). An operator key outside the table, an operator mapping with no operator key or with more than one, and a list or mapping in the 'eq' form are E_INVALID_DECLARATION (RULE-6). Whether the form fits the fact's kind is checked by the compiler (RULE-13, RULE-14).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/eqOperand"
+        },
+        {
+          "type": "object",
+          "description": "The 'in' form: the fact's value equals one element of the list (RULE-30), or of the list named by a setting reference (RULE-23).",
+          "required": [
+            "in"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "in": {
+              "$ref": "#/$defs/listOperand",
+              "description": "The operand list of the 'in' form: a literal list (RULE-30) or a reference to a list-valued setting (RULE-23, RULE-24). A single value or null where a list is required is E_INVALID_DECLARATION (RULE-6)."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The 'all_in' form, for a child fact: every child's value is one element of the list (RULE-31). It does not hold on a child collection that is present and empty (RULE-33, FACT-18). An omitted child collection makes the fact missing (FACT-17), so the precheck stops evaluation before the condition is tested (RULE-42).",
+          "required": [
+            "all_in"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "all_in": {
+              "$ref": "#/$defs/listOperand",
+              "description": "The operand list of the 'all_in' form: a literal list (RULE-31) or a reference to a list-valued setting (RULE-23, RULE-24). A single value or null where a list is required is E_INVALID_DECLARATION (RULE-6)."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "The 'any_in' form, for a child fact: at least one child's value is one element of the list (RULE-32).",
+          "required": [
+            "any_in"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "any_in": {
+              "$ref": "#/$defs/listOperand",
+              "description": "The operand list of the 'any_in' form: a literal list (RULE-32) or a reference to a list-valued setting (RULE-23, RULE-24). A single value or null where a list is required is E_INVALID_DECLARATION (RULE-6)."
+            }
+          }
+        }
+      ]
+    },
+    "eqOperand": {
+      "type": [
+        "boolean",
+        "string",
+        "number",
+        "null"
+      ],
+      "description": "The 'eq' form operand: one scalar, or a setting reference when the string begins with '$' (RULE-29, RULE-4). The schema accepts every scalar, including null and a number that is not an integer, because the code depends on the fact's declared type (RULE-17). The compiler reports an illegal literal, including null and a number for a decimal fact, as E_ILLEGAL_FACT_VALUE (RULE-18, RULE-19), and an integer outside the safe range as E_INTEGER_RANGE (RULE-20). A list or a mapping is not valid here and is E_INVALID_DECLARATION (RULE-6)."
+    },
+    "listOperand": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/literalList",
+          "description": "A literal list. It may be empty, and an empty list never matches (RULE-34). It must not repeat an element: the compiler reports a repeat as E_DUPLICATE_VALUE (RULE-21)."
+        },
+        {
+          "$ref": "#/$defs/settingReference",
+          "description": "A setting reference to a list-valued setting (RULE-23, RULE-24)."
+        }
+      ],
+      "description": "The operand of 'in', 'all_in' or 'any_in': a literal list or a setting reference. A single value, null or a mapping is not valid here and is E_INVALID_DECLARATION (RULE-6)."
+    },
+    "literalList": {
+      "type": "array",
+      "description": "A list of literal values. Each element is a scalar. The compiler reports an illegal element as E_ILLEGAL_FACT_VALUE (RULE-18, RULE-19), and an element that begins with '$' as E_INVALID_SETTING, because a setting reference is not allowed inside a list (RULE-23). A nested list or mapping is not valid and is E_INVALID_DECLARATION (RULE-6).",
+      "items": {
+        "$ref": "#/$defs/literal"
+      }
+    },
+    "literal": {
+      "type": [
+        "boolean",
+        "string",
+        "number",
+        "null"
+      ],
+      "description": "A scalar in a condition list. The schema accepts null, a number that is not an integer and a string that begins with '$', because the codes depend on the fact's declared type and on the position: null and a type-illegal literal are E_ILLEGAL_FACT_VALUE (RULE-18, RULE-19), an integer outside the safe range is E_INTEGER_RANGE (RULE-20), and a '$'-string inside a list is E_INVALID_SETTING (RULE-23)."
+    },
+    "settingReference": {
+      "type": "string",
+      "pattern": "^\\$",
+      "description": "A setting reference: a string that begins with '$', followed by the setting name (RULE-4). The compiler checks that the setting exists in the same policy (RULE-22, E_UNKNOWN_SETTING), and has the matching kind and fact (RULE-24, RULE-25, E_INVALID_SETTING)."
+    },
+    "nodeId": {
+      "type": "string",
+      "description": "A node ID written in a binding or in an example context. The schema checks only that it is a string. The compiler checks that it is non-empty, has at most 128 code points and contains no control character, and reports a failure as E_INVALID_NODE_ID (SCOPE-33, SCOPE-34, SCOPE-38, BIND-10, POL-43). It NFC-normalises the ID (SCOPE-35) and checks catalog membership (SCOPE-43, POL-44)."
+    },
+    "binding": {
+      "type": "object",
+      "description": "A binding: the selected policy and optional setting values for it (BIND-4). Every entry other than 'policy' names a setting of that policy and gives its value (BIND-8, BIND-9). The schema does not check the entries: whether a name is a setting of the policy (E_UNKNOWN_SETTING, BIND-8) and whether a value is valid (E_INVALID_SETTING, E_DUPLICATE_VALUE, BIND-9, POL-17 to POL-19) depend on the named policy. When the policy is unknown, the entries are not checked at all (BIND-7). A binding that omits a setting takes the setting's default (BIND-23, BIND-24).",
+      "required": [
+        "policy"
+      ],
+      "properties": {
+        "policy": {
+          "type": "string",
+          "description": "The name of a policy declared in this rules file (BIND-5). An unknown name is reported as E_UNKNOWN_POLICY (BIND-6). The schema checks only that it is a string."
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/settingValue"
+      }
+    },
+    "settingValue": {
+      "description": "A value that a binding gives a setting: a scalar for 'value_of', or a list of scalars for 'list_of' (POL-15, POL-17). The schema places no restriction on it, because the binding's other entries are not checked when its policy is unknown (BIND-7). The compiler reports an invalid value, including null, as E_INVALID_SETTING (POL-17, POL-18), and a repeated list element as E_DUPLICATE_VALUE (POL-19)."
+    },
+    "nodeBindings": {
+      "type": "object",
+      "description": "The bindings of one non-root level, keyed by node ID (BIND-3). Each node ID is checked by the compiler (BIND-10, E_INVALID_NODE_ID, E_UNKNOWN_NODE).",
+      "propertyNames": {
+        "$ref": "#/$defs/nodeId"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/binding"
+      }
+    },
+    "levelBindings": {
+      "description": "The bindings written at one level. At the root level it is one binding with no node ID (BIND-2). At any other level it is a map of node ID to binding (BIND-3). A binding has a string 'policy' entry, and a node map never has a 'policy' entry whose value is a string, because each node value is a mapping, so the two forms do not overlap. The compiler selects the form from the declared levels and reports a mismatch (BIND-2, BIND-3).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/binding"
+        },
+        {
+          "$ref": "#/$defs/nodeBindings"
+        }
+      ]
+    },
+    "examples": {
+      "type": "array",
+      "description": "A list of examples (POL-28). Each name must be unique within the file (POL-30). An empty list is allowed.",
+      "items": {
+        "$ref": "#/$defs/example"
+      }
+    },
+    "example": {
+      "type": "object",
+      "description": "An example: a context, a FactSet and the effect that the decision is expected to return (POL-28). An example uses the shorthand form when it has no 'children', and then a list value under 'facts' is shorthand for child maps (POL-32, POL-33). An example with 'children' uses the explicit form, and then no list is allowed under 'facts' (POL-32, POL-45).",
+      "required": [
+        "name",
+        "context",
+        "facts",
+        "expect"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonEmptyString",
+          "description": "The example's name, which identifies it in findings (POL-29). Names must be unique within the file (POL-30)."
+        },
+        "context": {
+          "$ref": "#/$defs/context",
+          "description": "The context for the decision: a map with optional 'levels' and 'axes' members (POL-28, POL-31). It must not name the root level (CTX-3). A shape error is E_INVALID_DECLARATION (POL-43)."
+        },
+        "facts": {
+          "$ref": "#/$defs/facts",
+          "description": "The single-value facts of the FactSet (FACT-23, FACT-24). In the shorthand form, a list value here is a child fact written as shorthand (POL-33). A fact whose value is null is missing (FACT-16)."
+        },
+        "children": {
+          "$ref": "#/$defs/children",
+          "description": "The explicit child maps of the FactSet, keyed by child entity (FACT-14, FACT-29). Its presence selects the explicit form (POL-32)."
+        },
+        "expect": {
+          "$ref": "#/$defs/effect",
+          "description": "The effect that the decide operation must return for this example (POL-40, POL-41). An invalid value is E_EFFECT_MISMATCH (POL-40)."
+        }
+      },
+      "dependentSchemas": {
+        "children": {
+          "properties": {
+            "facts": {
+              "description": "When the example has children, its facts must have no list values.",
+              "additionalProperties": {
+                "not": {
+                  "type": "array"
+                },
+                "description": "In the explicit form, no list value is allowed under 'facts' (POL-32, POL-45)."
+              }
+            }
+          }
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "The context of an example: an optional map of level names to node IDs and an optional map of axis names to node IDs (POL-31, CTX-1, CTX-2). It may hold no other member, and a map of the wrong shape is not valid: the compiler reports either as E_INVALID_DECLARATION (POL-43). It may not name the root level, which is also E_INVALID_DECLARATION (CTX-3, POL-43). An undeclared level or axis is E_UNKNOWN_SCOPE and a malformed node ID is E_INVALID_NODE_ID (POL-43); a node ID outside a closed catalog is E_UNKNOWN_NODE (POL-44). At runtime the same faults are E_CONTEXT_INVALID (CTX-2, CTX-3).",
+      "additionalProperties": false,
+      "properties": {
+        "levels": {
+          "$ref": "#/$defs/nodeMap",
+          "description": "A map from non-root level name to node ID."
+        },
+        "axes": {
+          "$ref": "#/$defs/nodeMap",
+          "description": "A map from axis name to node ID."
+        }
+      }
+    },
+    "nodeMap": {
+      "type": "object",
+      "description": "A map from scope name to node ID. Each value must be a string (CTX-1); another type is E_INVALID_DECLARATION (POL-43).",
+      "propertyNames": {
+        "type": "string",
+        "description": "A level or axis name. It must be a YAML string."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/nodeId"
+      }
+    },
+    "facts": {
+      "type": "object",
+      "description": "The single-value facts of an example's FactSet, keyed by fact name (FACT-23, FACT-26). A null value is a missing fact (FACT-16). A list value is valid only as shorthand, and only when the example has no 'children' (POL-33, POL-37).",
+      "propertyNames": {
+        "$ref": "#/$defs/factName",
+        "description": "A fact name."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/factValue"
+      }
+    },
+    "factValue": {
+      "type": [
+        "null",
+        "boolean",
+        "string",
+        "number",
+        "array"
+      ],
+      "description": "A fact value in a FactSet: a scalar, null for a missing fact (FACT-16, POL-39), or, as shorthand, a list of scalars for a child fact (POL-33). A null element of a shorthand list is a child map with a missing fact (FACT-19, FACT-35). A mapping is not a fact value; the compiler reports it as E_ILLEGAL_FACT_VALUE (POL-39). Whether a scalar fits the fact's declared type is checked by the compiler (POL-39).",
+      "items": {
+        "type": [
+          "null",
+          "boolean",
+          "string",
+          "number"
+        ],
+        "description": "One element of a shorthand list: a scalar or null."
+      }
+    },
+    "children": {
+      "type": "object",
+      "description": "The child collections of a FactSet, keyed by child entity name (FACT-14). Each collection is a list of child maps (FACT-31, FACT-32). An empty list is a child collection that is present and empty (FACT-18).",
+      "propertyNames": {
+        "$ref": "#/$defs/entityName"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "description": "A list of child maps, one for each child element.",
+        "items": {
+          "$ref": "#/$defs/childMap"
+        }
+      }
+    },
+    "childMap": {
+      "type": "object",
+      "description": "One child map: the child facts of one child element, keyed by fact name (FACT-14, FACT-33). Each value is a scalar or null, and a null value is a missing fact (FACT-19).",
+      "propertyNames": {
+        "$ref": "#/$defs/factName",
+        "description": "A child fact name."
+      },
+      "additionalProperties": {
+        "type": [
+          "null",
+          "boolean",
+          "string",
+          "number"
+        ],
+        "description": "A child fact value: a scalar, or null for a missing fact."
+      }
+    }
+  }
+}

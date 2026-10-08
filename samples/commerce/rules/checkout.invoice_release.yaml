@@ -1,0 +1,64 @@
+# Rules for feature checkout.invoice_release, decided per invoice over its child
+# orders (FEAT-4, ENTITY-11). The order facts are child facts of invoice (FACT-14),
+# so each condition needs a quantifier (RULE-13) and uses any_in or all_in (RULE-32,
+# RULE-31).
+# The examples cover the root binding and division south (LINT-29, LINT-30).
+
+feature: checkout.invoice_release
+
+policies:
+  payment_gate:
+    # Two list_of settings over the child fact order.payment_state (POL-16: it is
+    # eligible for invoice). Their defaults are valid lists (POL-15, POL-19).
+    settings:
+      held_states: { list_of: order.payment_state, default: [FAILED, PENDING] }
+      released_states: { list_of: order.payment_state, default: [PAID] }
+    default: HOLD
+    rules:
+      # RULE-32: any_in holds when some child's value is in the setting list.
+      - id: any-held-order
+        name: At least one order has a held payment state
+        when:
+          order.payment_state: { any_in: $held_states }
+        then: HOLD
+      # RULE-31: all_in holds when every child's value is in the setting list.
+      # On an empty child collection it does not hold (RULE-33), so an invoice
+      # with no orders falls through to the default HOLD.
+      - id: all-orders-released
+        name: Every order has a released payment state
+        when:
+          order.payment_state: { all_in: $released_states }
+        then: RELEASE
+
+# BIND-2: the root binding. BIND-3: division south maps to a binding with
+# setting values (BIND-8, BIND-9). It replaces the root binding entirely (BIND-18).
+bindings:
+  global: { policy: payment_gate }
+  division:
+    south: { policy: payment_gate, held_states: [FAILED], released_states: [PAID, PENDING] }
+
+examples:
+  - name: A pending order holds the invoice under the root binding
+    context: { levels: { channel: web } }
+    facts: { order.payment_state: [PAID, PENDING] }
+    expect: HOLD
+  - name: Paid orders release the invoice under the root binding
+    context: { levels: { channel: web } }
+    facts: { order.payment_state: [PAID] }
+    expect: RELEASE
+  - name: Pending and paid orders release the invoice at division south
+    context: { levels: { division: south } }
+    facts: { order.payment_state: [PENDING, PAID] }
+    expect: RELEASE
+  - name: A failed payment holds the invoice at division south
+    context: { levels: { division: south } }
+    facts: { order.payment_state: [PAID, FAILED] }
+    expect: HOLD
+  - name: An invoice with an empty order list is held
+    context: { levels: { channel: web } }
+    facts: { order.payment_state: [] }
+    expect: HOLD
+  - name: An invoice with no order data is held
+    context: { levels: { channel: web } }
+    facts: {}
+    expect: HOLD

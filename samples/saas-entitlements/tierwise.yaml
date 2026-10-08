@@ -1,0 +1,94 @@
+# Tierwise sample: SaaS entitlements (single-file project).
+#
+# Levels, least to most specific: plan (root) -> org -> workspace -> user.
+# The user level is service-sourced: its values come from a provider at
+# evaluation time, so a source gives it no values (SCOPE-47, SVC-13).
+#
+# The preset tierwise:entitlements supplies the kinds used here:
+#   limit   = strategy min,   on_source_failure deny, naming pattern limit_key
+#   feature = strategy all,   on_source_failure deny, naming pattern feature_key
+#   grant   = strategy union, on_source_failure skip, naming pattern grant_key
+#
+# Every key is settable at every level. No key declares on_source_failure: each
+# takes the behaviour of its kind (KIND-9, SVC-1). A key could repeat the kind's
+# value but could not change it (KIND-11, SVC-5). Because limit.* keys fail with
+# deny, their integer type declares a min bound (SVC-12), and a failed
+# provider call contributes that bound (SVC-9).
+#
+# Key names end as the preset's naming patterns require (LINT-12, LINT-16).
+#
+# See README.md for how each key resolves in one example context.
+
+specVersion: "0.1"
+
+extends:
+  - tierwise:entitlements
+
+schema:
+  decision_hierarchy:
+    levels: [plan, org, workspace, user]
+    scopes:
+      org:
+        nodes: [acme, globex]
+        on_unknown_node: error
+      workspace:
+        nodes: open
+      user:
+        nodes: open
+        values: service
+
+  keys:
+    usage.max_seats:
+      type: integer
+      min: 0
+      combine: min
+      settable_at: [plan, org, workspace, user]
+      kind: limit
+      description: Maximum number of seats. The lowest limit on the path wins.
+
+    usage.max_projects:
+      type: integer
+      min: 0
+      combine: min
+      settable_at: [plan, org, workspace, user]
+      kind: limit
+      description: Maximum number of projects. The lowest limit on the path wins.
+
+    sso.enabled:
+      type: boolean
+      combine: all
+      settable_at: [plan, org, workspace, user]
+      kind: feature
+      description: Single sign-on. Any level that sets false turns it off for the whole path.
+
+    audit_log.enabled:
+      type: boolean
+      combine: all
+      settable_at: [plan, org, workspace, user]
+      kind: feature
+      description: Audit log. On unless a level on the path sets false.
+
+    export.granted_formats:
+      type: set
+      universe: [csv, pdf, xlsx]
+      combine: union
+      settable_at: [plan, org, workspace, user]
+      kind: grant
+      description: Export formats granted. Every level on the path adds its formats.
+
+values:
+  # Root level: plan. Root entries carry no node ID (SRC-30).
+  plan:
+    usage.max_seats: 25
+    usage.max_projects: 20
+    sso.enabled: false
+    export.granted_formats: [csv]
+
+  # Non-root levels: <scope>: { <node>: { key: value } } (SRC-29).
+  org:
+    acme:
+      usage.max_seats: 10
+
+  workspace:
+    ws-2:
+      export.granted_formats: [pdf]

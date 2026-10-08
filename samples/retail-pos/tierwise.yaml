@@ -1,0 +1,31 @@
+# Sample domain B: retail POS. This project extends no preset, so its kinds and
+# naming patterns come from schema/core.yaml. The engine is given custom levels,
+# keys and feature names, and none of them is built in.
+specVersion: "0.1"
+
+sources:
+  schema:
+    - "schema/core.yaml"
+    - "schema/components/*.yaml"
+  values:
+    - file: "values/platform.yaml"
+      scope: platform
+    - file: "values/overrides.yaml"
+  rules:
+    - "rules/*.yaml"
+
+namespaces:
+  pos:
+    schema: "schema/components/pos.yaml"
+
+# Lint is set explicitly, because a project without presets runs no lint rule ([LINT-5]).
+lint:
+  rules:
+    "naming/*": error
+    values/no-op: error
+    rules/dead-rule: warn
+    examples/required-per-binding: error
+    examples/mixed-collection: warn
+    schema/unused: warn
+    schema/description-required: error
+    schema/owner-required: error

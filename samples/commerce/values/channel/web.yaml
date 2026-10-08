@@ -1,0 +1,3 @@
+# Path-mapped values file: scope channel, node web (SRC-22, SRC-25).
+# Narrows the shipping methods. Intersected with the root and division sets (MERGE-17).
+checkout.shipping.allowed_methods: [GROUND, NEXT_DAY]

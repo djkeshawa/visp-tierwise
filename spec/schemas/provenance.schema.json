@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/provenance.schema.json",
+  "title": "Tierwise provenance sidecar",
+  "description": "Structure of a provenance sidecar (section 10.6, [BUNDLE-139] to [BUNDLE-150]). A sidecar holds exactly one provenance record, and it is kept beside a bundle and never changes the bundle bytes or the digest ([BUNDLE-140], [DET-3]). The schema checks shape and the forms of [BUNDLE-150]. It does not check that bundleVersion matches the bundle that the sidecar is checked against ([BUNDLE-144], [BUNDLE-151]), that the createdAt date is a real calendar date, the file name of the sidecar ([BUNDLE-149]), or the content of publisher, which is an opaque label ([BUNDLE-150]). The checker reports those. An evaluator never reads a sidecar ([BUNDLE-145]).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bundleVersion", "createdAt"],
+  "properties": {
+    "bundleVersion": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "The bundleVersion of the bundle that this record describes: the string sha256: followed by 64 lowercase hexadecimal digits ([BUNDLE-141], [BUNDLE-5])."
+    },
+    "createdAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:(60|[0-5][0-9])Z$",
+      "description": "The time at which the record was created: an RFC 3339 time in UTC, with an uppercase T separator, a Z offset, seconds and no fractional seconds ([BUNDLE-141], [BUNDLE-150] (b)). The pattern checks the form and the field ranges, not the length of each month."
+    },
+    "gitCommit": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$",
+      "description": "OPTIONAL. The full commit identifier of the source, 40 or 64 lowercase hexadecimal digits ([BUNDLE-142], [BUNDLE-150] (a)). Absent when the source has no commit."
+    },
+    "publisher": {
+      "type": "string",
+      "description": "OPTIONAL. An opaque label that names the publisher. No evaluator reads it, and the sidecar does not authenticate it ([BUNDLE-142], [BUNDLE-150] (c))."
+    }
+  }
+}

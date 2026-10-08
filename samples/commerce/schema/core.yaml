@@ -1,24 +1,49 @@
-# Kinds and naming patterns come from the tierwise:recommended preset (see tierwise.yaml).
-# Format per ADR 0007 and ADR 0011; the complete project is Phase 1 work item 1.9.
+# Shared schema for sample domain A (commerce). Shared files may hold the
+# hierarchy, entities and facts (NS-4 forbids them in namespaced files).
+# Kinds and naming patterns come from tierwise:recommended (tierwise.yaml).
 
+# SCOPE-10 to SCOPE-26: root level global, levels in specificity order, one axis.
 decision_hierarchy:
   levels: [global, channel, division, site, account, user]
   axes: [seller]
   scopes:
+    # SCOPE-22, SCOPE-23: closed catalogs with an inline list.
     channel:  { nodes: [web, partner_portal], on_unknown_node: error }
     division: { nodes: [north, south, west], on_unknown_node: error }
-    site:     { nodes: { from: catalogs/sites.json }, on_unknown_node: ignore }
+    # SCOPE-27, SCOPE-29: generated catalog. The file is a JSON object with one
+    # property, nodes. ignore skips the scope for an unlisted node (CTX-14).
+    site:     { nodes: { from: "catalogs/sites.json" }, on_unknown_node: ignore }
+    # SCOPE-24, SCOPE-25, SCOPE-26: open catalogs, service-sourced levels.
     account:  { nodes: open, values: service }
     user:     { nodes: open, values: service }
+    # SCOPE-22: a closed axis catalog.
     seller:   { nodes: [acme], on_unknown_node: error }
 
+# ENTITY-1 to ENTITY-19. No cycles (ENTITY-14 to ENTITY-17).
 entity_hierarchy:
   customer: {}
   invoice:  { has_many: order }
   order:    { belongs_to: customer, has_many: item }
   item:     {}
 
+# FACT-1 to FACT-11, FACT-45. Each fact has a description (LINT-44). The source
+# member is documentation only (FACT-10).
 facts:
-  customer.active:      { type: boolean, source: customer-service }
-  customer.credit_hold: { type: boolean, source: credit-service }
-  item.stock_type:      { type: enum, values: [STOCKED, SPECIAL_ORDER, DROP_SHIP], source: order }
+  customer.active:
+    type: boolean
+    source: customer-service
+    description: "The customer account is open for business."
+  customer.credit_hold:
+    type: boolean
+    source: credit-service
+    description: "The customer is on a credit hold."
+  item.stock_type:
+    type: enum
+    values: [STOCKED, SPECIAL_ORDER, DROP_SHIP]
+    source: order
+    description: "How the item is supplied. A child fact of order."
+  order.payment_state:
+    type: enum
+    values: [PAID, PENDING, FAILED]
+    source: billing
+    description: "The payment state of the order. A child fact of invoice."

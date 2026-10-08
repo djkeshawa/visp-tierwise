@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/vector-canonical.schema.json",
+  "title": "Tierwise canonical vector",
+  "description": "One canonical vector (spec section 12.4): one JCS encoding or one SHA-256 digest, checked against its expected bytes. A canonical vector has no bundle and no call. This schema checks structure only. The byte values, the code-point rules for strings and the surrogate rule of [VEC-79] are checked by the runner.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "specVersion", "clauses", "description", "primitive", "input", "expect"],
+  "properties": {
+    "id": {
+      "description": "Vector identifier. It equals the file path relative to canonical/, without the .yaml extension ([VEC-11], [VEC-12]).",
+      "type": "string",
+      "minLength": 1
+    },
+    "specVersion": {
+      "description": "Version of this specification that the vector targets. The value for this version is \"0.1\" ([VEC-14]).",
+      "type": "string",
+      "const": "0.1"
+    },
+    "clauses": {
+      "description": "Clause IDs that define the behaviour the vector checks ([VEC-16]).",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/clauseId" }
+    },
+    "description": {
+      "description": "One non-empty, single-line sentence that says what the vector checks ([VEC-17]).",
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "primitive": {
+      "description": "The primitive under test: jcs for the JSON Canonicalization Scheme, or sha256 for the SHA-256 digest ([VEC-75]).",
+      "type": "string",
+      "enum": ["jcs", "sha256"]
+    },
+    "input": {
+      "description": "For a jcs vector, a value of the JSON data model written in YAML ([VEC-77]). For a sha256 vector, the bytes to hash, as a byte field ([VEC-81]). The shape is selected by primitive in the conditions of this schema."
+    },
+    "expect": {
+      "description": "The expected result. For a jcs vector it is the expected bytes in output. For a sha256 vector it is the expected digest in digest ([VEC-77], [VEC-81]).",
+      "type": "object"
+    }
+  },
+  "oneOf": [
+    {
+      "description": "A jcs vector: input is a JSON data value that [VEC-79] allows, and expect holds the expected bytes ([VEC-77], [VEC-78]).",
+      "properties": {
+        "primitive": { "description": "Must be jcs in this branch.", "const": "jcs" },
+        "input": { "description": "A JSON data value, written in YAML ([VEC-79]).", "$ref": "#/$defs/jcsValue" },
+        "expect": { "description": "The expected JCS bytes ([VEC-77]).", "$ref": "#/$defs/jcsExpect" }
+      },
+      "required": ["primitive", "input", "expect"]
+    },
+    {
+      "description": "A sha256 vector: input is the bytes to hash, and expect holds the expected digest ([VEC-81], [VEC-82]).",
+      "properties": {
+        "primitive": { "description": "Must be sha256 in this branch.", "const": "sha256" },
+        "input": { "description": "The bytes to hash ([VEC-81]).", "$ref": "#/$defs/byteField" },
+        "expect": { "description": "The expected digest ([VEC-81]).", "$ref": "#/$defs/sha256Expect" }
+      },
+      "required": ["primitive", "input", "expect"]
+    }
+  ],
+  "$defs": {
+    "clauseId": {
+      "description": "A clause ID: an area prefix from spec.md, a hyphen and a number from 1 ([VEC-16]).",
+      "type": "string",
+      "pattern": "^(MANIFEST|SRC|NS|SCOPE|CTX|ENTITY|FACT|TYPE|NORM|KEY|MERGE|AXIS|KIND|SVC|FEAT|POL|BIND|RULE|PROV|BUNDLE|DET|EVAL|VEC|FIND|LINT)-[1-9][0-9]*$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "jcsValue": {
+      "description": "A value of the JSON data model that [VEC-79] allows as input to JCS: a string, a boolean, null, an array, an object, or an integer within plus or minus (2^53 - 1). A non-integer number is not allowed ([VEC-80]). Strings must not contain an unpaired surrogate, which this schema cannot check ([VEC-79]).",
+      "anyOf": [
+        {
+          "description": "A string, which may contain any code point except an unpaired surrogate ([VEC-79]).",
+          "type": "string"
+        },
+        {
+          "description": "A boolean.",
+          "type": "boolean"
+        },
+        {
+          "description": "The null value.",
+          "type": "null"
+        },
+        {
+          "description": "An array of JSON data values, in order.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/jcsValue" }
+        },
+        {
+          "description": "An object whose member names are strings, and whose member values are JSON data values.",
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/jcsValue" }
+        },
+        {
+          "description": "An integer within plus or minus (2^53 - 1) ([VEC-79], [DET-4]). A JSON Schema check cannot tell the token 1.0 or 1e2 from 1 once the YAML is parsed, so it accepts an integral float. The runner rejects every float token, integral or not, as a runner failure ([VEC-35], [VEC-79]).",
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      ]
+    },
+    "byteField": {
+      "description": "A byte sequence written with exactly one of two keys: utf8 for a string whose UTF-8 encoding is the bytes, or hex for lowercase hexadecimal of even length ([VEC-84]). A byte sequence that is not valid UTF-8 must use hex.",
+      "oneOf": [
+        {
+          "description": "The utf8 form. The string is encoded as UTF-8 exactly, with no added newline ([VEC-84]). A block scalar would add a trailing newline, so the value must be a quoted scalar or use |-.",
+          "type": "object",
+          "properties": {
+            "utf8": {
+              "description": "The bytes as a string, encoded as UTF-8.",
+              "type": "string"
+            }
+          },
+          "required": ["utf8"],
+          "additionalProperties": false
+        },
+        {
+          "description": "The hex form. Lowercase hexadecimal digits in pairs, with the empty string for no bytes ([VEC-84]).",
+          "type": "object",
+          "properties": {
+            "hex": {
+              "description": "The bytes as lowercase hexadecimal of even length. It must be a quoted string, so that YAML does not read it as a number.",
+              "type": "string",
+              "pattern": "^(?:[0-9a-f]{2})*$",
+              "not": { "pattern": "[^0-9a-f]" }
+            }
+          },
+          "required": ["hex"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "jcsExpect": {
+      "description": "The expected result of a jcs vector: the expected JCS bytes ([VEC-77]).",
+      "type": "object",
+      "properties": {
+        "output": {
+          "description": "The exact bytes of the JCS encoding of input ([VEC-78]).",
+          "$ref": "#/$defs/byteField"
+        }
+      },
+      "required": ["output"],
+      "additionalProperties": false
+    },
+    "sha256Expect": {
+      "description": "The expected result of a sha256 vector: the expected digest ([VEC-81], [VEC-82]).",
+      "type": "object",
+      "properties": {
+        "digest": {
+          "description": "The expected SHA-256 digest, as 64 lowercase hexadecimal characters with no prefix, written as a quoted string ([VEC-83]).",
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": ["digest"],
+      "additionalProperties": false
+    }
+  }
+}

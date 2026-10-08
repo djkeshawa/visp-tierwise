@@ -1,0 +1,1181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json",
+  "title": "Tierwise schema file",
+  "description": "Structure of one schema file of a Tierwise project: the decision hierarchy, entity hierarchy, facts, kinds, naming patterns, keys, features and namespace (SRC-14, NS-7 and sections 2 to 7 and 13). The schema checks shape only. Cross-references, duplicates, value grammars and ranges, and the file-role rules of namespaced files are checked by the compiler.",
+  "$comment": "Conventions. The schema encodes member sets, JSON types, keyword enums, minimum sizes of declared lists and names, and the conditionals that the spec states between members. The compiler checks: references (entities, facts, levels, axes, keys, kinds, naming patterns, policies); duplicates (SRC-3, SRC-39, SRC-40, KEY-12, TYPE-43, FEAT-8, FEAT-21); value grammars and ranges (TYPE-13, TYPE-18, TYPE-24, TYPE-33, TYPE-34, LINT-17); comparisons between members (TYPE-14, SCOPE-26, MERGE-7, MERGE-10, AXIS-3, AXIS-6); and the namespace rules (NS-4, NS-5, NS-7). A JSON Schema integer also matches a parsed value such as 5.0, so TYPE-15 is checked by the compiler. A schema violation carries no spec code. The compiler reports the code that the violated clause names, for example E_STRATEGY_TYPE (MERGE-3), E_DEFAULT_NOT_ALLOWED (MERGE-4), E_AXIS_COMBINE_INVALID (AXIS-4 to AXIS-6), E_EFFECT_MISMATCH (FEAT-14), E_TYPE_REQUIRED (TYPE-4), E_KIND_DEFINITION (KEY-5), and otherwise E_INVALID_DECLARATION (TYPE-11, KEY-5, FEAT-2, ENTITY-7). (OPEN) No clause gives a code for a top-level member of a schema file that is null or not a mapping (for example keys: null, or decision_hierarchy: null): SRC-6 covers only the root node, and ENTITY-7, TYPE-11 and LINT-14 cover nested declarations. This schema rejects it by type. Items marked (OPEN) carry a $comment on the node they concern.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "decision_hierarchy": {
+      "$ref": "#/$defs/decisionHierarchy",
+      "description": "The decision hierarchy: ordered levels, axes and scope declarations (SCOPE area, section 2). Declared at most once across all sources (SRC-39)."
+    },
+    "entity_hierarchy": {
+      "type": "object",
+      "description": "Entity declarations keyed by entity name (ENTITY-1). Declared only in shared files (ENTITY-2). Declared at most once across all sources (SRC-39).",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[^.]+$",
+        "description": "An entity name: non-empty and without a dot (ENTITY-18)."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/entityDeclaration"
+      }
+    },
+    "facts": {
+      "type": "object",
+      "description": "Fact declarations keyed by fact name, in the form <entity>.<attribute> (FACT-1). Declared only in shared files (FACT-4).",
+      "$comment": "The form of a fact name is checked by the compiler, not here (FACT-3): a name with no dot is E_UNKNOWN_ENTITY, and a name with an empty attribute part is E_INVALID_DECLARATION.",
+      "additionalProperties": {
+        "$ref": "#/$defs/factDeclaration"
+      }
+    },
+    "kinds": {
+      "type": "object",
+      "description": "Kind definitions keyed by kind name (KIND-1, KIND-3). Declared at most once across the project's own sources (SRC-43).",
+      "additionalProperties": {
+        "$ref": "#/$defs/kindDefinition"
+      }
+    },
+    "naming": {
+      "type": "object",
+      "description": "Naming patterns keyed by pattern name (LINT-14). Declared only in shared files (NS-4).",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[^/*\\s]+$",
+        "description": "A pattern name: non-empty, with no slash, asterisk or white space (LINT-14)."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/namingPattern"
+      }
+    },
+    "keys": {
+      "type": "object",
+      "description": "Key declarations keyed by key name (KEY-1, section 5).",
+      "additionalProperties": {
+        "$ref": "#/$defs/keyDeclaration"
+      }
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature declarations keyed by feature name (FEAT-1, section 7.1).",
+      "additionalProperties": {
+        "$ref": "#/$defs/featureDeclaration"
+      }
+    },
+    "namespace": {
+      "type": "string",
+      "description": "The namespace that this file belongs to. Required in a namespaced file and forbidden in a shared file; its value must equal the name under which the manifest lists the file. The compiler checks all three (NS-7). The no-dot rule for namespace names belongs to the manifest (NS-9) and is not restated here."
+    }
+  },
+  "$defs": {
+    "decisionHierarchy": {
+      "type": "object",
+      "description": "Decision hierarchy declaration (SCOPE-1 to SCOPE-26).",
+      "$comment": "(OPEN) SCOPE-9 lists the malformed forms of decision_hierarchy but does not say whether an unknown member is an error, so this object does not set additionalProperties to false. SCOPE-9 also does not name an absent levels member. levels is required here because SCOPE-1 requires a list with at least one entry.",
+      "required": ["levels"],
+      "properties": {
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Level names from least to most specific. The first is the root level (SCOPE-6, SCOPE-10). Names are unique across levels and axes (SCOPE-3), checked by the compiler."
+        },
+        "axes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Axis names in declared order. Optional; an empty list declares no axes (SCOPE-5, SCOPE-7)."
+        },
+        "scopes": {
+          "type": ["object", "null"],
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/scopeDeclaration"
+          },
+          "description": "Scope entries keyed by level or axis name. Each non-root level and each axis needs one entry (SCOPE-14). Absent, null or an empty map is allowed when there is no non-root level and no axis (SCOPE-16). The per-entry count is checked by the compiler."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {
+                "required": ["levels"],
+                "properties": {
+                  "levels": {
+                    "type": "array",
+                    "minItems": 2
+                  }
+                }
+              },
+              {
+                "required": ["axes"],
+                "properties": {
+                  "axes": {
+                    "type": "array",
+                    "minItems": 1
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "required": ["scopes"],
+            "properties": {
+              "scopes": {
+                "type": "object"
+              }
+            }
+          },
+          "$comment": "SCOPE-14 to SCOPE-16: with a non-root level or an axis, scopes must be present and a map."
+        }
+      ]
+    },
+    "scopeDeclaration": {
+      "type": "object",
+      "description": "One scope entry: its node catalog and optional on_unknown_node and values (SCOPE-17 to SCOPE-26).",
+      "required": ["nodes"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "description": "The node catalog (SCOPE-19): an inline list of node IDs (closed), an object with a from path (closed, generated) or the string open (open catalog).",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Inline list of node IDs."
+            },
+            {
+              "type": "object",
+              "required": ["from"],
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Path, relative to the project directory, of a generated catalog file (SCOPE-27 to SCOPE-29)."
+                }
+              },
+              "description": "Generated catalog reference."
+            },
+            {
+              "const": "open",
+              "description": "Open catalog: every structurally valid node ID is admitted (SCOPE-45)."
+            }
+          ]
+        },
+        "on_unknown_node": {
+          "type": "string",
+          "enum": ["error", "ignore"],
+          "description": "Admission policy for an unlisted node ID in a closed catalog (SCOPE-23). Required for a closed catalog and forbidden for an open catalog (SCOPE-22, SCOPE-24)."
+        },
+        "values": {
+          "type": "string",
+          "enum": ["files", "service"],
+          "description": "Where the scope gets its values. Absent means file-sourced (SCOPE-25). service marks a service-sourced level (section 6)."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["nodes"],
+            "properties": {
+              "nodes": {
+                "type": ["array", "object"]
+              }
+            }
+          },
+          "then": {
+            "required": ["on_unknown_node"]
+          },
+          "$comment": "SCOPE-22: a closed catalog (inline list or from object) MUST contain on_unknown_node."
+        },
+        {
+          "if": {
+            "required": ["nodes"],
+            "properties": {
+              "nodes": {
+                "const": "open"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["on_unknown_node"]
+            }
+          },
+          "$comment": "SCOPE-24: an open catalog MUST NOT contain on_unknown_node."
+        }
+      ]
+    },
+    "entityNames": {
+      "description": "One entity name, or a list of entity names (ENTITY-5). Each name must be a declared entity (ENTITY-6), checked by the compiler.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "entityDeclaration": {
+      "type": "object",
+      "description": "Entity declaration: its parents and children (ENTITY-4 to ENTITY-11). The empty map is legal.",
+      "additionalProperties": false,
+      "properties": {
+        "belongs_to": {
+          "$ref": "#/$defs/entityNames",
+          "description": "Parent entities of this entity (ENTITY-9). One name or a list."
+        },
+        "has_many": {
+          "$ref": "#/$defs/entityNames",
+          "description": "Child entities of this entity (ENTITY-11). One name or a list."
+        }
+      }
+    },
+    "factDeclaration": {
+      "type": "object",
+      "description": "Fact declaration (FACT-6 to FACT-12, FACT-45). Its type is one of the five fact types, and it carries the type members that its type allows, plus source and description.",
+      "required": ["type"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["boolean", "string", "integer", "decimal", "enum"],
+          "description": "The fact type. Set, list and object are not fact types (FACT-7, FACT-8)."
+        },
+        "source": {
+          "type": "string",
+          "description": "Documentation only. Neither the compiler nor the evaluator uses it for validation (FACT-10, FACT-11)."
+        },
+        "description": {
+          "type": "string",
+          "description": "Informational text, required only by the lint rule schema/description-required (LINT-44).",
+          "$comment": "(OPEN) FACT-45 does not give the type of description or a code for a non-string value. This schema takes a string. Recommended code: E_INVALID_DECLARATION, as for source (FACT-11)."
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/typeMembers"
+        }
+      ]
+    },
+    "kindDefinition": {
+      "type": "object",
+      "description": "Kind definition: constraints that keys opt into (KIND-1, KIND-3). Its members are the five members below and no other (KEY-5, KIND-3).",
+      "$comment": "(OPEN) KIND-3 and KIND-4 do not say whether an empty strategies list is an error. This schema accepts an empty list, which then allows no strategy for a key that uses the kind.",
+      "additionalProperties": false,
+      "properties": {
+        "strategies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/strategyName"
+          },
+          "description": "Strategies that a key using this kind may use (KIND-4). Omitted means that every strategy is allowed."
+        },
+        "narrowing_only": {
+          "type": "boolean",
+          "description": "When true, only narrowing strategies are allowed, and an authored value may not equal the identity of its strategy (KIND-5, KIND-6)."
+        },
+        "require_default": {
+          "type": "boolean",
+          "description": "When true, every key that uses this kind declares default, so only order-dependent strategies are allowed (KIND-8, KIND-10)."
+        },
+        "on_source_failure": {
+          "type": "string",
+          "enum": ["skip", "deny"],
+          "description": "Source-failure behaviour that the kind gives its keys (KIND-9, KIND-11, SVC-4)."
+        },
+        "naming": {
+          "type": "string",
+          "description": "Name of a key naming pattern for the keys that use this kind (KIND-12, LINT-16)."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["narrowing_only"],
+            "properties": {
+              "narrowing_only": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": ["strategies"],
+            "properties": {
+              "strategies": {
+                "items": {
+                  "enum": ["all", "intersect", "min"]
+                }
+              }
+            }
+          },
+          "$comment": "KIND-5: with narrowing_only true, strategies MUST be given and MUST list only narrowing strategies."
+        },
+        {
+          "if": {
+            "required": ["require_default"],
+            "properties": {
+              "require_default": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": ["strategies"],
+            "properties": {
+              "strategies": {
+                "items": {
+                  "enum": ["override", "deep_merge"]
+                }
+              }
+            }
+          },
+          "$comment": "KIND-10: with require_default true, strategies MUST be given and MUST list only order-dependent strategies."
+        }
+      ]
+    },
+    "namingPattern": {
+      "type": "object",
+      "description": "Naming pattern entry (LINT-14 to LINT-17). Its members are category and pattern, plus an optional description, and no other member.",
+      "required": ["category", "pattern"],
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["key", "enum_value", "node_id", "feature"],
+          "description": "The one category of name that the pattern applies to (LINT-15)."
+        },
+        "pattern": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A pattern in the portable subset of LINT-17. Its validity is checked by the compiler."
+        },
+        "description": {
+          "type": "string",
+          "description": "Explanation for the lint rule naming/<name> (FIND-30)."
+        }
+      }
+    },
+    "keyDeclaration": {
+      "type": "object",
+      "description": "Key declaration (KEY-2 to KEY-9, MERGE-1 to MERGE-4, AXIS-1 to AXIS-6, KIND-2). Its type members sit beside its key members, and it has no other member.",
+      "required": ["type", "combine", "settable_at"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "combine": {
+          "type": "string",
+          "enum": ["all", "any", "intersect", "union", "min", "max", "override", "deep_merge"],
+          "description": "The merge strategy (MERGE-1). A name outside this list is E_INVALID_DECLARATION (KEY-5)."
+        },
+        "settable_at": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Scopes that may hold a value for this key (KEY-6, KEY-7). Scope names are checked by the compiler."
+        },
+        "default": {
+          "description": "Default value (MERGE-8). Not allowed on a commutative key (MERGE-4). Its JSON type follows type, as the allOf conditionals state."
+        },
+        "combine_across_axes": {
+          "type": "string",
+          "enum": ["axis_wins", "hierarchy_wins", "max", "min"],
+          "description": "How the hierarchy result and the axis result combine for an order-dependent key (AXIS-2 to AXIS-8). Not allowed on a commutative key."
+        },
+        "kind": {
+          "type": "string",
+          "description": "Name of the kind that this key opts into (KIND-2, KIND-13)."
+        },
+        "on_source_failure": {
+          "type": "string",
+          "enum": ["skip", "deny"],
+          "description": "Source-failure behaviour for a key settable at a service-sourced level (SVC-1, SVC-3). Must equal the kind's value when both are given (SVC-5)."
+        },
+        "description": {
+          "type": "string",
+          "description": "Informational text, required only by the lint rule schema/description-required (LINT-44). Does not change any result (KEY-9).",
+          "$comment": "(OPEN) KEY-9 does not give the type of description or a code for a non-string value. This schema takes a string. Recommended code: E_INVALID_DECLARATION."
+        },
+        "owner": {
+          "type": "string",
+          "description": "Informational owner of the key (KEY-9, LINT-48).",
+          "$comment": "(OPEN) KEY-9 and LINT-48 name the owner member but do not give its type. This schema accepts a string."
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/typeMembers"
+        },
+        {
+          "if": {
+            "required": ["combine"],
+            "properties": {
+              "combine": {
+                "enum": ["all", "any", "intersect", "union", "min", "max"]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["default"]
+                },
+                {
+                  "required": ["combine_across_axes"]
+                }
+              ]
+            }
+          },
+          "$comment": "MERGE-4: a commutative key declares no default. AXIS-2: it declares no combine_across_axes."
+        },
+        {
+          "if": {
+            "required": ["combine"],
+            "properties": {
+              "combine": {
+                "const": "deep_merge"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "object"
+              }
+            }
+          },
+          "$comment": "MERGE-3: deep_merge requires type object."
+        },
+        {
+          "if": {
+            "required": ["combine"],
+            "properties": {
+              "combine": {
+                "enum": ["all", "any"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "boolean"
+              }
+            }
+          },
+          "$comment": "MERGE-3: all and any require type boolean."
+        },
+        {
+          "if": {
+            "required": ["combine"],
+            "properties": {
+              "combine": {
+                "enum": ["intersect", "union"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "set"
+              }
+            }
+          },
+          "$comment": "MERGE-3: intersect and union require type set."
+        },
+        {
+          "if": {
+            "required": ["combine"],
+            "properties": {
+              "combine": {
+                "enum": ["min", "max"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "integer"
+              }
+            }
+          },
+          "$comment": "MERGE-3: min and max require type integer."
+        },
+        {
+          "if": {
+            "required": ["combine_across_axes"],
+            "properties": {
+              "combine_across_axes": {
+                "enum": ["max", "min"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "const": "integer"
+              }
+            }
+          },
+          "$comment": "AXIS-5: combine_across_axes max or min applies only to integer keys."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "boolean"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "default": {
+                "type": "boolean"
+              }
+            }
+          },
+          "$comment": "TYPE-12: a boolean default is a JSON boolean."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "integer"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "default": {
+                "type": "integer"
+              }
+            }
+          },
+          "$comment": "TYPE-16 to TYPE-18: an integer default is a JSON integer."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "enum": ["decimal", "string", "enum"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "default": {
+                "type": "string"
+              }
+            }
+          },
+          "$comment": "TYPE-24, TYPE-28, TYPE-44: decimal, string and enum defaults are strings. Decimal syntax is checked by the compiler."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "set"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "default": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "$comment": "TYPE-45: a set default is a list of strings."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "list"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "default": {
+                "type": "array"
+              }
+            }
+          },
+          "$comment": "TYPE-55: a list default is a sequence. Its elements are checked by the compiler."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "object"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "default": {
+                "type": "object"
+              }
+            }
+          },
+          "$comment": "TYPE-61: an object default is a map. Completeness (MERGE-10) is checked by the compiler."
+        }
+      ]
+    },
+    "featureDeclaration": {
+      "type": "object",
+      "description": "Feature declaration (FEAT-1 to FEAT-21). Its members are the five required members and description, and no other member (FEAT-2, LINT-44).",
+      "required": ["decided_per", "returns", "hit_policy", "binding_settable_at", "if_fact_missing"],
+      "additionalProperties": false,
+      "properties": {
+        "decided_per": {
+          "type": "string",
+          "description": "The one entity that the feature is decided for (FEAT-4). Must be declared (FEAT-5), checked by the compiler."
+        },
+        "returns": {
+          "$ref": "#/$defs/returnsDeclaration",
+          "description": "The effects of the feature: the enum form or the object form, exactly one (FEAT-6, FEAT-7, FEAT-11)."
+        },
+        "hit_policy": {
+          "type": "string",
+          "enum": ["FIRST"],
+          "description": "Hit policy. FIRST is the only value that spec 0.1 defines (FEAT-15, FEAT-16)."
+        },
+        "binding_settable_at": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Levels that may carry a binding (FEAT-17, FEAT-19 to FEAT-21). The root level must be listed (FEAT-18), which the compiler reports as E_ROOT_BINDING_NOT_ALLOWED, so no minimum length is set here."
+        },
+        "if_fact_missing": {
+          "description": "The effect returned when the missing-fact precheck fails (FEAT-3). Its JSON type follows returns, as the allOf conditionals state."
+        },
+        "description": {
+          "type": "string",
+          "description": "Informational text, required only by the lint rule schema/description-required (LINT-44)."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["returns"],
+            "properties": {
+              "returns": {
+                "required": ["enum"],
+                "not": {
+                  "required": ["nullable"],
+                  "properties": {
+                    "nullable": {
+                      "const": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "if_fact_missing": {
+                "type": "string"
+              }
+            }
+          },
+          "$comment": "FEAT-7, FEAT-9: an enum-form effect is a string when nullable is not true."
+        },
+        {
+          "if": {
+            "required": ["returns"],
+            "properties": {
+              "returns": {
+                "required": ["enum", "nullable"],
+                "properties": {
+                  "nullable": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "if_fact_missing": {
+                "type": ["string", "null"]
+              }
+            }
+          },
+          "$comment": "FEAT-9: with nullable true, null is an effect in addition to the listed strings."
+        },
+        {
+          "if": {
+            "required": ["returns"],
+            "properties": {
+              "returns": {
+                "required": ["object"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "if_fact_missing": {
+                "type": "object"
+              }
+            }
+          },
+          "$comment": "FEAT-11: an object-form effect is a map."
+        }
+      ]
+    },
+    "returnsDeclaration": {
+      "description": "The returns member of a feature: exactly one of the enum form or the object form (FEAT-6, FEAT-7, FEAT-11, FEAT-12).",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Enum form (FEAT-7): a list of effect strings, optionally nullable.",
+          "required": ["enum"],
+          "additionalProperties": false,
+          "properties": {
+            "enum": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              },
+              "description": "Effect strings (FEAT-7). A repeated string is E_DUPLICATE_VALUE (FEAT-8), checked by the compiler."
+            },
+            "nullable": {
+              "type": "boolean",
+              "description": "When true, null is an effect in addition to the listed strings (FEAT-9)."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Object form (FEAT-11): every effect is a complete object with these fields. It does not allow nullable (FEAT-12).",
+          "required": ["object"],
+          "additionalProperties": false,
+          "properties": {
+            "object": {
+              "$ref": "#/$defs/objectFields",
+              "description": "The fields of the effect object, in the object declaration grammar (TYPE-59, TYPE-60)."
+            }
+          }
+        }
+      ]
+    },
+    "strategyName": {
+      "type": "string",
+      "enum": ["all", "any", "intersect", "union", "min", "max", "override", "deep_merge"],
+      "description": "A merge strategy defined by MERGE-1."
+    },
+    "typeMembers": {
+      "type": "object",
+      "description": "Type members of a declaration (TYPE-7). For a key or a fact they sit beside the declaration's own members. For an items or object field declaration they form the whole declaration. Each type allows and requires its own members, as the allOf conditionals state.",
+      "$comment": "This object does not forbid unknown members. The declaration that embeds it does, through unevaluatedProperties or additionalProperties.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["boolean", "integer", "decimal", "string", "enum", "set", "list", "object"],
+          "description": "The value type (TYPE-2). Names are case-sensitive."
+        },
+        "min": {
+          "type": "integer",
+          "description": "Inclusive lower bound of an integer type (TYPE-19). The integer range, and min not greater than max, are checked by the compiler (TYPE-13, TYPE-14, TYPE-22)."
+        },
+        "max": {
+          "type": "integer",
+          "description": "Inclusive upper bound of an integer type (TYPE-19). The integer range is checked by the compiler (TYPE-13, TYPE-22)."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["time_hhmm", "iana_tz"],
+          "description": "Format of a string type (TYPE-31 to TYPE-37)."
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed values of an enum type (TYPE-41, TYPE-42). A repeated string is E_DUPLICATE_VALUE (TYPE-43, TYPE-52), checked by the compiler."
+        },
+        "universe": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Members of a set type (TYPE-41, TYPE-42). A repeated string is E_DUPLICATE_VALUE (TYPE-43, TYPE-52), checked by the compiler."
+        },
+        "items": {
+          "$ref": "#/$defs/typeDeclaration",
+          "description": "The element type of a list type (TYPE-53, TYPE-54)."
+        },
+        "fields": {
+          "$ref": "#/$defs/objectFields",
+          "description": "The fields of an object type (TYPE-59, TYPE-60)."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "boolean"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["items"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-7: boolean has no type members."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "integer"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["items"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-7: integer allows only min and max."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "decimal"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["items"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-7: decimal has no type members."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "string"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["items"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-7: string allows only format."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "enum"
+              }
+            }
+          },
+          "then": {
+            "required": ["values"],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["items"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-40: enum requires values. TYPE-7: enum allows only values."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "set"
+              }
+            }
+          },
+          "then": {
+            "required": ["universe"],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["items"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-40: set requires universe. TYPE-7: set allows only universe."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "list"
+              }
+            }
+          },
+          "then": {
+            "required": ["items"],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["fields"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-53: list requires items. TYPE-7: list allows only items."
+        },
+        {
+          "if": {
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "const": "object"
+              }
+            }
+          },
+          "then": {
+            "required": ["fields"],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["min"]
+                },
+                {
+                  "required": ["max"]
+                },
+                {
+                  "required": ["format"]
+                },
+                {
+                  "required": ["values"]
+                },
+                {
+                  "required": ["universe"]
+                },
+                {
+                  "required": ["items"]
+                }
+              ]
+            }
+          },
+          "$comment": "TYPE-59: object requires fields. TYPE-7: object allows only fields."
+        }
+      ]
+    },
+    "typeDeclaration": {
+      "type": "object",
+      "description": "Type declaration of an items declaration, at any depth (TYPE-1, TYPE-3, TYPE-54, TYPE-69). It carries the type members of its type and no optional member, which only an object field declaration may carry (TYPE-8).",
+      "required": ["type"],
+      "unevaluatedProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/typeMembers"
+        }
+      ]
+    },
+    "objectFieldDeclaration": {
+      "type": "object",
+      "description": "Object field declaration: a type declaration that may also carry optional (TYPE-8 to TYPE-10, TYPE-60).",
+      "required": ["type"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "optional": {
+          "type": "boolean",
+          "description": "When true, the field may be absent from an object value. When absent or false, the field is required (TYPE-10, TYPE-66)."
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/typeMembers"
+        }
+      ]
+    },
+    "objectFields": {
+      "type": "object",
+      "description": "The fields of an object type or of an object-form effect: a map from field name to object field declaration. It declares at least one field (TYPE-59, TYPE-68).",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1,
+        "description": "A field name, non-empty (TYPE-68)."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/objectFieldDeclaration"
+      }
+    }
+  }
+}

@@ -1,0 +1,664 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/vector-evaluate.schema.json",
+  "title": "Tierwise evaluate vector",
+  "description": "One evaluate vector (spec section 12.3): one resolve or decide call against a bundle file, with the expected result or the expected error. This schema checks structure only. Cross-references (bundle paths, level names, clause existence, id equal to path, unique ids) and runner behaviour are checked elsewhere ([VEC-19], [VEC-112]).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "specVersion", "clauses", "description", "call", "bundle", "expect"],
+  "properties": {
+    "id": {
+      "description": "Vector identifier. It equals the file path relative to evaluate/, without the .yaml extension ([VEC-11], [VEC-12]).",
+      "type": "string",
+      "minLength": 1
+    },
+    "specVersion": {
+      "description": "Version of this specification that the vector targets. The value for this version is \"0.1\" ([VEC-14]).",
+      "type": "string",
+      "const": "0.1"
+    },
+    "clauses": {
+      "description": "Clause IDs that define the behaviour the vector checks. Each entry is a clause ID from spec.md or a section ([VEC-16]).",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/clauseId" }
+    },
+    "description": {
+      "description": "One non-empty, single-line sentence that says what the vector checks ([VEC-17]).",
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "call": {
+      "description": "The one operation that the runner invokes: resolve or decide ([VEC-21]).",
+      "type": "string",
+      "enum": ["resolve", "decide"]
+    },
+    "sync": {
+      "description": "When true, the runner invokes the synchronous variant of the operation instead of the provider-capable one ([VEC-25]).",
+      "type": "boolean",
+      "default": false
+    },
+    "bundle": {
+      "description": "Path to the bundle file, relative to the directory that contains this vector file ([VEC-22]). The resolved file must lie in bundles/ or in bundles/invalid/ ([VEC-23]). The pattern checks only the form: no leading / or \\, no drive letter, no backslash, and a final bundles/<file> or bundles/invalid/<file> segment. The runner checks that the path resolves to the suite's own bundles/ directory, and a path that resolves elsewhere is a runner failure ([VEC-23]).",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![/\\\\]|[A-Za-z]:)(?!.*\\\\)(?:[^/]+/)*bundles/(?:invalid/)?[^/]+$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "context": {
+      "description": "Caller-supplied context for the operation. When present it must be a mapping. Its members levels and axes may be omitted, and their values are passed as written, so that malformed values can be tested ([VEC-28], [VEC-33], [CTX-1]). A member other than levels and axes is also passed as written, so that the operation raises E_CONTEXT_INVALID for it ([CTX-2]).",
+      "$ref": "#/$defs/context"
+    },
+    "key": {
+      "description": "The key to resolve. Required on a resolve vector and forbidden on a decide vector ([VEC-29]). An empty string is a valid value that tests the lookup ([EVAL-37]).",
+      "type": "string"
+    },
+    "feature": {
+      "description": "The feature to decide. Required on a decide vector and forbidden on a resolve vector ([VEC-29]). An empty string is a valid value that tests the lookup ([EVAL-37]).",
+      "type": "string"
+    },
+    "input": {
+      "description": "The FactSet passed to decide, as the YAML 1.2 core schema produces it, with no conversion ([VEC-31]). Any YAML value is allowed here, including null and shapes that are malformed, because the shape is checked by the operation under test ([FACT-22], [EVAL-36]). Its shape follows the FactSet form of section 3: a map with optional members facts and children. Required on decide and forbidden on resolve ([VEC-30], [VEC-32])."
+    },
+    "providers": {
+      "description": "Stubs for the service-sourced levels of the bundle. Each level name maps to the marker none, or to a stub that maps node IDs to outcomes ([VEC-37]). A level that is omitted gets an empty stub ([VEC-39]).",
+      "$ref": "#/$defs/providers"
+    },
+    "exact": {
+      "description": "When true, each mapping in the actual result must have exactly the keys that expect names at that position, and provider calls outside providerCalls count as mismatches ([VEC-62] to [VEC-67]). Defaults to false, which compares only the named fields ([VEC-54]).",
+      "type": "boolean",
+      "default": false
+    },
+    "expect": {
+      "description": "The expected outcome. It is either an error form with one error code, or a result form that names at least one result field. Either form may also carry providerCalls ([VEC-48], [VEC-49]). Its shape depends on call, as the conditions of this schema state.",
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "description": "A resolve vector has key, has no feature and no input ([VEC-29], [VEC-32]). Its expect is a resolve expectation.",
+      "if": {
+        "required": ["call"],
+        "properties": { "call": { "const": "resolve" } }
+      },
+      "then": {
+        "required": ["key"],
+        "not": {
+          "anyOf": [
+            { "required": ["feature"] },
+            { "required": ["input"] }
+          ]
+        },
+        "properties": {
+          "expect": { "$ref": "#/$defs/resolveExpect" }
+        }
+      }
+    },
+    {
+      "description": "A decide vector has feature and input, and has no key ([VEC-29], [VEC-30]). Its expect is a decide expectation.",
+      "if": {
+        "required": ["call"],
+        "properties": { "call": { "const": "decide" } }
+      },
+      "then": {
+        "required": ["feature", "input"],
+        "not": { "required": ["key"] },
+        "properties": {
+          "expect": { "$ref": "#/$defs/decideExpect" }
+        }
+      }
+    },
+    {
+      "description": "A decide call and a synchronous call call no provider, so every provider call count that these vectors name is 0 ([SVC-22], [EVAL-42], [VEC-26]).",
+      "if": {
+        "anyOf": [
+          { "required": ["call"], "properties": { "call": { "const": "decide" } } },
+          { "required": ["sync"], "properties": { "sync": { "const": true } } }
+        ]
+      },
+      "then": {
+        "properties": {
+          "expect": {
+            "properties": {
+              "providerCalls": { "$ref": "#/$defs/zeroProviderCalls" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "When exact is true and the expectation is a result form, the expectation names every member of the Resolved result, closed under the result shape of section 9 ([VEC-63], [PROV-11]). It may also name providerCalls.",
+      "if": {
+        "required": ["call", "exact"],
+        "properties": {
+          "call": { "const": "resolve" },
+          "exact": { "const": true }
+        }
+      },
+      "then": {
+        "properties": {
+          "expect": {
+            "if": { "not": { "required": ["error"] } },
+            "then": {
+              "$ref": "results.schema.json#/$defs/ResolvedMembers",
+              "properties": {
+                "providerCalls": { "$ref": "#/$defs/providerCalls" }
+              },
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "When exact is true and the expectation is a result form, the expectation names every member of the Decision result, closed under the result shape of section 9 ([VEC-63], [PROV-63]). It may also name providerCalls.",
+      "if": {
+        "required": ["call", "exact"],
+        "properties": {
+          "call": { "const": "decide" },
+          "exact": { "const": true }
+        }
+      },
+      "then": {
+        "properties": {
+          "expect": {
+            "if": { "not": { "required": ["error"] } },
+            "then": {
+              "$ref": "results.schema.json#/$defs/DecisionMembers",
+              "properties": {
+                "providerCalls": { "$ref": "#/$defs/providerCalls" }
+              },
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "clauseId": {
+      "description": "A clause ID: an area prefix from spec.md, a hyphen and a number from 1 ([VEC-16]).",
+      "type": "string",
+      "pattern": "^(MANIFEST|SRC|NS|SCOPE|CTX|ENTITY|FACT|TYPE|NORM|KEY|MERGE|AXIS|KIND|SVC|FEAT|POL|BIND|RULE|PROV|BUNDLE|DET|EVAL|VEC|FIND|LINT)-[1-9][0-9]*$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "zeroProviderCalls": {
+      "description": "Provider invocation counts for a vector in which no provider can be called, namely a decide vector and a vector with sync true ([SVC-22], [EVAL-42]). Each count is 0 or the expectation can never be met ([VEC-65]).",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Map from node ID to the expected number of provider invocations, which is 0.",
+        "type": "object",
+        "additionalProperties": {
+          "description": "Zero provider invocations.",
+          "const": 0
+        }
+      }
+    },
+    "errorCode": {
+      "description": "An evaluation error code that the evaluation operations may raise: the eleven codes of [EVAL-38] (requirements 6.2). Error messages are not compared ([VEC-52]). E_PROVENANCE_INVALID is a tooling code for provenance cases and is not one of them.",
+      "type": "string",
+      "enum": [
+        "E_BUNDLE_INTEGRITY",
+        "E_BUNDLE_UNSUPPORTED",
+        "E_PROVIDER_MISSING",
+        "E_PROVIDER_REQUIRED",
+        "E_CONTEXT_INVALID",
+        "E_UNKNOWN_SCOPE",
+        "E_UNKNOWN_NODE",
+        "E_UNKNOWN_KEY",
+        "E_UNKNOWN_FEATURE",
+        "E_FACTS_INVALID",
+        "E_EVALUATOR_OPTIONS"
+      ]
+    },
+    "context": {
+      "description": "The caller-supplied context: a mapping with optional members levels and axes ([VEC-28], [CTX-2]). A null context is a runner failure ([VEC-68]). The def does not close the mapping: a context that has any other member must reach the operation unchanged, because [CTX-2] makes that an E_CONTEXT_INVALID error, which a vector can expect. This follows the treatment of input, whose shape is also checked by the operation ([VEC-31]). A misspelt member name in a vector therefore shows as an error that the vector did not expect, not as a schema failure.",
+      "type": "object",
+      "properties": {
+        "levels": {
+          "description": "Map from non-root level names to node IDs. Keys are strings. Values are passed as written, so a malformed map or value, such as a list, null or an integer, can be tested ([CTX-1], [VEC-33]). Omitted means an empty map ([CTX-2])."
+        },
+        "axes": {
+          "description": "Map from axis names to node IDs, with the same rules as levels ([CTX-1], [CTX-2])."
+        }
+      }
+    },
+    "providers": {
+      "description": "Map from a service-sourced level name to the marker none, or to a stub ([VEC-37]). Level names must name a service-sourced level of the bundle, except where the vector expects E_EVALUATOR_OPTIONS ([VEC-38]).",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Either the marker none, which registers no provider and so makes creating the evaluator fail with E_PROVIDER_MISSING ([VEC-40]), or a stub ([VEC-37]).",
+        "anyOf": [
+          { "const": "none" },
+          { "$ref": "#/$defs/stub" }
+        ]
+      }
+    },
+    "stub": {
+      "description": "Map from node ID to the outcome that the provider returns for that node. A node that the stub does not list must not be called ([VEC-46]).",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/nodeOutcome" }
+    },
+    "nodeOutcome": {
+      "description": "The outcome for one node. It has exactly one of two forms: values, which the provider returns, or fail, which makes the provider fail ([VEC-41]).",
+      "oneOf": [
+        {
+          "description": "Values form: a provider result that returns the listed key names and values for the node ([VEC-42]). An empty map returns no entries ([SVC-36]). A null in place of the map is a runner failure ([VEC-41]).",
+          "type": "object",
+          "required": ["values"],
+          "properties": {
+            "values": {
+              "description": "Map from key names to the YAML values that the provider returns, passed through without conversion ([VEC-42], [VEC-33]).",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "description": "Fail form: the provider fails for this node with the given outcome ([VEC-43]).",
+          "type": "object",
+          "required": ["fail"],
+          "properties": {
+            "fail": {
+              "description": "The fail outcome: unavailable or timeout. Both give identical results ([VEC-44], [SVC-23], [SVC-39]).",
+              "type": "string",
+              "enum": ["unavailable", "timeout"]
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "providerCalls": {
+      "description": "Expected provider invocation counts: a map from level name to a map from node ID to a non-negative count ([VEC-65]). A count of 0 asserts that the node was not called ([SVC-19]).",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Map from node ID to the expected number of provider invocations for that level and node.",
+        "type": "object",
+        "additionalProperties": {
+          "description": "Number of provider invocations, counting fail outcomes ([VEC-47]).",
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "errorForm": {
+      "description": "The error form of expect: one error code and no result field ([VEC-48], [VEC-50]). It may also carry providerCalls ([VEC-65]).",
+      "type": "object",
+      "required": ["error"],
+      "properties": {
+        "error": {
+          "description": "The expected error code. It is the only normative part of an error ([VEC-52]).",
+          "$ref": "#/$defs/errorCode"
+        },
+        "providerCalls": {
+          "description": "Expected provider invocation counts, which may accompany the error ([VEC-65]).",
+          "$ref": "#/$defs/providerCalls"
+        }
+      },
+      "additionalProperties": false
+    },
+    "resolveExpect": {
+      "description": "Expectation for a resolve vector. Either the error form, or the result form, which names at least one Resolved field and no error ([VEC-48], [VEC-49]). Fields are compared as a subset unless exact is true ([VEC-54]).",
+      "oneOf": [
+        { "$ref": "#/$defs/errorForm" },
+        {
+          "type": "object",
+          "not": { "required": ["error"] },
+          "anyOf": [
+            { "required": ["key"] },
+            { "required": ["strategy"] },
+            { "required": ["kind"] },
+            { "required": ["value"] },
+            { "required": ["bundleVersion"] },
+            { "required": ["skippedScopes"] },
+            { "required": ["contributions"] },
+            { "required": ["source"] }
+          ],
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "enum": ["all", "any", "intersect", "union", "min", "max"] } }
+          },
+          "then": {
+            "description": "A commutative key has no source, so naming one can never match ([PROV-45], [VEC-55]).",
+            "not": { "required": ["source"] }
+          },
+          "properties": {
+            "key": {
+              "description": "Expected key name ([PROV-12]).",
+              "type": "string"
+            },
+            "strategy": {
+              "description": "Expected merge strategy, the value of combine ([PROV-13]).",
+              "$ref": "results.schema.json#/$defs/strategy"
+            },
+            "kind": {
+              "description": "Expected kind name. Present only when the key opts into a kind ([PROV-14], [PROV-15]).",
+              "type": "string",
+              "minLength": 1
+            },
+            "value": {
+              "description": "Expected value in the JSON encoding of its type. An expected null matches only an actual null ([VEC-56]). Values are not canonicalised by the runner ([VEC-60])."
+            },
+            "bundleVersion": {
+              "description": "Expected bundleVersion of the loaded bundle ([PROV-18]).",
+              "$ref": "results.schema.json#/$defs/bundleVersion"
+            },
+            "skippedScopes": {
+              "description": "Expected skipped scopes, in order ([PROV-58]). An expected empty list matches only an empty actual list ([VEC-61]).",
+              "type": "array",
+              "items": { "$ref": "#/$defs/expectSkippedScope" }
+            },
+            "contributions": {
+              "description": "Expected contribution entries, in evaluation-path order ([PROV-34]). An expected empty list matches only an empty actual list ([VEC-61]).",
+              "type": "array",
+              "items": { "$ref": "#/$defs/expectContribution" }
+            },
+            "source": {
+              "description": "Expected source of an order-dependent value: the string DEFAULT, or a source object ([PROV-46]). Present only for override and deep_merge keys ([PROV-45]).",
+              "oneOf": [
+                { "const": "DEFAULT" },
+                { "$ref": "#/$defs/expectSource" }
+              ]
+            },
+            "providerCalls": {
+              "description": "Expected provider invocation counts for the resolve call ([VEC-65]).",
+              "$ref": "#/$defs/providerCalls"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "decideExpect": {
+      "description": "Expectation for a decide vector. Either the error form, or the result form, which names at least one Decision field and no error ([VEC-48], [VEC-49]). decide calls no provider, so providerCalls counts are 0 when named ([VEC-26], [SVC-22]).",
+      "oneOf": [
+        { "$ref": "#/$defs/errorForm" },
+        {
+          "type": "object",
+          "not": { "required": ["error"] },
+          "anyOf": [
+            { "required": ["feature"] },
+            { "required": ["effect"] },
+            { "required": ["bundleVersion"] },
+            { "required": ["skippedScopes"] },
+            { "required": ["binding"] },
+            { "required": ["policy"] },
+            { "required": ["reason"] },
+            { "required": ["trace"] }
+          ],
+          "if": {
+            "required": ["reason"],
+            "properties": {
+              "reason": {
+                "required": ["type"],
+                "properties": { "type": { "const": "MISSING_FACT" } }
+              }
+            }
+          },
+          "then": {
+            "description": "A MISSING_FACT decision has an empty trace, so a non-empty expected trace can never match ([PROV-84], [VEC-61]).",
+            "properties": {
+              "trace": { "maxItems": 0 }
+            }
+          },
+          "properties": {
+            "feature": {
+              "description": "Expected declared feature name ([PROV-64]).",
+              "type": "string"
+            },
+            "effect": {
+              "description": "Expected effect that the decision returns, in the form of the feature's returns declaration: a string, null or an object ([PROV-65] to [PROV-67]). It is compared unchanged.",
+              "type": ["string", "null", "object"]
+            },
+            "bundleVersion": {
+              "description": "Expected bundleVersion of the loaded bundle ([PROV-18]).",
+              "$ref": "results.schema.json#/$defs/bundleVersion"
+            },
+            "skippedScopes": {
+              "description": "Expected skipped scopes, in order ([PROV-58]).",
+              "type": "array",
+              "items": { "$ref": "#/$defs/expectSkippedScope" }
+            },
+            "binding": {
+              "description": "Expected selected binding ([PROV-68]).",
+              "$ref": "#/$defs/expectBinding"
+            },
+            "policy": {
+              "description": "Expected name of the policy of the selected binding ([PROV-71]).",
+              "type": "string"
+            },
+            "reason": {
+              "description": "Expected reason, one of the RULE, DEFAULT or MISSING_FACT objects ([PROV-73]).",
+              "$ref": "#/$defs/expectReason"
+            },
+            "trace": {
+              "description": "Expected trace entries, in rule order ([PROV-82]). An expected empty list matches only an empty actual list ([VEC-61]).",
+              "type": "array",
+              "items": { "$ref": "#/$defs/expectTraceEntry" }
+            },
+            "providerCalls": {
+              "description": "Expected provider invocation counts. A decide call makes none, so each count is 0 when named; the conditions of the schema enforce this ([SVC-22], [VEC-65]).",
+              "$ref": "#/$defs/providerCalls"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "expectSource": {
+      "description": "Expected source object of an order-dependent value: the winning scope, and its node when the scope is not the root level ([PROV-46], [PROV-47]). Structure only.",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Scope kind of the winning scope.",
+          "$ref": "results.schema.json#/$defs/scopeKind"
+        },
+        "name": {
+          "description": "Declared name of the winning scope.",
+          "type": "string"
+        },
+        "node": {
+          "description": "Node ID of the winning scope. Present only when the scope is not the root level.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectSkippedScope": {
+      "description": "Expected skipped scope entry ([PROV-54]). Its reason is UNKNOWN_NODE, the only reason in this version ([PROV-55]).",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Scope kind of the skipped scope.",
+          "$ref": "results.schema.json#/$defs/scopeKind"
+        },
+        "name": {
+          "description": "Declared name of the skipped scope.",
+          "type": "string"
+        },
+        "node": {
+          "description": "Unknown node ID that the context supplied.",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Reason for the skip. The only value in this version ([PROV-55]).",
+          "type": "string",
+          "const": "UNKNOWN_NODE"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectContribution": {
+      "description": "Expected contribution entry ([PROV-22] to [PROV-36]). A member that the result omits under its provenance clause must be absent here when exact is true ([VEC-64]). In every case a member that the entry cannot carry is forbidden, because a named key that the actual lacks never matches ([VEC-55]): onSourceFailure on a value entry ([PROV-32]), and value on a failure entry under skip ([PROV-30]).",
+      "type": "object",
+      "allOf": [
+        {
+          "description": "A value entry has no onSourceFailure. A value entry is one whose effect is a value label ([PROV-32]).",
+          "if": {
+            "required": ["effect"],
+            "properties": { "effect": { "not": { "enum": ["UNAVAILABLE", "INVALID"] } } }
+          },
+          "then": { "not": { "required": ["onSourceFailure"] } }
+        },
+        {
+          "description": "A failure entry under skip has no value ([PROV-30]).",
+          "if": {
+            "required": ["onSourceFailure"],
+            "properties": { "onSourceFailure": { "const": "skip" } }
+          },
+          "then": { "not": { "required": ["value"] } }
+        },
+        {
+          "description": "An entry that carries onSourceFailure is a failure entry, so its effect is UNAVAILABLE or INVALID when named ([PROV-32], [PROV-41]).",
+          "if": { "required": ["onSourceFailure"] },
+          "then": { "properties": { "effect": { "enum": ["UNAVAILABLE", "INVALID"] } } }
+        }
+      ],
+      "properties": {
+        "scope": {
+          "description": "Scope kind of the contributing scope.",
+          "$ref": "results.schema.json#/$defs/scopeKind"
+        },
+        "name": {
+          "description": "Declared name of the contributing scope.",
+          "type": "string"
+        },
+        "node": {
+          "description": "Node ID of the contributing scope. Present only when the scope is not the root level ([PROV-25]).",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value that the scope contributes, or the deny value of a failure entry under deny. Absent for a failure entry under skip ([PROV-27], [PROV-30]). Never null ([PROV-31]), so an expected null can never match.",
+          "not": { "type": "null" }
+        },
+        "effect": {
+          "description": "Contribution label: a value label, or the failure label UNAVAILABLE or INVALID ([PROV-24], [PROV-38], [PROV-41]).",
+          "$ref": "results.schema.json#/$defs/contributionLabel"
+        },
+        "onSourceFailure": {
+          "description": "Source-failure behaviour in effect for the key. Present only on a failure entry ([PROV-32], [PROV-33]).",
+          "type": "string",
+          "enum": ["skip", "deny"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectBinding": {
+      "description": "Expected selected binding: its level, and its node when the level is not the root level ([PROV-68], [PROV-69]).",
+      "type": "object",
+      "properties": {
+        "level": {
+          "description": "Level of the selected binding.",
+          "type": "string"
+        },
+        "node": {
+          "description": "Node ID of the selected binding. Present only when the level is not the root level.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectReason": {
+      "description": "Expected reason of a decision: an object whose type is RULE, DEFAULT or MISSING_FACT ([PROV-73]). A member that the named type cannot carry is forbidden, because a named key that the actual lacks never matches ([VEC-55], [PROV-74] to [PROV-76]). Members may be omitted, because matching is by subset unless exact is true ([VEC-54]).",
+      "type": "object",
+      "allOf": [
+        {
+          "description": "A RULE reason has no facts ([PROV-74]).",
+          "if": { "required": ["type"], "properties": { "type": { "const": "RULE" } } },
+          "then": { "not": { "required": ["facts"] } }
+        },
+        {
+          "description": "A DEFAULT reason has no id, name or facts ([PROV-75]).",
+          "if": { "required": ["type"], "properties": { "type": { "const": "DEFAULT" } } },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["id"] },
+                { "required": ["name"] },
+                { "required": ["facts"] }
+              ]
+            }
+          }
+        },
+        {
+          "description": "A MISSING_FACT reason has no id or name ([PROV-76]).",
+          "if": { "required": ["type"], "properties": { "type": { "const": "MISSING_FACT" } } },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["id"] },
+                { "required": ["name"] }
+              ]
+            }
+          }
+        },
+        {
+          "description": "No reason has both facts and a rule member, whatever its type is, because id and name belong to RULE and facts to MISSING_FACT ([PROV-74], [PROV-76]).",
+          "not": {
+            "required": ["facts"],
+            "anyOf": [
+              { "required": ["id"] },
+              { "required": ["name"] }
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "type": {
+          "description": "Kind of reason.",
+          "type": "string",
+          "enum": ["RULE", "DEFAULT", "MISSING_FACT"]
+        },
+        "id": {
+          "description": "Id of the winning rule. Present only when type is RULE ([PROV-74]).",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the winning rule. Present only when type is RULE ([PROV-74]).",
+          "type": "string"
+        },
+        "facts": {
+          "description": "Missing fact names, in the order of [RULE-44]. Present only when type is MISSING_FACT ([PROV-76], [PROV-77]). The list is never empty ([RULE-42]).",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectTraceEntry": {
+      "description": "Expected trace entry for one rule checked ([PROV-78] to [PROV-81]). failed is forbidden when matched is true, because it is present only when matched is false ([PROV-80]).",
+      "type": "object",
+      "if": { "required": ["matched"], "properties": { "matched": { "const": true } } },
+      "then": { "not": { "required": ["failed"] } },
+      "properties": {
+        "id": {
+          "description": "Id of the rule that the entry describes.",
+          "type": "string"
+        },
+        "matched": {
+          "description": "Whether the rule matched.",
+          "type": "boolean"
+        },
+        "failed": {
+          "description": "First failing condition. Present if and only if matched is false ([PROV-80]).",
+          "type": "object",
+          "properties": {
+            "fact": {
+              "description": "Name of the fact of the failing condition.",
+              "type": "string"
+            },
+            "op": {
+              "description": "Operator of the failing condition.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# Path-mapped values file: axis seller, node acme (SRC-22, SRC-25).
+# An axis value for an override key. With division south (6), the axis result is
+# 8, and under combine_across_axes max the result is 8 (AXIS-7, AXIS-8).
+checkout.pickup.lead_hours: 8

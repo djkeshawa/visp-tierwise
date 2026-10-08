@@ -20,7 +20,7 @@ This section defines the decision hierarchy: its levels and axes, the singleton 
 
 **[SCOPE-8]** A level or axis name written in a source MUST be NFC-normalised before the uniqueness check of [SCOPE-3] and the lookups of [SCOPE-46]. A context name is not normalised ([CTX-4]). No character is reserved in a level or axis name. A name that is the empty string, or that contains an unpaired surrogate code point ([NORM-8]), MUST be reported as `E_SCOPE_DECLARATION`.
 
-**[SCOPE-9]** The compiler MUST report `E_SCOPE_DECLARATION` for a malformed hierarchy declaration: a `levels` value that is not a list, an empty `levels` list ([SCOPE-1]), an `axes` value that is not a list, an entry of `levels` or `axes` that is not a string ([SCOPE-2]), or an empty name ([SCOPE-8]).
+**[SCOPE-9]** The compiler MUST report `E_SCOPE_DECLARATION` for a malformed hierarchy declaration: a `levels` value that is not a list, an empty `levels` list ([SCOPE-1]), an `axes` value that is not a list, an entry of `levels` or `axes` that is not a string ([SCOPE-2]), an empty name ([SCOPE-8]), an absent `levels` member, or a member of `decision_hierarchy` other than `levels`, `axes` and `scopes` (ADR 0015).
 
 ## 2.2 The root level
 

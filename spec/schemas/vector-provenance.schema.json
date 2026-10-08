@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/vector-provenance.schema.json",
+  "title": "Tierwise provenance case",
+  "description": "One provenance case (spec section 12.7, [VEC-126] to [VEC-131]): a sidecar file checked against a bundle file. The case names both files and expects the sidecar to be accepted, or rejected with E_PROVENANCE_INVALID. No evaluator runs a provenance case. [VEC-112] requires every provenance case to validate against this schema. This schema checks structure only. The check tool checks that id equals the file path relative to provenance/ and is unique ([VEC-127]), that bundle resolves to a file in bundles/ and not in bundles/invalid/, that sidecar resolves to a .json file under provenance/ ([VEC-128]), and that each clause exists and is not OPEN ([VEC-16]). The sidecar itself is checked against provenance.schema.json and [BUNDLE-151] by the tool that runs the case ([VEC-130]).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "specVersion", "clauses", "description", "bundle", "sidecar", "expect"],
+  "properties": {
+    "id": {
+      "description": "Case identifier. It equals the file path relative to provenance/, without the .yaml extension, and is unique among the provenance cases ([VEC-11], [VEC-127]).",
+      "type": "string",
+      "minLength": 1
+    },
+    "specVersion": {
+      "description": "Version of this specification that the case targets. The value for this version is \"0.1\" ([VEC-14]).",
+      "type": "string",
+      "const": "0.1"
+    },
+    "clauses": {
+      "description": "Clause IDs that define the behaviour the case checks ([VEC-16], [VEC-131]).",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/clauseId" }
+    },
+    "description": {
+      "description": "One non-empty, single-line sentence that says what the case checks ([VEC-17]).",
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "bundle": {
+      "description": "Relative path, from the directory of the case file, to a canonical bundle file directly inside bundles/ and not inside bundles/invalid/ ([VEC-128]). The pattern checks only that the path is relative, uses / and ends in bundles/ followed by one file name, which excludes bundles/invalid/. The check tool checks that the path resolves to the suite's bundles/ directory.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![/\\\\]|[A-Za-z]:)(?!.*\\\\)(?:[^/]+/)*bundles/[^/]+$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "sidecar": {
+      "description": "Relative path, from the directory of the case file, to the sidecar under test: a .json file under provenance/ ([VEC-126], [VEC-128]). The pattern checks only that the path is relative, uses / and ends in .json. The check tool checks that it resolves under provenance/.",
+      "type": "string",
+      "minLength": 6,
+      "pattern": "^(?![/\\\\]|[A-Za-z]:)(?!.*\\\\).*\\.json$",
+      "not": { "pattern": "[\\n\\r]" }
+    },
+    "expect": {
+      "description": "The expected outcome: exactly one of accept, whose value is true, or error, whose value is E_PROVENANCE_INVALID ([VEC-129]). Messages are not compared ([VEC-130], [VEC-52]).",
+      "oneOf": [
+        {
+          "description": "The sidecar is accepted for the bundle ([VEC-129]).",
+          "type": "object",
+          "properties": {
+            "accept": {
+              "description": "Always true: the sidecar is expected to be accepted ([VEC-129]).",
+              "const": true
+            }
+          },
+          "required": ["accept"],
+          "additionalProperties": false
+        },
+        {
+          "description": "The sidecar is rejected with E_PROVENANCE_INVALID ([VEC-129], [BUNDLE-151]).",
+          "type": "object",
+          "properties": {
+            "error": {
+              "description": "The only code a provenance case can expect ([VEC-129]).",
+              "const": "E_PROVENANCE_INVALID"
+            }
+          },
+          "required": ["error"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "clauseId": {
+      "description": "A clause ID: an area prefix from spec.md, a hyphen and a number from 1 ([VEC-16]).",
+      "type": "string",
+      "pattern": "^(MANIFEST|SRC|NS|SCOPE|CTX|ENTITY|FACT|TYPE|NORM|KEY|MERGE|AXIS|KIND|SVC|FEAT|POL|BIND|RULE|PROV|BUNDLE|DET|EVAL|VEC|FIND|LINT)-[1-9][0-9]*$",
+      "not": { "pattern": "[\\n\\r]" }
+    }
+  }
+}

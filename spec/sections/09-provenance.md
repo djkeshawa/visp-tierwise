@@ -251,18 +251,18 @@ Conformance vectors compare result fields as a subset match unless the vector se
 }
 ```
 
-**Example (non-normative)**: a `Resolved` result for `checkout.container_order.allowed` (strategy `all`) when the `account` provider times out. Assume the behaviour in effect for the key is `skip`, and that no other scope contributes a value. The failure entry carries no `value`, and the result is the identity `true`. No `source` appears, because `all` is commutative ([PROV-45]).
+**Example (non-normative)**: a `Resolved` result for `checkout.container_order.allowed` (strategy `all`) when the `account` provider times out. The key takes `deny` from its `capability` kind, and no other scope contributes a value. The failure entry carries the deny value `false` ([SVC-9]), so the result is `false`. No `source` appears, because `all` is commutative ([PROV-45]).
 
 ```json
 {
   "key": "checkout.container_order.allowed",
   "strategy": "all",
   "kind": "capability",
-  "value": true,
+  "value": false,
   "bundleVersion": "sha256:<digest>",
   "skippedScopes": [],
   "contributions": [
-    { "scope": "level", "name": "account", "node": "A-1001", "effect": "UNAVAILABLE", "onSourceFailure": "skip" }
+    { "scope": "level", "name": "account", "node": "A-1001", "value": false, "effect": "UNAVAILABLE", "onSourceFailure": "deny" }
   ]
 }
 ```

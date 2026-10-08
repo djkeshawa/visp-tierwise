@@ -1,0 +1,6 @@
+# Path-mapped values file: scope division, node north (SRC-22, SRC-25).
+# The all veto: one false value denies container orders for this division (MERGE-17).
+# The window sets only close, a partial object (MERGE-11).
+checkout.container_order.allowed: false
+checkout.pickup.window:
+  close: "15:00"

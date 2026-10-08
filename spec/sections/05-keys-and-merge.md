@@ -33,7 +33,7 @@ This section defines what a key declaration contains, which scopes may hold valu
 
 **[KEY-8]** The `on_source_failure` member takes a value that [SVC-3] permits, and a kind may supply it under [KIND-9]. A key that is settable at a service-sourced level and has no source-failure behaviour in effect is reported as [SVC-1] and [SVC-2] require (`E_MISSING_SOURCE_FAILURE`). A key-level `on_source_failure` on a key that is settable at no service-sourced level is accepted with no effect ([SVC-7]).
 
-**[KEY-9]** The `description` and `owner` members are informational. Their presence, absence and content MUST NOT change any resolved value, decision or provenance record. The lint rules that require them are [LINT-44] (description) and [LINT-47] (owner). The `owner` member is one of the two ways a key has an owner, as [LINT-48] defines.
+**[KEY-9]** The `description` and `owner` members are informational, and each MUST be a string when present; any other value MUST be reported as `E_INVALID_DECLARATION` (ADR 0015). Their presence, absence and content MUST NOT change any resolved value, decision or provenance record. The lint rules that require them are [LINT-44] (description) and [LINT-47] (owner). The `owner` member is one of the two ways a key has an owner, as [LINT-48] defines.
 
 ## 5.2 Values for keys
 
@@ -178,7 +178,7 @@ A set result is returned in universe order ([TYPE-51]).
 
 **[KIND-2]** A key opts into a kind by naming it in its `kind` member, and kind names are compared after NFC normalisation. A key with no `kind` member is not constrained by any kind. A key names at most one kind.
 
-**[KIND-3]** A kind definition MAY contain these members: `strategies`, `narrowing_only`, `require_default`, `on_source_failure` and `naming`. A member that the definition omits imposes no constraint.
+**[KIND-3]** A kind definition MAY contain these members: `strategies`, `narrowing_only`, `require_default`, `on_source_failure` and `naming`. A member that the definition omits imposes no constraint. An empty `strategies` list MUST be reported as `E_KIND_DEFINITION` (ADR 0015).
 
 **[KIND-4]** When a kind definition has `strategies`, a key that uses the kind MUST use one of the listed strategies. A key that uses any other strategy MUST be reported as `E_KIND_VIOLATION`. A kind definition without `strategies` does not restrict the strategy.
 

@@ -1,18 +1,27 @@
+# Namespaced schema file for the checkout component (NS-3, NS-4, NS-5, NS-7).
+# It may declare only keys, features and the namespace. Every key here starts with
+# checkout. (NS-10) and therefore has an owner (LINT-48).
+
 namespace: checkout
 
 keys:
+  # Capability keys. They use the capability kind of tierwise:recommended (KIND-2).
+  # The two keys settable at the service-sourced account level take their
+  # source-failure behaviour from that kind (KIND-9, SVC-1).
   checkout.shipping.allowed_methods:
     kind: capability
     type: set
     universe: [GROUND, PICKUP, NEXT_DAY]
     combine: intersect
     settable_at: [global, channel, division, site, account, seller]
+    description: "The shipping methods that checkout may offer. Values narrow by intersection."
 
   checkout.container_order.allowed:
     kind: capability
     type: boolean
     combine: all
     settable_at: [channel, division, site, account]
+    description: "Whether a container order may be placed. Any false value vetoes it."
 
   checkout.order.allowed_max_lines:
     kind: capability
@@ -20,7 +29,11 @@ keys:
     min: 1
     combine: min
     settable_at: [global, division, site]
+    description: "The largest number of lines an order may have. The smallest bound wins."
 
+  # Configuration key with an override strategy, a default and a max across the
+  # seller axis (AXIS-7, AXIS-8). The hierarchy result and the axis result are
+  # compared, and the larger one wins.
   checkout.pickup.lead_hours:
     kind: configuration
     type: integer
@@ -30,11 +43,40 @@ keys:
     default: 4
     settable_at: [global, division, site, seller]
     combine_across_axes: max
+    description: "Hours of notice needed before a customer pickup. The larger of the hierarchy and seller values wins."
+
+  # Object key with deep_merge (MERGE-22). The default is a complete object
+  # (TYPE-62, MERGE-10). Other scopes may give partial objects (MERGE-11).
+  # slot_minutes is optional, so the default may omit it (TYPE-10, TYPE-66).
+  checkout.pickup.window:
+    kind: configuration
+    type: object
+    fields:
+      open:          { type: string, format: time_hhmm }
+      close:         { type: string, format: time_hhmm }
+      slot_minutes:  { type: integer, min: 5, max: 60, optional: true }
+    combine: deep_merge
+    default: { open: "08:00", close: "18:00" }
+    settable_at: [global, division, site]
+    description: "The daily pickup window. Each scope may change only the fields it sets."
 
 features:
+  # FEAT-1 to FEAT-21. A feature is decided per order (FEAT-4). The rules are in
+  # rules/checkout.order_submission.yaml.
   checkout.order_submission:
     decided_per: order
     returns: { enum: [ALLOW, DENY] }
     hit_policy: FIRST
     if_fact_missing: DENY
     binding_settable_at: [global, division, site]
+    description: "Whether an order may be submitted, decided for each order."
+
+  # A second feature, decided per invoice over its child orders (RULE-32 any_in).
+  # The rules are in rules/checkout.invoice_release.yaml.
+  checkout.invoice_release:
+    decided_per: invoice
+    returns: { enum: [RELEASE, HOLD] }
+    hit_policy: FIRST
+    if_fact_missing: HOLD
+    binding_settable_at: [global, division]
+    description: "Whether an invoice is released for payment, decided for each invoice from its orders."

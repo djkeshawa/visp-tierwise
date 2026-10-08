@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/values-file.schema.json",
+  "title": "Tierwise values file",
+  "description": "Structure of a values file (spec section 1, SRC-21 to SRC-31). A values file is a YAML mapping, read as UTF-8 under the core schema. There are two shapes. The entries shape is a map of key name to value: it is the content of a path-mapped file (SRC-25) and of a root file (SRC-26). The multi-node shape is a map of scope name to a section: it is the content of a multi-node file (SRC-29, SRC-30) and of inline manifest values (MANIFEST-15). The shape that applies is not stored in the file. It is chosen by the manifest entry that selects the file (SRC-21). The root below is therefore an anyOf, not a oneOf: the two shapes overlap, because a mapping such as { a: { x: 1 } } is valid under both, and a oneOf would reject valid files. The multi-node shape is also a subset of the entries shape (see multiNodeFile), so this schema cannot reject a multi-node file that is malformed below the first level. It checks only that no null appears at any depth (TYPE-76) and that the top-level keys are strings and the top-level values of a multi-node file are mappings. The manifest schema references multiNodeFile directly for inline values. Everything else is a compiler check: which shape the file must have (SRC-21), that a scope value is a mapping of nodes and a node value is a mapping of entries (SRC-31, E_SOURCE_MAPPING), node IDs (SCOPE-33, SCOPE-34, SCOPE-38, E_INVALID_NODE_ID), scope names (SRC-32, E_UNKNOWN_SCOPE), catalog membership (SCOPE-43), key names and value types (SRC-35, KEY-10 to KEY-13, TYPE-70), and the rule that a level declared 'values: service' has no values (SRC-33). A null found by this schema is reported by the compiler under TYPE-76 and TYPE-71.",
+  "anyOf": [
+    { "$ref": "#/$defs/entries" },
+    { "$ref": "#/$defs/multiNodeFile" }
+  ],
+  "$defs": {
+    "keyName": {
+      "type": "string",
+      "description": "A key name of a values entry. It must be a YAML string. A plain scalar that the core schema reads as a non-string, such as a number or a boolean, is not converted to a string and is reported by the compiler (SRC-11)."
+    },
+    "value": {
+      "type": ["boolean", "string", "number", "array", "object"],
+      "description": "A value of a key, at any depth: a boolean, a string, a number, a list or a mapping (TYPE-12, TYPE-28, TYPE-56, TYPE-65). Null is not a value of any type, so it is rejected at every depth, including as a list element and as an object field (TYPE-76, TYPE-56, TYPE-65); the compiler reports it under TYPE-71. Whether the value fits the key's declared type is checked by the compiler (KEY-13, TYPE-70).",
+      "items": { "$ref": "#/$defs/value" },
+      "additionalProperties": { "$ref": "#/$defs/value" }
+    },
+    "entries": {
+      "type": "object",
+      "description": "A map of key entries. This is the content of a path-mapped values file, whose path supplies its scope and node (SRC-22, SRC-25). It is also the content of a root values file (SRC-26), and the content of one node within a multi-node file (SRC-29) or of the root entry of a multi-node file (SRC-30). Each key name maps to one value. A key name that repeats is reported as E_DUPLICATE_KEY (SRC-3).",
+      "propertyNames": { "$ref": "#/$defs/keyName" },
+      "additionalProperties": { "$ref": "#/$defs/value" }
+    },
+    "scopeSection": {
+      "$ref": "#/$defs/entries",
+      "description": "The value of one scope name in a multi-node file. For the root level it is a map of key name to value with no node (SRC-30). For any other scope it is a map of node ID to the entries of that node (SRC-29). Both forms are mappings with non-null values, and this schema knows neither the root level's name nor the node IDs, so it checks only that the section is such a mapping. The compiler decides which form each scope must have and reports a section that is not a mapping of nodes, a node that is not a mapping of entries, or a root entry that is not a mapping of entries as E_SOURCE_MAPPING (SRC-31)."
+    },
+    "multiNodeFile": {
+      "type": "object",
+      "description": "The multi-node values file (SRC-29, SRC-30), and the shape of inline manifest values (MANIFEST-15). Each top-level key is a scope name, which is either the root level name (for root entries) or a non-root scope name; its value is a scopeSection. A scope that is declared 'values: service' must not appear here (SRC-33). This definition does not validate the node level: the node ID check (SCOPE-38, E_INVALID_NODE_ID), the scope-name check (SRC-32, E_UNKNOWN_SCOPE) and the node-structure check (SRC-31, E_SOURCE_MAPPING) are compiler checks. A file whose root is not a mapping is reported under SRC-6 (for inline values, under MANIFEST-15).",
+      "propertyNames": {
+        "type": "string",
+        "description": "A scope name, or the root level name. It must be a YAML string. An empty or undeclared name is reported by the compiler (SRC-23, SRC-32)."
+      },
+      "additionalProperties": { "$ref": "#/$defs/scopeSection" }
+    }
+  }
+}

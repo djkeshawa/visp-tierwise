@@ -1,0 +1,74 @@
+# Namespaced file for the pos namespace ([NS-3]). It holds only keys and features,
+# and every name starts with "pos." ([NS-4], [NS-5], [NS-10]).
+namespace: pos
+
+keys:
+  pos.basket.line_limit:
+    kind: guard
+    description: "Largest number of lines allowed in one basket."
+    type: integer
+    min: 1
+    max: 500
+    combine: min
+    settable_at: [platform, region, store, terminal]
+
+  pos.tender.allowed:
+    kind: guard
+    description: "Tenders accepted for a basket. Narrows at every level."
+    type: set
+    universe: [CASH, CARD, GIFT_CARD]
+    combine: intersect
+    settable_at: [platform, region, store, terminal]
+
+  pos.fraud.review_reasons:
+    description: "Reasons that send a basket to manual review. Collected from the platform, region and store levels and from every brand."
+    type: set
+    universe: [VELOCITY, MISMATCH, HIGH_VALUE, NEW_CARD]
+    combine: union
+    settable_at: [platform, region, store, brand]
+
+  pos.offline.allowed:
+    description: "Whether a terminal may keep taking baskets while it is offline."
+    type: boolean
+    combine: any
+    settable_at: [platform, region, store, terminal]
+    on_source_failure: skip
+
+  pos.pricing.max_discount_percent:
+    description: "Largest discount percentage that the platform, region or store level grants."
+    type: integer
+    min: 0
+    max: 100
+    combine: max
+    settable_at: [platform, region, store]
+
+  pos.receipt.header:
+    kind: setting
+    description: "Header block printed on the receipt. Fields merge across levels and brands."
+    type: object
+    fields:
+      title: { type: string }
+      show_store_address: { type: boolean }
+      footer_text: { type: string, optional: true }
+    default: { title: "Thank you", show_store_address: true }
+    combine: deep_merge
+    settable_at: [platform, region, store, brand]
+    combine_across_axes: axis_wins
+
+  pos.receipt.tax_label:
+    kind: setting
+    description: "Label printed for tax on the receipt. The brand wins over the hierarchy."
+    type: string
+    default: "Tax"
+    combine: override
+    settable_at: [platform, region, store, brand, terminal]
+    combine_across_axes: axis_wins
+
+features:
+  pos.basket_check:
+    decided_per: basket
+    returns: { enum: [APPROVE, REVIEW, REJECT] }
+    hit_policy: FIRST
+    if_fact_missing: REJECT
+    binding_settable_at: [platform, store]
+    description: "Whether a basket is approved, sent to manual review or rejected, decided for each basket."

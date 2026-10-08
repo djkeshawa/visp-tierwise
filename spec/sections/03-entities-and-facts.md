@@ -74,7 +74,7 @@ The terms *parent*, *ancestor*, *child*, *decided entity*, *single-value fact*, 
 
 **[FACT-12]** A compiler MUST NOT report an engine error for a declared fact that no rule references. Unused facts are a lint matter ([LINT-37], [LINT-39]).
 
-**[FACT-45]** A fact declaration MAY contain `type`, `source` ([FACT-10], [FACT-11]), `description`, and the type members that [TYPE-7] allows for its `type` ([FACT-9]). The `description` member is informational and is required only by the lint rule `schema/description-required` ([LINT-44]). A fact declaration with any other member MUST be reported as `E_INVALID_DECLARATION`.
+**[FACT-45]** A fact declaration MAY contain `type`, `source` ([FACT-10], [FACT-11]), `description`, and the type members that [TYPE-7] allows for its `type` ([FACT-9]). The `description` member is informational, MUST be a string when present, and is required only by the lint rule `schema/description-required` ([LINT-44]). A fact declaration with any other member MUST be reported as `E_INVALID_DECLARATION`.
 
 ## 3.3 Facts eligible for a decision
 

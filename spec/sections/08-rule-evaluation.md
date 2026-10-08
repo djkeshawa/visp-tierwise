@@ -35,7 +35,7 @@ The meaning of each form is defined in 8.6.
 
 **[RULE-9]** Every fact named in a condition MUST be a declared fact ([FACT-1]). A name that is not a declared fact MUST be reported as `E_UNKNOWN_FACT`, except that a name without the `<entity>.<attribute>` form is reported as [FACT-3] gives. The grammar of fact names is defined in [FACT-3].
 
-**[RULE-10]** A condition fact whose entity part is not a declared entity MUST be reported as `E_UNKNOWN_FACT`, under [RULE-9]. `E_UNKNOWN_ENTITY` is not reported for a condition fact.
+**[RULE-10]** A condition fact name that contains `.` and whose entity part is not a declared entity MUST be reported as `E_UNKNOWN_FACT`, under [RULE-9]; `E_UNKNOWN_ENTITY` is not reported for it. A condition fact name with no `.` follows [FACT-3] (ADR 0015).
 
 **[RULE-11]** A condition fact that is out of scope for the decision ([FACT-15]), and whose entity is reachable from the decided entity ([FEAT-4]) through two or more `has_many` edges ([ENTITY-11]), MUST be reported as `E_DEPTH_UNSUPPORTED`, whatever the form of the condition.
 
@@ -106,7 +106,7 @@ Within each group, the checks are taken in the order listed. [RULE-20] comes fir
 
 **[RULE-33]** On a child collection that is present and empty ([FACT-18]), a condition of the form `all_in` or `any_in` MUST NOT hold.
 
-**[RULE-34]** A condition of the form `in`, `all_in` or `any_in` whose operand list is empty, whether a literal `[]` or a setting whose resolved value is `[]`, MUST NOT hold. Such a rule can never match, and it is flagged by `rules/dead-rule` ([LINT-26]).
+**[RULE-34]** A condition of the form `in`, `all_in` or `any_in` whose operand list is empty, whether a literal `[]` or a setting whose resolved value is `[]`, MUST NOT hold. Such a rule can never match. A literal `[]` is flagged by `rules/dead-rule` ([LINT-26]); a setting reference is not ([LINT-28]).
 
 **[RULE-35]** `boolean`, `enum` and `string` values MUST be compared by code-point equality ([NORM-6]). Literal strings are NFC-normalised by the compiler ([NORM-1]). Fact values are compared as received ([NORM-3], [NORM-4]).
 

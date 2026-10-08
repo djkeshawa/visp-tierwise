@@ -49,6 +49,8 @@ The following terms are listed in `spec.md` §Terminology, and the clauses of th
 
 **[SRC-6]** A compiler MUST report `E_PARSE` for a source file or preset, other than the manifest, that holds more than one YAML document, or whose root node is not a mapping. An empty file has the root node null and is reported in the same way. For the manifest, the same faults are reported as `E_MANIFEST` ([MANIFEST-2]).
 
+**[SRC-45]** A top-level member of a schema file whose value is `null`, or is not of the shape its owning section requires (for example `keys` that is not a mapping), MUST be reported as `E_INVALID_DECLARATION`, unless the owning section names a more specific code (ADR 0015).
+
 **[SRC-7]** A compiler MUST report `E_YAML_FEATURE` for an explicit tag (for example `!!str`, or a local tag) and for an anchor (`&name`), in the manifest, in any source file and in any preset. Such a tag can give a scalar a type outside the core schema.
 
 **[SRC-8]** A finding about a node in a source file MUST be located as section 13 requires ([FIND-17] to [FIND-23]). A finding about a node in a preset is located as [FIND-18] requires.
@@ -80,7 +82,7 @@ The following terms are listed in `spec.md` §Terminology, and the clauses of th
 **[SRC-18]** A glob pattern in `sources.schema` or `sources.rules` is read as follows.
 
 - (a) `/` separates path segments. A pattern is relative to the project root.
-- (b) `*` matches any run of characters within one path segment. `**` spans directories.
+- (b) `*` matches any run of characters within one path segment. `**` as a whole segment matches zero or more whole directory segments, so `a/**/b.yaml` also matches `a/b.yaml` (ADR 0015).
 - (c) Matching is case-sensitive and compares code points.
 - (d) Hidden files and hidden directories are included in matches.
 - (e) A symbolic link is followed. A match whose resolved location lies outside the project root is reported under [MANIFEST-12].
@@ -246,7 +248,9 @@ The table summarises how items combine across presets and the project, following
 
 **[NS-8]** A schema file that a `namespaces` entry lists is selected even when no `sources.schema` pattern selects it. A file that both a pattern and a `namespaces` entry select is one namespaced file ([SRC-20] (c)).
 
-**[NS-9]** Namespace names are unique, as [SRC-3] and [SRC-4] define. A namespace name MUST NOT contain `.`, and a compiler MUST report a namespace name that does as `E_MANIFEST`. Each schema file MUST be listed under one namespace name only, and a compiler MUST report a second listing of the same file as `E_MANIFEST`.
+**[NS-9]** Namespace names are unique, as [SRC-3] and [SRC-4] define. A namespace name MUST be non-empty and MUST NOT contain `.`, and a compiler MUST report a namespace name that breaks this as `E_MANIFEST`. Each schema file MUST be listed under one namespace name only, and a compiler MUST report a second listing of the same file as `E_MANIFEST`.
+
+**[NS-12]** A preset MUST NOT contain the `namespace` key. A compiler MUST report a preset that does as `E_PRESET` (ADR 0015).
 
 **[NS-10]** A key or feature name in a namespaced file is in that file's namespace when it begins with the namespace name followed by `.`. So `<namespace>.<rest>` is in the namespace `<namespace>`. A shared file MAY declare names that begin with any namespace's prefix.
 

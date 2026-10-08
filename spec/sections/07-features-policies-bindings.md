@@ -4,7 +4,7 @@ This section covers feature declarations, the structure and validation of a rule
 
 ## 7.1 Feature declarations
 
-**[FEAT-1]** A feature declaration MUST declare `decided_per`, `returns`, `hit_policy`, `binding_settable_at` and `if_fact_missing`. A missing field is reported as [FEAT-2] decides.
+**[FEAT-1]** A feature declaration MUST declare `decided_per`, `returns`, `hit_policy`, `binding_settable_at` and `if_fact_missing`, and MAY declare `description`, an informational string ([LINT-44]) (ADR 0015). A missing field is reported as [FEAT-2] decides.
 
 **[FEAT-2]** A declaration in this section MUST be reported as `E_INVALID_DECLARATION` when it lacks a required member, has a member that its declaration does not allow, has a member of the wrong shape, or has an empty list where a non-empty list is required. This applies to every feature, rules file, policy, setting, rule, binding and example declaration in this section. Where another clause of this section names a code for the same case, that clause's code applies instead.
 

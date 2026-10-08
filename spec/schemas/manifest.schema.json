@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/manifest.schema.json",
+  "title": "Tierwise manifest (tierwise.yaml)",
+  "description": "Structure of the project manifest tierwise.yaml (section 1, MANIFEST, SRC and NS clauses). The schema checks shape only. Semantic checks stay in the compiler: that specVersion equals a version the compiler implements (MANIFEST-5), that a built-in preset name exists (MANIFEST-22), that path placeholders are well formed (SRC-23), that a glob resolves inside the project root (MANIFEST-12), that lint rule names are valid (LINT-10), and that engine error codes used as lint names are reported (LINT-8). Null is not an accepted value for any member (MANIFEST-7). Inline schema, values and rules content is validated against the file schemas it is written in, by $ref.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion"
+  ],
+  "properties": {
+    "specVersion": {
+      "type": "string",
+      "description": "The spec version the project is written against, as a string (MANIFEST-4). The only declaration of the spec version (MANIFEST-6). The compiler accepts only the version it implements, compared exactly (MANIFEST-5, MANIFEST-8). Write it quoted in YAML."
+    },
+    "extends": {
+      "type": "array",
+      "description": "Preset references, applied in list order before the project's own definitions (MANIFEST-19, MANIFEST-31). Each item is a built-in reference, a relative path to a preset file, or a URL reference with a SHA-256 digest (MANIFEST-20).",
+      "items": {
+        "$ref": "#/$defs/presetReference"
+      }
+    },
+    "sources": {
+      "$ref": "#/$defs/sources",
+      "description": "Glob patterns and values entries that select the project's source files (MANIFEST-10, MANIFEST-11)."
+    },
+    "schema": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json",
+      "description": "Inline shared schema content for a single-file project. It must be a mapping and is a shared file (MANIFEST-13, MANIFEST-14, NS-3). Its top-level keys follow the schema-file rules (SRC-14), except that namespace is not allowed because a shared file must not contain it (NS-7). A value that is not a mapping is E_MANIFEST (MANIFEST-14).",
+      "not": {
+        "required": [
+          "namespace"
+        ],
+        "description": "Inline schema content is a shared file (MANIFEST-14, NS-3), and a shared file must not contain the namespace key (NS-7). The compiler reports it as E_NAMESPACE_VIOLATION."
+      }
+    },
+    "values": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/values-file.schema.json#/$defs/multiNodeFile",
+      "description": "Inline values content: a mapping with the multi-node shape only, one entry per non-root scope holding nodes, and an entry for the root level holding key-value entries without a node (MANIFEST-15, SRC-29, SRC-30). The flat path-mapped and root shape (SRC-25, SRC-26) is not allowed inline. The $ref points at the multiNodeFile definition, not at the root of the values-file schema, which also accepts the flat shape. A value that is not a mapping is E_MANIFEST (MANIFEST-15); any other shape violation is E_SOURCE_MAPPING (SRC-31)."
+    },
+    "rules": {
+      "type": "array",
+      "description": "Inline rules content: a list with one rules document per feature (MANIFEST-13, MANIFEST-16). Two items that configure the same feature are a duplicate (SRC-44).",
+      "items": {
+        "$ref": "https://tierwise.github.io/schemas/0.1/rules-file.schema.json"
+      }
+    },
+    "namespaces": {
+      "type": "object",
+      "description": "Namespace names, each owning one schema file (NS-1, NS-2). Keys are namespace names. A name must not contain a dot (NS-9).",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[^.]*$",
+        "description": "A namespace name, which must not contain '.' (NS-9)."
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/namespaceEntry"
+      }
+    },
+    "lint": {
+      "$ref": "#/$defs/lint",
+      "description": "Lint settings: a mapping whose only key is rules, which sets the severity of lint rules (MANIFEST-37, MANIFEST-38, LINT-4)."
+    }
+  },
+  "$defs": {
+    "presetReference": {
+      "description": "One item of extends (MANIFEST-20). Either a string (a built-in reference such as tierwise:<name>, or a relative path to a preset file, MANIFEST-21, MANIFEST-23) or a URL reference mapping (MANIFEST-25).",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "A built-in reference of the form tierwise:<name> (MANIFEST-21), or a relative path to a preset file that does not begin with tierwise: (MANIFEST-23). The compiler tells them apart and checks the name or path."
+        },
+        {
+          "$ref": "#/$defs/urlPresetReference"
+        }
+      ]
+    },
+    "urlPresetReference": {
+      "type": "object",
+      "description": "A URL preset reference with exactly two keys (MANIFEST-26). The digest is computed over the exact bytes retrieved and is verified before any preset content is read (MANIFEST-29).",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "sha256"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^[Hh][Tt][Tt][Pp][Ss]://",
+          "description": "An https URL of the preset file (MANIFEST-26). The scheme is matched case-insensitively (RFC 3986, section 3.1)."
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "The SHA-256 digest of the preset's exact bytes, as 64 lowercase hexadecimal digits (MANIFEST-26)."
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "description": "The source lists of the project. Each key is optional and no other key is allowed (MANIFEST-10).",
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "type": "array",
+          "description": "Glob patterns, relative to the project root, that select schema files (MANIFEST-11, SRC-18). A file matched by two patterns is selected once (SRC-20 (b)).",
+          "items": {
+            "type": "string",
+            "description": "A glob pattern: '/' separates segments, '*' matches within one segment, '**' spans directories (SRC-18)."
+          }
+        },
+        "values": {
+          "type": "array",
+          "description": "Values entries, each of exactly one of the three shapes: path-mapped, root or multi-node (SRC-21). A file may be selected by only one entry (SRC-34).",
+          "items": {
+            "$ref": "#/$defs/valuesEntry"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "description": "Glob patterns, relative to the project root, that select rules files (MANIFEST-11, SRC-18).",
+          "items": {
+            "type": "string",
+            "description": "A glob pattern that selects rules files (SRC-18)."
+          }
+        }
+      }
+    },
+    "valuesEntry": {
+      "description": "One item of sources.values. Exactly one of the three shapes of SRC-21 applies. The shapes are mutually exclusive because each forbids the members of the others. An item that matches none of them is E_SOURCE_MAPPING (SRC-21), not E_MANIFEST, so the compiler must map a failure at this item to E_SOURCE_MAPPING.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/pathMappedValuesEntry"
+        },
+        {
+          "$ref": "#/$defs/rootValuesEntry"
+        },
+        {
+          "$ref": "#/$defs/multiNodeValuesEntry"
+        }
+      ]
+    },
+    "pathMappedValuesEntry": {
+      "type": "object",
+      "description": "A path-mapped entry (SRC-21, SRC-22). The pattern names the scope and node of each values file it selects through its {scope} and {node} placeholders. Placeholder counts and positions are checked by the compiler (SRC-23).",
+      "additionalProperties": false,
+      "required": [
+        "pattern"
+      ],
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "A path pattern containing {scope} and {node} placeholders, for example values/{scope}/{node}.yaml (SRC-22, SRC-23)."
+        }
+      }
+    },
+    "rootValuesEntry": {
+      "type": "object",
+      "description": "A root entry (SRC-21, SRC-26). The file holds values for the root level. The scope names the root level (SRC-27).",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "scope"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "The path of the root values file, relative to the project root (MANIFEST-12, SRC-17)."
+        },
+        "scope": {
+          "type": "string",
+          "description": "The name of the root level that the file's values belong to (SRC-27)."
+        }
+      }
+    },
+    "multiNodeValuesEntry": {
+      "type": "object",
+      "description": "A multi-node entry (SRC-21, SRC-29). The file holds values for several scopes and nodes, in the shape of SRC-29 and SRC-30.",
+      "additionalProperties": false,
+      "required": [
+        "file"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "The path of the multi-node values file, relative to the project root (MANIFEST-12, SRC-17)."
+        }
+      }
+    },
+    "namespaceEntry": {
+      "type": "object",
+      "description": "The value of one namespace name (NS-2). Its only key is schema.",
+      "additionalProperties": false,
+      "required": [
+        "schema"
+      ],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "description": "The path of the one schema file this namespace owns, relative to the project root (NS-2, MANIFEST-12). The file is namespaced (NS-3)."
+        }
+      }
+    },
+    "lint": {
+      "type": "object",
+      "description": "Lint configuration (MANIFEST-37). Its only key is rules. Used by the manifest and by presets (MANIFEST-36).",
+      "additionalProperties": false,
+      "properties": {
+        "rules": {
+          "$ref": "#/$defs/lintRules",
+          "description": "Mapping from lint rule identifiers to severities (MANIFEST-38). Rule names are checked by the compiler (LINT-8, LINT-10)."
+        }
+      }
+    },
+    "lintRules": {
+      "type": "object",
+      "description": "A mapping from lint rule identifiers to severities (MANIFEST-38). Rule names are not listed here. The compiler checks each name against the lint rules, the naming/* wildcard and the engine error codes, and reports an invalid name as E_MANIFEST or E_PRESET (LINT-8, LINT-10). An engine error code is reported as E_PRESET whatever its value (LINT-8).",
+      "additionalProperties": {
+        "$ref": "#/$defs/severity"
+      }
+    },
+    "severity": {
+      "type": "string",
+      "description": "A lint severity (LINT-3). An unlisted value is reported under LINT-10 (c) with the code that LINT-10 (b) gives.",
+      "enum": [
+        "error",
+        "warn",
+        "info",
+        "off"
+      ]
+    }
+  }
+}

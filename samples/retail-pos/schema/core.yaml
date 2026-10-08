@@ -1,0 +1,57 @@
+# Shared schema for sample domain B (retail POS). Shared files hold the hierarchy,
+# entities, facts, kinds and naming patterns ([NS-3], [ENTITY-2], [FACT-4]).
+# This project extends no preset: the kinds and naming patterns below are the
+# project's own (see tierwise.yaml).
+
+decision_hierarchy:
+  levels: [platform, region, store, terminal]
+  axes: [brand]
+  scopes:
+    region:   { nodes: [coastal, inland, upland], on_unknown_node: error }
+    store:    { nodes: [harbor_street, meadow_square], on_unknown_node: ignore }
+    terminal: { nodes: open, values: service }
+    brand:    { nodes: [harbor_foods, meadow_goods], on_unknown_node: error }
+
+entity_hierarchy:
+  shopper: {}
+  basket:  { belongs_to: shopper, has_many: line }
+  line:    {}
+
+facts:
+  shopper.tier:
+    type: enum
+    values: [STANDARD, GOLD, STAFF]
+    source: loyalty-service
+    description: "Loyalty tier of the shopper."
+  shopper.fraud_flag:
+    type: boolean
+    source: fraud-service
+    description: "True while a fraud flag is set on the shopper."
+  basket.tender:
+    type: enum
+    values: [CASH, CARD, GIFT_CARD]
+    source: basket-service
+    description: "Tender the shopper offers for the whole basket."
+  line.category:
+    type: enum
+    values: [GROCERY, GENERAL, ALCOHOL, PHARMACY, GIFT_CARD_SALE]
+    source: catalog-service
+    description: "Merchandise category of one basket line."
+
+kinds:
+  guard:
+    strategies: [all, intersect, min]
+    narrowing_only: true
+    on_source_failure: deny
+    naming: guard_key
+  setting:
+    strategies: [override, deep_merge]
+    require_default: true
+    on_source_failure: skip
+
+naming:
+  key:        { category: key,        pattern: '^[a-z]+(\.[a-z_]+){2}$',     description: "Keys have three dotted segments." }
+  guard_key:  { category: key,        pattern: '\.(allowed|[a-z_]+_limit)$', description: "Guard keys end in allowed or _limit." }
+  enum_value: { category: enum_value, pattern: '^[A-Z][A-Z0-9_]*$' }
+  node_id:    { category: node_id,    pattern: '^[a-z][a-z0-9_]*$' }
+  feature:    { category: feature,    pattern: '^[a-z]+\.[a-z_]+$' }

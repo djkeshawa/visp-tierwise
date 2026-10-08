@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/preset.schema.json",
+  "title": "Tierwise preset",
+  "description": "Structure of a preset document (MANIFEST-19 to MANIFEST-36). A preset is a reusable set of kinds, naming patterns and lint settings that a project extends. Its top-level keys are the schema-file keys of SRC-14 plus lint, and it never contains extends (MANIFEST-35, MANIFEST-36). The schema checks shape only. Semantic checks stay in the compiler: duplicate definitions (SRC-39, SRC-40, SRC-43), invalid naming patterns and declarations (LINT-14 to LINT-17, reported as E_PRESET), lint settings that name engine error codes (LINT-8), and invalid lint names or severities (LINT-10). A preset is read only while compiling and is not part of the bundle (BUNDLE-109). It does not declare a spec version (MANIFEST-6).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "decision_hierarchy": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/decision_hierarchy",
+      "description": "The decision hierarchy declaration (SCOPE area, section 2). A preset may declare it, and it is declared at most once across all sources (SRC-39)."
+    },
+    "entity_hierarchy": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/entity_hierarchy",
+      "description": "The entity hierarchy declaration (ENTITY area, section 3). Declared at most once across all sources (SRC-39)."
+    },
+    "facts": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/facts",
+      "description": "Fact declarations (FACT area, section 3). Each fact is declared at most once across all sources (SRC-40)."
+    },
+    "kinds": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/kinds",
+      "description": "Kind definitions (KIND area, section 5). A kind defined here may be replaced by a later layer (MANIFEST-32)."
+    },
+    "naming": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/naming",
+      "description": "Naming patterns, a mapping from pattern name to an entry with category, pattern and optional description (LINT-14). A naming member that breaks this form is E_PRESET in a preset (LINT-14, MANIFEST-36). A pattern that a later layer redefines replaces the earlier one (MANIFEST-32)."
+    },
+    "keys": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/keys",
+      "description": "Key declarations (KEY area, section 5). Each key is declared at most once across all sources (SRC-40)."
+    },
+    "features": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/features",
+      "description": "Feature declarations (FEAT area, section 7). Each feature is declared at most once across all sources (SRC-40)."
+    },
+    "namespace": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/schema-file.schema.json#/properties/namespace",
+      "description": "The namespace key. MANIFEST-36 allows every key that SRC-14 allows in a schema file, and SRC-14 lists namespace, so the schema accepts it. No clause defines its meaning in a preset: NS-3 and NS-7 tie it to namespaced and shared schema files, and a preset is neither. This is an open point for the section 1 owner. Until it is ruled on, the compiler behaviour for namespace in a preset is undefined."
+    },
+    "lint": {
+      "$ref": "https://tierwise.github.io/schemas/0.1/manifest.schema.json#/$defs/lint",
+      "description": "Lint settings for the preset: a mapping whose only key is rules, which sets lint rule severities. A setting that names an engine error code is E_PRESET whatever its value (LINT-8). Severities resolve in layer order (LINT-4, MANIFEST-31)."
+    }
+  },
+  "not": {
+    "required": [
+      "namespace"
+    ]
+  }
+}

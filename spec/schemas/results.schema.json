@@ -1,0 +1,553 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tierwise.github.io/schemas/0.1/results.schema.json",
+  "title": "Tierwise results",
+  "description": "The shapes of the Resolved result and the Decision result (spec section 9), as $defs. Evaluate vectors reference ResolvedMembers and DecisionMembers for exact matching ([VEC-63]). The closed Resolved and Decision defs are the strict result shapes ([PROV-1], [PROV-11], [PROV-63]). Rules that need information outside the result are semantic and are not encoded here: which scope is the root level, whether a key opts into a kind, whether a value is absent, whether a value has the type of its key, and which of its two labels an intersect entry takes. The label of a value entry that [PROV-38] fixes by strategy and value alone is encoded in ResolvedMembers.",
+  "oneOf": [
+    { "$ref": "#/$defs/Resolved" },
+    { "$ref": "#/$defs/Decision" }
+  ],
+  "$defs": {
+    "bundleVersion": {
+      "description": "A bundleVersion: the string sha256: followed by 64 lowercase hexadecimal digits ([BUNDLE-5]).",
+      "type": "string",
+      "minLength": 71,
+      "maxLength": 71,
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "strategy": {
+      "description": "A key's merge strategy, the value of its combine member. The commutative strategies are all, any, intersect, union, min and max. The order-dependent strategies are override and deep_merge ([MERGE-1], [PROV-13]).",
+      "type": "string",
+      "enum": ["all", "any", "intersect", "union", "min", "max", "override", "deep_merge"]
+    },
+    "scopeKind": {
+      "description": "Kind of a scope: a level, or an axis ([PROV-23]).",
+      "type": "string",
+      "enum": ["level", "axis"]
+    },
+    "contributionLabel": {
+      "description": "Contribution label, the effect member of a contribution entry. The value labels are VETO, IGNORED, WIDENED, NARROWED and SET. The failure labels are UNAVAILABLE and INVALID ([PROV-24], [PROV-38], [PROV-39], [PROV-40]).",
+      "type": "string",
+      "enum": ["VETO", "IGNORED", "WIDENED", "NARROWED", "SET", "UNAVAILABLE", "INVALID"]
+    },
+    "valueEntryShape": {
+      "description": "Recognises a value entry in a contribution list: an entry whose effect is present and is not a failure label ([PROV-38], section 9.3). It is used only as the condition of an if. A failure entry is recognised by its label, UNAVAILABLE or INVALID.",
+      "required": ["effect"],
+      "properties": {
+        "effect": { "not": { "enum": ["UNAVAILABLE", "INVALID"] } }
+      }
+    },
+    "SourceRef": {
+      "description": "The source of an order-dependent value: the winning scope, and its node when the scope is not the root level ([PROV-46], [PROV-47]).",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Kind of the winning scope: level or axis.",
+          "$ref": "#/$defs/scopeKind"
+        },
+        "name": {
+          "description": "Declared name of the winning scope.",
+          "type": "string",
+          "minLength": 1
+        },
+        "node": {
+          "description": "Node ID of the winning scope. Present if and only if the winning scope is not the root level ([PROV-47]).",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["scope", "name"],
+      "additionalProperties": false
+    },
+    "Contribution": {
+      "description": "One contribution entry: a value entry, or a failure entry (section 9.3). A failure entry has the label UNAVAILABLE or INVALID and carries onSourceFailure. Under skip it has no value. Under deny it has the deny value ([PROV-22] to [PROV-33], [PROV-41]).",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Kind of the contributing scope: level or axis ([PROV-23]).",
+          "$ref": "#/$defs/scopeKind"
+        },
+        "name": {
+          "description": "Declared name of the contributing scope ([PROV-23]).",
+          "type": "string",
+          "minLength": 1
+        },
+        "node": {
+          "description": "Node ID that the context supplies for the scope. Present if and only if the scope is not the root level ([PROV-25], [PROV-26]).",
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "description": "Value that the scope contributes, as validated, or the deny value of a failure entry under deny ([PROV-27] to [PROV-29]). Never JSON null ([PROV-31]).",
+          "not": { "type": "null" }
+        },
+        "effect": {
+          "description": "Contribution label ([PROV-24]). This is not the effect of a decision.",
+          "$ref": "#/$defs/contributionLabel"
+        },
+        "onSourceFailure": {
+          "description": "Source-failure behaviour in effect for the key. Present if and only if the entry is a failure entry ([PROV-32], [PROV-33]).",
+          "type": "string",
+          "enum": ["skip", "deny"]
+        }
+      },
+      "required": ["scope", "name", "effect"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "description": "A failure entry has onSourceFailure. A value entry does not ([PROV-32]). A failure entry under skip has no value, and under deny it has a value ([PROV-27], [PROV-30]).",
+          "if": {
+            "required": ["effect"],
+            "properties": {
+              "effect": { "enum": ["UNAVAILABLE", "INVALID"] }
+            }
+          },
+          "then": {
+            "required": ["onSourceFailure"],
+            "allOf": [
+              {
+                "if": {
+                  "required": ["onSourceFailure"],
+                  "properties": { "onSourceFailure": { "const": "skip" } }
+                },
+                "then": { "not": { "required": ["value"] } }
+              },
+              {
+                "if": {
+                  "required": ["onSourceFailure"],
+                  "properties": { "onSourceFailure": { "const": "deny" } }
+                },
+                "then": { "required": ["value"] }
+              }
+            ]
+          },
+          "else": {
+            "required": ["value"],
+            "not": { "required": ["onSourceFailure"] }
+          }
+        }
+      ]
+    },
+    "SkippedScope": {
+      "description": "One skipped scope: a scope that admission skipped under on_unknown_node: ignore ([PROV-54], [PROV-55]).",
+      "type": "object",
+      "properties": {
+        "scope": {
+          "description": "Kind of the skipped scope: level or axis.",
+          "$ref": "#/$defs/scopeKind"
+        },
+        "name": {
+          "description": "Declared name of the skipped scope.",
+          "type": "string",
+          "minLength": 1
+        },
+        "node": {
+          "description": "The unknown node ID that the context supplied for the scope.",
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "description": "Reason for the skip. UNKNOWN_NODE is the only reason in this version ([PROV-55]).",
+          "type": "string",
+          "const": "UNKNOWN_NODE"
+        }
+      },
+      "required": ["scope", "name", "node", "reason"],
+      "additionalProperties": false
+    },
+    "Binding": {
+      "description": "The selected binding of a decision: its level, and its node when the level is not the root level ([PROV-68] to [PROV-70]).",
+      "type": "object",
+      "properties": {
+        "level": {
+          "description": "Level of the selected binding.",
+          "type": "string",
+          "minLength": 1
+        },
+        "node": {
+          "description": "Node ID that the context supplies for the level. Present if and only if the level is not the root level ([PROV-69]).",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["level"],
+      "additionalProperties": false
+    },
+    "Reason": {
+      "description": "The reason of a decision. Exactly one of three shapes, distinguished by type ([PROV-73]).",
+      "oneOf": [
+        {
+          "description": "A rule matched: the id and name of the winning rule ([PROV-74]).",
+          "type": "object",
+          "properties": {
+            "type": { "description": "Reason kind.", "const": "RULE" },
+            "id": { "description": "Id of the winning rule.", "type": "string", "minLength": 1 },
+            "name": { "description": "Name of the winning rule.", "type": "string" }
+          },
+          "required": ["type", "id", "name"],
+          "additionalProperties": false
+        },
+        {
+          "description": "No rule matched: the policy default applies ([PROV-75]).",
+          "type": "object",
+          "properties": {
+            "type": { "description": "Reason kind.", "const": "DEFAULT" }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "description": "The missing-fact precheck failed ([PROV-76], [PROV-77]).",
+          "type": "object",
+          "properties": {
+            "type": { "description": "Reason kind.", "const": "MISSING_FACT" },
+            "facts": {
+              "description": "Names of the missing facts, in the order that [RULE-44] gives. The list is never empty, because the precheck fails only when at least one fact is missing ([RULE-42]).",
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          },
+          "required": ["type", "facts"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "TraceFailure": {
+      "description": "The first failing condition of a rule that did not match ([PROV-81]).",
+      "type": "object",
+      "properties": {
+        "fact": {
+          "description": "Name of the fact of the failing condition.",
+          "type": "string",
+          "minLength": 1
+        },
+        "op": {
+          "description": "Operator of the failing condition.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["fact", "op"],
+      "additionalProperties": false
+    },
+    "TraceEntry": {
+      "description": "One trace entry: a rule that was checked, whether it matched, and for a rule that did not match, its first failing condition ([PROV-78] to [PROV-81]).",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Id of the rule that this entry describes.",
+          "type": "string",
+          "minLength": 1
+        },
+        "matched": {
+          "description": "Whether all conditions of the rule hold ([RULE-53]).",
+          "type": "boolean"
+        },
+        "failed": {
+          "description": "The first failing condition. Present if and only if matched is false ([PROV-80]).",
+          "$ref": "#/$defs/TraceFailure"
+        }
+      },
+      "required": ["id", "matched"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "description": "failed is present if and only if matched is false ([PROV-80]).",
+          "if": {
+            "required": ["matched"],
+            "properties": { "matched": { "const": false } }
+          },
+          "then": { "required": ["failed"] },
+          "else": { "not": { "required": ["failed"] } }
+        }
+      ]
+    },
+    "ResolvedMembers": {
+      "description": "The members of a Resolved result, without the closure rule. This def is the open form that evaluate vectors use for exact matching, which adds providerCalls and then closes the mapping. Use Resolved to validate a real result. Every member has the meaning of section 9.2.",
+      "type": "object",
+      "properties": {
+        "key": {
+          "description": "Declared name of the key ([PROV-12]).",
+          "type": "string",
+          "minLength": 1
+        },
+        "strategy": {
+          "description": "The key's merge strategy ([PROV-13]).",
+          "$ref": "#/$defs/strategy"
+        },
+        "kind": {
+          "description": "Name of the kind that the key opts into. Present if and only if the key opts into a kind ([PROV-14], [PROV-15]). Whether a key opts in is not visible in the result, so presence is not checked here.",
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "description": "The key's result in the JSON encoding of its type ([PROV-16]). It is JSON null if and only if the result is absent ([PROV-17], [MERGE-6]). Absence is not checked here."
+        },
+        "bundleVersion": {
+          "description": "bundleVersion of the bundle that the evaluator loaded ([PROV-18]).",
+          "$ref": "#/$defs/bundleVersion"
+        },
+        "skippedScopes": {
+          "description": "Skipped scopes, in declared level order and then declared axis order ([PROV-58]). An empty array when there are none ([PROV-7]).",
+          "type": "array",
+          "items": { "$ref": "#/$defs/SkippedScope" }
+        },
+        "contributions": {
+          "description": "Contribution entries, in evaluation-path order ([PROV-34]). An empty array when there are none ([PROV-7]).",
+          "type": "array",
+          "items": { "$ref": "#/$defs/Contribution" }
+        },
+        "source": {
+          "description": "Source of an order-dependent value: the string DEFAULT, or the winning scope. Present if and only if the strategy is override or deep_merge ([PROV-45], [PROV-46]).",
+          "oneOf": [
+            { "const": "DEFAULT" },
+            { "$ref": "#/$defs/SourceRef" }
+          ]
+        }
+      },
+      "required": ["key", "strategy", "value", "bundleVersion", "skippedScopes", "contributions"],
+      "allOf": [
+        {
+          "description": "An order-dependent key has no failure entry under deny, because deny applies only to narrowing strategies ([PROV-49], [SVC-11]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "enum": ["override", "deep_merge"] } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "not": {
+                    "required": ["onSourceFailure"],
+                    "properties": { "onSourceFailure": { "const": "deny" } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for all: false is VETO and true is IGNORED ([PROV-38]). A failure entry keeps its failure label and is not constrained ([PROV-41]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "const": "all" } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": {
+                    "allOf": [
+                      {
+                        "if": { "required": ["value"], "properties": { "value": { "const": false } } },
+                        "then": { "properties": { "effect": { "const": "VETO" } } }
+                      },
+                      {
+                        "if": { "required": ["value"], "properties": { "value": { "const": true } } },
+                        "then": { "properties": { "effect": { "const": "IGNORED" } } }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for any: true is WIDENED and false is IGNORED ([PROV-38]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "const": "any" } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": {
+                    "allOf": [
+                      {
+                        "if": { "required": ["value"], "properties": { "value": { "const": true } } },
+                        "then": { "properties": { "effect": { "const": "WIDENED" } } }
+                      },
+                      {
+                        "if": { "required": ["value"], "properties": { "value": { "const": false } } },
+                        "then": { "properties": { "effect": { "const": "IGNORED" } } }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for intersect: NARROWED for a strict subset of the universe, IGNORED for the full universe. Which one applies needs the universe, so only the two allowed labels are checked here ([PROV-38]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "const": "intersect" } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": { "properties": { "effect": { "enum": ["NARROWED", "IGNORED"] } } }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for union: IGNORED for the empty set and WIDENED for a non-empty set ([PROV-38]). A set value is a JSON array ([PROV-86]), so the test needs no universe.",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "const": "union" } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": {
+                    "allOf": [
+                      {
+                        "if": { "required": ["value"], "properties": { "value": { "type": "array", "maxItems": 0 } } },
+                        "then": { "properties": { "effect": { "const": "IGNORED" } } }
+                      },
+                      {
+                        "if": { "required": ["value"], "properties": { "value": { "type": "array", "minItems": 1 } } },
+                        "then": { "properties": { "effect": { "const": "WIDENED" } } }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for min is NARROWED ([PROV-38]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "const": "min" } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": { "properties": { "effect": { "const": "NARROWED" } } }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for max is WIDENED ([PROV-38]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "const": "max" } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": { "properties": { "effect": { "const": "WIDENED" } } }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "Label of a value entry for override and deep_merge is SET, whatever the value ([PROV-38]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": { "strategy": { "enum": ["override", "deep_merge"] } }
+          },
+          "then": {
+            "properties": {
+              "contributions": {
+                "items": {
+                  "if": { "$ref": "#/$defs/valueEntryShape" },
+                  "then": { "properties": { "effect": { "const": "SET" } } }
+                }
+              }
+            }
+          }
+        },
+        {
+          "description": "source is present if and only if the strategy is override or deep_merge ([PROV-45]).",
+          "if": {
+            "required": ["strategy"],
+            "properties": {
+              "strategy": { "enum": ["override", "deep_merge"] }
+            }
+          },
+          "then": { "required": ["source"] },
+          "else": { "not": { "required": ["source"] } }
+        }
+      ]
+    },
+    "Resolved": {
+      "description": "A Resolved result, closed to the members that [PROV-11] allows ([PROV-10], [PROV-11]).",
+      "allOf": [
+        { "$ref": "#/$defs/ResolvedMembers" }
+      ],
+      "unevaluatedProperties": false
+    },
+    "DecisionMembers": {
+      "description": "The members of a Decision result, without the closure rule. This def is the open form that evaluate vectors use for exact matching, which adds providerCalls and then closes the mapping. Use Decision to validate a real result. Every member has the meaning of section 9.6.",
+      "type": "object",
+      "properties": {
+        "feature": {
+          "description": "Declared feature name ([PROV-64]).",
+          "type": "string",
+          "minLength": 1
+        },
+        "effect": {
+          "description": "The effect that the decision returns, in the form that the feature's returns declaration gives: a string from its enum, null when the enum is nullable, or an object for the object form ([PROV-65], [PROV-66]). The value is returned unchanged ([PROV-67]).",
+          "type": ["string", "null", "object"]
+        },
+        "bundleVersion": {
+          "description": "bundleVersion of the bundle that the evaluator loaded ([PROV-18]).",
+          "$ref": "#/$defs/bundleVersion"
+        },
+        "skippedScopes": {
+          "description": "Skipped scopes, in declared level order and then declared axis order ([PROV-58]). An empty array when there are none ([PROV-7]).",
+          "type": "array",
+          "items": { "$ref": "#/$defs/SkippedScope" }
+        },
+        "binding": {
+          "description": "The selected binding ([PROV-68]). Always present ([PROV-72]).",
+          "$ref": "#/$defs/Binding"
+        },
+        "policy": {
+          "description": "Name of the policy of the selected binding ([PROV-71]). Always present ([PROV-72]).",
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "description": "Why the effect was returned ([PROV-73]).",
+          "$ref": "#/$defs/Reason"
+        },
+        "trace": {
+          "description": "Rules checked, in rule order, under the FIRST hit policy ([PROV-82]). An empty array when there are none ([PROV-7], [PROV-84]).",
+          "type": "array",
+          "items": { "$ref": "#/$defs/TraceEntry" }
+        }
+      },
+      "required": ["feature", "effect", "bundleVersion", "skippedScopes", "binding", "policy", "reason", "trace"]
+    },
+    "Decision": {
+      "description": "A Decision result, closed to the members that [PROV-62] lists and that [PROV-63] allows. It has no contributions and no source.",
+      "allOf": [
+        { "$ref": "#/$defs/DecisionMembers" }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

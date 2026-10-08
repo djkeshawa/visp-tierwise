@@ -1,0 +1,27 @@
+# Multi-node values file ([SRC-29]): <scope>: { <node>: { key: value } }.
+# It covers the region, store and brand scopes. The terminal level is service-sourced,
+# so it has no values here ([SCOPE-47]).
+region:
+  coastal:
+    pos.tender.allowed: [CASH]
+  inland:
+    pos.tender.allowed: [CARD]
+    pos.pricing.max_discount_percent: 15
+    pos.receipt.header: { footer_text: "Returns within 30 days" }
+    pos.receipt.tax_label: "GST"
+store:
+  harbor_street:
+    pos.basket.line_limit: 80
+    pos.tender.allowed: [CASH, CARD]
+    pos.fraud.review_reasons: [HIGH_VALUE, NEW_CARD]
+    pos.offline.allowed: true
+    pos.pricing.max_discount_percent: 20
+  meadow_square:
+    pos.basket.line_limit: 50
+brand:
+  harbor_foods:
+    pos.fraud.review_reasons: [NEW_CARD]
+    pos.receipt.tax_label: "GST"
+  meadow_goods:
+    pos.receipt.header: { title: "Meadow Goods thanks you" }
+    pos.receipt.tax_label: "VAT"

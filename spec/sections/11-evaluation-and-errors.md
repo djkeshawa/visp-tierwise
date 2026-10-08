@@ -102,7 +102,7 @@ Steps 4 to 6 raise no error. A missing fact is not an error ([FACT-21], [RULE-42
 
 **[EVAL-27]** Create evaluator MUST raise `E_EVALUATOR_OPTIONS` when the options register a provider for a level that the bundle does not declare, for a declared level that is not service-sourced, or twice for one level ([SVC-14]). Only create evaluator raises this code.
 
-**[EVAL-28]** An omitted options argument MUST count as empty options, with no provider and no listener. The listener is optional. Options that are present but are not a map MUST raise `E_EVALUATOR_OPTIONS`. A timeout is valid only when it is a positive integer number of milliseconds ([SVC-38], [SVC-41]). A timeout that is not valid MUST raise `E_EVALUATOR_OPTIONS`. Whether a provider registered with no timeout is invalid is open in [SVC-48], which ADR 0013 does not decide.
+**[EVAL-28]** An omitted options argument MUST count as empty options, with no provider and no listener. The listener is optional. Options that are present but are not a map MUST raise `E_EVALUATOR_OPTIONS`. A timeout is valid only when it is a positive integer number of milliseconds ([SVC-38], [SVC-41]). A timeout that is not valid MUST raise `E_EVALUATOR_OPTIONS`. A provider registered with no timeout is handled by [SVC-48].
 
 **[EVAL-29]** `E_PROVIDER_REQUIRED` MUST be raised only by the synchronous variant of resolve, at step 3 of [EVAL-16], under [SVC-42]. It is raised instead of the provider call.
 

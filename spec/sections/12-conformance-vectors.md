@@ -65,7 +65,7 @@ Every vector, and the `expected.yaml` of every compile case, carries the fields 
 
 **[VEC-18]** A vector under `evaluate/` MUST have `call` and MUST NOT have `primitive`. A vector under `canonical/` MUST have `primitive` and MUST NOT have `call`. A compile case and a provenance case MUST have neither. A mismatch between the directory and these fields is a runner failure.
 
-**[VEC-19]** A vector or `expected.yaml` that has a field the schema does not define, at any depth, including inside `expect`, `providers` and each stub outcome, MUST be a runner failure. Enforcer: the schema, and the runner for any field that the schema admits only by pattern.
+**[VEC-19]** A vector or `expected.yaml` that has a field the schema does not define, at any depth, including inside `expect`, `providers` and each stub outcome, MUST be a runner failure. The contents of `context` and `input` are exempt: they are passed to the operation unchanged, so that shape errors under [CTX-1] and [FACT-24] can be tested (ADR 0015). Enforcer: the schema, and the runner for any field that the schema admits only by pattern.
 
 **[VEC-20]** The JSON Schemas for vectors MUST set `additionalProperties` to `false` in every object that has a fixed set of fields. Enforcer: check tool (validates the schemas).
 

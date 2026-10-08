@@ -1,0 +1,75 @@
+# Rules for feature checkout.order_submission, decided per order (FEAT-4).
+# Shape per POL-1, POL-6 to POL-9 and POL-28 to POL-33.
+# The examples cover every binding: the root (credit_check, as the example with
+# channel web selects it), division north and division south (LINT-29, LINT-30).
+
+feature: checkout.order_submission
+
+policies:
+  credit_check:
+    # POL-11, POL-12, POL-15: a list_of setting over the child fact item.stock_type.
+    # Its default [] is a valid list (POL-15). A binding may change it (BIND-23).
+    settings:
+      allowed_on_credit_hold: { list_of: item.stock_type, default: [] }
+    default: DENY
+    rules:
+      # RULE-7: every condition holds. Conditions are checked in code-point order (RULE-8).
+      - id: good-credit
+        name: Good credit
+        when:
+          customer.active: true
+          customer.credit_hold: false
+        then: ALLOW
+      # RULE-31: all_in on a child fact. The setting reference is RULE-4 and RULE-23.
+      - id: credit-hold-allowed-stock
+        name: On credit hold, every item is an allowed stock type
+        when:
+          customer.active: true
+          customer.credit_hold: true
+          item.stock_type: { all_in: $allowed_on_credit_hold }
+        then: ALLOW
+  allow_all:
+    # POL-8: an empty rules list is valid. The precheck set is empty, so the
+    # default applies to every decision (RULE-45, RULE-50).
+    default: ALLOW
+    rules: []
+
+# BIND-2, BIND-3: the root binding has no node ID. Other levels map node IDs to bindings.
+# The root binding gives no allowed_on_credit_hold, so the default [] applies
+# (BIND-23). An empty resolved list makes the second credit_check rule unable to
+# hold (RULE-34), and LINT-28 exempts setting references from rules/dead-rule.
+# Under the root binding an order on credit hold is therefore denied.
+bindings:
+  global: { policy: credit_check }
+  division:
+    north: { policy: allow_all }
+    south: { policy: credit_check, allowed_on_credit_hold: [STOCKED, SPECIAL_ORDER] }
+
+# POL-28: examples. Each has a name (POL-29, unique by POL-30), a context,
+# facts and an expected effect (POL-40, POL-41). A list under facts is
+# shorthand for child maps (POL-33).
+examples:
+  - name: Mixed basket on credit hold is denied
+    context: { levels: { division: south } }
+    facts: { customer.active: true, customer.credit_hold: true, item.stock_type: [STOCKED, DROP_SHIP] }
+    expect: DENY
+  - name: Credit hold with only allowed stock is allowed
+    context: { levels: { division: south } }
+    facts: { customer.active: true, customer.credit_hold: true, item.stock_type: [STOCKED, SPECIAL_ORDER] }
+    expect: ALLOW
+  - name: Empty order on credit hold is denied
+    context: { levels: { division: south } }
+    facts: { customer.active: true, customer.credit_hold: true, item.stock_type: [] }
+    expect: DENY
+  - name: Unknown credit status is denied
+    context: { levels: { division: south } }
+    facts: { customer.active: true, item.stock_type: [STOCKED] }
+    expect: DENY
+  - name: North allows everything
+    context: { levels: { division: north } }
+    facts: { customer.active: false, customer.credit_hold: true, item.stock_type: [DROP_SHIP] }
+    expect: ALLOW
+  - name: Good credit on the web channel is allowed under the root binding
+    context: { levels: { channel: web } }
+    facts: { customer.active: true, customer.credit_hold: false, item.stock_type: [DROP_SHIP] }
+    expect: ALLOW
