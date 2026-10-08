@@ -1,0 +1,17 @@
+id: jcs/ordering/nested-objects
+specVersion: "0.1"
+clauses: [BUNDLE-9, BUNDLE-8, DET-5]
+description: "Member order applies at every depth, and an array keeps the order of its elements."
+primitive: jcs
+input:
+  "outer":
+    "z": 1
+    "a":
+      "y": [ { "b": 1, "a": 2 }, "z" ]
+      "x": true
+  "Outer":
+    "2": "two"
+    "10": "ten"
+expect:
+  output:
+    utf8: '{"Outer":{"10":"ten","2":"two"},"outer":{"a":{"x":true,"y":[{"a":2,"b":1},"z"]},"z":1}}'

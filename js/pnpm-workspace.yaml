@@ -2,3 +2,4 @@ packages:
   - evaluator
   - node
   - openfeature
+  - spec-tools

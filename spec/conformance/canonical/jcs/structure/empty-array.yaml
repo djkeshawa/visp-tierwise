@@ -1,0 +1,9 @@
+id: jcs/structure/empty-array
+specVersion: "0.1"
+clauses: [BUNDLE-7, BUNDLE-8]
+description: "An empty array is written as two brackets with no whitespace."
+primitive: jcs
+input: []
+expect:
+  output:
+    utf8: '[]'

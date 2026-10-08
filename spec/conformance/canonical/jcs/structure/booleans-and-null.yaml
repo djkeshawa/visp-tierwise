@@ -1,0 +1,9 @@
+id: jcs/structure/booleans-and-null
+specVersion: "0.1"
+clauses: [BUNDLE-7, BUNDLE-9]
+description: "The literals true, false and null are written bare, and the members of the object are sorted."
+primitive: jcs
+input: { "t": true, "f": false, "n": null }
+expect:
+  output:
+    utf8: '{"f":false,"n":null,"t":true}'

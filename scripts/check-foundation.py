@@ -71,7 +71,8 @@ def check_ci():
             require(re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref), f"Unpinned action in {workflow.name}: {ref}")
     ci = (ROOT / ".github/workflows/ci.yml").read_text()
     for command in ("./mvnw -B -ntp verify", "pnpm --dir js install --frozen-lockfile",
-                    "pnpm --dir js run check", "pnpm --dir js run build", "pnpm --dir js test"):
+                    "pnpm --dir js run genericity", "pnpm --dir js run check",
+                    "pnpm --dir js run build", "pnpm --dir js test"):
         require(command in ci, f"CI is missing: {command}")
 
 

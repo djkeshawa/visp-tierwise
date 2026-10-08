@@ -1,0 +1,9 @@
+id: sha256/input-64-bytes
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: "A 64-byte input, one full block, which also needs a second block for its padding."
+primitive: sha256
+input:
+  utf8: "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcd"
+expect:
+  digest: "2a94c28f8bed8b9015dbfd25bb5ebde8bf5a38e88d18e287c4050a07f3367527"

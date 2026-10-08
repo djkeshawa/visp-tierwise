@@ -1,0 +1,8 @@
+id: sha256/empty-input
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: The digest of zero bytes.
+primitive: sha256
+input: { utf8: "" }
+expect:
+  digest: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"

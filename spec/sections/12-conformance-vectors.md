@@ -471,7 +471,7 @@ A compile case compiles its project and compares the outcome with `expect`. The 
 
 A provenance case checks the linkage between a sidecar and its bundle file ([BUNDLE-139] to [BUNDLE-151]). The sidecar is a file that is not part of the bundle, so a case names both files. No evaluator runs a provenance case.
 
-**[VEC-126]** Every `.yaml` file at any depth under `provenance/` MUST be one provenance case. A sidecar file that a provenance case names MUST be a `.json` file under `provenance/`, and is not a case. Any other file under `provenance/`, such as `README.md`, is not a case. Enforcer: check tool.
+**[VEC-126]** Every `.yaml` file at any depth under `provenance/` MUST be one provenance case. A sidecar file that a provenance case names MUST be a `.json` file under `provenance/`, and is not a case. Any other file under `provenance/`, such as `README.md`, is not a case. Enforcer: check tool. Fixture files under `provenance/` are exempt from the sidecar naming rule of [BUNDLE-149], because a case may need a deliberately wrong name.
 
 **[VEC-127]** A provenance case MUST have the fields of [VEC-11] to [VEC-17], and the fields `bundle`, `sidecar` and `expect` of [VEC-128] and [VEC-129]. Its `id` MUST equal the file's path relative to `provenance/`, without the `.yaml` extension, and MUST be unique among the provenance cases. Enforcer: check tool (id equal to path, uniqueness).
 

@@ -1,0 +1,9 @@
+id: jcs/structure/nested-arrays
+specVersion: "0.1"
+clauses: [BUNDLE-7, BUNDLE-8]
+description: "Nested arrays, including empty ones at each depth, are written with no whitespace."
+primitive: jcs
+input: [ [], [ [] ], [ 1, [ 2, [ 3, [] ] ] ] ]
+expect:
+  output:
+    utf8: '[[],[[]],[1,[2,[3,[]]]]]'

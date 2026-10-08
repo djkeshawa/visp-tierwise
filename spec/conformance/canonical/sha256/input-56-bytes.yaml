@@ -1,0 +1,9 @@
+id: sha256/input-56-bytes
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: "A 56-byte input, the shortest that needs a second block for its padding."
+primitive: sha256
+input:
+  utf8: "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdef"
+expect:
+  digest: "bfcf8730342196aeae0adaed61dabec7e8261428b5220ae5f3d1a9fa9621cd12"

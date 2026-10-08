@@ -1,0 +1,16 @@
+# Genericity allow-list for scripts/check-genericity.mjs (requirements §1.1).
+#
+# One name per line. A name listed here is skipped by the scan, so add one only when
+# a sample name is a generic word that the engine must use, and say why above it.
+# Names are matched as whole words, case-sensitive. Blank lines and "#" comments are
+# ignored. A listed name that no sample declares is reported as a warning.
+#
+# Expected future entries: the saas sample declares the kind name "feature", which the
+# OpenFeature packages will use as plain vocabulary once their source lands. Add it here
+# then, with that reason, rather than renaming the engine's own terms.
+
+# "export" is the TypeScript and JavaScript keyword of the module entry points
+# (for example "export {};" in js/*/src/index.ts). It is also the first segment of the
+# sample key export.granted_formats (samples/saas-entitlements). The keyword is not a
+# domain identifier, so the engine cannot avoid it.
+export

@@ -1,0 +1,9 @@
+id: jcs/numbers/zero
+specVersion: "0.1"
+clauses: [BUNDLE-11, BUNDLE-7]
+description: "Zero and positive integers are written in plain decimal, with no sign, fraction or exponent."
+primitive: jcs
+input: [ 0, 1, 10 ]
+expect:
+  output:
+    utf8: '[0,1,10]'

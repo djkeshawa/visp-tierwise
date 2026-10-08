@@ -1,0 +1,9 @@
+id: jcs/numbers/safe-integer-min
+specVersion: "0.1"
+clauses: [BUNDLE-11, BUNDLE-12, DET-4]
+description: "The negative safe integer -9007199254740991, the lower bound of [DET-4], is written in full with no exponent."
+primitive: jcs
+input: { "min": -9007199254740991 }
+expect:
+  output:
+    utf8: '{"min":-9007199254740991}'

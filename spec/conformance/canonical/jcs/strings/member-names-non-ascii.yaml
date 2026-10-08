@@ -1,0 +1,9 @@
+id: jcs/strings/member-names-non-ascii
+specVersion: "0.1"
+clauses: [BUNDLE-9, BUNDLE-10]
+description: "Non-ASCII member names are written literally, and all of them sort after the ASCII name z by UTF-16 code units."
+primitive: jcs
+input: { "\u00E9": 1, "\u20AC": 2, "\U0001F600": 3, "z": 4 }
+expect:
+  output:
+    utf8: "{\"z\":4,\"\u00E9\":1,\"\u20AC\":2,\"\U0001F600\":3}"

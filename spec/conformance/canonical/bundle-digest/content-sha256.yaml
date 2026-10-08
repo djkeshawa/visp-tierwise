@@ -1,0 +1,10 @@
+id: bundle-digest/content-sha256
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: "The digest of the canonical content bytes, which become the 64 digits of bundleVersion."
+primitive: sha256
+input:
+  utf8: |-
+    {"bundleFormatVersion":"1","entities":{"customer":{"belongsTo":[],"hasMany":[]},"item":{"belongsTo":[],"hasMany":[]},"order":{"belongsTo":["customer"],"hasMany":["item"]}},"facts":{"customer.active":{"entity":"customer","type":{"type":"boolean"}},"customer.credit_hold":{"entity":"customer","type":{"type":"boolean"}}},"features":{"checkout.order_submission":{"bindingSettableAt":["global","division"],"bindings":{"global":{"":{"policy":"credit_check","settings":{}}}},"decidedPer":"order","hitPolicy":"FIRST","ifFactMissing":"DENY","policies":{"credit_check":{"default":"DENY","requiredFacts":["customer.active","customer.credit_hold"],"rules":[{"id":"good-credit","name":"Good credit","then":"ALLOW","when":[{"fact":"customer.active","op":"eq","value":true},{"fact":"customer.credit_hold","op":"eq","value":false}]}],"settings":{}}},"returns":{"enum":["ALLOW","DENY"]}}},"hierarchy":{"axes":["seller"],"levels":["global","division"],"scopes":{"division":{"nodes":["north","south"],"onUnknownNode":"error","values":"files"},"seller":{"nodes":["acme"],"onUnknownNode":"error","values":"files"}}},"keys":{"checkout.pickup.lead_hours":{"combine":"override","combineAcrossAxes":"max","default":4,"kind":"configuration","settableAt":["global","division","seller"],"type":{"max":168,"min":0,"type":"integer"}}},"specVersion":"0.1","values":{"division":{"south":{"checkout.pickup.lead_hours":6}},"seller":{"acme":{"checkout.pickup.lead_hours":8}}}}
+expect:
+  digest: "1e9c6ff42b19ba87006b172f1cc5211cc04bbea48b4d297afe441aa1e6a13403"

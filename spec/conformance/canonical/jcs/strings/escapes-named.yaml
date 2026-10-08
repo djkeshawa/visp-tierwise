@@ -1,0 +1,9 @@
+id: jcs/strings/escapes-named
+specVersion: "0.1"
+clauses: [BUNDLE-10, BUNDLE-7]
+description: "The quote, backslash, backspace, form feed, line feed, carriage return and tab are escaped by name, and slash is written unescaped."
+primitive: jcs
+input: [ "\"", "\\", "\b", "\f", "\n", "\r", "\t", "/" ]
+expect:
+  output:
+    utf8: '["\"","\\","\b","\f","\n","\r","\t","/"]'

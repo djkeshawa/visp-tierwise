@@ -1,0 +1,9 @@
+id: jcs/ordering/utf16-bmp-above-e000-vs-non-bmp
+specVersion: "0.1"
+clauses: [BUNDLE-9, DET-5]
+description: "U+1F600 sorts before U+E000 because its first UTF-16 code unit, D83D, is below E000, although its code point is larger."
+primitive: jcs
+input: { "\uE000": 1, "\U0001F600": 2 }
+expect:
+  output:
+    utf8: "{\"\U0001F600\":2,\"\uE000\":1}"

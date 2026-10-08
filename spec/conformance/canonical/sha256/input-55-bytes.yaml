@@ -1,0 +1,9 @@
+id: sha256/input-55-bytes
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: "A 55-byte input, the longest that pads into one 64-byte block."
+primitive: sha256
+input:
+  utf8: "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcde"
+expect:
+  digest: "4406b9931051072b50b3245d51f9f57baf7b39acf85b1cce452ec6c81d2a384f"

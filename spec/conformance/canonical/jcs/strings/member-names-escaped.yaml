@@ -1,0 +1,9 @@
+id: jcs/strings/member-names-escaped
+specVersion: "0.1"
+clauses: [BUNDLE-9, BUNDLE-10]
+description: "Quote, backslash and line feed in member names are escaped as they are in string values."
+primitive: jcs
+input: { "a\"b": 1, "c\\d": 2, "e\nf": 3 }
+expect:
+  output:
+    utf8: '{"a\"b":1,"c\\d":2,"e\nf":3}'

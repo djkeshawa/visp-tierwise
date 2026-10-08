@@ -1,0 +1,9 @@
+id: jcs/numbers/negative
+specVersion: "0.1"
+clauses: [BUNDLE-11, BUNDLE-7]
+description: "Negative integers keep one minus sign and their digits, with no fraction or exponent."
+primitive: jcs
+input: [ -1, -10, -42, -1000000 ]
+expect:
+  output:
+    utf8: '[-1,-10,-42,-1000000]'

@@ -1,0 +1,9 @@
+id: jcs/ordering/digits-letters-punctuation
+specVersion: "0.1"
+clauses: [BUNDLE-9, DET-5]
+description: "Space, hyphen, full stop and digits sort before capitals and lowercase letters, and '10' sorts before '2' because names compare as text."
+primitive: jcs
+input: { " ": 6, "-": 5, ".": 7, "10": 2, "2": 9, "9": 3, "A": 4, "_": 8, "a": 1 }
+expect:
+  output:
+    utf8: '{" ":6,"-":5,".":7,"10":2,"2":9,"9":3,"A":4,"_":8,"a":1}'

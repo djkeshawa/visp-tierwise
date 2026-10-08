@@ -1,0 +1,15 @@
+{
+  "name": "@tierwise/spec-tools",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Private checks for the Tierwise spec: schemas, samples, bundles, conformance vectors and coverage.",
+  "scripts": {
+    "check": "node check.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -49,6 +49,9 @@ jobs:
           version: '11.3.0'
           run_install: false
       - run: pnpm --dir js install --frozen-lockfile
+      # Requirements §1.1: no sample domain name may appear in production code.
+      - name: Genericity check
+        run: pnpm --dir js run genericity
       - run: pnpm --dir js run check
       - run: pnpm --dir js run build
       - name: Packaging tests (Node 22)

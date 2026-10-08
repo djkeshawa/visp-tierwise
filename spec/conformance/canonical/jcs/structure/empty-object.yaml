@@ -1,0 +1,9 @@
+id: jcs/structure/empty-object
+specVersion: "0.1"
+clauses: [BUNDLE-7, BUNDLE-8]
+description: "An empty object is written as two braces with no whitespace."
+primitive: jcs
+input: {}
+expect:
+  output:
+    utf8: '{}'

@@ -1,0 +1,9 @@
+id: jcs/ordering/utf16-fffd-vs-u10000
+specVersion: "0.1"
+clauses: [BUNDLE-9, DET-5]
+description: "U+10000 sorts before U+FFFD because its first UTF-16 code unit, D800, is below FFFD, although its code point is larger."
+primitive: jcs
+input: { "\uFFFD": 1, "\U00010000": 2 }
+expect:
+  output:
+    utf8: "{\"\U00010000\":2,\"\uFFFD\":1}"

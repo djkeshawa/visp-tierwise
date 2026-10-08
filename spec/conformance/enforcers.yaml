@@ -1,0 +1,24 @@
+# Enforcers for normative clauses that no conformance vector can observe (VEC-125).
+# Each key is a normative clause ID. Each value is one line that names the enforcer.
+# `pnpm spec:check` accepts a clause that a vector cites, or that has an entry here.
+# An entry names a test that the owning implementation has not written yet, so it is a
+# promise to test that clause, not evidence that the clause is tested. COVERAGE.md prints each
+# entry's text, so a planned test shows as "Planned" there.
+
+# Timeouts are durations, and VEC-45 keeps durations out of vectors.
+EVAL-28: "Planned evaluator unit test: create-evaluator raises E_EVALUATOR_OPTIONS for a timeout that is not a positive integer number of milliseconds, and for options that are not a map."
+
+# SVC-38 and SVC-48 state the timeout rules of EVAL-28 for providers. VEC-24 gives every stub provider a timeout of
+# 1000 ms, and VEC-45 keeps durations out of vectors, so no vector can register a provider with a missing or invalid timeout.
+SVC-38: "Planned evaluator unit test: create-evaluator raises E_EVALUATOR_OPTIONS for a provider timeout that is not a positive integer number of milliseconds (EVAL-28)."
+SVC-48: "Planned evaluator unit test: create-evaluator raises E_EVALUATOR_OPTIONS for a provider registered with no timeout, and supplies no default timeout (EVAL-28)."
+
+# Tool storage: no vector observes whether a sidecar is replaced.
+BUNDLE-147: "Planned provenance-writer unit test: writing a sidecar whose path already exists fails and leaves the existing file unchanged."
+
+# Tool storage: a record must not replace another record in the store.
+BUNDLE-148: "Planned provenance-writer unit test: a second record with the same bundleVersion is stored in its own sidecar, and no stored record is replaced."
+
+# A vector cannot carry an omitted or non-string key or feature (VEC-29 requires a string). The empty-string case of
+# EVAL-37 is not listed, because a vector can carry an empty string.
+EVAL-37: "Planned evaluator unit test: resolve raises E_UNKNOWN_KEY and decide raises E_UNKNOWN_FEATURE for an omitted or non-string key or feature argument."

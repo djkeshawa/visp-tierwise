@@ -21,3 +21,4 @@ Writing the schemas, presets and samples exposed small gaps in the spec text.
 | VEC-19 | `context` and `input` contents are exempt from the closed-schema rule, so CTX and FactSet shape errors stay testable |
 | Section 9 example | Rewritten under `deny`, which the sample's `capability` kind actually applies |
 | `tierwise:entitlements` | Accepted as written: lint severities copied from `recommended`; naming patterns `key`, `limit_key`, `feature_key` and `grant_key`; `deny` for `limit` (fail closed) |
+| Spec tooling (wave 3a) | The YAML loader in the spec tools rejects integral and non-finite floats in sources and vectors (`E_TYPE_MISMATCH`, or `E_MANIFEST` in the manifest), consistent with TYPE-15, SRC-11 and VEC-35. Provenance fixtures are exempt from the BUNDLE-149 naming rule (VEC-126). |

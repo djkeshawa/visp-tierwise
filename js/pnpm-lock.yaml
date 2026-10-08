@@ -27,6 +27,8 @@ importers:
 
   openfeature: {}
 
+  spec-tools: {}
+
 packages:
 
   '@typescript/typescript-aix-ppc64@7.0.2':

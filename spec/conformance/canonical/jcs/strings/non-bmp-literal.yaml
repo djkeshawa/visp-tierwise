@@ -1,0 +1,9 @@
+id: jcs/strings/non-bmp-literal
+specVersion: "0.1"
+clauses: [BUNDLE-10]
+description: "A non-BMP character, U+1F600 or U+1D11E, is written literally as four UTF-8 bytes and is not escaped."
+primitive: jcs
+input: [ "\U0001F600", "a\U0001D11Eb" ]
+expect:
+  output:
+    utf8: "[\"\U0001F600\",\"a\U0001D11Eb\"]"

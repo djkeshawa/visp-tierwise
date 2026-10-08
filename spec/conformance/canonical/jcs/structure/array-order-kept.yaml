@@ -1,0 +1,9 @@
+id: jcs/structure/array-order-kept
+specVersion: "0.1"
+clauses: [BUNDLE-7]
+description: "The elements of an array keep their order, and a repeated value is written each time it occurs."
+primitive: jcs
+input: [ "z", "a", "m", "a" ]
+expect:
+  output:
+    utf8: '["z","a","m","a"]'

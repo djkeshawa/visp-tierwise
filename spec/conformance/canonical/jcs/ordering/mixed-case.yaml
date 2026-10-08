@@ -1,0 +1,9 @@
+id: jcs/ordering/mixed-case
+specVersion: "0.1"
+clauses: [BUNDLE-9, DET-5]
+description: "Capitals sort before the underscore and the lowercase letters, which is UTF-16 code unit order and not a locale order."
+primitive: jcs
+input: { "b": 1, "B": 2, "a": 3, "A": 4, "_": 5 }
+expect:
+  output:
+    utf8: '{"A":4,"B":2,"_":5,"a":3,"b":1}'

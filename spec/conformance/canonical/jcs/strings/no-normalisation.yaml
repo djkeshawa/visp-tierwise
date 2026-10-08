@@ -1,0 +1,9 @@
+id: jcs/strings/no-normalisation
+specVersion: "0.1"
+clauses: [BUNDLE-10, BUNDLE-138]
+description: "A decomposed letter, e followed by a combining acute accent, is written as its two code points and is not normalised."
+primitive: jcs
+input: [ "e\u0301", "\u00E9" ]
+expect:
+  output:
+    hex: "5b2265cc81222c22c3a9225d"

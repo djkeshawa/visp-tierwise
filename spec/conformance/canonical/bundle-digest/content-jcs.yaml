@@ -1,0 +1,110 @@
+id: bundle-digest/content-jcs
+specVersion: "0.1"
+clauses: [BUNDLE-6, BUNDLE-7, BUNDLE-8, BUNDLE-9]
+description: "The canonical bytes of the section 10 example content object, which the bundle digest is taken over."
+primitive: jcs
+input:
+  "bundleFormatVersion": "1"
+  "specVersion": "0.1"
+  "hierarchy":
+    "levels":
+      - "global"
+      - "division"
+    "axes":
+      - "seller"
+    "scopes":
+      "division":
+        "nodes":
+          - "north"
+          - "south"
+        "onUnknownNode": "error"
+        "values": "files"
+      "seller":
+        "nodes":
+          - "acme"
+        "onUnknownNode": "error"
+        "values": "files"
+  "entities":
+    "customer":
+      "belongsTo": []
+      "hasMany": []
+    "item":
+      "belongsTo": []
+      "hasMany": []
+    "order":
+      "belongsTo":
+        - "customer"
+      "hasMany":
+        - "item"
+  "facts":
+    "customer.active":
+      "entity": "customer"
+      "type":
+        "type": "boolean"
+    "customer.credit_hold":
+      "entity": "customer"
+      "type":
+        "type": "boolean"
+  "keys":
+    "checkout.pickup.lead_hours":
+      "type":
+        "type": "integer"
+        "min": 0
+        "max": 168
+      "combine": "override"
+      "default": 4
+      "settableAt":
+        - "global"
+        - "division"
+        - "seller"
+      "combineAcrossAxes": "max"
+      "kind": "configuration"
+  "values":
+    "division":
+      "south":
+        "checkout.pickup.lead_hours": 6
+    "seller":
+      "acme":
+        "checkout.pickup.lead_hours": 8
+  "features":
+    "checkout.order_submission":
+      "decidedPer": "order"
+      "returns":
+        "enum":
+          - "ALLOW"
+          - "DENY"
+      "hitPolicy": "FIRST"
+      "ifFactMissing": "DENY"
+      "bindingSettableAt":
+        - "global"
+        - "division"
+      "policies":
+        "credit_check":
+          "settings": {}
+          "default": "DENY"
+          "requiredFacts":
+            - "customer.active"
+            - "customer.credit_hold"
+          "rules":
+            -
+              "id": "good-credit"
+              "name": "Good credit"
+              "when":
+                -
+                  "fact": "customer.active"
+                  "op": "eq"
+                  "value": true
+                -
+                  "fact": "customer.credit_hold"
+                  "op": "eq"
+                  "value": false
+              "then": "ALLOW"
+      "bindings":
+        "global":
+          "":
+            "policy": "credit_check"
+            "settings": {}
+expect:
+  output:
+    utf8: |-
+      {"bundleFormatVersion":"1","entities":{"customer":{"belongsTo":[],"hasMany":[]},"item":{"belongsTo":[],"hasMany":[]},"order":{"belongsTo":["customer"],"hasMany":["item"]}},"facts":{"customer.active":{"entity":"customer","type":{"type":"boolean"}},"customer.credit_hold":{"entity":"customer","type":{"type":"boolean"}}},"features":{"checkout.order_submission":{"bindingSettableAt":["global","division"],"bindings":{"global":{"":{"policy":"credit_check","settings":{}}}},"decidedPer":"order","hitPolicy":"FIRST","ifFactMissing":"DENY","policies":{"credit_check":{"default":"DENY","requiredFacts":["customer.active","customer.credit_hold"],"rules":[{"id":"good-credit","name":"Good credit","then":"ALLOW","when":[{"fact":"customer.active","op":"eq","value":true},{"fact":"customer.credit_hold","op":"eq","value":false}]}],"settings":{}}},"returns":{"enum":["ALLOW","DENY"]}}},"hierarchy":{"axes":["seller"],"levels":["global","division"],"scopes":{"division":{"nodes":["north","south"],"onUnknownNode":"error","values":"files"},"seller":{"nodes":["acme"],"onUnknownNode":"error","values":"files"}}},"keys":{"checkout.pickup.lead_hours":{"combine":"override","combineAcrossAxes":"max","default":4,"kind":"configuration","settableAt":["global","division","seller"],"type":{"max":168,"min":0,"type":"integer"}}},"specVersion":"0.1","values":{"division":{"south":{"checkout.pickup.lead_hours":6}},"seller":{"acme":{"checkout.pickup.lead_hours":8}}}}

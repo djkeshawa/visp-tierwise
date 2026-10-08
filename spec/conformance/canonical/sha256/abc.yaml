@@ -1,0 +1,8 @@
+id: sha256/abc
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: "The digest of the ASCII string abc, a standard test input."
+primitive: sha256
+input: { utf8: "abc" }
+expect:
+  digest: "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"

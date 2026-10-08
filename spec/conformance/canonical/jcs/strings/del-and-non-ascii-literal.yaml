@@ -1,0 +1,9 @@
+id: jcs/strings/del-and-non-ascii-literal
+specVersion: "0.1"
+clauses: [BUNDLE-10]
+description: "DEL and non-ASCII characters are written literally as their UTF-8 bytes, and the expected output is given in the hex form."
+primitive: jcs
+input: [ "\x7F", "\u00E9", "\u20AC" ]
+expect:
+  output:
+    hex: "5b227f222c22c3a9222c22e282ac225d"

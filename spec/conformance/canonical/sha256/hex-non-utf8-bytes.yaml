@@ -1,0 +1,9 @@
+id: sha256/hex-non-utf8-bytes
+specVersion: "0.1"
+clauses: [BUNDLE-6]
+description: "A four-byte input that is not valid UTF-8, given in the hex form."
+primitive: sha256
+input:
+  hex: "ff00fe80"
+expect:
+  digest: "12bd5eeba3a92e35c41611e24d7756eb39442699403e1aad28bd56443f2dfc86"

@@ -1,0 +1,9 @@
+id: jcs/ordering/prefix-and-empty-name
+specVersion: "0.1"
+clauses: [BUNDLE-9, DET-5]
+description: "The empty name sorts first, a name sorts before a longer name that it prefixes, and space sorts before full stop, which sorts before a letter."
+primitive: jcs
+input: { "ab": 1, "a": 2, "": 3, "a.b": 4, "a b": 5 }
+expect:
+  output:
+    utf8: '{"":3,"a":2,"a b":5,"a.b":4,"ab":1}'

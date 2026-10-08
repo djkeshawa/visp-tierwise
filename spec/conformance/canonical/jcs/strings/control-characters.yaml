@@ -1,0 +1,9 @@
+id: jcs/strings/control-characters
+specVersion: "0.1"
+clauses: [BUNDLE-10]
+description: "Control characters without a short name are written as backslash u and four lowercase hexadecimal digits."
+primitive: jcs
+input: [ "\u0000", "\u0001", "\u0007", "\u000B", "\u000E", "\u001B", "\u001F" ]
+expect:
+  output:
+    utf8: '["\u0000","\u0001","\u0007","\u000b","\u000e","\u001b","\u001f"]'
