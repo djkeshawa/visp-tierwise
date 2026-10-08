@@ -1,0 +1,8 @@
+id: sidecar-createdat-fraction
+specVersion: "0.1"
+clauses: [BUNDLE-150, BUNDLE-151]
+description: A createdAt with fractional seconds is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-createdat-fraction.json
+expect:
+  error: E_PROVENANCE_INVALID

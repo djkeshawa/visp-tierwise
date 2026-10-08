@@ -549,20 +549,32 @@ function checkProvenanceCase(file, data, schemas) {
   if (data.expect?.error !== undefined && accepted) problem(`${rel(file)}: expected ${data.expect.error}, but the sidecar was accepted (VEC-129)`);
 }
 
-// Reads the enforcer map of spec/conformance/enforcers.yaml (VEC-125). Returns an empty map when it is missing.
+// Reads the enforcer map (VEC-125) from spec/conformance/enforcers.yaml and every
+// spec/conformance/enforcers.d/*.yaml, so that parallel authors each own one file.
+// A clause listed in two files is a problem. Returns an empty map when none exist.
 function readEnforcers() {
-  const file = join(CONFORMANCE, 'enforcers.yaml');
-  const data = existsSync(file) ? loadSource(file) : {};
-  if (!isObject(data)) {
-    if (data !== undefined) problem(`${rel(file)}: must be a mapping from clause ID to enforcer`);
-    return {};
+  const files = [join(CONFORMANCE, 'enforcers.yaml')];
+  const dir = join(CONFORMANCE, 'enforcers.d');
+  if (existsSync(dir)) {
+    for (const name of readdirSync(dir).sort()) if (name.endsWith('.yaml')) files.push(join(dir, name));
   }
-  for (const [id, text] of Object.entries(data)) {
-    if (typeof text !== 'string' || text.trim() === '' || /[\n\r]/.test(text)) {
-      problem(`${rel(file)}: the enforcer of ${id} must be a one-line, non-empty string (VEC-125)`);
+  const merged = {};
+  for (const file of files) {
+    if (!existsSync(file)) continue;
+    const data = loadSource(file);
+    if (!isObject(data)) {
+      if (data !== undefined) problem(`${rel(file)}: must be a mapping from clause ID to enforcer`);
+      continue;
+    }
+    for (const [id, text] of Object.entries(data)) {
+      if (typeof text !== 'string' || text.trim() === '' || /[\n\r]/.test(text)) {
+        problem(`${rel(file)}: the enforcer of ${id} must be a one-line, non-empty string (VEC-125)`);
+      }
+      if (Object.hasOwn(merged, id)) problem(`${rel(file)}: ${id} is already listed in another enforcer file`);
+      merged[id] = text;
     }
   }
-  return data;
+  return merged;
 }
 
 // Checks clause definitions and citations (stage (e)): every cited clause and enforcer key exists and is not OPEN.

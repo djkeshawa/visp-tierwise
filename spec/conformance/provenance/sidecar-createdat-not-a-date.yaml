@@ -1,0 +1,8 @@
+id: sidecar-createdat-not-a-date
+specVersion: "0.1"
+clauses: [BUNDLE-141, BUNDLE-151]
+description: A createdAt that names no calendar day, 2026-02-30, is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-createdat-not-a-date.json
+expect:
+  error: E_PROVENANCE_INVALID

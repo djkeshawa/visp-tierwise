@@ -1,0 +1,8 @@
+id: sidecar-duplicate-member
+specVersion: "0.1"
+clauses: [BUNDLE-111, BUNDLE-151]
+description: A sidecar that repeats the createdAt member is rejected at strict parse.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-duplicate-member.json
+expect:
+  error: E_PROVENANCE_INVALID

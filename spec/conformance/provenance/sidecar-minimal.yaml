@@ -1,0 +1,8 @@
+id: sidecar-minimal
+specVersion: "0.1"
+clauses: [BUNDLE-141, BUNDLE-142, BUNDLE-151]
+description: A sidecar with only the required members is accepted for the bundle that has its bundleVersion.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-minimal.json
+expect:
+  accept: true

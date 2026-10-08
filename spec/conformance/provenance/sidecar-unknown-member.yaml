@@ -1,0 +1,8 @@
+id: sidecar-unknown-member
+specVersion: "0.1"
+clauses: [BUNDLE-143, BUNDLE-151]
+description: A sidecar with a member that BUNDLE-141 and BUNDLE-142 do not define is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-unknown-member.json
+expect:
+  error: E_PROVENANCE_INVALID

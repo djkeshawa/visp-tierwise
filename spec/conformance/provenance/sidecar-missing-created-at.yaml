@@ -1,0 +1,8 @@
+id: sidecar-missing-created-at
+specVersion: "0.1"
+clauses: [BUNDLE-141, BUNDLE-151]
+description: A sidecar without the required createdAt member is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-missing-created-at.json
+expect:
+  error: E_PROVENANCE_INVALID

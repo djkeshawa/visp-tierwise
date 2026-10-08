@@ -1,0 +1,8 @@
+id: sidecar-createdat-offset
+specVersion: "0.1"
+clauses: [BUNDLE-150, BUNDLE-151]
+description: A createdAt with a numeric offset in place of the Z offset is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-createdat-offset.json
+expect:
+  error: E_PROVENANCE_INVALID

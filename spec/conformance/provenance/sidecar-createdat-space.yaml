@@ -1,0 +1,8 @@
+id: sidecar-createdat-space
+specVersion: "0.1"
+clauses: [BUNDLE-150, BUNDLE-151]
+description: A createdAt with a space in place of the T separator is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-createdat-space.json
+expect:
+  error: E_PROVENANCE_INVALID

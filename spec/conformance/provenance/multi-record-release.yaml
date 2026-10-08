@@ -1,0 +1,8 @@
+id: multi-record-release
+specVersion: "0.1"
+clauses: [BUNDLE-144, BUNDLE-148, BUNDLE-149]
+description: The other of two records that carry the same bundleVersion is also accepted for that bundle.
+bundle: ../bundles/retail-pos.json
+sidecar: records/retail-pos.provenance.release.json
+expect:
+  accept: true

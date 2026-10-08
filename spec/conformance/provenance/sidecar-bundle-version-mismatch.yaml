@@ -1,0 +1,8 @@
+id: sidecar-bundle-version-mismatch
+specVersion: "0.1"
+clauses: [BUNDLE-144, BUNDLE-151]
+description: A sidecar whose bundleVersion differs from the bundle only in its last digit is rejected.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-bundle-version-mismatch.json
+expect:
+  error: E_PROVENANCE_INVALID

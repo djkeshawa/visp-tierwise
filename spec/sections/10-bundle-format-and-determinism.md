@@ -372,7 +372,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-149]** The sidecar for a bundle MUST be named `<stem>.provenance.json`, where `<stem>` is the bundle file's name with its `.json` extension removed. A further sidecar for the same bundle ([BUNDLE-148]) MUST be named `<stem>.provenance.<label>.json`, where `<label>` is a lowercase label that the tool chooses, unique among that bundle's sidecars.
 
-**[BUNDLE-150]** When present, the members of a sidecar MUST have these forms: (a) `gitCommit` is the full commit identifier: 40 or 64 lowercase hexadecimal digits; (b) `createdAt` is an RFC 3339 time with an uppercase `T` separator and a `Z` offset, with seconds and without fractional seconds; (c) `publisher` is a string that is an opaque label.
+**[BUNDLE-150]** When present, the members of a sidecar MUST have these forms: (a) `gitCommit` is the full commit identifier: 40 or 64 lowercase hexadecimal digits; (b) `createdAt` is an RFC 3339 time that denotes a real calendar date and time, with an uppercase `T` separator and a `Z` offset, with seconds and without fractional seconds; (c) `publisher` is a string that is an opaque label.
 
 > Non-normative: no evaluator reads `publisher`, and the sidecar does not authenticate it. Trust in publisher claims is outside this specification.
 

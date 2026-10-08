@@ -1,0 +1,8 @@
+id: sidecar-git-commit-64
+specVersion: "0.1"
+clauses: [BUNDLE-150]
+description: A 64-digit lowercase gitCommit, the SHA-256 length, is accepted.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-git-commit-64.json
+expect:
+  accept: true

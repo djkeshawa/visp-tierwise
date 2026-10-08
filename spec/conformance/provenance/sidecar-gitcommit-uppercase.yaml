@@ -1,0 +1,8 @@
+id: sidecar-gitcommit-uppercase
+specVersion: "0.1"
+clauses: [BUNDLE-150, BUNDLE-151]
+description: A gitCommit of 40 uppercase hexadecimal digits is rejected, because the form is lowercase.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-gitcommit-uppercase.json
+expect:
+  error: E_PROVENANCE_INVALID

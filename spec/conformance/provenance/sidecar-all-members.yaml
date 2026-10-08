@@ -1,0 +1,8 @@
+id: sidecar-all-members
+specVersion: "0.1"
+clauses: [BUNDLE-141, BUNDLE-142, BUNDLE-150]
+description: A sidecar with gitCommit, createdAt and publisher, each in its allowed form, is accepted.
+bundle: ../bundles/retail-pos.json
+sidecar: sidecar-all-members.json
+expect:
+  accept: true
