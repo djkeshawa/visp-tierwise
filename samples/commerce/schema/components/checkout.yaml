@@ -14,7 +14,7 @@ keys:
     combine: all
     settable_at: [channel, division, site, account]
 
-  checkout.order.max_lines:
+  checkout.order.allowed_max_lines:
     kind: capability
     type: integer
     min: 1

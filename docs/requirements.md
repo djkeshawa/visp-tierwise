@@ -28,8 +28,8 @@ domain name in this document (`global`, `division`, `seller`, `order`,
   - The most specific level is the last entry.
   - Service-sourced levels are the ones declared with `values: service`.
   - Effects are whatever a feature's `returns` declares.
-- **Kind names and naming patterns live only in presets.** The engine has no
-  concept of "configuration" or "capability".
+- **Kind names and naming patterns live in presets or the project's schema, never
+  in engine code.** The engine has no concept of "configuration" or "capability".
 - **Two unrelated domains**, both used by the conformance suite:
   - **A, `samples/commerce/`**: levels `global → channel → division → site →
     account → user`; axis `seller`; `account` and `user` service-sourced; entities
@@ -535,7 +535,7 @@ keys:
     combine: all
     settable_at: [channel, division, site, account]
 
-  checkout.order.max_lines:
+  checkout.order.allowed_max_lines:
     kind: capability
     type: integer
     min: 1
@@ -685,22 +685,24 @@ rationale and how to fix it.
 
 | Area | Codes |
 | --- | --- |
-| Parsing and manifest | `E_MANIFEST`, `E_DUPLICATE_KEY`, `E_YAML_FEATURE`, `E_SOURCE_MAPPING`, `E_PRESET` |
+| Parsing and manifest | `E_MANIFEST`, `E_PARSE`, `E_DUPLICATE_KEY`, `E_YAML_FEATURE`, `E_SOURCE_MAPPING`, `E_PRESET`, `E_INVALID_DECLARATION` |
 | Hierarchy and scopes | `E_UNKNOWN_SCOPE`, `E_SCOPE_DECLARATION`, `E_UNKNOWN_NODE`, `E_DUPLICATE_NODE`, `E_INVALID_NODE_ID` |
 | Keys and values | `E_UNKNOWN_KEY`, `E_TYPE_REQUIRED`, `E_TYPE_MISMATCH`, `E_OUT_OF_RANGE`, `E_INTEGER_RANGE`, `E_NOT_IN_UNIVERSE`, `E_NOT_SETTABLE_HERE`, `E_DUPLICATE_VALUE`, `E_DUPLICATE_DEFINITION` |
 | Strategies | `E_STRATEGY_TYPE`, `E_MISSING_DEFAULT`, `E_DEFAULT_NOT_ALLOWED`, `E_MISSING_AXIS_COMBINE`, `E_AXIS_COMBINE_INVALID` |
 | Service sources | `E_MISSING_SOURCE_FAILURE`, `E_DENY_NOT_NARROWING`, `E_DENY_BOUND_REQUIRED` |
-| Kinds and namespaces | `E_KIND_VIOLATION`, `E_KIND_DEFINITION`, `E_NAMESPACE_VIOLATION` |
+| Kinds and namespaces | `E_KIND_VIOLATION`, `E_KIND_DEFINITION`, `E_UNKNOWN_KIND`, `E_NAMESPACE_VIOLATION` |
 | Entities and facts | `E_UNKNOWN_ENTITY`, `E_ENTITY_GRAPH`, `E_UNKNOWN_FACT`, `E_ILLEGAL_FACT_VALUE` |
-| Conditions | `E_QUANTIFIER_REQUIRED`, `E_QUANTIFIER_NOT_ALLOWED`, `E_DEPTH_UNSUPPORTED` |
-| Policies and bindings | `E_UNKNOWN_SETTING`, `E_INVALID_SETTING`, `E_EFFECT_MISMATCH`, `E_DUPLICATE_RULE_ID`, `E_ROOT_BINDING_NOT_ALLOWED`, `E_ROOT_BINDING_MISSING`, `E_BINDING_NOT_ALLOWED` |
+| Conditions | `E_QUANTIFIER_REQUIRED`, `E_QUANTIFIER_NOT_ALLOWED`, `E_DEPTH_UNSUPPORTED`, `E_FACT_NOT_IN_SCOPE` |
+| Policies and bindings | `E_UNKNOWN_FEATURE`, `E_UNKNOWN_POLICY`, `E_UNKNOWN_SETTING`, `E_INVALID_SETTING`, `E_EFFECT_MISMATCH`, `E_DUPLICATE_RULE_ID`, `E_ROOT_BINDING_NOT_ALLOWED`, `E_ROOT_BINDING_MISSING`, `E_BINDING_NOT_ALLOWED` |
 | Examples | `E_EXAMPLE_FAILED` |
 
 ### 6.2 Evaluation errors
 
 `E_BUNDLE_INTEGRITY`, `E_BUNDLE_UNSUPPORTED`, `E_PROVIDER_MISSING`,
 `E_PROVIDER_REQUIRED`, `E_CONTEXT_INVALID`, `E_UNKNOWN_SCOPE`, `E_UNKNOWN_NODE`,
-`E_UNKNOWN_KEY`, `E_UNKNOWN_FEATURE`, `E_FACTS_INVALID`.
+`E_UNKNOWN_KEY`, `E_UNKNOWN_FEATURE`, `E_FACTS_INVALID`, `E_EVALUATOR_OPTIONS`.
+
+Tooling code (spec tools and CLI only): `E_PROVENANCE_INVALID`. Codes added by [ADR 0013](adr/0013-spec-open-point-resolutions.md).
 
 ### 6.3 Lint rules
 
@@ -816,7 +818,7 @@ Stateless, horizontally scalable, **never the source of truth**. Publishes
 
 | Endpoint | Purpose |
 | --- | --- |
-| `POST /v1/bundles` | Publish canonical bundle bytes plus a publication record. CI identity only. Verifies the digest and re-runs examples. A conflicting body for an existing version is rejected. |
+| `POST /v1/bundles` | Publish canonical bundle bytes plus a publication record. CI identity only. Verifies integrity, versions and structure (examples run at validation, ADR 0013). A conflicting body for an existing version is rejected. |
 | `GET /v1/bundles/latest` | Latest bundle bytes; ETag = `bundleVersion` |
 | `GET /v1/bundles/{version}` | A specific version |
 | `GET /v1/bundles` | History from publication records: version, commit, time, publisher |

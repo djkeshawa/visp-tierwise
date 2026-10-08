@@ -154,7 +154,7 @@ io.github.tierwise.core.internal
 | 3.4 | Strategies as one small, pure function each, plus axis combination (ADR 0008) | M |
 | 3.5 | Resolver with providers, timeouts and listener events (ADR 0009) | M |
 | 3.6 | Decision engine: binding selection, settings, precheck, `FIRST`, trace | M |
-| 3.7 | `tierwise test`'s engine: run examples (`E_EXAMPLE_FAILED`) | S |
+| 3.7 | Example runner inside validation (`E_EXAMPLE_FAILED`, ADR 0013); `tierwise test` reports per-example results | S |
 | 3.8 | Evaluate and canonical conformance runners; jqwik properties (§12) | M |
 | 3.9 | JMH benchmark on a generated bundle of about 1,000 keys and 50 features; report the numbers | S |
 
