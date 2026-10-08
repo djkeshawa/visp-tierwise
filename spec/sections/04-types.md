@@ -20,7 +20,7 @@ Fact declarations without `type` use the same code under [FACT-6].
 
 ADR 0010 §6 treats each listed effect as an ordinary enum value, which is why these rules apply.
 
-Which types a fact may declare is decided by [FACT-7]. Which other type members a fact may carry is open under [FACT-9].
+Which types a fact may declare is decided by [FACT-7]. Which other type members a fact may carry is set by [FACT-9].
 
 In this section, the *type members* of a declaration are `type`, `min`, `max`, `format`, `values`, `universe`, `items` and `fields`. They sit alongside the declaration's own members, which the owning section defines: [KEY-2] and [KEY-3] for keys, section 3 (`FACT`) for facts, and [TYPE-8] for object fields.
 
@@ -42,7 +42,20 @@ A type member written on a key or fact declaration is still governed by this cla
 
 **[TYPE-10]** A field whose declaration has no `optional` member, or has `optional` set to `false`, MUST be treated as required.
 
-**[TYPE-11]** *(OPEN)* Which code reports a malformed type declaration? The cases are: a declaration that is not a map; a `type` that is not a string, is `null`, or names an unknown type; an unknown `format`; a type member its type does not define ([TYPE-7]); a missing `values`, `universe`, `items` or `fields` ([TYPE-40], [TYPE-53], [TYPE-59]); a member of an object field or `items` declaration that is neither a type member nor `optional`; an `optional` outside an object field declaration ([TYPE-8]); an `optional` that is not a boolean ([TYPE-9]); a `min` or `max` that is not an integer or is `null`; a `values` or `universe` that is not a list, or that has an entry that is not a string; and a `fields` that is not a map. Section 6.1 names no code for these. The candidate is a new declaration code, `E_TYPE_DECLARATION`.
+**[TYPE-11]** A malformed type declaration MUST be reported as `E_INVALID_DECLARATION`. A type declaration is malformed when:
+
+- it is not a map ([TYPE-1]);
+- its `type` is not a string, is `null`, or is not one of the names that [TYPE-2] lists;
+- its `format` is not one of the values that [TYPE-31] lists;
+- it has a type member that its `type` does not define ([TYPE-7]);
+- it lacks `values`, `universe`, `items` or `fields` where [TYPE-40], [TYPE-53] or [TYPE-59] requires it;
+- it has a member of an object field or `items` declaration that is neither a type member nor `optional`;
+- it has `optional` outside an object field declaration ([TYPE-8]), or an `optional` that is not a boolean ([TYPE-9]);
+- its `min` or `max` is not a source integer under [TYPE-15], or is `null`;
+- its `values` or `universe` is not a list, or has an entry that is not a string;
+- its `fields` is not a map, or declares no field, or has an empty field name ([TYPE-68]).
+
+A declaration that lacks `type` is reported as `E_TYPE_REQUIRED` under [TYPE-4], and that code takes precedence.
 
 ## 4.2 Booleans, integers and decimals
 
@@ -50,7 +63,7 @@ A type member written on a key or fact declaration is still governed by this cla
 
 **[TYPE-13]** The `min` and `max` members of an `integer` declaration, where present, MUST each be a source integer ([TYPE-15]) within ±(2^53 − 1).
 
-**[TYPE-14]** When both `min` and `max` are present, `min` MUST NOT be greater than `max`.
+**[TYPE-14]** When both `min` and `max` are present, `min` MUST NOT be greater than `max`. A declaration that breaks this MUST be reported as `E_INVALID_DECLARATION`.
 
 **[TYPE-15]** In a source, an `integer` value MUST be a plain scalar that [SRC-1] reads as the core-schema integer type.
 
@@ -58,7 +71,9 @@ A type member written on a key or fact declaration is still governed by this cla
 
 **Example (non-normative).** `5`, `+5`, `0x1F` and `0o17` are integer values. `5.0`, `1e3` and `"5"` are not; each fails validation under [TYPE-70].
 
-**[TYPE-17]** *(OPEN)* How does an evaluator decide that a runtime number is an integer value? Some runtimes hold every number as a floating-point value, so they cannot tell `5` from `5.0`. Recommended: a runtime number is an integer value when its mathematical value is an integer, and conformance vectors use integer tokens only.
+**[TYPE-17]** A runtime number is an integer value when its mathematical value is an integer, whatever its representation. A runtime number whose mathematical value is not an integer is not an integer value.
+
+**Note (non-normative).** Some runtimes hold every number as a floating-point value, so they cannot tell `5` from `5.0`. Under [TYPE-17] both are integer values. [VEC-35] keeps integral float tokens out of the conformance suite's inputs.
 
 **[TYPE-18]** Every `integer` value MUST lie within ±(2^53 − 1), whether or not its declaration gives bounds.
 
@@ -70,11 +85,11 @@ A type member written on a key or fact declaration is still governed by this cla
 
 > **Implementation note.** A JavaScript number is an IEEE double and loses precision above 2^53. An implementation that holds numbers this way should check the digits of the original token against the range, not the converted number.
 
-For a runtime integer fact value outside this range, [FACT-41] gives the error. Whether a fact declaration may give bounds is open under [FACT-9].
+For a runtime integer fact value outside this range, [FACT-41] gives the error. Which type members a fact declaration may carry, bounds included, is set by [FACT-9].
 
-**[TYPE-22]** *(OPEN)* Which codes report (a) a `min` or `max` outside ±(2^53 − 1), which [TYPE-13] requires, (b) a `min` greater than `max`, which [TYPE-14] requires, and (c) an integer value that is both outside ±(2^53 − 1) and outside its declared bounds, where [TYPE-20] and [TYPE-21] would both apply? Section 6.1 names no code for (a) or (b). `E_INTEGER_RANGE` is the candidate for (a). For (c), the number of findings is decided by [TYPE-23].
+**[TYPE-22]** A `min` or `max` of an `integer` declaration that lies outside ±(2^53 − 1), which [TYPE-13] forbids, MUST be reported as `E_INTEGER_RANGE`.
 
-**[TYPE-23]** *(OPEN)* Which findings does a compiler report when one source value breaks more than one rule? Examples are an object with an unknown field and a missing required field, a set with a repeated member and a member outside `universe`, and a list with several invalid elements. Recommended: the compiler reports each violation as its own finding, and the order of findings is left to the `FIND` area ([FIND-26]).
+**[TYPE-23]** A compiler MUST report each violation of a rule in this section as its own finding, and MUST give each finding the code that [TYPE-71] selects for it. So an object with an unknown field and a missing required field gives two findings, and a list with several invalid elements gives one finding for each invalid element. The order of findings is set by [FIND-26].
 
 **[TYPE-24]** A `decimal` value MUST be a string that matches `[+-]?[0-9]+(\.[0-9]+)?` in full, where `[0-9]` stands for an ASCII digit.
 
@@ -85,6 +100,8 @@ A finding for a number written where a decimal is expected typically suggests qu
 **[TYPE-26]** A decimal value MUST be compared in canonical form (see [NORM-9] and [NORM-10]).
 
 **[TYPE-27]** A decimal value MUST be compared by equality and membership only. No ordering comparison is defined for decimals. The operators that conditions offer are defined by section 8 (see [RULE-15] and [RULE-37]).
+
+**[TYPE-79]** When one source `integer` value breaks both [TYPE-20] and [TYPE-21], the compiler MUST report it with two findings, one under [TYPE-20] and one under [TYPE-21], as [TYPE-23] requires. Each finding takes the code that [TYPE-71] selects, which without an owning-clause code is `E_INTEGER_RANGE` for the first and `E_OUT_OF_RANGE` for the second.
 
 ## 4.3 Strings and formats
 
@@ -106,7 +123,7 @@ A finding for a number written where a decimal is expected typically suggests qu
 
 **[TYPE-35]** Any other `iana_tz` source value MUST fail validation under [TYPE-70].
 
-**[TYPE-36]** *(OPEN)* Which IANA tz database release is pinned, and what is the format of `spec/data/tz-names.txt`? The file does not exist yet. Recommended: a constant in `spec/spec.md` names the release, and the file is UTF-8 with one zone or link name per line, LF line endings, sorted by code point, and no comments or blank lines.
+**[TYPE-36]** The spec version MUST pin one IANA tz database release, and a constant in `spec/spec.md` MUST name it. The file `spec/data/tz-names.txt` MUST be UTF-8, with one zone or link name per line, LF line endings, no comments and no blank lines, and its names MUST be sorted by code point. [TYPE-80] names the pinned release.
 
 **[TYPE-37]** An evaluator MUST check an `iana_tz` value received at runtime against the syntax `^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)*$` in full, and nothing more.
 
@@ -114,13 +131,15 @@ A finding for a number written where a decimal is expected typically suggests qu
 
 **[TYPE-39]** A runtime `iana_tz` value that fails the syntax of [TYPE-37] MUST fail validation under [TYPE-70].
 
+**[TYPE-80]** Spec version 0.1 pins IANA tz database release `2026e` ([TYPE-36]). `spec/data/tz-names.txt` MUST list exactly the Zone and Link names of that release's main data files and `backward`, excluding `Factory` and the `backzone` file (ADR 0014).
+
 ## 4.4 Enumerations and sets
 
 **[TYPE-40]** An `enum` declaration MUST contain `values`, and a `set` declaration MUST contain `universe`.
 
 **[TYPE-41]** The `values` of an `enum` declaration and the `universe` of a `set` declaration MUST each be a list of strings.
 
-**[TYPE-42]** The `values` of an `enum` declaration and the `universe` of a `set` declaration MUST each be non-empty.
+**[TYPE-42]** The `values` of an `enum` declaration and the `universe` of a `set` declaration MUST each be non-empty. An empty list is reported as `E_INVALID_DECLARATION`.
 
 **[TYPE-43]** The `values` of an `enum` declaration and the `universe` of a `set` declaration MUST NOT repeat a string.
 
@@ -140,13 +159,13 @@ A finding for a number written where a decimal is expected typically suggests qu
 
 **[TYPE-51]** Every set value that an evaluator produces as a result MUST list its members in the declaration order of `universe`.
 
-**[TYPE-52]** *(OPEN)* Which codes report (a) an empty `values` or `universe` list ([TYPE-42]), (b) a repeated string in a `values` or `universe` declaration ([TYPE-43]), and (c) a repeated member in a set value ([TYPE-46])? The candidate for (b) and (c) is `E_DUPLICATE_VALUE`. Section 6.1 names no code for (a).
+**[TYPE-52]** A repeated string in the `values` or `universe` of a declaration ([TYPE-43]), and a repeated member of a source `set` value ([TYPE-46]), MUST each be reported as `E_DUPLICATE_VALUE`.
 
 ## 4.5 Lists and objects
 
 **[TYPE-53]** A `list` declaration MUST contain `items`.
 
-**[TYPE-54]** The `items` member of a `list` declaration MUST be a type declaration of any type (nesting is open under [TYPE-69]).
+**[TYPE-54]** The `items` member of a `list` declaration MUST be a type declaration of any type (nesting is unlimited under [TYPE-69]).
 
 Which strategies a `list` key may use is decided by [MERGE-3].
 
@@ -166,7 +185,7 @@ Which strategies a `list` key may use is decided by [MERGE-3].
 
 **[TYPE-62]** Every field not declared `optional` MUST be present in an object value, except in a value that [MERGE-11] permits to be partial and in the object values nested within it ([MERGE-12]).
 
-**[TYPE-63]** *(OPEN)* Which code reports a source object value that lacks a field not declared `optional`: `E_TYPE_REQUIRED` or `E_TYPE_MISMATCH` through [TYPE-71]? Recommended: `E_TYPE_MISMATCH`, because the value does not match its object type. ADR 0011 §1 uses `E_TYPE_REQUIRED` only for a declaration with no `type`.
+**[TYPE-63]** A source `object` value that lacks a field not declared `optional`, where [TYPE-62] requires that field, MUST be reported as `E_TYPE_MISMATCH`. `E_TYPE_REQUIRED` applies only to a declaration with no `type` ([TYPE-4]).
 
 **[TYPE-64]** An `object` value MUST NOT contain a key that names no declared field, and such a key MUST NOT be ignored.
 
@@ -176,15 +195,15 @@ Which strategies a `list` key may use is decided by [MERGE-3].
 
 **[TYPE-67]** A present field whose value is `null` MUST be handled under [TYPE-77], whether or not the field is declared `optional`.
 
-**[TYPE-68]** *(OPEN)* Which strings are valid field names, and may an `object` declare zero fields? Duplicate map keys are rejected by [SRC-3]. Naming patterns are project policy and are not part of this section.
+**[TYPE-68]** A field name MUST be a non-empty string, NFC-normalised under [NORM-1]. No other restriction on a field name's characters applies in this section. An `object` declaration MUST declare at least one field. An empty field name, or an `object` declaration with no field, is a malformed declaration under [TYPE-11]. Duplicate map keys are rejected by [SRC-3]. Naming patterns are project policy and are not part of this section.
 
-**[TYPE-69]** *(OPEN)* May `list` and `object` declarations nest to any depth? The sources set no limit, and no nesting error code exists.
+**[TYPE-69]** A `list` or `object` declaration MAY contain a `list` or `object` declaration at any depth. No nesting depth limit applies.
 
 ## 4.6 Null and general validation
 
 **[TYPE-70]** A value that does not match its declared type MUST fail validation.
 
-**[TYPE-71]** When the value comes from a source, a failure of validation MUST be reported with the first of these codes that applies: (1) the code that the clause owning the value names for an invalid value, such as `E_INVALID_SETTING` for setting values ([POL-17]) and `E_ILLEGAL_FACT_VALUE` for condition literals ([RULE-18]); (2) the code that this section names for that failure ([TYPE-20], [TYPE-21], [TYPE-48]); (3) `E_TYPE_MISMATCH`.
+**[TYPE-71]** When the value comes from a source, a failure of validation MUST be reported with the first of these codes that applies: (1) the code that the clause owning the value names for an invalid value, such as `E_INVALID_SETTING` for setting values ([POL-17]) and `E_ILLEGAL_FACT_VALUE` for condition literals ([RULE-18]); (2) the code that this section names for that failure ([TYPE-20], [TYPE-21], [TYPE-48], [TYPE-52]); (3) `E_TYPE_MISMATCH`.
 
 **[TYPE-72]** An effect that fails validation MUST be reported as [FEAT-14] requires.
 
@@ -222,7 +241,7 @@ Identifiers such as keys, entities, facts and node IDs are outside [NORM-1] and 
 
 > **Implementation note.** For well-formed strings, equality is the same whether strings are compared by UTF-16 code unit or by code point. This holds for equality only, not for ordering ([DET-5]).
 
-**[NORM-8]** *(OPEN)* Is a string that contains an unpaired surrogate valid? Some runtimes can hold such values. The sources do not say whether they are rejected at compile time, or compared as received at runtime. Until this is settled, [NORM-6] is undefined for such strings. [BUNDLE-13] already excludes them from bundles.
+**[NORM-8]** A string that contains an unpaired surrogate code point is invalid. It MUST fail validation under [TYPE-70] wherever it appears, in a source or at runtime. A source value is reported under [TYPE-71], and a runtime value is not reported with a code from this section ([TYPE-73]) but is handled as its owning clause requires. [BUNDLE-13] already excludes such strings from bundles.
 
 **[NORM-9]** A canonical decimal string is one that matches `-?(0|[1-9][0-9]*)(\.[0-9]*[1-9])?` in full and is not `-0`, where `[0-9]` and `[1-9]` stand for ASCII digits. Zero is written `0`.
 
@@ -252,17 +271,21 @@ A string is not a number, a number is not a boolean, and a number is not a decim
 
 **[NORM-18]** Values of different declared types MUST NOT be equal. How conditions compare values is defined by [RULE-35] to [RULE-38].
 
+**[NORM-19]** Two values MUST be equal if and only if they have the same type and: for scalars, they are equal under [NORM-6] and the other `NORM` rules for that type; for sets, they have the same elements; for lists, they have the same length and equal elements at each position; for objects, they have the same field names and equal values for each field. Field order is not significant (ADR 0014).
+
 ## Summary of codes (non-normative)
 
 | Code | Source value | Clauses |
 | --- | --- | --- |
 | `E_TYPE_REQUIRED` | Key, object field or `items` declaration with no `type` | [TYPE-4] |
-| `E_TYPE_MISMATCH` | Value of the wrong form, a `null`, an unknown object field, an out-of-set `iana_tz` or `enum` value, a number used as a decimal, a `set` value that is not a list | [TYPE-12], [TYPE-15], [TYPE-24], [TYPE-25], [TYPE-35], [TYPE-44], [TYPE-45], [TYPE-64], [TYPE-71], [TYPE-77], [NORM-14] |
-| `E_INTEGER_RANGE` | Integer value outside ±(2^53 − 1) | [TYPE-20] |
-| `E_OUT_OF_RANGE` | Integer value outside its declared bounds | [TYPE-21] |
+| `E_INVALID_DECLARATION` | Malformed type declaration, a `min` greater than `max`, an empty `values` or `universe` | [TYPE-11], [TYPE-14], [TYPE-42] |
+| `E_TYPE_MISMATCH` | Value of the wrong form, a `null`, an unknown object field, a source object value lacking a required field, an out-of-set `iana_tz` or `enum` value, a number used as a decimal, a `set` value that is not a list, a string with an unpaired surrogate | [TYPE-12], [TYPE-15], [TYPE-24], [TYPE-25], [TYPE-35], [TYPE-44], [TYPE-45], [TYPE-63], [TYPE-64], [TYPE-71], [TYPE-77], [NORM-8], [NORM-14] |
+| `E_INTEGER_RANGE` | Integer value, or declared `min` or `max`, outside ±(2^53 − 1) | [TYPE-20], [TYPE-22], [TYPE-79] |
+| `E_OUT_OF_RANGE` | Integer value outside its declared bounds | [TYPE-21], [TYPE-79] |
 | `E_NOT_IN_UNIVERSE` | Set member not in `universe` | [TYPE-48] |
+| `E_DUPLICATE_VALUE` | Repeated string in a declared `values` or `universe`, or repeated member of a source `set` value | [TYPE-52] |
 
-An absent required object field has no code in this table; its code is open under [TYPE-63]. All codes in this table apply to source values only, and a code that the clause owning the value names takes precedence over them ([TYPE-71]). Effects use [FEAT-14]. A runtime value is not reported with these codes ([TYPE-73]); it is handled as [FACT-35], [SVC-31] and [SVC-34] define.
+All codes in this table apply to source content only, and a code that the clause owning the value names takes precedence over them ([TYPE-71]). Effects use [FEAT-14]. A runtime value is not reported with these codes ([TYPE-73]); it is handled as [FACT-35], [SVC-31] and [SVC-34] define.
 
 ## Examples (non-normative)
 
@@ -292,13 +315,4 @@ window:
 
 ## Open points
 
-- [TYPE-11]: the code for malformed type declarations, such as an unknown type name or a member its type does not define.
-- [TYPE-17]: how an evaluator decides that a runtime number is an integer value.
-- [TYPE-22]: the codes for invalid declared bounds, and the findings for an integer that fails both checks.
-- [TYPE-23]: the findings for a source value that breaks more than one rule.
-- [TYPE-36]: the pinned tz release and the format of `spec/data/tz-names.txt`.
-- [TYPE-52]: the codes for an empty `values` or `universe`, a repeated entry, and a repeated set member.
-- [TYPE-63]: the code for an absent required object field from a source.
-- [TYPE-68]: the syntax of field names, and whether an object may declare zero fields.
-- [TYPE-69]: whether list and object declarations may nest to any depth.
-- [NORM-8]: whether a string containing an unpaired surrogate is valid.
+- (none)

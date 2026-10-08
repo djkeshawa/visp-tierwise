@@ -66,7 +66,7 @@ A **contribution entry** is one element of `contributions`. A scope *contributes
 
 **[PROV-27]** A contribution entry MUST contain `value` if and only if it is a value entry, or a failure entry under `deny`.
 
-**[PROV-28]** The `value` of a value entry MUST be the value that the scope contributes, as validated ([SVC-31] for a provider value, and the bundle rules for a bundle value), and MUST NOT be a running or merged result. For `deep_merge` the value can therefore be a partial object ([MERGE-11]).
+**[PROV-28]** The `value` of a value entry MUST be the value that the scope contributes, as validated ([SVC-31] for a provider value, and the bundle rules for a bundle value), and MUST NOT be a running or merged result. For `deep_merge` the value can therefore be a partial object ([MERGE-11]), subject to [MERGE-26] for an optional object field.
 
 **[PROV-29]** The `value` of a failure entry under `deny` MUST be the deny value of the key's strategy ([SVC-9]).
 
@@ -78,7 +78,7 @@ A **contribution entry** is one element of `contributions`. A scope *contributes
 
 **[PROV-33]** The `onSourceFailure` of a failure entry MUST be the source-failure behaviour in effect for the key under [SVC-1], whether declared on the key or supplied by its kind ([KIND-9]). That behaviour is `skip` or `deny` ([SVC-3]).
 
-> Note: which behaviour applies when the key and its kind both declare a value is open in [SVC-5].
+> Note: when the key and its kind both declare `on_source_failure`, the two values are equal ([SVC-5]), so one behaviour is in effect.
 
 **[PROV-34]** Contribution entries MUST be in evaluation-path order ([MERGE-13]): levels from the root level to the most specific level in declared order ([SCOPE-6]), then axes in declared order ([SCOPE-7]).
 
@@ -118,13 +118,13 @@ A **contribution label** is the value of a contribution entry's `effect` member.
 
 **[PROV-41]** A failure entry under `deny` MUST keep its failure label, `UNAVAILABLE` or `INVALID`, and MUST NOT take a value label. For example, a failure under `deny` for an `all` key carries `value` `false` and the label `UNAVAILABLE`, not `VETO`.
 
-**[PROV-42]** `contributions` MUST NOT contain an entry for any scope other than those that [PROV-20], [PROV-39] and [PROV-40] require, and any that [PROV-44] adds once it is settled. This covers in particular a scope that the context omits ([CTX-21]), a skipped scope ([PROV-61]), a scope whose node has no value for the key, a key that a provider omits ([SVC-36]), and a key that a provider returns but the bundle does not declare ([SVC-27]).
+**[PROV-42]** `contributions` MUST NOT contain an entry for any scope other than those that [PROV-20], [PROV-39] and [PROV-40] require. This covers in particular a scope that the context omits ([CTX-21]), a skipped scope ([PROV-61]), a scope whose node has no value for the key, a key that a provider omits ([SVC-36]), a key that a provider returns but the bundle does not declare ([SVC-27]), and a provider entry for a key that is not settable at that level ([PROV-44]).
 
-**[PROV-43]** A scope at which the key is not settable MUST NOT appear in `contributions`, except as [PROV-44] decides.
+**[PROV-43]** A scope at which the key is not settable MUST NOT appear in `contributions`.
 
-> Note: for a single-key `resolve` ([EVAL-7]), no `Resolved` result contains such an entry. The provider is called only when the key is settable at the level ([SVC-17]), and the result covers no other key.
+> Note: for a single-key `resolve` ([EVAL-7]), no `Resolved` result contains such an entry. The provider is called only when the key is settable at the level ([SVC-17]), and the result covers no other key. In a multi-key request ([SVC-20]), a provider can return such an entry for another requested key, and [PROV-44] then applies.
 
-**[PROV-44]** *(OPEN)* In a multi-key request ([SVC-20]), when the provider is called because of one requested key and returns an entry for another requested key that is not settable at that level, does that key's `Resolved` result contain a failure entry at that level ([SVC-29])? [PROV-43] depends on the answer. Related open points are [SVC-28] and [SVC-30].
+**[PROV-44]** A provider entry for a key that is not settable at the level that returns it MUST be ignored, as [SVC-29] and [SVC-30] define. It MUST NOT produce a contribution entry of any kind, and in particular MUST NOT produce a failure entry. This applies in a multi-key request as well.
 
 ## 9.4 Source of an order-dependent value
 
@@ -155,7 +155,7 @@ A **contribution label** is the value of a contribution entry's `effect` member.
 
 **[PROV-52]** When `source` names a scope, that scope MUST have a value entry ([PROV-20]).
 
-**[PROV-53]** *(OPEN)* For `deep_merge`, the fields of the result can come from several scopes, but `source` names one scope or `DEFAULT`. Candidate rules: (a) the last term present in the fold of [AXIS-7], which uses the merge operation of [MERGE-22] and omits absent terms. For `axis_wins` the fold is `D ⊕ H ⊕ A`, and for `hierarchy_wins` it is `D ⊕ A ⊕ H`. H names the most specific level that contributes a value, A names the last declared axis that contributes a value, and `D` alone names `DEFAULT`. (b) a list of scopes, which would change the shape in [PROV-46]. The role of `default` in the fold is settled by [MERGE-25], so only the choice of rule is open.
+**[PROV-53]** For `deep_merge`, the fields of the result can come from several scopes, but `source` names one scope or `DEFAULT`. `source` MUST name the last present term of the fold of [AXIS-7], which uses the merge operation of [MERGE-22] and omits absent terms. For `axis_wins` the fold is `D ⊕ H ⊕ A`, and for `hierarchy_wins` it is `D ⊕ A ⊕ H`. `H` names the most specific level that contributes a value, `A` names the last declared axis that contributes a value, and `D` alone names `DEFAULT`. The role of `default` in the fold is settled by [MERGE-25].
 
 ## 9.5 Skipped scopes
 
@@ -211,7 +211,7 @@ A **contribution label** is the value of a contribution entry's `effect` member.
 
 **[PROV-78]** Each `trace` entry MUST be an object with the members `id` and `matched`, and MUST NOT have any member other than `id`, `matched` and `failed`.
 
-**[PROV-79]** The `id` of each `trace` entry MUST be the `id` of the rule that it describes, and its `matched` MUST be a boolean ([RULE-53]). The type of a rule `id`, and so of this member, is open in [POL-25].
+**[PROV-79]** The `id` of each `trace` entry MUST be the `id` of the rule that it describes, a non-empty string ([POL-25]), and its `matched` MUST be a boolean ([RULE-53]).
 
 **[PROV-80]** A `trace` entry MUST contain `failed` if and only if its `matched` is `false` ([RULE-53], [RULE-54]).
 
@@ -225,9 +225,9 @@ A **contribution label** is the value of a contribution entry's `effect` member.
 
 ## 9.7 Serialization
 
-Conformance vectors compare result fields as a subset match unless the vector sets `exact: true` (requirements §5.7), so vectors do not depend on member order. The open question below is narrower.
+Conformance vectors compare result fields as a subset match unless the vector sets `exact: true` (requirements §5.7), so vectors do not depend on member order.
 
-**[PROV-85]** *(OPEN)* Whether a serialized result, such as an HTTP response body, has a defined member order, or is an unordered JSON object whose array orders alone are significant.
+**[PROV-85]** A serialized result, such as an HTTP response body, is an unordered JSON object: its member order MUST NOT be significant. Only the order of array elements is significant, and the clause that defines each array states that order ([PROV-34], [PROV-58], [PROV-77], [PROV-82] and [PROV-86]).
 
 **[PROV-86]** The `value` of a set-valued result and of a set-valued contribution entry MUST list its members in the declaration order of `universe` ([TYPE-50], [TYPE-51]).
 
@@ -286,9 +286,4 @@ Conformance vectors compare result fields as a subset match unless the vector se
 ```
 
 ## Open points
-
-- [PROV-44] (OPEN): in a multi-key request ([SVC-20]), whether a provider entry for a requested key that is not settable at that level produces a failure entry in that key's `contributions`. Related: [SVC-28], [SVC-29] and [SVC-30].
-- [PROV-53] (OPEN): which scope a `deep_merge` `source` names when its fields come from several scopes. The default's role is settled by [MERGE-25]; the choice of rule is open.
-- [PROV-85] (OPEN): whether a serialized result has a defined member order.
-
-Related open points owned by other sections: [SVC-5] (which source-failure behaviour applies when a key and its kind disagree; [PROV-33] depends on it), [SVC-20] ([PROV-44] depends on it), [SVC-30] (what a failure under [SVC-29] records; [PROV-44] depends on it), [POL-25] (the type of a rule `id`; [PROV-79] depends on it).
+- (none)

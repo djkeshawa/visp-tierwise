@@ -12,7 +12,7 @@ This section defines the operations an evaluator offers: load bundle, create eva
 
 > Implementation note: ADR 0012 §3 keeps the JavaScript `loadBundle` synchronous by bundling its own SHA-256. The JavaScript loader also accepts a string. It encodes the string as UTF-8 before any check, so the checks of section 10 apply to the encoded bytes.
 
-**[EVAL-4]** Create evaluator MUST take a loaded bundle and evaluator options, and MUST either return an evaluator or raise `E_PROVIDER_MISSING` ([EVAL-26]). The errors for invalid provider registrations and options are open in [EVAL-27] and [EVAL-28]. The options supply one provider for each service-sourced level ([SVC-14]), a timeout for each provider ([SVC-38]), and the listener ([EVAL-41]).
+**[EVAL-4]** Create evaluator MUST take a loaded bundle and evaluator options, and MUST either return an evaluator or raise `E_PROVIDER_MISSING` ([EVAL-26]) or `E_EVALUATOR_OPTIONS` ([EVAL-27], [EVAL-28]). The options supply one provider for each service-sourced level ([SVC-14]), a timeout for each provider ([SVC-38]), and the listener ([EVAL-41]).
 
 **[EVAL-5]** Create evaluator MUST be synchronous.
 
@@ -22,7 +22,7 @@ This section defines the operations an evaluator offers: load bundle, create eva
 
 **[EVAL-8]** `decide(context, feature, factset)` MUST either return a `Decision` result ([PROV-62]) or raise an error of [EVAL-17]. It calls no provider ([SVC-22]).
 
-**[EVAL-9]** *(OPEN)* Must every implementation offer the synchronous variants of resolve and decide? Requirements §7.2 gives them for one language only, and ADR 0009 §1 names only `resolveSync`. In the requirements §7.1 sketch, resolve returns directly and its providers are blocking calls, so that sketch has no variant that refuses to call a provider. Conformance vectors name operations, so a variant that one implementation lacks cannot be tested on it. Proposed: every implementation offers both variants, with the same codes, so that one set of evaluate vectors covers both. Until this is decided, [EVAL-10] to [EVAL-12] apply to an implementation that offers the variant.
+**[EVAL-9]** Every implementation MUST offer both a synchronous variant of resolve, which never calls a provider and raises `E_PROVIDER_REQUIRED` where [SVC-42] requires a call, and the provider-capable resolve of [EVAL-7]. Decide never calls a provider ([SVC-22]), so every implementation MUST offer decide in a form that returns its result directly. That form is the synchronous variant of decide that [EVAL-12] describes. The error codes are the same in every variant.
 
 **[EVAL-10]** For an input that needs no provider call under [SVC-42], the synchronous variant of resolve MUST return the same result, or raise the same error, as resolve.
 
@@ -36,9 +36,22 @@ This section defines the operations an evaluator offers: load bundle, create eva
 
 ## 11.2 Check order
 
-**[EVAL-14]** *(OPEN)* In what order does load bundle apply the loader checks of section 10 ([BUNDLE-111] to [BUNDLE-116], and any adopted under [BUNDLE-118] to [BUNDLE-138]), and which error does it raise when several fail? [BUNDLE-117] defers to this clause. Two proposals exist. Section 10 proposes: well-formedness and strict parsing ([BUNDLE-111], [BUNDLE-112], [BUNDLE-116]), then the digest ([BUNDLE-113]), then the versions ([BUNDLE-115]), then structure. The section 11 review proposes: strict parsing and the envelope, then the versions, then the digest, then structure, so that a bundle in a future format reports `E_BUNDLE_UNSUPPORTED` and not `E_BUNDLE_INTEGRITY`. Under both, the first failing check decides the code.
+**[EVAL-14]** Load bundle MUST apply the checks of section 10 in this order, and MUST raise the code of the first check that fails ([EVAL-20]):
 
-**[EVAL-15]** *(OPEN)* In what order does create evaluator run its checks, and which error is raised when several fail? Its only decided check is the provider check of [SVC-14] ([EVAL-26]). The checks on the options are open in [EVAL-27] and [EVAL-28]. Proposed: the shape of the options first, then the provider registrations ([EVAL-27], [SVC-14]), then `E_PROVIDER_MISSING`, so that a provider registered under a misspelt level name is reported as that mistake and not only as a missing provider.
+1. Strict parsing and the envelope: [BUNDLE-111], [BUNDLE-112] and [BUNDLE-116]. A failure raises `E_BUNDLE_INTEGRITY`.
+2. Versions: [BUNDLE-115], with the supported values of [EVAL-25]. A failure raises `E_BUNDLE_UNSUPPORTED`.
+3. Digest: [BUNDLE-113]. A failure raises `E_BUNDLE_INTEGRITY`.
+4. Structure: [BUNDLE-118] to [BUNDLE-136]. A failure raises `E_BUNDLE_INTEGRITY`.
+
+A bundle in a future format therefore reports `E_BUNDLE_UNSUPPORTED`, not a digest mismatch. [BUNDLE-117] takes this order. [EVAL-56] covers a version member that is missing or is not a string.
+
+**[EVAL-15]** Create evaluator MUST apply these checks in this order, and MUST raise the code of the first check that fails:
+
+1. The options, including each timeout ([EVAL-28]). A failure raises `E_EVALUATOR_OPTIONS`.
+2. The provider registrations ([EVAL-27]). A failure raises `E_EVALUATOR_OPTIONS`.
+3. The provider check of [SVC-14] ([EVAL-26]). A failure raises `E_PROVIDER_MISSING`.
+
+A provider registered under a misspelt level name is therefore reported as `E_EVALUATOR_OPTIONS`, not only as a missing provider.
 
 **[EVAL-16]** Resolve, and its synchronous variant, MUST run these steps in this order:
 
@@ -67,11 +80,13 @@ Steps 4 to 6 raise no error. A missing fact is not an error ([FACT-21], [RULE-42
 >
 > Example (non-normative): `decide` is called with a FactSet that gives `"true"` for a `boolean` fact and omits another fact that the selected policy needs. It raises `E_FACTS_INVALID`. It does not return the feature's `if_fact_missing` value.
 
-**[EVAL-19]** *(OPEN)* Which code is raised when one context fails two checks of the same [CTX-9] step that have different codes? Only step 2 has two codes: naming the root level ([CTX-3], `E_CONTEXT_INVALID`) and naming an undeclared scope ([CTX-4], `E_UNKNOWN_SCOPE`). A declared name in the wrong map is `E_UNKNOWN_SCOPE` ([CTX-5]). This is the within-step part of [CTX-11], which owns the question. The answer must not depend on the order of map entries. Proposed: `E_CONTEXT_INVALID` wins, because naming the root is a contract violation, not a misspelt name.
+**[EVAL-19]** When one context, in one step of [CTX-9], fails the root-level check of [CTX-3] and also a check that raises `E_UNKNOWN_SCOPE` ([CTX-4], [CTX-5]), the operation MUST raise `E_CONTEXT_INVALID`, whatever the order of the map entries. Naming the root level is a contract violation, not a misspelt name. [CTX-11] refers to this clause for that case.
 
 **[EVAL-20]** After a check fails, an operation MUST NOT run a later check, MUST NOT call a provider, and MUST NOT raise a second error.
 
 **[EVAL-21]** An operation MUST NOT raise an error because no binding applies. A compiled feature always has a selected binding ([BIND-13], ADR 0007 §1), so this specification defines no such error.
+
+**[EVAL-56]** When `bundleFormatVersion` or `specVersion` is missing from `content`, load bundle MUST raise `E_BUNDLE_INTEGRITY`. When either is present with a value other than exactly the string `"1"` or `"0.1"` respectively, whatever its JSON type, load bundle MUST raise `E_BUNDLE_UNSUPPORTED` ([BUNDLE-137]) (ADR 0014).
 
 ## 11.3 Evaluation errors
 
@@ -79,19 +94,19 @@ Steps 4 to 6 raise no error. A missing fact is not an error ([FACT-21], [RULE-42
 
 **[EVAL-23]** An operation MUST NOT return a caller error or an integrity failure as a result, an effect, a reason, a contribution or a skipped scope ([PROV-9]).
 
-**[EVAL-24]** `E_BUNDLE_INTEGRITY` MUST be raised only by load bundle, for the failures of [BUNDLE-111], [BUNDLE-112] and [BUNDLE-113]. Whether it also covers malformed, non-UTF-8, non-canonical or incomplete input, and content that breaks the structure of section 10, is open in [BUNDLE-116] and [BUNDLE-118] to [BUNDLE-136].
+**[EVAL-24]** `E_BUNDLE_INTEGRITY` MUST be raised only by load bundle, for the failures of [BUNDLE-111], [BUNDLE-112], [BUNDLE-113], [BUNDLE-116] and [BUNDLE-118] to [BUNDLE-136].
 
-**[EVAL-25]** `E_BUNDLE_UNSUPPORTED` MUST be raised only by load bundle, for the failure of [BUNDLE-115]. Which versions an evaluator supports is open in [BUNDLE-137].
+**[EVAL-25]** `E_BUNDLE_UNSUPPORTED` MUST be raised only by load bundle, for the failure of [BUNDLE-115]. A bundle is supported only when its `bundleFormatVersion` is the string `"1"` and its `specVersion` is the string `"0.1"`, compared as exact strings ([BUNDLE-16], [BUNDLE-17], [BUNDLE-137]). Any other string is unsupported. [EVAL-56] covers a member that is missing or is not a string.
 
 **[EVAL-26]** `E_PROVIDER_MISSING` MUST be raised only by create evaluator, for the failure of [SVC-14].
 
-**[EVAL-27]** *(OPEN)* What does create evaluator raise when the options register a provider for a level that the bundle does not declare? [SVC-14] refers here for the related cases of a provider for a level that is not service-sourced and of two providers for one level, and requirements §6.2 has no code for any of them. Proposed: decide all three cases together in this clause, rejecting them at creation with one new code added by ADR, because ignoring them would hide a deployment mistake.
+**[EVAL-27]** Create evaluator MUST raise `E_EVALUATOR_OPTIONS` when the options register a provider for a level that the bundle does not declare, for a declared level that is not service-sourced, or twice for one level ([SVC-14]). Only create evaluator raises this code.
 
-**[EVAL-28]** *(OPEN)* Which evaluator options are required, and how is an invalid or absent option reported? Open cases: absent options, a provider with no timeout, a timeout that is zero or negative, and an absent listener. ADR 0009 §3 leaves timeout defaults to the runtime integration, and requirements §6.2 has no code for an invalid option.
+**[EVAL-28]** An omitted options argument MUST count as empty options, with no provider and no listener. The listener is optional. Options that are present but are not a map MUST raise `E_EVALUATOR_OPTIONS`. A timeout is valid only when it is a positive integer number of milliseconds ([SVC-38], [SVC-41]). A timeout that is not valid MUST raise `E_EVALUATOR_OPTIONS`. Whether a provider registered with no timeout is invalid is open in [SVC-48], which ADR 0013 does not decide.
 
 **[EVAL-29]** `E_PROVIDER_REQUIRED` MUST be raised only by the synchronous variant of resolve, at step 3 of [EVAL-16], under [SVC-42]. It is raised instead of the provider call.
 
-**[EVAL-30]** `E_CONTEXT_INVALID` MUST be raised by resolve, decide and their synchronous variants for the failures of [CTX-1], [CTX-3] and [CTX-6]. A runtime node ID that is not in NFC is not such a failure ([CTX-7]).
+**[EVAL-30]** `E_CONTEXT_INVALID` MUST be raised by resolve, decide and their synchronous variants for the failures of [CTX-1], [CTX-2], [CTX-3] and [CTX-6]. A runtime node ID that is not in NFC is not such a failure ([CTX-7]).
 
 **[EVAL-31]** A context argument that is present but is not a map, for example a list or a string, MUST raise `E_CONTEXT_INVALID`, because it is a malformed context (ADR 0009 §4).
 
@@ -105,25 +120,31 @@ Steps 4 to 6 raise no error. A missing fact is not an error ([FACT-21], [RULE-42
 
 **[EVAL-36]** `E_FACTS_INVALID` MUST be raised by decide and its synchronous variant for the FactSet failures of [FACT-22] to [FACT-41], and for a FactSet argument that is present but is not a map, which is a malformed FactSet (ADR 0009 §4). A fact whose value is `null` is missing, not invalid, and never raises this code ([FACT-16], [FACT-19], [FACT-21]).
 
-**[EVAL-37]** *(OPEN)* How is an absent or wrong-typed argument reported where no clause above gives a code? Open cases: an absent context; a context without `levels` or `axes` ([CTX-2]); an absent FactSet, or one without `facts` or `children` ([FACT-24]); a key or feature argument that is absent, not a string, or empty; and a bundle argument that load bundle did not return. Proposed: a key or feature argument that is not a non-empty string raises `E_UNKNOWN_KEY` or `E_UNKNOWN_FEATURE`, because no declared name matches it; an absent context or FactSet follows the answers to [CTX-2] and [FACT-24]; a bundle argument that load bundle did not return is outside the contract and has no vector.
+**[EVAL-37]** A key or feature argument that is omitted, is not a string, or is an empty string MUST raise `E_UNKNOWN_KEY` in resolve, at the lookup step of [EVAL-16], or `E_UNKNOWN_FEATURE` in decide, at the lookup step of [EVAL-17], because no declared name matches it.
 
-**[EVAL-38]** The evaluation operations MUST raise only the ten codes of requirements §6.2, whose evaluation triggers [EVAL-24] to [EVAL-36] define. `E_UNKNOWN_SCOPE`, `E_UNKNOWN_NODE` and `E_UNKNOWN_KEY` are also compiler codes (requirements §6.1), reported for sources under the clause areas that own them. This section defines only their evaluation triggers.
+**[EVAL-38]** The evaluation operations MUST raise only the eleven codes of requirements §6.2: `E_BUNDLE_INTEGRITY`, `E_BUNDLE_UNSUPPORTED`, `E_PROVIDER_MISSING`, `E_PROVIDER_REQUIRED`, `E_CONTEXT_INVALID`, `E_UNKNOWN_SCOPE`, `E_UNKNOWN_NODE`, `E_UNKNOWN_KEY`, `E_UNKNOWN_FEATURE`, `E_FACTS_INVALID` and `E_EVALUATOR_OPTIONS`. The triggers of [EVAL-24] to [EVAL-37] define when each code is raised. `E_UNKNOWN_SCOPE`, `E_UNKNOWN_NODE`, `E_UNKNOWN_KEY` and `E_UNKNOWN_FEATURE` are also engine error codes (requirements §6.1), reported for sources under the clause areas that own them. This section defines only their evaluation triggers.
 
 **[EVAL-39]** A source failure ([SVC-23], [SVC-29], [SVC-34]) MUST NOT raise an evaluation error. It is recorded in the provenance of the result ([PROV-8], [PROV-39], [PROV-40]).
 
 **[EVAL-40]** A key that a provider leaves out ([SVC-36]), and a key that a provider returns but the bundle does not declare ([SVC-27]), MUST NOT raise an evaluation error. Neither is a source failure.
 
+**[EVAL-54]** An omitted context argument MUST be treated as an empty context, and an omitted FactSet argument as an empty FactSet, as [CTX-2] and [FACT-24] define for a context without maps and a FactSet without `facts` or `children`.
+
+**[EVAL-55]** An operation's bundle argument MUST be a loaded bundle that [EVAL-2] returned. Any other value is outside the contract of this section, and no clause defines a code for it.
+
 ## 11.4 Listener events
 
-**[EVAL-41]** When a listener is configured, resolve MUST report to it the events that [SVC-43] to [SVC-46] define for the provider calls it makes.
+**[EVAL-41]** When a listener is configured, resolve MUST report to it the events that [SVC-43] to [SVC-47] define for the provider calls it makes.
 
 **[EVAL-42]** Decide and the synchronous variants of resolve and decide MUST NOT report a provider event, because they call no provider ([SVC-22], [SVC-42]).
 
-**[EVAL-43]** *(OPEN)* Requirements §7.1 and ADR 0012 §4 name bundle loads among the listener events. Load bundle, however, takes no listener and runs before any evaluator exists. How is a load event delivered? Options: a listener argument on load bundle, or an event that create evaluator emits for the bundle it receives.
+**[EVAL-43]** Create evaluator MUST emit one load event to the listener, when one is configured, for the bundle it receives. It emits this event only when it returns an evaluator, and before it returns ([EVAL-44]). Load bundle takes no listener and emits no event.
 
-**[EVAL-44]** *(OPEN)* Is each listener event delivered before the operation that caused it returns, and may listener calls from concurrent operations overlap? What is the payload of a provider event, how often does one occur, and how is a listener that fails treated? Section 6 refers to this clause for all of these. Proposed: events are delivered before the operation returns, with one event for each affected key in each call, and a listener that fails changes no result and raises no error, which keeps [EVAL-51] true.
+**[EVAL-44]** An operation MUST deliver each listener event before it returns. A call MUST report one event for each affected key, meaning each key that one of the events of [SVC-43] to [SVC-47] concerns. A listener that throws is ignored: it changes no result and raises no error. This keeps [EVAL-51] true.
 
-**[EVAL-45]** *(OPEN)* Should raised errors, and the skipped scopes recorded in a result (`skippedScopes`), also be reported to the listener? The sources list only provider events and bundle loads.
+**[EVAL-45]** An operation MUST NOT report a raised error, or a skipped scope recorded in a result (`skippedScopes`), to the listener. The events of [EVAL-41] and [EVAL-43] are the only listener events.
+
+**[EVAL-53]** An evaluator MUST NOT serialise listener calls; a listener MUST tolerate concurrent calls from concurrent operations. Each event MUST carry `type` and `bundleVersion`, and, where they apply, `level`, `node` and `key`; an implementation MAY add members. Conformance vectors do not assert listener events (ADR 0014).
 
 ## 11.5 Immutability and concurrency
 
@@ -145,13 +166,4 @@ Steps 4 to 6 raise no error. A missing fact is not an error ([FACT-21], [RULE-42
 
 ## Open points
 
-- [EVAL-9]: whether every implementation must offer the synchronous variants of resolve and decide.
-- [EVAL-14]: the order of load bundle checks, and the code when several fail (referenced by [BUNDLE-117]).
-- [EVAL-15]: the order of create evaluator checks, which depends on [EVAL-27] and [EVAL-28].
-- [EVAL-19]: the code when one context names the root level and an undeclared scope in the same [CTX-9] step (owned by [CTX-11]).
-- [EVAL-27]: the code for a provider registered for an undeclared level, a level that is not service-sourced, or twice for one level ([SVC-14]).
-- [EVAL-28]: which evaluator options are required, and how absent or invalid options are reported.
-- [EVAL-37]: the code, if any, for absent or wrong-typed arguments not covered by other clauses.
-- [EVAL-43]: how bundle-load events reach a listener.
-- [EVAL-44]: delivery timing, overlap, payload and granularity of listener events, and a listener that fails.
-- [EVAL-45]: whether raised errors and skipped scopes are reported to the listener.
+- (none)

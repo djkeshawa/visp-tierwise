@@ -4,13 +4,13 @@ This section defines the decision hierarchy: its levels and axes, the singleton 
 
 ## 2.1 Levels and axes
 
-**[SCOPE-1]** The `levels` list MUST contain at least one entry. The error code is the open point [SCOPE-9].
+**[SCOPE-1]** The `levels` list MUST contain at least one entry. An empty `levels` list is reported as `E_SCOPE_DECLARATION` ([SCOPE-9]).
 
-**[SCOPE-2]** Each entry in `levels` and `axes` MUST be a string. The error code is the open point [SCOPE-9]. How a scalar that the core schema reads as a non-string is treated in a name position is the open point [SRC-11].
+**[SCOPE-2]** Each entry in `levels` and `axes` MUST be a string. A non-string entry, such as a scalar that the core schema reads as a number or a boolean, is never converted to a string ([SRC-11]). The compiler MUST report it as `E_SCOPE_DECLARATION` ([SCOPE-9]).
 
-**[SCOPE-3]** Each name MUST be unique across the `levels` and `axes` lists taken together. The error code is the open point [SCOPE-4], except that the root level listed in `axes` is governed by [SCOPE-11].
+**[SCOPE-3]** Each name MUST be unique across the `levels` and `axes` lists taken together. The compiler MUST report a repeated name as `E_SCOPE_DECLARATION` ([SCOPE-4]), including the root level listed in `axes` ([SCOPE-11]).
 
-**[SCOPE-4]** *(OPEN)* Which error code reports a duplicate name under [SCOPE-3]: `E_SCOPE_DECLARATION` (a malformed declaration) or `E_DUPLICATE_DEFINITION` (the code ADR 0011 §7 uses when a hierarchy is defined more than once across presets and the project)?
+**[SCOPE-4]** A repeated name under [SCOPE-3] is a malformed hierarchy declaration, and the compiler MUST report it as `E_SCOPE_DECLARATION`. It MUST NOT report it as `E_DUPLICATE_DEFINITION`, which applies to a hierarchy that is defined more than once across presets and the project.
 
 **[SCOPE-5]** The `axes` list is optional. An omitted or empty `axes` list declares no axes.
 
@@ -18,15 +18,15 @@ This section defines the decision hierarchy: its levels and axes, the singleton 
 
 **[SCOPE-7]** Axes have no position in the specificity order. Where the order of axes matters, it is their declared order in `axes`.
 
-**[SCOPE-8]** *(OPEN)* Beyond being unique strings, the engine states no syntax for level and axis names. Is the empty string a valid name? Are any characters reserved, given that names are used as map keys in sources and contexts? Are level and axis names written in sources NFC-normalised before the uniqueness check of [SCOPE-3] and the lookups of [SCOPE-46], as [NORM-1] does for values and [SRC-24] proposes for names captured from file paths?
+**[SCOPE-8]** A level or axis name written in a source MUST be NFC-normalised before the uniqueness check of [SCOPE-3] and the lookups of [SCOPE-46]. A context name is not normalised ([CTX-4]). No character is reserved in a level or axis name. A name that is the empty string, or that contains an unpaired surrogate code point ([NORM-8]), MUST be reported as `E_SCOPE_DECLARATION`.
 
-**[SCOPE-9]** *(OPEN)* Which code reports a malformed hierarchy declaration: a `levels` value that is not a list, an empty `levels` list ([SCOPE-1]), an `axes` value that is not a list, or an entry of `levels` or `axes` that is not a string ([SCOPE-2])? The candidates are `E_MANIFEST` and `E_SCOPE_DECLARATION`.
+**[SCOPE-9]** The compiler MUST report `E_SCOPE_DECLARATION` for a malformed hierarchy declaration: a `levels` value that is not a list, an empty `levels` list ([SCOPE-1]), an `axes` value that is not a list, an entry of `levels` or `axes` that is not a string ([SCOPE-2]), or an empty name ([SCOPE-8]).
 
 ## 2.2 The root level
 
 **[SCOPE-10]** The first entry of `levels` is the root level. The root level is a singleton. It has no node catalog and exactly one implicit node, and that node has no node ID.
 
-**[SCOPE-11]** The root level MUST NOT be listed in `axes`. If it is, the compiler MUST report `E_SCOPE_DECLARATION`. This code applies whatever [SCOPE-4] decides for other duplicate names.
+**[SCOPE-11]** The root level MUST NOT be listed in `axes`. If it is, the compiler MUST report `E_SCOPE_DECLARATION`. The root level is then a repeated name under [SCOPE-3], and [SCOPE-4] gives the same code.
 
 **[SCOPE-12]** The root level MUST NOT have an entry in the `scopes` map, including an entry that sets `values: service`. If it has one, the compiler MUST report `E_SCOPE_DECLARATION`.
 
@@ -44,9 +44,9 @@ This section defines the decision hierarchy: its levels and axes, the singleton 
 
 **[SCOPE-14]** Every non-root level and every axis MUST have exactly one entry in the `scopes` map. The `scopes` map MUST NOT contain any other entry. If an entry is missing or extra, the compiler MUST report `E_SCOPE_DECLARATION`.
 
-**[SCOPE-15]** The `scopes` value MUST be a map. If it is not, for example a list or a scalar, the compiler MUST report `E_SCOPE_DECLARATION`.
+**[SCOPE-15]** Except as [SCOPE-16] allows, the `scopes` value MUST be a map. If it is not, for example a list or a scalar, the compiler MUST report `E_SCOPE_DECLARATION`.
 
-**[SCOPE-16]** *(OPEN)* May `scopes` be absent, or must it be an empty map, when the hierarchy has only the root level and no axes (for example `levels: [global]`)? Is an explicit `null` treated as absent, or as a non-map value under [SCOPE-15]?
+**[SCOPE-16]** When the hierarchy has no non-root level and no axis, the `scopes` member MAY be absent, `null`, or an empty map. In that case the compiled bundle still records `scopes` as an object ([BUNDLE-29]). When the hierarchy has a non-root level or an axis, an absent or `null` `scopes` member is reported as `E_SCOPE_DECLARATION` under [SCOPE-14] or [SCOPE-15].
 
 **[SCOPE-17]** A scope entry MUST contain `nodes`. If it does not, the compiler MUST report `E_SCOPE_DECLARATION`.
 
@@ -54,9 +54,9 @@ This section defines the decision hierarchy: its levels and axes, the singleton 
 
 **[SCOPE-19]** The `nodes` value MUST be one of: an inline list of node IDs; an object whose only property is `from`, with a non-empty string path as its value; or the string `open`. Any other value MUST be reported as `E_SCOPE_DECLARATION`.
 
-**[SCOPE-20]** *(OPEN)* Which code reports a non-string entry in an inline `nodes` list: `E_SCOPE_DECLARATION` or `E_INVALID_NODE_ID`? Whether a scalar that the core schema reads as a non-string is ever converted to a string in a name position is the open point [SRC-11]. This clause asks only which code applies.
+**[SCOPE-20]** A non-string entry in an inline `nodes` list MUST be reported as `E_SCOPE_DECLARATION`. It is never converted to a string ([SRC-11]). A string entry that breaks [SCOPE-33] or [SCOPE-34] is reported as `E_INVALID_NODE_ID` under [SCOPE-38].
 
-**[SCOPE-21]** *(OPEN)* Is a closed catalog with no IDs valid, that is, an empty inline list or a generated catalog whose `nodes` array is empty? If it is valid, every supplied ID for that scope is unlisted.
+**[SCOPE-21]** A closed catalog with no node IDs is valid. This covers an empty inline list and a generated catalog whose `nodes` array is empty. Every node ID that a source or a context supplies for such a scope is then unlisted, and the rules of [SCOPE-43] and of [CTX-12] to [CTX-14] apply to it.
 
 **[SCOPE-22]** A closed catalog is a scope whose `nodes` is an inline list or a `from` object. Its entry MUST contain `on_unknown_node`. If it does not, the compiler MUST report `E_SCOPE_DECLARATION`.
 
@@ -87,11 +87,11 @@ decision_hierarchy:
 
 **[SCOPE-27]** A `from` path MUST be relative to the project directory, the directory that contains `tierwise.yaml` (spec.md §Terminology, **Project**), and MUST resolve to a location inside that directory.
 
-**[SCOPE-28]** *(OPEN)* Which code reports a `from` path that is absolute, that resolves outside the project directory, that names a missing file, or that names a directory? Are symbolic links followed when checking that a path stays inside the project directory? [MANIFEST-12] asks the same question for every manifest path and proposes `E_MANIFEST`; one resolution answers both.
+**[SCOPE-28]** A `from` path that is absolute, that resolves outside the project directory, that names a missing file, or that names a directory MUST be reported as `E_SCOPE_DECLARATION`. Symbolic links are resolved before the containment check of [SCOPE-27], so a link whose target lies outside the project directory makes the path outside it. Manifest paths are governed by [MANIFEST-12].
 
 **[SCOPE-29]** A catalog file MUST be a JSON object with exactly one property, `nodes`, whose value is an array of strings.
 
-**[SCOPE-30]** *(OPEN)* Which code reports a catalog file that does not match [SCOPE-29]: one that is not well-formed JSON, that is not UTF-8 or starts with a byte-order mark, that repeats a property name, that has a property other than `nodes`, or whose `nodes` value is not an array of strings? Section 1 owns the parse codes (`E_MANIFEST`, `E_DUPLICATE_KEY`, see [SRC-3]); the question is which of them, or `E_SCOPE_DECLARATION`, applies to a catalog file. May two scopes name the same catalog file?
+**[SCOPE-30]** A catalog file that does not match [SCOPE-29] MUST be reported with the code of its defect. A file that is not valid UTF-8, that starts with a byte-order mark, or that is not well-formed JSON is reported as `E_PARSE`. A file that repeats a property name is reported as `E_DUPLICATE_KEY` ([SRC-3]). A file whose top-level value is not an object, that has no `nodes` property, that has a property other than `nodes`, or whose `nodes` value is not an array of strings, is reported as `E_SCOPE_DECLARATION`. Two scopes MAY name the same catalog file.
 
 **[SCOPE-31]** The compiler MUST read each generated catalog and embed its node IDs in the compiled bundle, in the NFC-normalised form of [SCOPE-35]. The bundle MUST NOT reference the catalog file. The bundle layout, including how each scope records its catalog or `open` and its `on_unknown_node` setting, is defined in section 10 ([BUNDLE-29] to [BUNDLE-43]).
 
@@ -103,17 +103,17 @@ decision_hierarchy:
 
 **[SCOPE-34]** A node ID MUST NOT contain a control character in the range U+0000 to U+001F or U+007F to U+009F.
 
-**[SCOPE-35]** The compiler MUST normalise each node ID written in a source to NFC, as the `NORM` area defines. This includes each entry of a generated catalog file. A source node ID that is not in NFC is normalised, not rejected. Whether a node ID captured from a file path is normalised is the open point [SRC-24].
+**[SCOPE-35]** The compiler MUST normalise each node ID written in a source to NFC, as the `NORM` area defines. This includes each entry of a generated catalog file and each node ID captured from a file path ([SRC-22], [SRC-24]). A source node ID that is not in NFC is normalised, not rejected.
 
-**[SCOPE-36]** *(OPEN)* Are the length check of [SCOPE-33] and the control-character check of [SCOPE-34] applied to a source node ID before or after NFC normalisation? Normalisation can change the number of code points in a string. Proposed: after, as [NORM-1] orders its checks for values.
+**[SCOPE-36]** The length check of [SCOPE-33] and the control-character check of [SCOPE-34] are applied to a source node ID after NFC normalisation, as [NORM-2] orders the checks for other strings. Normalisation can change the number of code points in a string.
 
-**[SCOPE-37]** *(OPEN)* Is a string that contains an unpaired surrogate a valid node ID? Such a string does not denote a sequence of Unicode code points, and JSON and YAML sources can contain one. This is the node ID case of [NORM-8]. The answer also governs context node IDs under [CTX-6].
+**[SCOPE-37]** A string that contains an unpaired surrogate is not a valid node ID, as [NORM-8] states. A source node ID of this kind MUST be reported as `E_INVALID_NODE_ID`, and a context node ID of this kind fails [CTX-6].
 
 **[SCOPE-38]** A source node ID that breaks [SCOPE-33] or [SCOPE-34] MUST be reported as `E_INVALID_NODE_ID`. This applies wherever a source writes a node ID: an inline list, a generated catalog, a values entry, a binding, or a node ID captured from a file path ([SRC-22]).
 
-**[SCOPE-39]** *(OPEN)* When a source node ID both breaks the contract and is absent from its closed catalog, which code is reported: `E_INVALID_NODE_ID`, `E_UNKNOWN_NODE`, or both? Every finding that is determined is reported ([FIND-3]); the question is whether an ID that fails the contract is also checked for membership.
+**[SCOPE-39]** A source node ID that is not valid under [SCOPE-33], [SCOPE-34] or [SCOPE-37] MUST be reported as `E_INVALID_NODE_ID`, and the compiler MUST NOT check it for membership under [SCOPE-43]. Such an ID therefore never produces `E_UNKNOWN_NODE`.
 
-**[SCOPE-40]** The engine MUST NOT require any naming pattern for node IDs beyond [SCOPE-33] and [SCOPE-34]. Naming patterns are project or preset policy and are checked, if at all, by lint rules (section 13, area `LINT`).
+**[SCOPE-40]** The engine MUST NOT require any naming pattern for node IDs beyond [SCOPE-33] and [SCOPE-34]. Naming patterns are a lint feature: they are declared in a shared schema file or a preset and are checked, if at all, by lint rules (section 13, area `LINT`; ADR 0013).
 
 **[SCOPE-41]** A node ID that cannot be used as a file name is still a valid node ID. Where its values are written is governed by section 1 (`SRC`).
 
@@ -125,17 +125,17 @@ decision_hierarchy:
 
 **[SCOPE-44]** The check in [SCOPE-43] MUST apply whatever the value of `on_unknown_node`. The setting has no effect at compile time.
 
-**[SCOPE-45]** For an open catalog, the compiler MUST NOT check a source node ID for membership. Any node ID that passes [SCOPE-33] and [SCOPE-34] is accepted.
+**[SCOPE-45]** For an open catalog, the compiler MUST NOT check a source node ID for membership. Any node ID that is valid under [SCOPE-33], [SCOPE-34] and [SCOPE-37] is accepted.
 
 **[SCOPE-46]** A source value or binding that names a level or axis not declared in `levels` or `axes` MUST be reported as `E_UNKNOWN_SCOPE`.
 
-**[SCOPE-47]** *(OPEN)* May a source value target a level declared `values: service`? If not, which code reports it? This clause owns the question; [SRC-33] and [SVC-13] refer to it. Bindings at a service-sourced level are already settled: they are `E_BINDING_NOT_ALLOWED` ([FEAT-19], [BIND-12]).
+**[SCOPE-47]** A source value MUST NOT target a level declared `values: service`. The compiler MUST report such a value as `E_SOURCE_MAPPING`. Bindings at a service-sourced level are already settled: they are `E_BINDING_NOT_ALLOWED` ([FEAT-19], [BIND-12]).
 
 ## 2.7 Context shape
 
-**[CTX-1]** Each of the `levels` and `axes` members that a context contains MUST be a map from strings to strings. If a member is not such a map, or a map entry has a value that is not a string, the evaluator MUST raise `E_CONTEXT_INVALID`. Whether a member may be absent is the open point [CTX-2].
+**[CTX-1]** Each of the `levels` and `axes` members that a context contains MUST be a map from strings to strings. If a member is not such a map, or a map entry has a value that is not a string, the evaluator MUST raise `E_CONTEXT_INVALID`. Whether a member may be absent is governed by [CTX-2].
 
-**[CTX-2]** *(OPEN)* Are the `levels` and `axes` members of a context required? Are members other than these two rejected? The sources differ: requirements §5.5 and §5.7 write contexts with only `levels`, while ADR 0007 §5 step 1 and the API sketches in requirements §7 carry both maps.
+**[CTX-2]** The `levels` and `axes` members of a context are each optional, and an absent member is an empty map. A context MUST NOT have any other member. If it has one, the evaluator MUST raise `E_CONTEXT_INVALID` at step 1 of [CTX-9]. A member that is present but `null` is not absent. It is not a map, so [CTX-1] applies.
 
 **[CTX-3]** A context MUST NOT name the root level, in either map. If it does, the evaluator MUST raise `E_CONTEXT_INVALID`. This clause, not [CTX-4], governs the root level's name.
 
@@ -143,7 +143,7 @@ decision_hierarchy:
 
 **[CTX-5]** A declared non-root level supplied under `axes`, or a declared axis supplied under `levels`, is not declared in the map that holds it. The evaluator MUST raise `E_UNKNOWN_SCOPE` for it under [CTX-4].
 
-**[CTX-6]** Each node ID value in a context MUST meet [SCOPE-33] and [SCOPE-34]. If it does not, the evaluator MUST raise `E_CONTEXT_INVALID`. Whether a string with an unpaired surrogate meets them is the open point [SCOPE-37].
+**[CTX-6]** Each node ID value in a context MUST meet [SCOPE-33] and [SCOPE-34], and MUST NOT contain an unpaired surrogate code point ([SCOPE-37]). If it does not, the evaluator MUST raise `E_CONTEXT_INVALID`.
 
 **[CTX-7]** An evaluator MUST NOT check whether a context node ID is in NFC, and MUST NOT raise `E_CONTEXT_INVALID` because it is not. Such an ID is compared as received under [CTX-8]. It is admitted or rejected by the rules of section 2.9 like any other ID.
 
@@ -155,14 +155,14 @@ decision_hierarchy:
 
 **[CTX-9]** Context validation MUST run these steps in this order:
 
-1. Shape: [CTX-1].
+1. Shape: [CTX-1] and [CTX-2].
 2. Scope names: [CTX-3], [CTX-4] and [CTX-5].
 3. Node ID structure: [CTX-6].
 4. Admission: [CTX-12], [CTX-13] and [CTX-14].
 
 **[CTX-10]** An evaluator MUST NOT start a value lookup, a binding lookup or a provider call until the context has passed all four steps of [CTX-9].
 
-**[CTX-11]** *(OPEN)* When a context fails two checks of the same step of [CTX-9] that have different codes, which code is raised? Only step 2 has two codes: one context may name the root level ([CTX-3], `E_CONTEXT_INVALID`) and an undeclared scope ([CTX-4], `E_UNKNOWN_SCOPE`). The answer must not depend on the order of map entries. Across steps, the first failing step decides ([EVAL-18]). [EVAL-19] refers to this question and proposes `E_CONTEXT_INVALID`.
+**[CTX-11]** When step 2 of [CTX-9] finds both a name that [CTX-3] rejects and a name that [CTX-4] or [CTX-5] rejects, the evaluator MUST raise `E_CONTEXT_INVALID`, whatever the order of the map entries. Across steps, the first failing step decides ([EVAL-18]).
 
 ## 2.9 Runtime admission
 
@@ -196,17 +196,4 @@ decision_hierarchy:
 
 ## Open points
 
-- [SCOPE-4]: error code for a duplicate name across `levels` and `axes`.
-- [SCOPE-8]: syntax of level and axis names (empty string, reserved characters) and whether source names are NFC-normalised.
-- [SCOPE-9]: error code for a malformed hierarchy declaration, including an empty `levels` list and non-string entries.
-- [SCOPE-16]: whether `scopes` may be absent, or must be an empty map, when only the root level exists; whether an explicit `null` counts as absent. Proposal: absent and `{}` are both valid when no non-root scope exists.
-- [SCOPE-20]: error code for a non-string entry in an inline `nodes` list.
-- [SCOPE-21]: whether a closed catalog with no IDs is valid.
-- [SCOPE-28]: error code for a `from` path that is absolute, leaves the project directory, or names a missing file or a directory; whether symbolic links are followed (shared with [MANIFEST-12]).
-- [SCOPE-30]: error code for a catalog file that is malformed or does not match [SCOPE-29]; whether two scopes may share a catalog file.
-- [SCOPE-36]: whether the length and control-character checks apply before or after NFC normalisation.
-- [SCOPE-37]: whether a string with an unpaired surrogate is a valid node ID (node ID case of [NORM-4]).
-- [SCOPE-39]: error code when a source node ID both breaks the contract and is unlisted.
-- [SCOPE-47]: whether a source value may target a `values: service` level, and the code if not (referenced by [SRC-33] and [SVC-13]).
-- [CTX-2]: whether the `levels` and `axes` members of a context are required, and whether other members are rejected.
-- [CTX-11]: error code when a context fails two checks of one validation step with different codes (referenced by [EVAL-19]; step order settled by [EVAL-18]).
+- (none)

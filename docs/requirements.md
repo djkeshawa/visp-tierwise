@@ -293,7 +293,7 @@ Values for `values: service` levels come from a provider
     only on narrowing strategies.
 - A provider is called at most once per scope per evaluation call, and only when
   needed. A throw or timeout makes every key being resolved at that level
-  `UNAVAILABLE`. An invalid or non-settable entry makes only that key `INVALID`.
+  `UNAVAILABLE`. An invalid entry makes only that key `INVALID`; an entry for a key not settable at that level is ignored and reported to the listener (ADR 0013).
   Omitted keys set nothing. Unknown keys are ignored and reported to the
   `EvaluationListener`.
 - A missing provider fails at evaluator creation (`E_PROVIDER_MISSING`).

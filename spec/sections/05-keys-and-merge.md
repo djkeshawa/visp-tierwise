@@ -8,7 +8,7 @@ This section defines what a key declaration contains, which scopes may hold valu
 
 **[KEY-2]** A key declaration MUST contain the members `type`, `combine` and `settable_at`.
 
-**[KEY-3]** A key declaration MAY contain the members `default`, `combine_across_axes`, `kind`, `on_source_failure`, `description` and `owner`, and the type members that [TYPE-7] allows for its `type`. It MUST NOT contain any other member. The code for a declaration that contains another member is open in [KEY-5].
+**[KEY-3]** A key declaration MAY contain the members `default`, `combine_across_axes`, `kind`, `on_source_failure`, `description` and `owner`, and the type members that [TYPE-7] allows for its `type`. It MUST NOT contain any other member. The code for a declaration that contains another member is given by [KEY-5].
 
 **[KEY-4]** The meaning and validation of each member of a key declaration are defined by the clauses named below, and an implementation MUST apply those clauses:
 
@@ -20,21 +20,26 @@ This section defines what a key declaration contains, which scopes may hold valu
 - `on_source_failure`: [KEY-8];
 - `description` and `owner`: [KEY-9].
 
-**[KEY-5]** *(OPEN)* Which code a key declaration reports when `combine` or `settable_at` is missing, when `combine` or a kind's `strategies` list names no strategy defined in this section, or when a key declaration or kind definition contains a member that [KEY-3] or [KIND-3] does not allow. Requirements §6.1 has no code for these cases.
+**[KEY-5]** A key declaration or kind definition is reported as follows:
+- A key declaration that omits `combine` or `settable_at`, that contains a member that [KEY-3] does not allow, or whose `settable_at` is not a list of names, MUST be reported as `E_INVALID_DECLARATION`.
+- A key declaration whose `on_source_failure` is neither `skip` nor `deny` MUST be reported as `E_INVALID_DECLARATION` ([SVC-4]).
+- A key declaration that omits `type` MUST be reported as `E_TYPE_REQUIRED` ([TYPE-4]).
+- A key declaration whose `combine` names no strategy defined in [MERGE-1] MUST be reported as `E_INVALID_DECLARATION`.
+- A kind definition that contains a member that [KIND-3] does not allow, or whose `strategies` list is not a list of strategies defined in [MERGE-1], MUST be reported as `E_KIND_DEFINITION`.
 
-**[KEY-6]** The `settable_at` member MUST be a list of scope names. Each name MUST be the root level, a declared non-root level or a declared axis. A name that is not declared MUST be reported as `E_UNKNOWN_SCOPE`. A service-sourced level MAY appear in `settable_at`.
+**[KEY-6]** The `settable_at` member MUST be a list of scope names. Each name MUST be the root level, a declared non-root level or a declared axis. A name that is not declared MUST be reported as `E_UNKNOWN_SCOPE`. A service-sourced level MAY appear in `settable_at`. Scope names are compared after NFC normalisation ([SCOPE-8]).
 
-**[KEY-7]** *(OPEN)* Whether `settable_at` may be an empty list, and whether it may name the same scope twice. An empty list gives the key no scope where it can hold a value.
+**[KEY-7]** The `settable_at` list MUST NOT be empty. An empty list MUST be reported as `E_INVALID_DECLARATION`. A scope name MUST NOT appear more than once in the list, and a repeated name MUST be reported as `E_DUPLICATE_VALUE`.
 
-**[KEY-8]** The `on_source_failure` member takes a value that [SVC-3] permits, and a kind may supply it under [KIND-9]. A key that is settable at a service-sourced level and has no source-failure behaviour in effect is reported as [SVC-1] and [SVC-2] require (`E_MISSING_SOURCE_FAILURE`).
+**[KEY-8]** The `on_source_failure` member takes a value that [SVC-3] permits, and a kind may supply it under [KIND-9]. A key that is settable at a service-sourced level and has no source-failure behaviour in effect is reported as [SVC-1] and [SVC-2] require (`E_MISSING_SOURCE_FAILURE`). A key-level `on_source_failure` on a key that is settable at no service-sourced level is accepted with no effect ([SVC-7]).
 
-**[KEY-9]** The `description` and `owner` members are informational. Their presence, absence and content MUST NOT change any resolved value, decision or provenance record. The lint rules that require them are [LINT-44] (description) and [LINT-47] (owner). Whether `owner` is a key member at all is open in [LINT-48].
+**[KEY-9]** The `description` and `owner` members are informational. Their presence, absence and content MUST NOT change any resolved value, decision or provenance record. The lint rules that require them are [LINT-44] (description) and [LINT-47] (owner). The `owner` member is one of the two ways a key has an owner, as [LINT-48] defines.
 
 ## 5.2 Values for keys
 
 **[KEY-10]** A value for a key name that the compiled project does not declare MUST be reported as `E_UNKNOWN_KEY`.
 
-**[KEY-11]** A value for a key MUST be written only at a scope listed in that key's `settable_at`. The root level counts as a scope for this rule. A value written at a declared scope that is not listed in the key's `settable_at` MUST be reported as `E_NOT_SETTABLE_HERE`. A value that names an undeclared scope is reported under [SCOPE-46]. Whether a source may write a value at a service-sourced level is open in [SCOPE-47].
+**[KEY-11]** A value for a key MUST be written only at a scope listed in that key's `settable_at`. The root level counts as a scope for this rule. A value written at a declared scope that is not listed in the key's `settable_at` MUST be reported as `E_NOT_SETTABLE_HERE`. A value that names an undeclared scope is reported under [SCOPE-46]. A source value that targets a service-sourced level is an error, reported as `E_SOURCE_MAPPING` ([SCOPE-47]). A provider entry for a key that is not settable at its level is not reported under this clause; it is ignored, as [SVC-28] and [SVC-30] define.
 
 **[KEY-12]** Two values for the same key at the same scope and node, from any sources, MUST be reported as `E_DUPLICATE_VALUE`. The root level has no node ID ([SCOPE-13]), so a key has at most one root value.
 
@@ -82,7 +87,7 @@ A key whose type is not allowed for its strategy MUST be reported as `E_STRATEGY
 
 **[MERGE-9]** *Definition.* A **complete object** is an object value in which every field not declared `optional: true` has a value, and every object-typed field that has a value is itself a complete object.
 
-**[MERGE-10]** For a `deep_merge` key, the **starting value** is the `default` when one is declared, and the root value otherwise. The starting value MUST be a complete object ([TYPE-62]). An absent required field in the starting value is a violation of [TYPE-62], and the code that reports it is open in [TYPE-63].
+**[MERGE-10]** For a `deep_merge` key, the **starting value** is the `default` when one is declared, and the root value otherwise. The starting value MUST be a complete object ([TYPE-62]). An absent required field in the starting value is a violation of [TYPE-62], reported as `E_TYPE_MISMATCH` ([TYPE-63]).
 
 **[MERGE-11]** For a `deep_merge` key, every value other than the starting value MAY be a partial object. It MAY omit any field, including a field not declared `optional: true`.
 
@@ -132,7 +137,11 @@ A set result is returned in universe order ([TYPE-51]).
 
 > Note (non-normative): D ⊕ H equals the fold that starts from D. Merge ([MERGE-22]) is associative, because each field of the result is the fold of the values that set it, in order, and that fold is associative for object and non-object fields alike. So the statement "D ⊕ H" in [AXIS-7] and the fold that starts from the default in ADR 0008 §2 give the same result.
 
-**[MERGE-26]** *(OPEN)* Whether [MERGE-22] may merge an optional object field that the base does not set. In that case the overriding value becomes the field's value as a whole. If that value is partial, the result is not a complete object under [MERGE-9]. ADR 0008 §2 intends every resolved result to be complete, but does not say how this case is prevented or which code reports it. Proposed: because a merge never removes a field, a base lacks such a field on some path only if the starting value lacks it. So require, as a static check on authored values and as a validation of provider values, that a value which sets an optional object field that the starting value does not set gives a complete object for that field.
+**[MERGE-26]** For a `deep_merge` key, a value that sets an optional object field which the starting value does not set MUST give a complete object for that field ([MERGE-9]). This applies at any depth of the value. The requirement is checked as follows:
+- an authored value that breaks it MUST be reported as `E_TYPE_MISMATCH`, by the static check on authored values;
+- a provider value that breaks it fails validation under [SVC-31] and has outcome `INVALID` ([SVC-34]).
+
+*Basis:* ADR 0013 (optional object fields), and ADR 0008 §2, which intends every resolved result to be complete.
 
 ## 5.6 Axes
 
@@ -165,9 +174,9 @@ A set result is returned in universe order ([TYPE-51]).
 
 ## 5.7 Kinds
 
-**[KIND-1]** A **kind** is a named set of constraints that keys opt into. The engine gives a kind's name no meaning, and it enforces only the members listed in [KIND-3]. A kind is declared by the project or by a preset. A later definition replaces an earlier one as [MANIFEST-32] and [MANIFEST-33] require. Two definitions of the same kind inside the project are open in [SRC-43].
+**[KIND-1]** A **kind** is a named set of constraints that keys opt into. The engine gives a kind's name no meaning, and it enforces only the members listed in [KIND-3]. A kind is declared by the project or by a preset. A later definition replaces an earlier one as [MANIFEST-32] and [MANIFEST-33] require. Two definitions of the same kind inside the project are reported as `E_DUPLICATE_DEFINITION` ([SRC-43]).
 
-**[KIND-2]** A key opts into a kind by naming it in its `kind` member. A key with no `kind` member is not constrained by any kind. A key names at most one kind.
+**[KIND-2]** A key opts into a kind by naming it in its `kind` member, and kind names are compared after NFC normalisation. A key with no `kind` member is not constrained by any kind. A key names at most one kind.
 
 **[KIND-3]** A kind definition MAY contain these members: `strategies`, `narrowing_only`, `require_default`, `on_source_failure` and `naming`. A member that the definition omits imposes no constraint.
 
@@ -187,31 +196,16 @@ A set result is returned in universe order ([TYPE-51]).
 
 **[KIND-8]** A kind definition with `require_default: true` requires every key that uses it to declare `default`. A key that uses such a kind and does not declare `default` MUST be reported as `E_KIND_VIOLATION`.
 
-**[KIND-9]** A key that declares no `on_source_failure` and whose kind declares one takes the kind's value as its `on_source_failure`, as [SVC-1] allows. Where the key and its kind both declare a value, [SVC-5] applies. [SVC-5] is open, so this rule is incomplete until it is settled.
+**[KIND-9]** A key that declares no `on_source_failure` and whose kind declares one takes the kind's value as its `on_source_failure`, as [SVC-1] allows. Where the key and its kind both declare the member, [KIND-11] applies.
 
-**[KIND-10]** *(OPEN)* Whether a kind definition with `require_default: true` may allow commutative strategies. Commutative keys may not declare `default` ([MERGE-4]), so no commutative key can satisfy [KIND-8]. Proposed: report such a kind definition as `E_KIND_DEFINITION`, as [KIND-5] does for `narrowing_only`.
+**[KIND-10]** A kind definition with `require_default: true` MUST NOT allow a commutative strategy ([MERGE-1]), because a commutative key MUST NOT declare `default` ([MERGE-4]). A kind definition that allows one MUST be reported as `E_KIND_DEFINITION`. A definition with `require_default: true` and no `strategies` member allows every strategy, and is therefore reported under this rule.
 
-**[KIND-11]** *(OPEN)* The shape of a kind's `on_source_failure` member: a single value, or a set of permitted values. [KIND-9] assumes a single value. Until this is settled, read the member as a single value.
+**[KIND-11]** A kind's `on_source_failure` member takes a single value. A value that [SVC-3] does not permit is reported as [SVC-4] defines. Where a key that uses the kind also declares `on_source_failure`, the key's value MUST equal the kind's value. A key whose value differs MUST be reported as `E_KIND_VIOLATION`.
 
-**[KIND-12]** *(OPEN)* Whether a kind's `naming` member is an engine check, reported as `E_KIND_VIOLATION`, or a lint rule under the naming family in `LINT`. Requirements §4.3 says the engine enforces exactly what a kind declares, while §6.3 makes naming a lint rule with a severity set by the project. The pattern dialect is also undefined: requirements §4.9 shows regular expressions, and regular-expression dialects differ between runtimes.
+**[KIND-12]** A kind's `naming` member MUST name one pattern declared under the top-level `naming` map of a shared schema file or a preset ([LINT-14]), and that pattern MUST have category `key` ([LINT-16]). A kind whose `naming` member names no declared pattern, or names a pattern whose category is not `key`, MUST be reported as `E_KIND_DEFINITION`. Whether a key's name matches the pattern is a lint rule of the `naming/*` family ([LINT-16]), not an engine check. The pattern language is defined by [LINT-17].
 
-**[KIND-13]** *(OPEN)* Which code a key reports when it names a kind that the compiled project does not declare. Requirements §6.1 has no code for this case. Candidates: `E_KIND_DEFINITION`, or a new code.
+**[KIND-13]** A key whose `kind` member names a kind that the compiled project does not declare MUST be reported as `E_UNKNOWN_KIND`.
 
 ## Open points
 
-- **[KEY-5]** Code for a missing `combine` or `settable_at`, an unknown strategy name, or an undeclared member in a key or kind declaration.
-- **[KEY-7]** Whether `settable_at` may be empty or name a scope twice.
-- **[MERGE-26]** Whether an optional object field that the base does not set may take a partial overriding value. Proposed: a value that sets an optional object field which the starting value does not set must give a complete object for it, checked statically for authored values and on validation for provider values.
-- **[KIND-10]** Whether `require_default: true` on a kind that allows commutative strategies is a kind-definition error.
-- **[KIND-11]** The shape of a kind's `on_source_failure` member.
-- **[KIND-12]** Whether a kind's `naming` member is an engine check or a lint rule, and which pattern dialect applies.
-- **[KIND-13]** Code for a key that names an undeclared kind.
-
-Open points in other areas that this section depends on:
-
-- **[SVC-5]** Which `on_source_failure` applies when a key and its kind both declare one with different values ([KIND-9]).
-- **[SCOPE-47]** Whether a source value may target a `values: service` level ([KEY-11]).
-- **[SRC-43]** Two definitions of the same kind inside the project ([KIND-1]).
-- **[LINT-48]** What gives a key an owner, and so whether `owner` is a key member ([KEY-9]).
-- **[TYPE-63]** Which code reports a source object value that lacks a field not declared `optional` ([MERGE-10]).
-- **[PROV-53]** The `source` of a `deep_merge` result. Its candidate rules depend on the role of `default` now settled by [MERGE-25]; the choice of rule is the open part.
+- (none)

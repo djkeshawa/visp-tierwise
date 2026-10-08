@@ -18,9 +18,9 @@ The terms *parent*, *ancestor*, *child*, *decided entity*, *single-value fact*, 
 
 **[ENTITY-6]** Each name in a `belongs_to` or `has_many` value MUST be a declared entity. If it is not, the compiler MUST report `E_UNKNOWN_ENTITY`.
 
-**[ENTITY-7]** *(OPEN)* Which code reports each of the following: an entity declaration that is not a map, including a YAML null (`customer:` with no value); a member other than `belongs_to` and `has_many`; a `belongs_to` or `has_many` value that is neither a string nor a list; and a list element that is not a string? Requirements §6.1 names no code for a malformed entity declaration. The candidate is the structural declaration code that [FEAT-2] and [TYPE-11] also need. [SRC-11] proposes `E_TYPE_MISMATCH` for a non-string scalar where a name is expected.
+**[ENTITY-7]** The compiler MUST report `E_INVALID_DECLARATION` when an entity declaration is not a map, including a YAML null, when it has a member other than `belongs_to` and `has_many`, when the value of `belongs_to` or `has_many` is a map, or when a list value has an element that is a map or a list.
 
-**[ENTITY-8]** *(OPEN)* Is an empty `belongs_to` or `has_many` list legal, and is a name repeated within one list an error? Candidates: an empty list is legal and means the same as an omitted member; a repeated name is `E_DUPLICATE_VALUE`, by analogy with the proposal in [TYPE-52].
+**[ENTITY-8]** An empty `belongs_to` or `has_many` list is legal, and means the same as an omitted member. A name repeated within one list, compared after NFC normalisation ([FACT-3]), MUST be reported as `E_DUPLICATE_VALUE`.
 
 **[ENTITY-9]** Each entity named in the `belongs_to` of entity E is a *parent* of E. An entity MAY have several parents.
 
@@ -40,9 +40,13 @@ The terms *parent*, *ancestor*, *child*, *decided entity*, *single-value fact*, 
 
 **[ENTITY-16]** The compiler MUST report `E_ENTITY_GRAPH` when, for some entity E, one entity is both an ancestor of E and a child of E.
 
-**[ENTITY-17]** *(OPEN)* Is a cycle that combines both edge kinds, and that [ENTITY-14] to [ENTITY-16] do not catch, an `E_ENTITY_GRAPH` error? Requirements §4.2 says "cycles" without qualification. ADR 0010 §1 lists a cycle through `belongs_to` and a cycle through `has_many`. Recommended: orient every edge from parent to child (P to E for `E: { belongs_to: P }`, and P to C for `P: { has_many: C }`), and report `E_ENTITY_GRAPH` when the oriented graph has a cycle. That rule includes [ENTITY-14] to [ENTITY-16] and keeps the pair in [ENTITY-13] legal.
+**[ENTITY-17]** The compiler MUST orient every edge from parent to child: for an entity E with `belongs_to: P`, the edge is P → E; for an entity P with `has_many: C`, the edge is P → C. The compiler MUST report `E_ENTITY_GRAPH` when the oriented graph contains a cycle. This covers a cycle through `belongs_to` edges alone, through `has_many` edges alone, or through both kinds ([ENTITY-14] to [ENTITY-16]). The pair in [ENTITY-13] is not a cycle, because both of its edges run from P to E.
 
-> **Example (non-normative).** `A: { has_many: B, belongs_to: C }`, `B: { has_many: C }`, `C: {}`. C is an ancestor of A and a grandchild of A. No `belongs_to` or `has_many` cycle exists on its own, and no entity is both an ancestor and a child of the same entity, so [ENTITY-14] to [ENTITY-16] do not apply.
+> **Example (non-normative).** `A: { has_many: B, belongs_to: C }`, `B: { has_many: C }`, `C: {}`. C is an ancestor of A and a grandchild of A. No `belongs_to` cycle and no `has_many` cycle exists, but the oriented graph has the cycle C → A → B → C, so the compiler reports `E_ENTITY_GRAPH` under [ENTITY-17].
+
+**[ENTITY-18]** An entity name MUST be non-empty and MUST NOT contain `.`. The compiler MUST report a declared entity name that breaks this rule as `E_INVALID_DECLARATION`. A name in a `belongs_to` or `has_many` value that breaks it is not a declared entity, so [ENTITY-6] applies.
+
+**[ENTITY-19]** Where an entity name is expected, a number, a boolean or a null MUST NOT be converted to a string. The compiler MUST report it as `E_TYPE_MISMATCH`. For a number or a boolean, the message MUST suggest quoting the value. The positions where an entity name is expected are the value of `belongs_to` or `has_many`, and each element of a list value.
 
 ## 3.2 Fact declarations
 
@@ -50,7 +54,7 @@ The terms *parent*, *ancestor*, *child*, *decided entity*, *single-value fact*, 
 
 **[FACT-2]** The `<entity>` part of a fact name MUST be a declared entity. If it is not, the compiler MUST report `E_UNKNOWN_ENTITY`.
 
-**[FACT-3]** *(OPEN)* What is the identifier grammar for entity names and attribute names? Which code reports a fact name without the `<entity>.<attribute>` form? May an attribute contain `.`, and if so, is the entity part everything before the first `.`? Are entity and fact names NFC-normalised by the compiler ([NORM-1] leaves identifiers to the declaring section)? Candidates: `E_UNKNOWN_ENTITY` for a name with no `.`; entity names contain no `.`, so the entity part ends at the first `.`; names are NFC-normalised, as ADR 0011 §3 does for source strings.
+**[FACT-3]** Declared entity and attribute names MUST be compared after NFC normalisation. A fact name is split at its first `.`: the text before it is the entity part, and the text after it is the attribute part, which MAY contain `.`. A fact name with no `.` MUST be reported as `E_UNKNOWN_ENTITY`. A fact name whose attribute part is empty MUST be reported as `E_INVALID_DECLARATION`. Entity names contain no `.` ([ENTITY-18]), so the entity part always ends at the first `.`.
 
 **[FACT-4]** Facts MUST be declared only in shared files ([NS-3]). A `facts` map in a namespaced file is reported as [NS-4] requires.
 
@@ -60,15 +64,17 @@ The terms *parent*, *ancestor*, *child*, *decided entity*, *single-value fact*, 
 
 **[FACT-7]** The `type` of a fact MUST be one of `boolean`, `string`, `integer`, `decimal` or `enum`, declared in the grammar of section 4 ([TYPE-5]).
 
-**[FACT-8]** *(OPEN)* Which code reports a fact whose `type` is a type of section 4 that [FACT-7] excludes (`set`, `list` or `object`)? A type name that section 4 does not define is covered by [TYPE-11]. The candidate is the code proposed there, `E_TYPE_DECLARATION`.
+**[FACT-8]** A fact declaration whose `type` is `set`, `list` or `object` MUST be reported as `E_INVALID_DECLARATION`. A type name that section 4 does not define is covered by [TYPE-11].
 
-**[FACT-9]** *(OPEN)* May a fact declaration use the members that [TYPE-7] defines for its type (`min` and `max` for `integer`, `format` for `string`)? [TYPE-5] applies the type grammar to facts, while requirements §4.5 names only the type. Recommended: yes. A FactSet value outside them then fails [FACT-35].
+**[FACT-9]** A fact declaration MAY use the members that [TYPE-7] defines for its type, with the meaning given there; for example, `min` and `max` for `integer`, or `format` for `string`. A FactSet value outside the range that those members define is not a valid value of the type, so [FACT-35] applies.
 
 **[FACT-10]** The `source` member of a fact declaration is documentation only. A compiler and an evaluator MUST NOT use it to validate or to evaluate.
 
-**[FACT-11]** *(OPEN)* Is `source` required on every fact declaration, and must it be a string? Requirements §4.5 lists `source` as part of a fact declaration, but no code exists for a missing one. Recommended: optional, and a string when present.
+**[FACT-11]** The `source` member of a fact declaration is optional. When it is present, it MUST be a string. Any other value MUST be reported as `E_INVALID_DECLARATION`.
 
 **[FACT-12]** A compiler MUST NOT report an engine error for a declared fact that no rule references. Unused facts are a lint matter ([LINT-37], [LINT-39]).
+
+**[FACT-45]** A fact declaration MAY contain `type`, `source` ([FACT-10], [FACT-11]), `description`, and the type members that [TYPE-7] allows for its `type` ([FACT-9]). The `description` member is informational and is required only by the lint rule `schema/description-required` ([LINT-44]). A fact declaration with any other member MUST be reported as `E_INVALID_DECLARATION`.
 
 ## 3.3 Facts eligible for a decision
 
@@ -114,7 +120,7 @@ The evaluator validates the FactSet of each `decide` call against the decided en
 
 **[FACT-23]** A FactSet MUST NOT have entries other than `facts` and `children`. An entry with any other name MUST raise `E_FACTS_INVALID`.
 
-**[FACT-24]** *(OPEN)* Must `facts` and `children` both be present, or may either be omitted? Recommended: either may be omitted. An omitted `facts` makes every single-value fact absent ([FACT-16]). An omitted `children` has no entry for any child entity ([FACT-17]).
+**[FACT-24]** A FactSet MAY omit `facts`, `children`, or both. An omitted `facts` has no entries, so every single-value fact is absent ([FACT-16]). An omitted `children` has no entry for any child entity, so every child fact is missing ([FACT-17]).
 
 **[FACT-25]** The value of `facts` MUST be a map. A value that is neither a map nor `null` MUST raise `E_FACTS_INVALID`. A `null` value is covered by [FACT-30].
 
@@ -126,7 +132,7 @@ The evaluator validates the FactSet of each `decide` call against the decided en
 
 **[FACT-29]** Each entry name of `children` MUST be a child of the decided entity ([ENTITY-11]). Any other entry MUST raise `E_FACTS_INVALID`, whatever its value.
 
-**[FACT-30]** *(OPEN)* Is `null` as the value of `facts`, of `children`, or of a `children` entry (as in `children: { item: null }`) malformed, or does it count as omitted? Recommended: malformed, raising `E_FACTS_INVALID`. ADR 0010 §2 makes `null` mean missing only for a fact value, and makes omission, not `null`, mean missing for a child collection.
+**[FACT-30]** A `null` value of `facts`, of `children`, or of a `children` entry MUST raise `E_FACTS_INVALID`. This does not apply to a `null` single-value fact, which is missing under [FACT-16]. A child collection is left out by omission, not by `null`, so an omitted collection is missing under [FACT-17].
 
 **[FACT-31]** The value of each `children` entry MUST be a list. A value that is neither a list nor `null` MUST raise `E_FACTS_INVALID`. A `null` value is covered by [FACT-30].
 
@@ -136,7 +142,7 @@ The evaluator validates the FactSet of each `decide` call against the decided en
 
 > **Example (non-normative).** In a child map under `children.item`, each of these entry names raises `E_FACTS_INVALID` under [FACT-33]: an undeclared name; a fact of the decided entity, such as `order.priority`; a fact of an ancestor of the decided entity, such as `customer.credit_hold`; a fact of an ancestor of `item` itself, if `item` had a parent; and a fact of a child of `item`.
 
-**[FACT-34]** *(OPEN)* How is a FactSet map that holds the same entry name twice reported? A FactSet reaches an evaluator as a map of the host language, which holds each name once, but serialised input such as JSON or a vector file can repeat a name, and parsers differ. Recommended: an evaluator need not detect repeats, and a conformance vector runner rejects them as [SRC-3] does for sources.
+**[FACT-34]** A conformance vector runner MUST reject a vector whose FactSet repeats an entry name within one map, and MUST report `E_DUPLICATE_KEY` as [SRC-3] does for sources. An evaluator is not required to detect repeated entry names in a FactSet.
 
 ## 3.6 FactSet values
 
@@ -193,13 +199,4 @@ The evaluator validates the FactSet of each `decide` call against the decided en
 
 ## Open points
 
-- `[ENTITY-7]` Codes for a malformed entity declaration (not a map, unknown member, bad `belongs_to`/`has_many` value or element).
-- `[ENTITY-8]` Whether empty `belongs_to`/`has_many` lists are legal, and the code for a name repeated in one list.
-- `[ENTITY-17]` Whether a cycle that combines both edge kinds is `E_ENTITY_GRAPH`.
-- `[FACT-3]` Identifier grammar and NFC normalisation for entity and attribute names; the code for a fact name without the `<entity>.<attribute>` form.
-- `[FACT-8]` The code for a fact declaring `set`, `list` or `object`.
-- `[FACT-9]` Whether `min`, `max` and `format` are permitted on fact declarations.
-- `[FACT-11]` Whether `source` is required, and its shape.
-- `[FACT-24]` Whether `facts` and `children` may be omitted from a FactSet.
-- `[FACT-30]` Whether `null` as `facts`, `children` or a `children` entry is malformed or omitted.
-- `[FACT-34]` How a repeated entry name in a FactSet map is reported.
+- (none)

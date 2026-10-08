@@ -4,11 +4,11 @@ This section covers feature declarations, the structure and validation of a rule
 
 ## 7.1 Feature declarations
 
-**[FEAT-1]** A feature declaration MUST declare `decided_per`, `returns`, `hit_policy` and `binding_settable_at`. A missing field is reported as [FEAT-2] decides.
+**[FEAT-1]** A feature declaration MUST declare `decided_per`, `returns`, `hit_policy`, `binding_settable_at` and `if_fact_missing`. A missing field is reported as [FEAT-2] decides.
 
-**[FEAT-2]** *(OPEN)* Which code does the compiler report for a required field that is missing, for a field that a declaration in this section does not allow, or for a field whose value has the wrong structure (for example a string where a map is required)? No error code is defined for these cases. The question applies to every declaration in this section: features, rules files, policies, settings, rules, bindings and examples.
+**[FEAT-2]** A declaration in this section MUST be reported as `E_INVALID_DECLARATION` when it lacks a required member, has a member that its declaration does not allow, has a member of the wrong shape, or has an empty list where a non-empty list is required. This applies to every feature, rules file, policy, setting, rule, binding and example declaration in this section. Where another clause of this section names a code for the same case, that clause's code applies instead.
 
-**[FEAT-3]** *(OPEN)* Is `if_fact_missing` required? It is not marked as required, unlike `hit_policy` and `binding_settable_at`, yet the missing-fact precheck ([RULE-42], [RULE-43]) needs an effect to return whenever the selected policy names a fact.
+**[FEAT-3]** A feature MUST declare `if_fact_missing`. Its effect is returned when the missing-fact precheck fails ([RULE-42], [RULE-43]). A feature without it is reported under [FEAT-2].
 
 **[FEAT-4]** `decided_per` MUST be one entity name. A feature is decided for exactly one entity.
 
@@ -18,7 +18,7 @@ This section covers feature declarations, the structure and validation of a rule
 
 **[FEAT-7]** The enum form is `{ enum: [<effect>, ...] }`, optionally with `nullable: true`. The list follows [TYPE-6]. Each listed string is an effect.
 
-**[FEAT-8]** *(OPEN)* Which code reports an enum-form list that breaks [TYPE-6]: one that is empty, that repeats a string, or that has an entry that is not a string? [TYPE-6] applies the rules for `values` ([TYPE-41] to [TYPE-43]) to this list, but their codes are open in [TYPE-11] and [TYPE-52], and `E_EFFECT_MISMATCH` ([FEAT-14]) is also a candidate.
+**[FEAT-8]** An enum-form list ([TYPE-6]) that is empty, or that has an entry that is not a string, MUST be reported as `E_INVALID_DECLARATION`. An enum-form list that repeats a string MUST be reported as `E_DUPLICATE_VALUE`.
 
 **[FEAT-9]** The effect `null` is legal only when the enum form declares `nullable: true`. It is then an effect in addition to the listed strings ([TYPE-77] and [TYPE-78] leave this meaning of `null` to this section).
 
@@ -26,15 +26,15 @@ This section covers feature declarations, the structure and validation of a rule
 
 **[FEAT-11]** The object form is `{ object: <fields> }`, where `<fields>` follows the object declaration grammar of section 4 ([TYPE-5], [TYPE-59], [TYPE-60]). Every effect of this form is a complete object value that is valid under that grammar.
 
-**[FEAT-12]** *(OPEN)* May the object form also declare `nullable: true`? `nullable` is defined only for the enum form.
+**[FEAT-12]** The object form MUST NOT declare `nullable`. A `nullable` member in the object form is a member that the declaration does not allow, and is reported under [FEAT-2].
 
-**[FEAT-13]** Every effect written in a feature or in a policy MUST be a valid value of `returns`. This covers the feature's `if_fact_missing` (when declared, see [FEAT-3]), each policy's `default` ([POL-7]) and each rule's `then` ([POL-22]).
+**[FEAT-13]** Every effect written in a feature or in a policy MUST be a valid value of `returns`. This covers the feature's `if_fact_missing` ([FEAT-3]), each policy's `default` ([POL-7]) and each rule's `then` ([POL-22]).
 
 **[FEAT-14]** An effect that breaks [FEAT-13] MUST be reported as `E_EFFECT_MISMATCH`.
 
 **[FEAT-15]** `hit_policy` MUST be `FIRST`. Spec v0.x defines no other value. The meaning of `FIRST` is defined by [RULE-46] and [RULE-47].
 
-**[FEAT-16]** *(OPEN)* Which code reports a `hit_policy` value other than `FIRST`?
+**[FEAT-16]** A `hit_policy` value other than `FIRST` MUST be reported as `E_INVALID_DECLARATION`.
 
 **[FEAT-17]** `binding_settable_at` MUST be a list of level names. An entry that names no declared level or axis MUST be reported as `E_UNKNOWN_SCOPE`, as for `settable_at` ([KEY-6]).
 
@@ -42,9 +42,9 @@ This section covers feature declarations, the structure and validation of a rule
 
 **[FEAT-19]** `binding_settable_at` MUST NOT include a service-sourced level (section 6, `SVC`). If it does, the compiler MUST report `E_BINDING_NOT_ALLOWED`.
 
-**[FEAT-20]** *(OPEN)* Which code reports an entry of `binding_settable_at` that names a declared axis? Only levels carry bindings ([BIND-15]), so such an entry can never be used. Candidates are `E_BINDING_NOT_ALLOWED` and `E_SCOPE_DECLARATION`.
+**[FEAT-20]** An entry of `binding_settable_at` that names a declared axis MUST be reported as `E_BINDING_NOT_ALLOWED`. Only levels carry bindings ([BIND-15]).
 
-**[FEAT-21]** *(OPEN)* May `binding_settable_at` name the same level twice, and if not, which code reports it? This is the same question as [KEY-7] asks for `settable_at`.
+**[FEAT-21]** `binding_settable_at` MUST NOT name the same level twice. A repeated entry MUST be reported as `E_DUPLICATE_VALUE`.
 
 ## 7.2 Rules file and policies
 
@@ -52,11 +52,11 @@ This section covers feature declarations, the structure and validation of a rule
 
 **[POL-2]** A rules file MUST configure exactly one feature, the one named by `feature`. Its policies, bindings and examples apply to that feature only.
 
-**[POL-3]** *(OPEN)* Which code reports a `feature` value that names no declared feature?
+**[POL-3]** A rules file whose `feature` names no declared feature MUST be reported as `E_UNKNOWN_FEATURE`.
 
-**[POL-4]** *(OPEN)* Must the name of a rules file match the feature it names? The documented pattern is `rules/<feature>.yaml`, while the manifest may match any file under `rules/`.
+**[POL-4]** The name of a rules file MAY differ from the feature it names. A compiler MUST NOT require the two to match. The `feature` entry alone decides which feature the file configures ([POL-2]).
 
-**[POL-5]** *(OPEN)* What happens when two rules files name the same feature? [SRC-44] refers to this question. [SRC-37] makes the project's definitions a union, but does not say whether one feature's policies may be spread over several files.
+**[POL-5]** A feature MUST be configured by at most one rules file. Two rules files that name the same feature MUST be reported as `E_DUPLICATE_DEFINITION`. This is the case that [SRC-44] refers to.
 
 **[POL-6]** `policies` MUST be a map from policy name to policy.
 
@@ -78,15 +78,15 @@ This section covers feature declarations, the structure and validation of a rule
 
 **[POL-15]** A `value_of` setting holds one value of its fact's type. A `list_of` setting holds a list of distinct values of its fact's type. An empty list is a valid `list_of` value.
 
-**[POL-16]** *(OPEN)* May a setting name a declared fact that is out of scope for the feature's decided entity, and if not, which code reports it? This is the question [RULE-12] asks for condition facts.
+**[POL-16]** The fact named by `value_of` or `list_of` MUST be an eligible fact of the decided entity ([FACT-15]). A declared fact that is not eligible MUST be reported as `E_FACT_NOT_IN_SCOPE`. When the test of [RULE-11] holds for that fact, the code is `E_DEPTH_UNSUPPORTED` instead. An undeclared fact is reported under [POL-14].
 
 **[POL-17]** The `default` of each setting, and each value that a binding gives a setting ([BIND-9]), MUST be a valid value of the setting's form ([POL-15]) under section 4 (`TYPE`). An invalid value MUST be reported as `E_INVALID_SETTING`, which is the more specific code that [TYPE-71] allows.
 
 **[POL-18]** `null` is never a valid setting value ([TYPE-76]). A `null` default or binding value breaks [POL-17].
 
-**[POL-19]** *(OPEN)* Which code reports a repeated value in a `list_of` default or binding value: `E_INVALID_SETTING` under [POL-17], or the code that [TYPE-52] (c) decides for a repeated set member? One decision should settle both.
+**[POL-19]** A `list_of` default or binding value that repeats an element MUST be reported as `E_DUPLICATE_VALUE`, in place of `E_INVALID_SETTING` under [POL-17]. Any other invalid element is still reported as `E_INVALID_SETTING`.
 
-**[POL-20]** *(OPEN)* Do setting names have a grammar? [RULE-4] takes the rest of a `$`-string as the name, so an empty name or one containing `.` is not defined. A setting named `policy` can be declared but never given a value in a binding, because `policy` is the binding's policy entry ([BIND-4]). Should `policy` be reserved, and with which code?
+**[POL-20]** A setting name MUST be a non-empty string that contains neither `$` nor `.`. A compiler MUST NFC-normalise setting names before it compares them. The name `policy` is reserved, because it is the policy entry of a binding ([BIND-4]), so a setting MUST NOT use it. A setting declaration whose name is empty, contains `$` or `.`, is not a string, or is `policy` MUST be reported as `E_INVALID_SETTING`.
 
 **[POL-21]** Each rule MUST declare `id`, `name`, `when` and `then`. Rules are checked in their listed order ([RULE-46]).
 
@@ -96,11 +96,11 @@ This section covers feature declarations, the structure and validation of a rule
 
 **[POL-24]** Within one policy, each rule `id` MUST be unique. A repeated `id` MUST be reported as `E_DUPLICATE_RULE_ID`. Rules in different policies MAY share an `id`.
 
-**[POL-25]** *(OPEN)* What type and grammar do a rule's `id` and `name` have? Under the core schema a YAML `id: 1` is an integer, and no character set or length limit is defined for either field.
+**[POL-25]** A rule's `id` and `name` MUST each be a non-empty string. Any other value, including a YAML integer such as `id: 1`, MUST be reported as `E_INVALID_DECLARATION`. No other grammar or length limit applies to them.
 
 **[POL-26]** Each `$name` reference in a condition is checked by [RULE-22] to [RULE-25] against the settings that the same policy declares ([POL-9]).
 
-**[POL-27]** *(OPEN)* May a `then` value be a setting reference such as `$name`? Setting references are defined only for conditions ([RULE-4]), so a `$name` in `then` is not defined.
+**[POL-27]** A rule's `then` MUST NOT be a setting reference. A `then` whose first code point is `$` MUST be reported as `E_INVALID_SETTING`, and not as `E_EFFECT_MISMATCH`. Setting references are defined only for conditions ([RULE-4]).
 
 **Example (non-normative)**: a rules file for the sample domain, with two policies, three bindings (one at the root level `global` and two at the `division` level) and one example. It illustrates [POL-1], [POL-6] to [POL-9], [BIND-2], [BIND-3] and [POL-28].
 
@@ -155,11 +155,11 @@ examples:
 
 **[BIND-5]** The `policy` entry of a binding MUST name a policy declared in the same rules file.
 
-**[BIND-6]** *(OPEN)* Which code reports a binding whose `policy` names no policy in the same rules file?
+**[BIND-6]** A binding whose `policy` entry names no policy declared in the same rules file MUST be reported as `E_UNKNOWN_POLICY`.
 
-**[BIND-7]** *(OPEN)* When a binding's `policy` names no declared policy ([BIND-6]), are its other entries still checked under [BIND-8], and if so against which settings? Without a decision, one implementation may report `E_UNKNOWN_SETTING` for every entry and another for none.
+**[BIND-7]** When the `policy` entry of a binding names no declared policy ([BIND-6]), the other entries of that binding are not checked against settings: [BIND-8] and [BIND-9] do not apply to it. The binding is still reported under [BIND-6].
 
-**[BIND-8]** Every entry of a binding other than `policy` MUST name a setting declared by the policy that the binding names. An entry that names no such setting MUST be reported as `E_UNKNOWN_SETTING`.
+**[BIND-8]** Every entry of a binding other than `policy` MUST name a setting declared by the policy that the binding names. The entry name and the setting names are compared after NFC normalisation ([POL-20]). An entry that names no such setting MUST be reported as `E_UNKNOWN_SETTING`.
 
 **[BIND-9]** The value of each setting entry of a binding MUST satisfy [POL-17].
 
@@ -197,15 +197,15 @@ examples:
 
 ## 7.5 Examples
 
-**[POL-28]** `examples` MAY be declared. When declared, it MUST be a list of examples. Each example MUST declare `name`, `context`, `facts` and `expect`.
+**[POL-28]** `examples` MAY be declared. When declared, it MUST be a list of examples. Each example MUST declare `name`, `context`, `facts` and `expect`, and MAY declare `children` ([POL-32]).
 
 **[POL-29]** An example's `name` identifies the example in findings.
 
-**[POL-30]** *(OPEN)* May two examples of one rules file have the same `name`, and if not, which code reports it?
+**[POL-30]** Two examples of one rules file MUST NOT have the same `name`. A repeated name MUST be reported as `E_DUPLICATE_VALUE`.
 
-**[POL-31]** The `context` of an example MUST be a context that section 2 accepts, including [CTX-3] (no root level). The code for an example context that breaks this is the subject of [POL-43].
+**[POL-31]** The `context` of an example MUST be a context that section 2 accepts, including [CTX-3] (no root level). The code for an example context that breaks this is given by [POL-43].
 
-**[POL-32]** *(OPEN)* What is the explicit form of an example's FactSet? A FactSet has the keys `facts` and `children` ([FACT-23], [FACT-24]), and the sources do not say whether an example holds `children` as a key beside `facts` or holds a whole FactSet under `facts`. How does a reader tell the explicit form from the shorthand form ([POL-33])?
+**[POL-32]** An example that declares `children` beside `facts` is in the explicit form. The explicit form has no shorthand: a list value under `facts` is never shorthand in it, and is reported under [POL-45]. An example that does not declare `children` is in the shorthand form, where a list value under `facts` is read under [POL-33]. The `facts` and `children` entries are the FactSet entries of [FACT-23] and [FACT-24]. A FactSet is not nested under `facts`.
 
 **[POL-33]** In an example's `facts`, a key that names a child fact of the decided entity ([FACT-14]), with a list value, is shorthand. It stands for one child map per list element, each holding that one fact with that element as its value, placed under `children` for that child entity.
 
@@ -213,7 +213,7 @@ examples:
 
 **[POL-35]** A child entity that the example gives no child maps, by shorthand or in the explicit form, has an omitted child collection, so its child facts are missing ([FACT-17]).
 
-**[POL-36]** *(OPEN)* Are two shorthand keys for the same child entity, or a shorthand key together with explicit child maps for that entity, an error (and with which code), or are they combined? Examples that need several child attributes are expected to use the explicit form, but the sources do not say what happens when they do not.
+**[POL-36]** An example MUST NOT contain two shorthand keys for the same child entity. Such a repetition MUST be reported as `E_INVALID_DECLARATION`. Shorthand and explicit child maps cannot appear in one example, because a list under `facts` is never shorthand in the explicit form ([POL-32]).
 
 **[POL-37]** A list value in an example's `facts` is valid only as shorthand under [POL-33]. Any other list value is a FactSet structure violation ([POL-45]).
 
@@ -227,43 +227,20 @@ examples:
 
 **[POL-42]** An example for which the decide operation returns an effect not equal to `expect` MUST be reported as `E_EXAMPLE_FAILED`. Like every engine error, it has severity `error` ([FIND-15]) and cannot be disabled by a preset or a setting.
 
-**[POL-43]** *(OPEN)* Which code reports an example context that breaks [POL-31], such as one that names the root level or an undeclared scope?
+**[POL-43]** An example context that breaks [POL-31] MUST be reported with the source code that the same name receives in a source value or binding: `E_UNKNOWN_SCOPE` for a level or axis that is not declared ([SCOPE-46]), and `E_INVALID_NODE_ID` for a malformed node ID ([SCOPE-38]). A context that names the root level ([CTX-3]), or that has a shape error (a member other than `levels` and `axes`, or a map of the wrong shape), MUST be reported as `E_INVALID_DECLARATION`.
 
-**[POL-44]** *(OPEN)* Which code reports a closed-catalog node in an example context that the catalog does not list? Source checks report such a node as `E_UNKNOWN_NODE` ([SCOPE-43]), but at runtime an `ignore` policy would skip that scope.
+**[POL-44]** An example context that names a node ID that a closed catalog does not list MUST be reported as `E_UNKNOWN_NODE`, under either value of `on_unknown_node` ([SCOPE-43]).
 
-**[POL-45]** *(OPEN)* Which code reports a FactSet structure violation in an example that [POL-38] and [POL-39] do not cover, such as a list on a single-value fact? At runtime the same violation is `E_FACTS_INVALID`.
+**[POL-45]** A FactSet structure violation in an example that [POL-38] and [POL-39] do not cover MUST be reported as `E_INVALID_DECLARATION`. Examples are a list value that is not shorthand ([POL-37]), such as a list on a single-value fact, and a declared fact that is not eligible for the decided entity ([FACT-15]). At runtime the same violation is `E_FACTS_INVALID`.
 
-**[POL-46]** *(OPEN)* Which code reports an example whose decision raises an evaluation error instead of returning an effect ([EVAL-22])? Candidates are `E_EXAMPLE_FAILED` and the evaluation error's own code.
+**[POL-46]** An example whose decision raises an evaluation error ([EVAL-22]) instead of returning an effect MUST be reported as `E_EXAMPLE_FAILED`. The message of that finding MUST include the code of the evaluation error.
 
-**[POL-47]** *(OPEN)* Which operations run examples: validation and compilation, a separate test operation, publication, or several of these? If validation runs them, a failing example prevents a bundle ([FIND-7]); if only a test operation runs them, it does not. Examples are compile-time-only data and are not written to the bundle ([BUNDLE-109]).
+**[POL-47]** Validation and compilation MUST run every example ([POL-41]). A failing example is reported as `E_EXAMPLE_FAILED` ([POL-42]). That engine error makes validation fail, so a compiler MUST NOT write a canonical bundle ([FIND-7]). Examples are compile-time-only data and are not written to the bundle ([BUNDLE-109]). No evaluator and no server runs examples. Examples run only when validation has found no other engine finding; otherwise they are not run and nothing is reported for them (ADR 0014).
 
-**[POL-48]** *(OPEN)* How are two object-valued effects compared for [POL-41]? Section 4 defines equality for strings ([NORM-6]) but not for object values.
+**[POL-48]** Two object values are equal when they have the same field names and, for each field name, the two field values are equal under the equality that [NORM-19] defines for that field's type. The order of fields is not significant. [POL-41] compares object-valued effects this way.
+
+**[POL-49]** A tool that reports example results, such as a `test` command, MUST base them on the same example checks as validation ([POL-47]), MUST identify each example by its name ([POL-29]), and MUST report a failing example with its code ([POL-42]). This specification defines no commands (see the implementation note in section 13).
 
 ## Open points
 
-- [FEAT-2] (OPEN): code for a missing, disallowed or wrongly structured field in any declaration of this section.
-- [FEAT-3] (OPEN): whether `if_fact_missing` is required.
-- [FEAT-8] (OPEN): codes for an empty, repeating or non-string enum-form `returns` list.
-- [FEAT-12] (OPEN): whether `nullable: true` is allowed on the object form of `returns`.
-- [FEAT-16] (OPEN): code for a `hit_policy` value other than `FIRST`.
-- [FEAT-20] (OPEN): code for an axis in `binding_settable_at`.
-- [FEAT-21] (OPEN): whether `binding_settable_at` may repeat a level.
-- [POL-3] (OPEN): code for a `feature` value that names no declared feature.
-- [POL-4] (OPEN): whether a rules file's name must match its feature.
-- [POL-5] (OPEN): what happens when two rules files name the same feature.
-- [POL-16] (OPEN): whether a setting may name a fact out of scope for the decided entity, and the code.
-- [POL-19] (OPEN): code for a repeated value in a `list_of` setting value.
-- [POL-20] (OPEN): setting-name grammar, and whether `policy` is reserved.
-- [POL-25] (OPEN): type and grammar of a rule's `id` and `name`.
-- [POL-27] (OPEN): whether `then` may contain a setting reference.
-- [POL-30] (OPEN): whether example names must be unique.
-- [POL-32] (OPEN): the shape of the explicit example FactSet, and how it is told apart from the shorthand.
-- [POL-36] (OPEN): repeated shorthand keys for one child entity, or shorthand mixed with explicit child maps.
-- [POL-43] (OPEN): code for an invalid example context.
-- [POL-44] (OPEN): code for an unlisted closed-catalog node in an example context.
-- [POL-45] (OPEN): code for a FactSet structure violation in an example outside [POL-38] and [POL-39].
-- [POL-46] (OPEN): code for an example whose decision raises an evaluation error.
-- [POL-47] (OPEN): which operations run examples, and whether a failing example blocks bundle output.
-- [POL-48] (OPEN): equality of object-valued effects.
-- [BIND-6] (OPEN): code for a binding whose `policy` names no policy in the same rules file.
-- [BIND-7] (OPEN): whether setting entries are checked when the binding's policy is unknown.
+- (none)

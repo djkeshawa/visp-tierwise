@@ -23,9 +23,9 @@ The meaning of each form is defined in 8.6.
 
 **[RULE-4]** An operand, or an element of a list operand, that is a string whose first code point is `$` MUST be read as a setting reference (requirements §4.6: "Rules reference settings as `$name`"). The reference names the setting whose name is the rest of the string, which may be empty. A setting reference is not a literal, so 8.3 does not apply to it. Setting references are checked under 8.4.
 
-**[RULE-5]** *(OPEN)* How is a literal string that begins with `$` written? Under [RULE-4] every such string is a setting reference, and no escape form is defined, so this value cannot be written as a literal.
+**[RULE-5]** Spec v0.1 defines no escape for a literal string that begins with `$`. Under [RULE-4] every such string is a setting reference, so a literal that begins with `$` cannot be written. A `$`-string that names no declared setting is reported under [RULE-22].
 
-**[RULE-6]** *(OPEN)* Which code reports malformed condition syntax? The cases are: an operator key outside Table 8.1 (for example a numeric comparison, which spec v0.x does not define); an operator mapping with more than one operator key, or none; and an operand of the wrong shape (a list or mapping in the `eq` form, or a single value or `null` where Table 8.1 requires a list). No code in requirements §6.1 covers these cases. A rule with no `when` is a missing required field, covered by [POL-21] and [FEAT-2].
+**[RULE-6]** A condition with malformed syntax MUST be reported as `E_INVALID_DECLARATION`. The cases are: a `when` that is not a mapping ([RULE-1]); an operator key outside Table 8.1 (for example a numeric comparison, which spec v0.x does not define); an operator mapping with more than one operator key, or none; and an operand of the wrong shape: a list or mapping in the `eq` form, or a single value or `null` where Table 8.1 requires a list. A rule with no `when` is a missing required member, covered by [POL-21] and [FEAT-2].
 
 **[RULE-7]** A rule MUST match if and only if every one of its conditions holds.
 
@@ -33,33 +33,33 @@ The meaning of each form is defined in 8.6.
 
 ## 8.2 Facts and forms
 
-**[RULE-9]** Every fact named in a condition MUST be a declared fact ([FACT-1]). A name that is not a declared fact MUST be reported as `E_UNKNOWN_FACT`. The grammar of fact names, and the code for a name without the `<entity>.<attribute>` form, are open in [FACT-3].
+**[RULE-9]** Every fact named in a condition MUST be a declared fact ([FACT-1]). A name that is not a declared fact MUST be reported as `E_UNKNOWN_FACT`, except that a name without the `<entity>.<attribute>` form is reported as [FACT-3] gives. The grammar of fact names is defined in [FACT-3].
 
-**[RULE-10]** *(OPEN)* Which code reports a condition fact whose entity part is not a declared entity, such as `ghost.active` when no entity `ghost` is declared? Options: `E_UNKNOWN_FACT` under [RULE-9] alone, `E_UNKNOWN_ENTITY` as [FACT-2] gives for fact declarations, or both.
+**[RULE-10]** A condition fact whose entity part is not a declared entity MUST be reported as `E_UNKNOWN_FACT`, under [RULE-9]. `E_UNKNOWN_ENTITY` is not reported for a condition fact.
 
 **[RULE-11]** A condition fact that is out of scope for the decision ([FACT-15]), and whose entity is reachable from the decided entity ([FEAT-4]) through two or more `has_many` edges ([ENTITY-11]), MUST be reported as `E_DEPTH_UNSUPPORTED`, whatever the form of the condition.
 
-**[RULE-12]** *(OPEN)* Which code reports a declared condition fact that is out of scope for the decision ([FACT-15]) but is not covered by [RULE-11]? Examples are a fact of a sibling entity, and a fact of an entity that declares `has_many` for the decided entity. No code in requirements §6.1 covers this case. The nearest code is `E_UNKNOWN_FACT`.
+**[RULE-12]** A declared condition fact that is out of scope for the decision ([FACT-15]) and is not covered by [RULE-11] MUST be reported as `E_FACT_NOT_IN_SCOPE`. Examples are a fact of a sibling entity, and a fact of an entity that names the decided entity in `has_many` without being its ancestor ([FACT-15], [ENTITY-12]). The same code applies to the fact of a setting ([POL-16]).
 
 **[RULE-13]** A condition of the form `eq` or `in` on a child fact ([FACT-14]) MUST be reported as `E_QUANTIFIER_REQUIRED`.
 
 **[RULE-14]** A condition of the form `all_in` or `any_in` on a single-value fact ([FACT-13]) MUST be reported as `E_QUANTIFIER_NOT_ALLOWED`.
 
-**[RULE-15]** A condition on a `decimal` fact MUST use the form `eq` or `in` (requirements §4.11(3); [TYPE-27]). This section reads "membership" in [TYPE-27] as the `in` form only.
+**[RULE-15]** A condition on a `decimal` fact MUST use an equality or membership form: `eq` or `in` on a single-value fact, and `all_in` or `any_in` on a child fact ([RULE-13], [RULE-14]). The membership in [TYPE-27] covers `in`, `all_in` and `any_in`. No ordering form exists, so a decimal condition in any other form is malformed and is reported under [RULE-6]. Every form compares canonical strings ([RULE-37]).
 
-**[RULE-16]** *(OPEN)* Which code reports a condition of the form `all_in` or `any_in` on a `decimal` child fact, which [RULE-15] forbids? No code in requirements §6.1 covers this case. Together with [RULE-13], [RULE-15] means that a `decimal` child fact cannot appear in any condition.
+**[RULE-16]** A condition of the form `all_in` or `any_in` on a `decimal` child fact is legal, and it is not an error. Its test is membership by canonical string equality: [RULE-31] or [RULE-32] applies, with the comparison of [RULE-37].
 
 ## 8.3 Condition literals
 
 **[RULE-17]** Every literal MUST be a legal value of its fact's declared type ([FACT-7]; [TYPE-12], [TYPE-15] to [TYPE-19], [TYPE-24], [TYPE-25], [TYPE-28] to [TYPE-39], [TYPE-44]). This applies to the operand of the `eq` form and to every element of a literal list.
 
-**[RULE-18]** A literal that breaks [RULE-17] MUST be reported as `E_ILLEGAL_FACT_VALUE`. For condition literals, this code takes the place of `E_TYPE_MISMATCH`, which [TYPE-71] gives other source values. Examples are an enum literal that is not one of the fact's declared `values`, the string `yes` for a `boolean` fact ([NORM-17]), and a YAML number for a `decimal` fact ([TYPE-25]).
+**[RULE-18]** Subject to [RULE-20], a literal that breaks [RULE-17] MUST be reported as `E_ILLEGAL_FACT_VALUE`. For condition literals, this code takes the place of `E_TYPE_MISMATCH`, which [TYPE-71] gives other source values. Examples are an enum literal that is not one of the fact's declared `values`, the string `yes` for a `boolean` fact ([NORM-17]), and a YAML number for a `decimal` fact ([TYPE-25]).
 
 **[RULE-19]** A `null` literal, written `null` or `~`, and a `null` element of a literal list, MUST be reported under [RULE-18]. `null` is not a value of any type ([TYPE-76]), and no clause gives it a meaning in a condition.
 
-**[RULE-20]** *(OPEN)* Which code reports an `integer` literal outside ±(2^53 − 1)? Options: `E_INTEGER_RANGE`, which [TYPE-20] gives every integer source value, or `E_ILLEGAL_FACT_VALUE` under [RULE-18]. The runtime bound on `integer` fact values is settled by [FACT-41].
+**[RULE-20]** An `integer` literal outside ±(2^53 − 1), used as the operand of a condition on an `integer` fact or as an element of such a list, MUST be reported as `E_INTEGER_RANGE`, as [TYPE-20] gives for integer source values. This code replaces `E_ILLEGAL_FACT_VALUE` under [RULE-18] for that case. An out-of-range integer literal on a fact of another type is reported under [RULE-18]. The runtime bound on `integer` fact values is settled by [FACT-41].
 
-**[RULE-21]** *(OPEN)* May a literal list repeat an element? A repeated element has no effect on any operator in 8.6. Options: it is legal, or it is a compile error. No code in requirements §6.1 matches exactly. `E_DUPLICATE_VALUE` is the nearest code, and the same question for setting values is open in [POL-19].
+**[RULE-21]** A literal list MUST NOT repeat an element. A repeated element has no effect on any operator in 8.6, but it MUST be reported as `E_DUPLICATE_VALUE`. The same code applies to repeated setting values ([POL-19]).
 
 ## 8.4 Setting references
 
@@ -86,7 +86,13 @@ Table 8.2: Setting references
 
 ## 8.5 Several failures in one condition
 
-**[RULE-28]** *(OPEN)* When one condition breaks more than one check in 8.2 to 8.4, which codes are reported? Options: every applicable code, or one code chosen by a fixed precedence. Golden fixtures need one answer, because each invalid fixture must produce exactly its expected codes. Cases that overlap: an illegal literal in a form that breaks [RULE-13] or [RULE-14]; a fact that breaks [RULE-11] in a form that breaks [RULE-13] or [RULE-14]; a reference to an undeclared setting in a position that breaks [RULE-23]; and a reference that breaks both [RULE-24] and [RULE-25].
+**[RULE-28]** When one condition breaks more than one check of 8.1 to 8.4, the compiler MUST report one code: the code of the first failing check in the following order.
+1. Fact checks: [RULE-9], [RULE-10], [RULE-11], [RULE-12].
+2. Form checks: [RULE-6], [RULE-13], [RULE-14].
+3. Setting checks: [RULE-22], [RULE-23], [RULE-24], [RULE-25].
+4. Literal checks: [RULE-20], [RULE-17], [RULE-18], [RULE-19], [RULE-21].
+
+Within each group, the checks are taken in the order listed. [RULE-20] comes first among the literal checks, so that an out-of-range integer literal reports `E_INTEGER_RANGE`.
 
 ## 8.6 Operator semantics
 
@@ -122,7 +128,7 @@ The precheck runs after FactSet validation has passed ([EVAL-17]), so a value th
 
 **[RULE-42]** If any fact in the precheck set is missing ([FACT-16], [FACT-17], [FACT-19]), the evaluator MUST NOT check any rule.
 
-**[RULE-43]** When [RULE-42] applies, the effect MUST be the feature's `if_fact_missing` ([FEAT-13]). Whether `if_fact_missing` is required is open in [FEAT-3].
+**[RULE-43]** When [RULE-42] applies, the effect MUST be the feature's `if_fact_missing` ([FEAT-13]). That member is required for every feature ([FEAT-3]).
 
 **[RULE-44]** When [RULE-42] applies, the reason MUST be `MISSING_FACT`, and its `facts` MUST be exactly the missing facts of the precheck set, in ascending code-point order. [PROV-77] gives the shape of `facts`.
 
@@ -172,13 +178,4 @@ trace:
 
 ## Open points
 
-- [RULE-5]: how a literal string that begins with `$` is written.
-- [RULE-6]: the code for malformed condition syntax (unknown or several operator keys, wrong operand shape).
-- [RULE-10]: the code for a condition fact whose entity part is not a declared entity.
-- [RULE-12]: the code for a declared, out-of-scope condition fact that is not a grandchild or deeper descendant.
-- [RULE-16]: the code for `all_in` or `any_in` on a `decimal` child fact.
-- [RULE-20]: the code for an `integer` literal outside ±(2^53 − 1).
-- [RULE-21]: whether a literal list may repeat an element, and the code if it may not.
-- [RULE-28]: whether one condition reports every applicable code, or one code by precedence.
-
-Related open points owned by other sections: [FACT-3] (fact-name grammar, used by [RULE-9]), [FEAT-3] (whether `if_fact_missing` is required, used by [RULE-43]) and [POL-19] (repeated setting values, related to [RULE-21]).
+- (none)

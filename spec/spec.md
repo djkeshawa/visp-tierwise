@@ -2,6 +2,7 @@
 
 - **Spec version:** 0.1 (draft, not accepted)
 - **Bundle format version:** 1 (draft)
+- **IANA tz database release:** 2026e ([TYPE-80])
 
 This specification defines the source format, compilation, bundle format and
 evaluation semantics of Tierwise in language-neutral terms. Every conforming
@@ -52,6 +53,7 @@ Conformance vectors cite these IDs.
 | **Effect** | The value a decision returns |
 | **Bundle** | The canonical compiled artifact `{ bundleVersion, content }` |
 | **Finding** | A diagnostic with a stable code, location and message |
+| **Provenance case** | A conformance case that checks a provenance sidecar against its bundle ([VEC-126]) |
 
 ### Sources and projects (section 1)
 

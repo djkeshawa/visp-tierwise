@@ -34,7 +34,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-13]** A string in a bundle MUST NOT contain an unpaired surrogate code point.
 
-> Non-normative: such a string has no UTF-8 form, and [BUNDLE-10] allows no `\u` escape for it. Whether a source may contain one is an open point of the NORM clauses. The code a loader reports for an escaped one is open in [BUNDLE-116].
+> Non-normative: such a string has no UTF-8 form, and [BUNDLE-10] allows no `\u` escape for it. Sources may not contain one either ([NORM-8]). The code a loader reports for an escaped one is given in [BUNDLE-116].
 
 ## 10.3 Content members
 
@@ -54,13 +54,13 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-21]** A member MUST NOT use a placeholder value, such as `null`, to stand for an absent value.
 
-**[BUNDLE-22]** *(OPEN)* Are empty entries written under `values` and `bindings`? An empty entry here is a scope entry under `values` or `bindings` with no node entries, or a node entry under `values` with no key values. [BUNDLE-19] already requires every REQUIRED container, including an empty object, so only these entries are in question. Proposal: omit them, so that an entry exists only when it holds at least one value or binding.
+**[BUNDLE-22]** A scope member under `values` or `bindings` MUST be absent when it has no node entries, and a node entry under `values` MUST be absent when it has no key values. An entry exists only when it holds at least one value or binding. [BUNDLE-19] still applies to the containers `values` and `bindings` themselves, which are present even when empty.
 
 **[BUNDLE-23]** `null` MUST NOT appear in `content`, except as an effect that [BUNDLE-24] permits.
 
 **[BUNDLE-24]** A `null` effect MAY appear only as a rule's `then`, a policy's `default` or a feature's `ifFactMissing`, and only where the feature's `returns` is nullable ([FEAT-9]).
 
-> Non-normative: whether the object form of `returns` may be nullable is open in [FEAT-12], and this clause gains that case if [FEAT-12] allows it. A setting value is never `null` ([POL-18]), and a key's default is never `null` ([BUNDLE-56]).
+> Non-normative: only the enum form of `returns` may be nullable ([FEAT-9], [FEAT-12]), so [BUNDLE-82] writes `nullable` on that form only. A setting value is never `null` ([POL-18]), and a key's default is never `null` ([BUNDLE-56]).
 
 **[BUNDLE-25]** Each keyword member name MUST be spelled as in Table 10.1.
 
@@ -68,7 +68,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-27]** Each keyword value, such as a strategy name, `FIRST`, `skip`, `deny`, `open` or an operator, MUST keep its source spelling.
 
-**[BUNDLE-28]** *(OPEN)* Should `valueOf` and `listOf` be the member spellings that Table 10.1 gives? Proposal: yes. They are camelCase, as `onSourceFailure` is. Requirements §4.8 already uses `onSourceFailure` for the contribution field, and section 06 uses it for the key member of the bundle ([BUNDLE-59]). The implementation plan's layout uses camelCase for `belongsTo`, `hasMany`, `settableAt` and `decidedPer`, but does not show `valueOf` or `listOf`.
+**[BUNDLE-28]** The member names `valueOf` and `listOf` MUST be spelled as Table 10.1 gives them.
 
 **Table 10.1: member names that differ from the source**
 
@@ -118,7 +118,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-40]** The catalog MUST be embedded in the bundle, and a bundle MUST NOT refer to an external file (the SCOPE clauses).
 
-**[BUNDLE-41]** An empty closed catalog MUST be written as `[]` wherever the SCOPE clauses allow one. Whether they allow one is an open point of the SCOPE clauses.
+**[BUNDLE-41]** An empty closed catalog MUST be written as `[]`, because a closed catalog with no IDs is valid ([SCOPE-21]).
 
 **[BUNDLE-42]** `onUnknownNode` MUST be present exactly when `nodes` is an array.
 
@@ -148,7 +148,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-53]** A key MUST NOT have any member other than those named in [BUNDLE-52] and the OPTIONAL members `default`, `combineAcrossAxes`, `onSourceFailure` and `kind`, which [BUNDLE-55], [BUNDLE-57], [BUNDLE-59] and [BUNDLE-62] define.
 
-**[BUNDLE-54]** *(OPEN)* In what order are `settableAt` and `bindingSettableAt` written? Proposal: `settableAt` in scope order, meaning the levels in declared order followed by the axes in declared order. That is the order of contributions, and it matches the examples in the requirements. `bindingSettableAt` holds only levels ([BUNDLE-81]), so it is written in declared level order.
+**[BUNDLE-54]** `settableAt` MUST list its scope names in scope order: the levels in declared order, followed by the axes in declared order. `bindingSettableAt` MUST list its level names in declared level order ([BUNDLE-81]).
 
 **[BUNDLE-55]** A key's `default` MUST be present exactly when the key declares a default (the MERGE clauses).
 
@@ -172,7 +172,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 ### 10.3.4 Values
 
-**[BUNDLE-64]** Each member of `values` MUST be named by a level or an axis that is not service-sourced, and its value MUST be an object. Whether such a scope has a member when it holds no values is open in [BUNDLE-22].
+**[BUNDLE-64]** Each member of `values` MUST be named by a level or an axis that is not service-sourced, and its value MUST be an object.
 
 **[BUNDLE-65]** Each object in [BUNDLE-64] MUST map each node key to an object, and each such object MUST map key names to values.
 
@@ -198,7 +198,9 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 > Non-normative: an effect, a setting value and a condition literal use the encodings above. A `listOf` value is encoded as [BUNDLE-89] and [BUNDLE-90] require.
 
-**[BUNDLE-75]** *(OPEN)* In what order are the following arrays written, none of which has an order of its own? They are the `values` of an `enum` type declaration, the `enum` list of a feature's `returns`, the `belongsTo` and `hasMany` arrays, the value of a `listOf` setting (as its `default` or in a binding), and the array `value` of an `in`, `all_in` or `any_in` condition. Proposal: code point order for all of them. None of them carries meaning in its order, and membership tests are order-free. The orders that are settled are not in question: `levels`, `axes`, `rules` and a `set` type's `universe` keep their declared order, `list` and `set` values follow [BUNDLE-72] and [BUNDLE-74], and `settableAt` and `bindingSettableAt` follow [BUNDLE-54].
+**[BUNDLE-75]** Each of the following arrays has no order of its own and holds strings, decimal strings included ([BUNDLE-71]). Each MUST be in code point order ([DET-5]): the `values` of an `enum` type declaration, the `enum` list of a feature's `returns`, the `belongsTo` and `hasMany` arrays, a `listOf` value, and the array value of an `in`, `all_in` or `any_in` condition. The arrays of booleans and integers are governed by [BUNDLE-152]. The orders that are settled are not in question: `levels`, `axes`, `rules` and a `set` type's `universe` keep their declared order, `list` and `set` values follow [BUNDLE-72] and [BUNDLE-74], and `settableAt` and `bindingSettableAt` follow [BUNDLE-54].
+
+**[BUNDLE-152]** A compiler MUST write an array of integer literals in ascending numeric order, and an array of boolean literals with `false` before `true`. Membership tests do not depend on this order; it only fixes the bytes (ADR 0014).
 
 ### 10.3.5 Features, policies and bindings
 
@@ -210,11 +212,11 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-79]** `ifFactMissing` MUST be present and MUST be an effect valid for `returns` (the FEAT clauses).
 
-**[BUNDLE-80]** *(OPEN)* Is `if_fact_missing` required in the source? This is [FEAT-3]. If it is, [BUNDLE-79] stands as written. If a source may omit it, the FEAT clauses must define the value that the compiler writes when the source omits it, and this section keeps `ifFactMissing` REQUIRED with that value. Proposal: require it in the source, as `hit_policy` and `binding_settable_at` are required. The missing-fact precheck of the RULE clauses needs an effect to return whenever the selected policy names a fact, and an invented default would be a silent interpretation.
+**[BUNDLE-80]** Every feature MUST have an `ifFactMissing` member, because the source requires `if_fact_missing` ([FEAT-3]).
 
 **[BUNDLE-81]** `bindingSettableAt` MUST hold level names only, in the order that [BUNDLE-54] gives (the FEAT and BIND clauses).
 
-**[BUNDLE-82]** *(OPEN)* What is the JSON shape of `returns`? Proposal: `{ "enum": [...] }`, with `"nullable": true` added only when the source declares it; or `{ "object": { <field name>: <type declaration>, ... } }`, where each field declaration follows the object grammar of the TYPE clauses, and its `optional` flag is written only when it is true. Whether the object form may carry `nullable` is [FEAT-12]. The order of the `enum` list is [BUNDLE-75].
+**[BUNDLE-82]** The value of `returns` MUST be either `{ "enum": [...] }` or `{ "object": { <field name>: <field declaration>, ... } }`. The enum list MUST be in the order that [BUNDLE-75] gives. The enum form MUST have a `nullable` member, with the value `true`, only when the source declares `nullable: true` ([FEAT-9]), and otherwise no `nullable` member. The object form MUST NOT have a `nullable` member ([FEAT-12]). Each field declaration MUST be a type declaration in the form that the TYPE clauses give an object field, with an `optional` member present only when the field is optional and its value is `true`.
 
 **[BUNDLE-83]** `policies` MUST have one member for each policy that the feature declares, and each member MUST be an object with exactly the REQUIRED members `settings`, `default`, `requiredFacts` and `rules`.
 
@@ -230,7 +232,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-89]** A `listOf` value, as a `default` or in a binding, MUST be a JSON array of distinct values of the type of its fact (the POL clauses).
 
-**[BUNDLE-90]** A `listOf` value MUST be in the order that [BUNDLE-75] gives.
+**[BUNDLE-90]** A `listOf` value MUST be in the order that [BUNDLE-75] and [BUNDLE-152] give.
 
 **[BUNDLE-91]** `requiredFacts` MUST be the distinct fact names that appear as `fact` in any condition of any rule of the policy, including rules that can never run.
 
@@ -262,7 +264,7 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-103]** A setting reference MUST stay symbolic in the bundle and MUST NOT be replaced by its value. It is resolved against the selected binding at evaluation time (the BIND and RULE clauses). Its encoding is [BUNDLE-104].
 
-**[BUNDLE-104]** *(OPEN)* How is a setting reference written in a condition's `value`? Proposal: as the source writes it, the string `$` followed by the setting name, in place of the whole value (the literal for `eq`, or the array for the other operators). The RULE clauses read every operand string that starts with `$` as a setting reference, so no literal in a bundle starts with `$`, and the form is unambiguous. The alternative, an object `{ "setting": "<name>" }`, also cannot be confused with a literal, because fact types are scalar ([BUNDLE-50]), but it departs from the source form.
+**[BUNDLE-104]** A setting reference MUST be written as the string `$` followed by the setting name, in place of the whole value (the literal for `eq`, or the array for the other operators). A string literal in a condition's `value` MUST NOT begin with `$`. Setting names contain no `$` or `.` ([POL-20]), and [RULE-4] reads an operand string that begins with `$` as a setting reference.
 
 **[BUNDLE-105]** `bindings` MUST be an object keyed by level name, and each level entry MUST be an object keyed by node key ([BUNDLE-66]).
 
@@ -290,55 +292,59 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[BUNDLE-114]** A loader MUST NOT evaluate anything from a bundle it has rejected.
 
-**[BUNDLE-115]** A loader MUST reject a bundle whose `bundleFormatVersion` or `specVersion` it does not support, and MUST report `E_BUNDLE_UNSUPPORTED` ([EVAL-25]). Which values it supports is open in [BUNDLE-137].
+**[BUNDLE-115]** A loader MUST reject a bundle whose `bundleFormatVersion` or `specVersion` it does not support, and MUST report `E_BUNDLE_UNSUPPORTED` ([EVAL-25]). The values it supports are given in [BUNDLE-137].
 
-**[BUNDLE-116]** *(OPEN)* Which code is reported for input that is not UTF-8, begins with a byte-order mark, is not well-formed JSON, lacks `bundleVersion` or `content`, contains a number that breaks [BUNDLE-11] or [BUNDLE-12] (a non-integer, or an integer outside the range of [DET-4]), contains an escaped unpaired surrogate ([BUNDLE-13]), or is not exactly the serialisation that [BUNDLE-2] requires? [EVAL-24] refers to this clause for the same question, so one resolution answers both. Proposal: `E_BUNDLE_INTEGRITY` for all of these. They are integrity failures of the same kind as [BUNDLE-111] to [BUNDLE-113], and no new code is needed.
+**[BUNDLE-116]** A loader MUST report `E_BUNDLE_INTEGRITY` for input that is not UTF-8, begins with a byte-order mark, is not well-formed JSON, lacks `bundleVersion` or `content`, contains a number that breaks [BUNDLE-11] or [BUNDLE-12] (a non-integer, or an integer outside the range of [DET-4]), contains an escaped unpaired surrogate ([BUNDLE-13]), or is not exactly the serialisation that [BUNDLE-2] requires. [EVAL-24] refers to this clause for the same question.
 
-**[BUNDLE-117]** The order in which a loader applies the checks of this section, and the code it reports when a bundle fails more than one of them, MUST be the order that [EVAL-14] states.
+**[BUNDLE-117]** A loader MUST apply the checks of this section in the order that [EVAL-14] states, and MUST report the code that [EVAL-14] gives when a bundle fails more than one of them.
 
-> Non-normative: the order is open in [EVAL-14], which owns it and records this section's proposal. Until it is settled, no vector depends on it ([VEC-114]).
+> Non-normative: [EVAL-14] owns the order of the checks, so this clause does not restate it.
 
-**[BUNDLE-118]** *(OPEN)* Should a loader reject any member of `content`, and any value, that does not match the members and forms of [BUNDLE-14] to [BUNDLE-108]? Proposal: yes, with `E_BUNDLE_INTEGRITY`.
+**[BUNDLE-118]** A loader MUST reject a bundle whose `content` has a member, or a value, that does not match the members and forms that [BUNDLE-14] to [BUNDLE-108] define, and MUST report `E_BUNDLE_INTEGRITY`. [BUNDLE-16] and [BUNDLE-17] are excluded, because [BUNDLE-115] and [BUNDLE-137] govern the two version values. [BUNDLE-18] is excluded too, because a loader does not see the manifest.
 
-**[BUNDLE-119]** *(OPEN)* Should a loader reject a `nodes`, `requiredFacts` or `when` array that is not in the order that [DET-6] requires? Proposal: yes, with `E_BUNDLE_INTEGRITY`, because the order is part of the canonical form.
+**[BUNDLE-119]** A loader MUST reject a `nodes`, `requiredFacts` or `when` array that is not in the order that [DET-6] requires, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-120]** *(OPEN)* Should a loader reject a fact name that a condition's `fact`, a setting's `valueOf` or `listOf`, or `requiredFacts` uses, when no fact of that name is declared? Proposal: yes, with `E_BUNDLE_INTEGRITY`. The sources report such a name as `E_UNKNOWN_FACT` (the RULE and POL clauses), so a bundle that contains one was not produced from valid sources.
+**[BUNDLE-120]** A loader MUST reject a fact name that a condition's `fact`, a setting's `valueOf` or `listOf`, or a `requiredFacts` entry uses when the bundle declares no fact of that name, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-121]** *(OPEN)* Should a loader reject an entity name that `decidedPer`, a fact's `entity`, `belongsTo` or `hasMany` uses, when no entity of that name is declared? Proposal: yes, with `E_BUNDLE_INTEGRITY`.
+**[BUNDLE-121]** A loader MUST reject an entity name that `decidedPer`, a fact's `entity`, `belongsTo` or `hasMany` uses when the bundle declares no entity of that name, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-122]** *(OPEN)* Should a loader reject a fact member whose `entity` differs from the prefix of its name? Proposal: yes, with `E_BUNDLE_INTEGRITY`, because the name defines the entity (the FACT clauses).
+**[BUNDLE-122]** A loader MUST reject a fact member whose `entity` differs from the prefix of its name, and MUST report `E_BUNDLE_INTEGRITY` (the FACT clauses).
 
-**[BUNDLE-123]** *(OPEN)* Should a loader reject a binding whose `policy` names no policy declared in the same feature? Proposal: yes, with `E_BUNDLE_INTEGRITY`.
+**[BUNDLE-123]** A loader MUST reject a binding whose `policy` names no policy declared in the same feature, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-124]** *(OPEN)* Should a loader reject a setting in a binding that the binding's policy does not declare? Proposal: yes, with `E_BUNDLE_INTEGRITY`.
+**[BUNDLE-124]** A loader MUST reject a setting in a binding that the binding's policy does not declare, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-125]** *(OPEN)* Should a loader reject a setting reference in a condition that names no setting of the same policy? Proposal: yes, with `E_BUNDLE_INTEGRITY` (the RULE clauses).
+**[BUNDLE-125]** A loader MUST reject a setting reference in a condition that names no setting of the same policy, and MUST report `E_BUNDLE_INTEGRITY` (the RULE clauses).
 
-**[BUNDLE-126]** *(OPEN)* Should a loader reject a setting reference in a position that the RULE clauses forbid? The allowed positions are: an `eq` operand that names a `valueOf` setting of the condition's fact; an `in`, `all_in` or `any_in` operand that names a `listOf` setting of the condition's fact; the whole operand and nothing else; and never an element of a literal list. Proposal: yes, with `E_BUNDLE_INTEGRITY`. The sources report these positions as `E_INVALID_SETTING` (the RULE clauses).
+**[BUNDLE-126]** A loader MUST reject a setting reference in any position that the RULE clauses do not allow, and MUST report `E_BUNDLE_INTEGRITY`. The allowed positions are: the whole operand of an `eq` condition, naming a `valueOf` setting of the condition's fact; and the whole operand of an `in`, `all_in` or `any_in` condition, naming a `listOf` setting of the condition's fact. A setting reference inside a literal list is never allowed.
 
-**[BUNDLE-127]** *(OPEN)* Should a loader reject a scope name in `settableAt`, `bindingSettableAt`, `values` or `bindings` that the hierarchy does not declare, and a name in `bindings` or `bindingSettableAt` that is not a level? Proposal: yes, with `E_BUNDLE_INTEGRITY` (the SCOPE and KEY clauses).
+**[BUNDLE-127]** A loader MUST reject a scope name in `settableAt`, `bindingSettableAt`, `values` or `bindings` that the hierarchy does not declare, and a name in `bindings` or `bindingSettableAt` that is not a level. It MUST report `E_BUNDLE_INTEGRITY` (the SCOPE and KEY clauses).
 
-**[BUNDLE-128]** *(OPEN)* Should a loader reject a `bindingSettableAt` that omits the root level, or that names a service-sourced level? Proposal: yes, with `E_BUNDLE_INTEGRITY`. The sources report these cases under the FEAT and BIND clauses.
+**[BUNDLE-128]** A loader MUST reject a `bindingSettableAt` that omits the root level, or that names a service-sourced level, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-129]** *(OPEN)* Should a loader reject a node key under `values` or `bindings` that a closed catalog does not admit, a `""` node key under a non-root scope, or an empty node ID? Proposal: yes, with `E_BUNDLE_INTEGRITY`. ADR 0005 requires compile-time values and bindings to use known closed-catalog IDs under both policies, so a bundle that breaks this was not compiled from valid sources.
+**[BUNDLE-129]** A loader MUST reject a node key under `values` or `bindings` that a closed catalog does not admit, a `""` node key under a non-root scope, or a node ID in a `nodes` array that is empty, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-130]** *(OPEN)* Should a loader reject a key under `values` that is undeclared, or whose `settableAt` does not include the scope it sits under? Proposal: yes, with `E_BUNDLE_INTEGRITY` (the KEY clauses; the sources report `E_UNKNOWN_KEY` and `E_NOT_SETTABLE_HERE`).
+**[BUNDLE-130]** A loader MUST reject a key under `values` that the bundle does not declare, or whose `settableAt` does not include the scope it sits under, and MUST report `E_BUNDLE_INTEGRITY` (the KEY clauses).
 
-**[BUNDLE-131]** *(OPEN)* Should a loader reject a value that is not valid for the type of its key (under `values`) or of its fact (in a setting or a binding)? Proposal: yes, with `E_BUNDLE_INTEGRITY` (the TYPE and POL clauses).
+**[BUNDLE-131]** A loader MUST reject a value under `values` that is not valid for the type of its key, and a setting default or binding value that is not valid for the type of its fact. It MUST report `E_BUNDLE_INTEGRITY` (the TYPE and POL clauses).
 
-**[BUNDLE-132]** *(OPEN)* Should a loader reject two rules of one policy with the same `id`? Proposal: yes, with `E_BUNDLE_INTEGRITY`. The sources report this as `E_DUPLICATE_RULE_ID`.
+**[BUNDLE-132]** A loader MUST reject two rules of one policy with the same `id`, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-133]** *(OPEN)* Should a loader reject a `nodes` array, or a `listOf` value, that repeats an element? Proposal: yes, with `E_BUNDLE_INTEGRITY`. The sources report a repeated node ID as `E_DUPLICATE_NODE`. The code for a repeated `listOf` value is open in the POL clauses.
+**[BUNDLE-133]** A loader MUST reject a `nodes` array, or a `listOf` value, that repeats an element, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-134]** *(OPEN)* Should a loader reject a `set` value that repeats a member or that has a member outside the universe of its type? Proposal: yes, with `E_BUNDLE_INTEGRITY`. The sources report a member outside the universe as `E_NOT_IN_UNIVERSE`. The code for a repeated member is open in the TYPE clauses.
+**[BUNDLE-134]** A loader MUST reject a `set` value that repeats a member or that has a member outside the universe of its type, and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-135]** *(OPEN)* Should a loader reject a decimal string that is not in canonical form (the NORM clauses)? Proposal: yes, with `E_BUNDLE_INTEGRITY`, since a non-canonical decimal can match a different value at evaluation.
+**[BUNDLE-135]** A loader MUST reject a decimal string that is not in canonical form (the NORM clauses), and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-136]** *(OPEN)* Should a loader check that `requiredFacts` equals the distinct facts of the conditions, sorted as [BUNDLE-92] requires? Proposal: yes, with `E_BUNDLE_INTEGRITY`. The digest proves only that the bytes match `content`, not that the compiler derived `requiredFacts` correctly, and a wrong precheck changes the result of a decision (the RULE clauses). The check is cheap. The alternative, not checking, rests on the digest alone, which does not show that the compiler derived `requiredFacts` correctly.
+**[BUNDLE-136]** A loader MUST reject a policy whose `requiredFacts` is not the distinct fact names that appear in its rules' conditions, in code point order ([BUNDLE-91], [BUNDLE-92]), and MUST report `E_BUNDLE_INTEGRITY`.
 
-**[BUNDLE-137]** *(OPEN)* Which exact `bundleFormatVersion` and `specVersion` values does this version of the specification support? Proposal: exactly `"1"` and `"0.1"` ([BUNDLE-16] and [BUNDLE-17]). Version 0.1 has no ranges and no compatibility rules, and any other value is `E_BUNDLE_UNSUPPORTED` under [BUNDLE-115]. The declaration of the supported set belongs to the EVAL clauses.
+> Non-normative: for [BUNDLE-118] to [BUNDLE-136], a bundle that breaks a check was not compiled from valid sources. The sources report the same faults under their own codes, for example `E_UNKNOWN_FACT`, `E_UNKNOWN_ENTITY`, `E_UNKNOWN_KEY`, `E_NOT_SETTABLE_HERE`, `E_UNKNOWN_NODE`, `E_DUPLICATE_NODE`, `E_DUPLICATE_RULE_ID`, `E_NOT_IN_UNIVERSE`, `E_INVALID_SETTING` and `E_TYPE_MISMATCH`. [BUNDLE-136] is needed because the digest proves only that the bytes match `content`, not that the compiler derived `requiredFacts` correctly, and a wrong precheck changes the result of a decision (the RULE clauses).
 
-**[BUNDLE-138]** *(OPEN)* Should a loader verify that strings are in NFC form? Proposal: no. A loader does not normalise strings (the NORM clauses), and checking normalisation needs Unicode data that can differ between runtimes. A non-NFC string can only come from a defective compiler, and it matches only its exact code points.
+**[BUNDLE-137]** A loader MUST support exactly the `bundleFormatVersion` value `"1"` and the `specVersion` value `"0.1"`, compared as exact JSON strings. It MUST treat any other string value as unsupported under [BUNDLE-115]. A member that is missing or is not a string is covered by [EVAL-56]. No range of versions is supported.
+
+**[BUNDLE-138]** A loader MUST NOT check whether strings are in NFC form. Strings are compared as received ([NORM-4]).
+
+> Non-normative: checking normalisation needs Unicode data that can differ between runtimes. A non-NFC string can only come from a defective compiler, and it matches only its exact code points.
 
 ## 10.6 Provenance sidecar
 
@@ -364,11 +370,15 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 > Non-normative: server publication records have the same members as a sidecar ([BUNDLE-141] and [BUNDLE-142]). They are defined with the server, outside this section, and like sidecars they never change bundle bytes ([DET-3]).
 
-**[BUNDLE-149]** *(OPEN)* What is the sidecar's file name, and how is a second sidecar for the same bundle named? The requirements give `<bundle>.provenance.json`, which is ambiguous when the bundle file is `example.json`. Proposal: remove the `.json` extension from the bundle file name first, so that `example.json` has the sidecar `example.provenance.json`. A further sidecar for the same bundle ([BUNDLE-148]) is `example.provenance.<label>.json`, where `<label>` is a lowercase label that the tool chooses and that is unique among that bundle's sidecars.
+**[BUNDLE-149]** The sidecar for a bundle MUST be named `<stem>.provenance.json`, where `<stem>` is the bundle file's name with its `.json` extension removed. A further sidecar for the same bundle ([BUNDLE-148]) MUST be named `<stem>.provenance.<label>.json`, where `<label>` is a lowercase label that the tool chooses, unique among that bundle's sidecars.
 
-**[BUNDLE-150]** *(OPEN)* What formats apply to `gitCommit`, `createdAt` and `publisher`? Proposal: `gitCommit` is the full commit identifier in lowercase hexadecimal. `createdAt` is RFC 3339 with an uppercase `T` and a `Z` offset, with seconds present and no fractional seconds. `publisher` is an opaque label. No evaluator reads it, and the sidecar does not authenticate it. Trust in publisher claims is outside this specification.
+**[BUNDLE-150]** When present, the members of a sidecar MUST have these forms: (a) `gitCommit` is the full commit identifier: 40 or 64 lowercase hexadecimal digits; (b) `createdAt` is an RFC 3339 time with an uppercase `T` separator and a `Z` offset, with seconds and without fractional seconds; (c) `publisher` is a string that is an opaque label.
 
-**[BUNDLE-151]** *(OPEN)* Which tool parses a sidecar, which code does it report for a fault, and is the sidecar parsed strictly? Proposal: the sidecar is parsed under the duplicate-property rule of [BUNDLE-111] and the member rule of [BUNDLE-143], and a fault under those rules, or a mismatch under [BUNDLE-144], is reported by the spec tool `check` (implementation plan item 1.12), and from Phase 5 by the CLI. None of the listed codes fits. `E_BUNDLE_INTEGRITY` is reserved for load bundle ([EVAL-24]), and an evaluator never reads a sidecar ([BUNDLE-145]). Proposal: an ADR adds a code, `E_PROVENANCE_INVALID`, for sidecar faults. The alternative is to amend [EVAL-24] so that these tools may report `E_BUNDLE_INTEGRITY`.
+> Non-normative: no evaluator reads `publisher`, and the sidecar does not authenticate it. Trust in publisher claims is outside this specification.
+
+**[BUNDLE-151]** The spec tool `check` (implementation plan item 1.12), and from Phase 5 the CLI, MUST report `E_PROVENANCE_INVALID` for a sidecar that fails strict parsing under the duplicate-property rule of [BUNDLE-111], that breaks [BUNDLE-141] to [BUNDLE-143] or the forms of [BUNDLE-150], or whose `bundleVersion` differs from that of the bundle it is checked against ([BUNDLE-144]).
+
+**[BUNDLE-153]** An evaluator MUST NOT report `E_PROVENANCE_INVALID`, because an evaluator never reads a sidecar ([BUNDLE-145]).
 
 **Example (non-normative).** The envelope below is pretty-printed for readability. The canonical bytes have no whitespace and sort every object's members ([BUNDLE-7] to [BUNDLE-9]). Names come from a sample domain. The example is a small but complete `content`: it has one key, one feature with one policy, and that policy has one rule, so its `requiredFacts` is complete. The `bundleVersion` is a placeholder for the digest.
 
@@ -465,14 +475,14 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 **[DET-8]** A bundle and a result MUST NOT depend on wall-clock time, on the host environment, or on the iteration order of an unordered collection.
 
-**Order of arrays (non-normative).** The table below shows the order of each array in a bundle and the clause that owns it. Only [DET-6] names a code point order in this section.
+**Order of arrays (non-normative).** The table below shows the order of each array in a bundle and the clause that owns it.
 
 | Array | Order | Clause |
 | --- | --- | --- |
 | `levels`, `axes` | declared | [BUNDLE-30], [BUNDLE-31] |
 | `nodes` | code point | [BUNDLE-39] |
 | `settableAt`, `bindingSettableAt` | scope order; level order | [BUNDLE-54], [BUNDLE-81] |
-| `belongsTo`, `hasMany`, enum `values`, `returns` enum list, `in` / `all_in` / `any_in` values, `listOf` values | code point | [BUNDLE-75], [BUNDLE-90] |
+| `belongsTo`, `hasMany`, enum `values`, `returns` enum list, `in` / `all_in` / `any_in` values, `listOf` values | code point for strings; boolean and integer elements are open | [BUNDLE-75], [BUNDLE-90], [BUNDLE-152] |
 | `universe` of a `set` type | declared | the TYPE clauses |
 | `list` values | source order | [BUNDLE-72] |
 | `set` values | universe order | [BUNDLE-74] |
@@ -489,18 +499,4 @@ This section defines the canonical bundle: its envelope and byte form, the membe
 
 ## Open points
 
-- [BUNDLE-22]: whether empty entries under `values` and `bindings` are written (proposal: omit them).
-- [BUNDLE-28]: spelling of `valueOf` and `listOf` (proposal: camelCase, as Table 10.1 gives).
-- [BUNDLE-54]: order of `settableAt` and `bindingSettableAt` (proposal: scope order, and level order for `bindingSettableAt`).
-- [BUNDLE-75]: order of arrays without an order of their own (proposal: code point order). [BUNDLE-90] follows it.
-- [BUNDLE-80]: whether the source must write `if_fact_missing` ([FEAT-3]). This section follows the answer.
-- [BUNDLE-82]: JSON shape of `returns` (proposal given in the clause). Whether the object form may be nullable is [FEAT-12].
-- [BUNDLE-104]: encoding of a setting reference in a condition's `value` (proposal: the source string `$name`).
-- [BUNDLE-116]: code for malformed, non-UTF-8, non-canonical or incomplete input (proposal: `E_BUNDLE_INTEGRITY`; the same question as [EVAL-24]).
-- [BUNDLE-117] depends on [EVAL-14] (OPEN), which owns the order of load checks and records this section's proposal.
-- [BUNDLE-118] to [BUNDLE-136]: structural checks that a loader makes beyond the digest, each with a proposal in its clause (`E_BUNDLE_INTEGRITY`). [BUNDLE-136] (whether a loader checks `requiredFacts`) proposes yes.
-- [BUNDLE-137]: which exact `bundleFormatVersion` and `specVersion` strings are supported (proposal: `"1"` and `"0.1"`). The declaration belongs to the EVAL clauses.
-- [BUNDLE-138]: whether a loader verifies NFC (proposal: no).
-- [BUNDLE-149]: sidecar file name, and the name of a further sidecar for the same bundle (proposal given in the clause).
-- [BUNDLE-150]: formats of `gitCommit`, `createdAt` and `publisher` (proposal given in the clause).
-- [BUNDLE-151]: the tool that parses sidecars and the code it reports (proposal: an ADR adds `E_PROVENANCE_INVALID`; the alternative amends [EVAL-24]).
+- (none)
