@@ -22,7 +22,7 @@
       import below, listed before the Spring Boot BOM, makes this module use the JUnit line of Spring Boot.
       Keep it equal to the BOM's value when the Spring Boot version changes.
     -->
-    <version.junit.server>6.0.3</version.junit.server>
+    <version.junit.server>6.1.3</version.junit.server>
   </properties>
 
   <dependencyManagement>
