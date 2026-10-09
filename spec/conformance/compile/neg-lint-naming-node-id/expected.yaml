@@ -1,0 +1,6 @@
+id: neg-lint-naming-node-id
+specVersion: "0.1"
+clauses: [LINT-19]
+description: "The closed catalog node IDs match the node_id pattern, so naming/node_id reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

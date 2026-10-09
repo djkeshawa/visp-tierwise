@@ -1,0 +1,10 @@
+id: hierarchy-unknown-entity-in-has-many
+specVersion: "0.1"
+clauses: ["ENTITY-6"]
+description: "A has_many name that is not a declared entity is reported at that list item."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "invoice", "has_many", 0]
+      line: 13

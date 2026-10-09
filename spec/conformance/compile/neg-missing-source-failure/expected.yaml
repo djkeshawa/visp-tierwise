@@ -1,0 +1,6 @@
+id: neg-missing-source-failure
+specVersion: "0.1"
+clauses: [SVC-1, SVC-2, KIND-9]
+description: "The baseline keys settable at a service-sourced level all have a source-failure behaviour, and compile with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

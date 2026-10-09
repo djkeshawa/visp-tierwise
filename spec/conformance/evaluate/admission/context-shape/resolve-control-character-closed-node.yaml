@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-control-character-closed-node"
+specVersion: "0.1"
+clauses: [SCOPE-34, CTX-6, EVAL-30]
+description: "A node ID with a control character is invalid under CTX-6 before admission, so it raises E_CONTEXT_INVALID."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: "north\u0001" } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

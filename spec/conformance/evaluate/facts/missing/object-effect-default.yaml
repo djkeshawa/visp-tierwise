@@ -1,0 +1,14 @@
+id: facts/missing/object-effect-default
+specVersion: "0.1"
+clauses: [FEAT-3, FEAT-11, RULE-43, FACT-24]
+description: "A missing fact returns the object-form if_fact_missing effect, which is a complete object value."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.object_quote
+input: {}
+expect:
+  effect: { amount: "0", tier: SILVER }
+  reason: { type: MISSING_FACT, facts: [ line.kind, order.total ] }
+  policy: quote
+  binding: { level: global }
+  trace: []

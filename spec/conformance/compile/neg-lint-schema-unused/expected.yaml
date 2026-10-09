@@ -1,0 +1,6 @@
+id: neg-lint-schema-unused
+specVersion: "0.1"
+clauses: [LINT-38, LINT-39, LINT-41]
+description: "Every declaration is used, and a service-sourced key counts as used, so schema/unused reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

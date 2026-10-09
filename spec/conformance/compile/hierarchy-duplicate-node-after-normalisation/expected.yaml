@@ -1,0 +1,10 @@
+id: hierarchy-duplicate-node-after-normalisation
+specVersion: "0.1"
+clauses: ["SCOPE-42", "SCOPE-35"]
+description: "Two node IDs that are equal after NFC normalisation are reported at the second entry."
+expect:
+  findings:
+    - code: E_DUPLICATE_NODE
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes", 1]
+      line: 5

@@ -1,0 +1,6 @@
+id: "src-values-syntax-error-control"
+specVersion: "0.1"
+clauses: ["SRC-5"]
+description: "The values file of src-values-syntax-error, well-formed and empty of values, compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

@@ -1,0 +1,10 @@
+id: lint-naming-kind-key
+specVersion: "0.1"
+clauses: [LINT-16, LINT-12, LINT-19]
+description: "A key of a kind whose naming pattern it breaks is reported by naming/kind_key at the key declaration."
+expect:
+  findings:
+    - code: naming/kind_key
+      file: "schema/core.yaml"
+      path: [keys, search.ranked]
+      line: 119

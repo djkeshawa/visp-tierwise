@@ -1,0 +1,10 @@
+id: type-set-without-universe
+specVersion: "0.1"
+clauses: [TYPE-40, TYPE-11]
+description: "A set declaration without universe is an invalid declaration, reported at the declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items"]
+      line: 65

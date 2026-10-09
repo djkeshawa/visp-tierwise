@@ -1,0 +1,12 @@
+id: merge/max-one-widened
+specVersion: "0.1"
+clauses: [MERGE-14, MERGE-17, PROV-37, PROV-38]
+description: One integer from a division is labelled WIDENED, and the max key takes that integer.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.ceiling
+expect:
+  value: 30
+  contributions:
+    - { scope: level, name: division, node: north, value: 30, effect: WIDENED }

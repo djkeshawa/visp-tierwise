@@ -1,0 +1,14 @@
+id: "src-yaml-alias"
+specVersion: "0.1"
+clauses: ["SRC-2","SRC-7","FIND-19","FIND-12"]
+description: "An alias node is reported as E_YAML_FEATURE at the aliasing key, and its anchor is reported at the anchored key."
+expect:
+  findings:
+    - code: "E_YAML_FEATURE"
+      file: "schema/core.yaml"
+      path: ["naming","key_a"]
+      line: 13
+    - code: "E_YAML_FEATURE"
+      file: "schema/core.yaml"
+      path: ["naming","key_b"]
+      line: 14

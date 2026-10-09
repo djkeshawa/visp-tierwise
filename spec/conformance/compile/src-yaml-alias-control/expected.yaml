@@ -1,0 +1,6 @@
+id: "src-yaml-alias-control"
+specVersion: "0.1"
+clauses: ["SRC-2","SRC-7"]
+description: "The naming entries of src-yaml-alias written without an anchor or an alias compile to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

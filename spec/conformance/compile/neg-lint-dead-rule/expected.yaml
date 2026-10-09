@@ -1,0 +1,6 @@
+id: neg-lint-dead-rule
+specVersion: "0.1"
+clauses: [LINT-28, LINT-27]
+description: "A rule with a setting reference in its list is not flagged, and no rule follows an empty when, so rules/dead-rule reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

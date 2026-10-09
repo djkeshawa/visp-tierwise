@@ -1,0 +1,17 @@
+id: providers/decide-sync-express-allowed
+specVersion: "0.1"
+clauses: [EVAL-9, EVAL-12, SVC-22, PROV-65]
+description: The synchronous decide returns the same effect as decide and makes no provider call.
+call: decide
+sync: true
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+feature: order.express_allowed
+input: { facts: { order.express: true } }
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: false }
+expect:
+  effect: ALLOW
+  providerCalls: { tenant: { t-1: 0 } }

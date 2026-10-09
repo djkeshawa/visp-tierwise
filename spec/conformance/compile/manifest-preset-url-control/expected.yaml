@@ -1,0 +1,6 @@
+id: "manifest-preset-url-control"
+specVersion: "0.1"
+clauses: ["MANIFEST-25","MANIFEST-26","MANIFEST-27"]
+description: "The control replaces the URL reference by a path reference to an existing preset, and compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

@@ -1,0 +1,10 @@
+id: "ns-name-with-dot"
+specVersion: "0.1"
+clauses: ["NS-9","FIND-20","FIND-12"]
+description: "A namespace name that contains a dot is reported as E_MANIFEST at that name."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["namespaces","pos.x"]
+      line: 10

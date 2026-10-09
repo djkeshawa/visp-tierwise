@@ -1,0 +1,10 @@
+id: key-missing-source-failure
+specVersion: "0.1"
+clauses: [KEY-8, SVC-1, SVC-2]
+description: "A key settable at a service-sourced level with no on_source_failure gives E_MISSING_SOURCE_FAILURE at the key declaration."
+expect:
+  findings:
+    - code: E_MISSING_SOURCE_FAILURE
+      file: "schema/keys.yaml"
+      path: ["keys", "plan_tier"]
+      line: 130

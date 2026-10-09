@@ -1,0 +1,10 @@
+id: "manifest-preset-url-unretrievable"
+specVersion: "0.1"
+clauses: ["MANIFEST-25","MANIFEST-26","MANIFEST-27","FIND-23","FIND-12"]
+description: "A well-formed URL preset reference whose content cannot be retrieved is reported as E_PRESET at its extends item."
+expect:
+  findings:
+    - code: "E_PRESET"
+      file: "tierwise.yaml"
+      path: ["extends",0]
+      line: 3

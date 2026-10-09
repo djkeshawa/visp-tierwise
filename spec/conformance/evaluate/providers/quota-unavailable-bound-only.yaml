@@ -1,0 +1,17 @@
+id: providers/quota-unavailable-bound-only
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-9, SVC-23, SVC-24, MERGE-15, PROV-29, PROV-41]
+description: With no other contribution, the deny value of a min key is the declared minimum 2, not null and not zero.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      fail: unavailable
+expect:
+  value: 2
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: 2, effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

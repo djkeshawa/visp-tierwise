@@ -1,0 +1,5 @@
+decision_hierarchy:
+  levels: [global, division]
+  scopes:
+    division:
+      nodes: [north, south]

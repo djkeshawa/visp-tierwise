@@ -1,0 +1,17 @@
+id: providers/quota-key-name-case
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-16, SVC-19, SVC-27, NORM-3]
+description: An entry whose key differs from a declared key only by letter case is an undeclared key, so it is ignored and not validated.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { region: east, tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      values: { "QUOTA.max_items": 1 }
+expect:
+  value: 6
+  contributions:
+    - { scope: level, name: region, node: east, value: 6, effect: NARROWED }
+  providerCalls: { tenant: { t-1: 1 } }

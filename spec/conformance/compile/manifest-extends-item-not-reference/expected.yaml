@@ -1,0 +1,10 @@
+id: "manifest-extends-item-not-reference"
+specVersion: "0.1"
+clauses: ["MANIFEST-20","FIND-20","FIND-12"]
+description: "An extends item that is neither a preset reference nor a URL mapping is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["extends",0]
+      line: 3

@@ -1,0 +1,15 @@
+id: providers/create-provider-on-root-level
+specVersion: "0.1"
+clauses: [EVAL-4, EVAL-15, EVAL-27, SVC-14]
+description: A provider registered for the root level, which is declared but never service-sourced, makes create evaluator raise E_EVALUATOR_OPTIONS.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: {}
+  global: {}
+expect:
+  error: E_EVALUATOR_OPTIONS

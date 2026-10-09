@@ -1,0 +1,10 @@
+id: unknown-fact-entity
+specVersion: "0.1"
+clauses: [RULE-10]
+description: "A condition whose entity part is not declared is reported as E_UNKNOWN_FACT and not as E_UNKNOWN_ENTITY."
+expect:
+  findings:
+    - code: E_UNKNOWN_FACT
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "visitor.active"]
+      line: 13

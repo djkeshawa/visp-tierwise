@@ -1,0 +1,6 @@
+id: ex-quote-decided-expect
+specVersion: "0.1"
+clauses: [POL-41, POL-47, POL-48, FEAT-11, FEAT-18]
+description: "Clean reference: the quote examples pass, including an object-valued expect in another field order and the default for a missing fact."
+expect:
+  bundle: "../../bundles/edge-features.json"

@@ -1,0 +1,16 @@
+id: axes/override/hierarchy-wins-most-specific-level
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-19, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: Under hierarchy_wins the most specific level is the result even when both axes contribute, so the store value beats the channel value.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north, store: s1 }, axes: { seller: acme, channel: web } }
+key: axes.override.hier_label
+expect:
+  value: s1
+  contributions:
+    - { scope: level, name: region, node: north, value: north, effect: SET }
+    - { scope: level, name: store, node: s1, value: s1, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: acme, effect: SET }
+    - { scope: axis, name: channel, node: web, value: web, effect: SET }
+  source: { scope: level, name: store, node: s1 }

@@ -1,0 +1,10 @@
+id: hierarchy-scope-absent-levels
+specVersion: "0.1"
+clauses: ["SCOPE-9"]
+description: "An absent levels member is located at the enclosing decision_hierarchy mapping."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy"]
+      line: 1

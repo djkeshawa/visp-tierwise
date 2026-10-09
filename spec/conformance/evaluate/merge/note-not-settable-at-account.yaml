@@ -1,0 +1,23 @@
+id: merge/note-not-settable-at-account
+specVersion: "0.1"
+clauses: [MERGE-14, MERGE-19, PROV-42, PROV-43, PROV-46, PROV-47, PROV-50, PROV-52, SVC-17, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: A key that is not settable at the account level makes no provider call there, so the account value is never read.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-1 } }
+key: merge.note
+providers:
+  account:
+    acct-1:
+      values: { merge.note: account-note }
+exact: true
+expect:
+  key: merge.note
+  strategy: override
+  value: division-note
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: division-note, effect: SET }
+  source: { scope: level, name: division, node: north }
+  providerCalls: { account: { acct-1: 0 } }

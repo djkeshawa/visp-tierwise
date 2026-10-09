@@ -1,0 +1,18 @@
+id: "admission/open/decide-open-account-admitted-without-provider"
+specVersion: "0.1"
+clauses: [CTX-13, SVC-22, CTX-19]
+description: "An admitted open service-sourced node does not change the decision, and decide calls no provider for it."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: "acme corp/eu.1" } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+providers: { account: { "acme corp/eu.1": { values: { edge.min_qty: 2 } } } }
+expect:
+  effect: SHIP
+  skippedScopes: []
+  binding: { level: global }
+  policy: paid_only
+  reason: { type: RULE, id: paid, name: "Order is paid" }
+  trace: [{ id: paid, matched: true }]
+  providerCalls: { account: { "acme corp/eu.1": 0 } }

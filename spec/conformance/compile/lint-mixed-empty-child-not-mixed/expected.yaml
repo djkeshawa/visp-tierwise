@@ -1,0 +1,10 @@
+id: lint-mixed-empty-child-not-mixed
+specVersion: "0.1"
+clauses: [LINT-33, FACT-18, RULE-33]
+description: "An empty child collection is not mixed, so the all_in policy with no other mixed example is reported."
+expect:
+  findings:
+    - code: examples/mixed-collection
+      file: "rules/order.yaml"
+      path: [features, order.submission, policies, review]
+      line: 3

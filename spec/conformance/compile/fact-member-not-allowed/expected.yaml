@@ -1,0 +1,10 @@
+id: fact-member-not-allowed
+specVersion: "0.1"
+clauses: [FACT-45]
+description: "A fact declaration with a member other than the allowed ones is reported as E_INVALID_DECLARATION."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: schema/core.yaml
+      path: ["facts", "customer.active", "owner"]
+      line: 15

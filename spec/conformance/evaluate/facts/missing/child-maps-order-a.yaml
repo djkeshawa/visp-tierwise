@@ -1,0 +1,13 @@
+id: facts/missing/child-maps-order-a
+specVersion: "0.1"
+clauses: [FACT-19, FACT-20]
+description: "A child fact missing from the first child map is missing, whatever the order of the child maps."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2" }, children: { line: [ { }, { line.kind: BULK } ] } }
+expect:
+  effect: DENY
+  reason: { type: MISSING_FACT, facts: [ line.kind ] }
+  policy: gate
+  trace: []

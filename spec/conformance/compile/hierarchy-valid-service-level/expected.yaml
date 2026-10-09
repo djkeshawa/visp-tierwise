@@ -1,0 +1,6 @@
+id: hierarchy-valid-service-level
+specVersion: "0.1"
+clauses: ["SCOPE-24", "SCOPE-25", "SCOPE-47", "BUNDLE-67"]
+description: "A service-sourced level with no values file compiles with no values entry."
+expect:
+  bundle: "../../bundles/edge-hierarchy-service.json"

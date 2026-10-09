@@ -1,0 +1,33 @@
+decision_hierarchy:
+  levels: [global, division, account]
+  axes: [seller]
+  scopes:
+    division: { nodes: [north, south], on_unknown_node: error }
+    account:  { nodes: open, values: service }
+    seller:   { nodes: [acme], on_unknown_node: error }
+entity_hierarchy:
+  customer: {}
+  order: { belongs_to: customer, has_many: item }
+  item: {}
+facts:
+  customer.active: { type: boolean }
+  customer.credit_hold: { type: boolean }
+  item.stock_type: { type: enum, values: [STOCKED, DROP_SHIP, SPECIAL_ORDER] }
+  item.weight: { type: integer }
+features:
+  checkout.order_submission:
+    decided_per: order
+    returns: { enum: [ALLOW, DENY, ALLOW] }
+    hit_policy: FIRST
+    binding_settable_at: [global, division]
+    if_fact_missing: DENY
+  checkout.quote:
+    decided_per: order
+    returns:
+      object:
+        method: { type: enum, values: [NEXT_DAY, GROUND] }
+        days: { type: integer, min: 1, max: 30 }
+        note: { type: string, optional: true }
+    hit_policy: FIRST
+    binding_settable_at: [global]
+    if_fact_missing: { method: GROUND, days: 5 }

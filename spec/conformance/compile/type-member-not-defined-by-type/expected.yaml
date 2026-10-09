@@ -1,0 +1,10 @@
+id: type-member-not-defined-by-type
+specVersion: "0.1"
+clauses: [TYPE-7, TYPE-11]
+description: "A boolean declaration with a min member, which TYPE-7 does not allow for boolean, is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "min"]
+      line: 65

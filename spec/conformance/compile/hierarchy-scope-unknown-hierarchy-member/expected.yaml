@@ -1,0 +1,10 @@
+id: hierarchy-scope-unknown-hierarchy-member
+specVersion: "0.1"
+clauses: ["SCOPE-9"]
+description: "A member of decision_hierarchy other than levels, axes and scopes is reported at that member."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "root"]
+      line: 3

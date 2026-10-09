@@ -1,0 +1,22 @@
+id: decide/bindings/skipped-level-and-axis-order
+specVersion: "0.1"
+clauses: [CTX-14, CTX-16, CTX-17, BIND-15, BIND-16, PROV-7, PROV-54, PROV-55, PROV-56, PROV-58, PROV-59, PROV-61, PROV-68, PROV-70, PROV-71, PROV-75, PROV-18, PROV-62, PROV-64, PROV-65, PROV-69, PROV-73, BIND-17, RULE-50, RULE-51]
+description: "An unknown site and an unknown seller are both skipped, and skippedScopes lists the skipped level before the skipped axis, while the division binding still applies."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: { levels: { division: north, site: site_999 }, axes: { seller: nope } }
+feature: edge.binding_selection
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.binding_selection
+  effect: DIVISION
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes:
+    - { scope: level, name: site, node: site_999, reason: UNKNOWN_NODE }
+    - { scope: axis, name: seller, node: nope, reason: UNKNOWN_NODE }
+  binding: { level: division, node: north }
+  policy: division_policy
+  reason: { type: DEFAULT }
+  trace: []

@@ -1,0 +1,18 @@
+id: providers/shipping-unavailable
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-9, SVC-23, SVC-24, MERGE-15, MERGE-17, PROV-29, PROV-41]
+description: Under deny, an unavailable tenant provider gives an intersect key the empty set as its deny value, so the root set narrows to empty.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: shipping.methods
+providers:
+  tenant:
+    t-1:
+      fail: unavailable
+expect:
+  value: []
+  contributions:
+    - { scope: level, name: global, value: [GROUND, PICKUP], effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: [], effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

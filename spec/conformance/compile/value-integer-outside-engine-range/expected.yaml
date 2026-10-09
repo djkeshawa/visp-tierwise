@@ -1,0 +1,10 @@
+id: value-integer-outside-engine-range
+specVersion: "0.1"
+clauses: [TYPE-20, TYPE-18, TYPE-71]
+description: "An integer outside plus or minus (2^53 - 1) with no declared bounds is E_INTEGER_RANGE (TYPE-20)."
+expect:
+  findings:
+    - code: E_INTEGER_RANGE
+      file: "values/seller/acme.yaml"
+      path: ["retry_count"]
+      line: 1

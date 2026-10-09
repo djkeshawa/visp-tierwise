@@ -1,0 +1,10 @@
+id: "src-bom-in-schema"
+specVersion: "0.1"
+clauses: ["SRC-10","FIND-23","FIND-12"]
+description: "A schema file that begins with a byte-order mark is reported as E_PARSE at the empty path and line 1."
+expect:
+  findings:
+    - code: "E_PARSE"
+      file: "schema/extra.yaml"
+      path: []
+      line: 1

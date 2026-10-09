@@ -1,0 +1,10 @@
+id: "src-values-unknown-key"
+specVersion: "0.1"
+clauses: ["SRC-35","KEY-10","FIND-21","FIND-27","FIND-12"]
+description: "A value for a key that the project does not declare is reported as E_UNKNOWN_KEY at that key."
+expect:
+  findings:
+    - code: "E_UNKNOWN_KEY"
+      file: "values/regions.yaml"
+      path: ["region","yes","checkout.nope"]
+      line: 6

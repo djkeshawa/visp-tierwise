@@ -1,0 +1,20 @@
+id: decide/bindings/unbound-division-uses-root
+specVersion: "0.1"
+clauses: [BIND-16, BIND-17, BIND-19, BIND-20, PROV-68, PROV-69, PROV-71, PROV-75, PROV-7, PROV-62, PROV-18, PROV-64, PROV-65, PROV-73, RULE-50, RULE-51]
+description: "A division with no binding of its own adds no candidate, so the root binding is selected and its root policy default applies."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: { levels: { division: west } }
+feature: edge.binding_selection
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.binding_selection
+  effect: ROOT
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: root_policy
+  reason: { type: DEFAULT }
+  trace: []

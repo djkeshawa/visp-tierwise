@@ -1,0 +1,10 @@
+id: pol-duplicate-policy-key
+specVersion: "0.1"
+clauses: [POL-10, SRC-3]
+description: "A repeated policy name is a repeated mapping key, reported at its second occurrence."
+expect:
+  findings:
+    - code: E_DUPLICATE_KEY
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "unused"]
+      line: 7

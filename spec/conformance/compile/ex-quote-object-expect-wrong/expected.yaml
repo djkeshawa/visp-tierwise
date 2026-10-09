@@ -1,0 +1,10 @@
+id: ex-quote-object-expect-wrong
+specVersion: "0.1"
+clauses: [POL-41, POL-42, POL-48]
+description: "An object-valued expect that differs in a field is an example failure, whatever the field order."
+expect:
+  findings:
+    - code: E_EXAMPLE_FAILED
+      file: "rules/checkout.quote.yaml"
+      path: ["examples", 0, "expect"]
+      line: 20

@@ -1,0 +1,6 @@
+id: "manifest-path-preset-control"
+specVersion: "0.1"
+clauses: ["MANIFEST-23","MANIFEST-24"]
+description: "The path preset reference of manifest-path-preset-missing, with its file present, compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

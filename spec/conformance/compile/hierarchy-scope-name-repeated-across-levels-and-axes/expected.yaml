@@ -1,0 +1,10 @@
+id: hierarchy-scope-name-repeated-across-levels-and-axes
+specVersion: "0.1"
+clauses: ["SCOPE-3", "SCOPE-4"]
+description: "A name listed as both a level and an axis is reported at the later entry, as a malformed declaration."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "axes", 0]
+      line: 3

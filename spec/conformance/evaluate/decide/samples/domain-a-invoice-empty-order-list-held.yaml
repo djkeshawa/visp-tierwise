@@ -1,0 +1,24 @@
+id: decide/samples/domain-a-invoice-empty-order-list-held
+specVersion: "0.1"
+clauses: [RULE-32, RULE-33, RULE-31, RULE-50, RULE-51, RULE-52, RULE-54, RULE-55, FACT-18, PROV-62, PROV-71, PROV-75, PROV-78, PROV-80, PROV-82, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-53, PROV-79, PROV-81]
+description: "Sample domain A: an invoice with an empty order list is held, because neither any_in nor all_in holds on a present empty collection and the default is HOLD."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: {}
+feature: checkout.invoice_release
+input:
+  facts: {}
+  children:
+    order: []
+exact: true
+expect:
+  feature: checkout.invoice_release
+  effect: HOLD
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: global }
+  policy: payment_gate
+  reason: { type: DEFAULT }
+  trace:
+    - { id: any-held-order, matched: false, failed: { fact: order.payment_state, op: any_in } }
+    - { id: all-orders-released, matched: false, failed: { fact: order.payment_state, op: all_in } }

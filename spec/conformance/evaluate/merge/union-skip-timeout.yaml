@@ -1,0 +1,23 @@
+id: merge/union-skip-timeout
+specVersion: "0.1"
+clauses: [EVAL-39, MERGE-15, PROV-30, PROV-32, PROV-33, PROV-35, PROV-39, PROV-86, SVC-8, SVC-39, SVC-44, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14, PROV-8, PROV-27]
+description: A timed-out account provider under skip adds no value to the union, so the division set stands.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: south, account: acct-2 } }
+key: merge.tags
+providers:
+  account:
+    acct-2:
+      fail: timeout
+exact: true
+expect:
+  key: merge.tags
+  strategy: union
+  value: [blue]
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: south, value: [blue], effect: WIDENED }
+    - { scope: level, name: account, node: acct-2, effect: UNAVAILABLE, onSourceFailure: skip }
+  providerCalls: { account: { acct-2: 1 } }

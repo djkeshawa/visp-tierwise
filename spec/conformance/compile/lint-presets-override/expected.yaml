@@ -1,0 +1,22 @@
+id: lint-presets-override
+specVersion: "0.1"
+clauses: [LINT-49, LINT-50, KIND-1, MANIFEST-31, MANIFEST-32, MANIFEST-34]
+description: "A naming pattern that the project redefines over tierwise:recommended is reported by presets/override at the project's entry."
+expect:
+  findings:
+    - code: presets/override
+      file: "schema/core.yaml"
+      path: [naming, enum_value]
+      line: 43
+    - code: presets/override
+      file: "schema/core.yaml"
+      path: [naming, feature]
+      line: 51
+    - code: presets/override
+      file: "schema/core.yaml"
+      path: [naming, key]
+      line: 35
+    - code: presets/override
+      file: "schema/core.yaml"
+      path: [naming, node_id]
+      line: 47

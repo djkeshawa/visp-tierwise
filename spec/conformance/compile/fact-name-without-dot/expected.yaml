@@ -1,0 +1,10 @@
+id: fact-name-without-dot
+specVersion: "0.1"
+clauses: [FACT-3]
+description: "A fact name with no dot is reported as E_UNKNOWN_ENTITY."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: schema/core.yaml
+      path: ["facts", "active"]
+      line: 15

@@ -1,0 +1,10 @@
+id: type-optional-outside-object-field
+specVersion: "0.1"
+clauses: [TYPE-8, TYPE-11]
+description: "An optional member on a string items declaration, outside an object field, is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "optional"]
+      line: 65

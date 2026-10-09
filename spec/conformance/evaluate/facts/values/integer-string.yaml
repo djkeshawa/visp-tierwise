@@ -1,0 +1,10 @@
+id: facts/values/integer-string
+specVersion: "0.1"
+clauses: [FACT-35, NORM-17]
+description: "An integer fact given the string \"3\" raises E_FACTS_INVALID, because a string is not an integer."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2", order.lines: "3" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

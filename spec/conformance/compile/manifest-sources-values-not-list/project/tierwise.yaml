@@ -1,0 +1,5 @@
+specVersion: "0.1"
+sources:
+  values:
+    file: "values/root.yaml"
+    scope: global

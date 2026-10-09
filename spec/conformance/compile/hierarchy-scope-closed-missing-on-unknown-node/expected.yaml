@@ -1,0 +1,10 @@
+id: hierarchy-scope-closed-missing-on-unknown-node
+specVersion: "0.1"
+clauses: ["SCOPE-22"]
+description: "A closed catalog with no on_unknown_node is located at the scope entry mapping, by FIND-23."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division"]
+      line: 4

@@ -1,0 +1,10 @@
+id: fact-name-nfc-duplicate
+specVersion: "0.1"
+clauses: [FACT-3, SRC-4]
+description: "Two fact names equal after NFC normalisation are reported as E_DUPLICATE_KEY at the second occurrence."
+expect:
+  findings:
+    - code: E_DUPLICATE_KEY
+      file: schema/core.yaml
+      path: ["facts", "customer.café"]
+      line: 16

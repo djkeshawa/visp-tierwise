@@ -1,0 +1,15 @@
+id: facts/effects/label-string-unchanged
+specVersion: "0.1"
+clauses: [FEAT-10, PROV-67, RULE-50, RULE-51]
+description: "The default effect IGNORED, a string equal to a contribution label, is returned unchanged."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "9" }, children: { line: [] } }
+expect:
+  effect: IGNORED
+  reason: { type: DEFAULT }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: false, failed: { fact: order.total, op: in } }
+    - { id: line-amount-probe, matched: false, failed: { fact: line.amount, op: any_in } }

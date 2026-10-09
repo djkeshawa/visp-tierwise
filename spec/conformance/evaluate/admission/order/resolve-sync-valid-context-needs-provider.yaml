@@ -1,0 +1,11 @@
+id: "admission/order/resolve-sync-valid-context-needs-provider"
+specVersion: "0.1"
+clauses: [EVAL-11, EVAL-29, SVC-42]
+description: "With a valid context and an admitted partner node, the synchronous resolve raises E_PROVIDER_REQUIRED and calls no provider."
+call: resolve
+sync: true
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-1, division: south } }
+key: edge.enabled
+providers: { partner: { p-1: { values: { edge.enabled: true, edge.max_items: 20, edge.min_qty: 3 } } } }
+expect: { error: E_PROVIDER_REQUIRED }

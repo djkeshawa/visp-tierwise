@@ -1,0 +1,10 @@
+id: pol-rule-then-setting-reference
+specVersion: "0.1"
+clauses: [POL-27]
+description: "A rule then that is a setting reference is an invalid setting, not an effect mismatch."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 0, "then"]
+      line: 14

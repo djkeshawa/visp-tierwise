@@ -1,0 +1,10 @@
+id: axis-combine-on-commutative-key
+specVersion: "0.1"
+clauses: [AXIS-2, MERGE-1]
+description: "A commutative key that declares combine_across_axes is E_AXIS_COMBINE_INVALID at the member."
+expect:
+  findings:
+    - code: E_AXIS_COMBINE_INVALID
+      file: "schema/keys.yaml"
+      path: ["keys", "retry_count", "combine_across_axes"]
+      line: 22

@@ -1,0 +1,6 @@
+id: "ns-name-with-dot-control"
+specVersion: "0.1"
+clauses: ["NS-9"]
+description: "The namespace name of ns-name-with-dot without a dot compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

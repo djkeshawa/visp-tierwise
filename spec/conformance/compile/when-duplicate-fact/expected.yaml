@@ -1,0 +1,10 @@
+id: when-duplicate-fact
+specVersion: "0.1"
+clauses: [RULE-1, SRC-3]
+description: "A fact named twice in one when mapping is reported as E_DUPLICATE_KEY at the second occurrence."
+expect:
+  findings:
+    - code: E_DUPLICATE_KEY
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "customer.active"]
+      line: 13

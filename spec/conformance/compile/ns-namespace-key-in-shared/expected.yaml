@@ -1,0 +1,10 @@
+id: "ns-namespace-key-in-shared"
+specVersion: "0.1"
+clauses: ["NS-7","SRC-16","FIND-12"]
+description: "A shared schema file that contains the namespace key is reported as E_NAMESPACE_VIOLATION, not as an invalid declaration."
+expect:
+  findings:
+    - code: "E_NAMESPACE_VIOLATION"
+      file: "schema/core.yaml"
+      path: ["namespace"]
+      line: 12

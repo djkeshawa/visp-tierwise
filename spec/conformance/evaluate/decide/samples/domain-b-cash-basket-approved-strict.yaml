@@ -1,0 +1,27 @@
+id: decide/samples/domain-b-cash-basket-approved-strict
+specVersion: "0.1"
+clauses: [RULE-31, RULE-32, RULE-29, RULE-47, RULE-48, RULE-49, RULE-52, RULE-54, RULE-55, RULE-27, BIND-17, BIND-23, PROV-62, PROV-68, PROV-70, PROV-71, PROV-74, PROV-78, PROV-80, PROV-82, PROV-83, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, BIND-16, PROV-7, RULE-53, PROV-79, PROV-81]
+description: "Sample domain B: a uniform cash basket of the strict cash categories is approved by the third rule, after two rules fail, with the strict cash_categories default."
+call: decide
+bundle: ../../../bundles/retail-pos.json
+context: { levels: { store: harbor_street } }
+feature: pos.basket_check
+input:
+  facts: { basket.tender: CASH, shopper.fraud_flag: false }
+  children:
+    line:
+      - { line.category: GROCERY }
+      - { line.category: GROCERY }
+exact: true
+expect:
+  feature: pos.basket_check
+  effect: APPROVE
+  bundleVersion: "sha256:5acebbd8528de939c2ca351ef15f2845f9d156eb6c4f275c57501c9edb039df0"
+  skippedScopes: []
+  binding: { level: store, node: harbor_street }
+  policy: strict
+  reason: { type: RULE, id: cash-simple-basket, name: "A cash basket of cash categories is approved" }
+  trace:
+    - { id: flagged-shopper, matched: false, failed: { fact: shopper.fraud_flag, op: eq } }
+    - { id: restricted-line, matched: false, failed: { fact: line.category, op: any_in } }
+    - { id: cash-simple-basket, matched: true }

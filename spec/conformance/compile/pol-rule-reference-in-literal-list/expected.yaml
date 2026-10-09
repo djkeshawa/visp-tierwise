@@ -1,0 +1,10 @@
+id: pol-rule-reference-in-literal-list
+specVersion: "0.1"
+clauses: [POL-26, RULE-23]
+description: "A setting reference inside a literal list is an invalid setting."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 1, "when", "item.stock_type", "all_in", 0]
+      line: 20

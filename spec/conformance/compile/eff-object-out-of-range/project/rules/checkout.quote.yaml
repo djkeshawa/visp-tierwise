@@ -1,0 +1,24 @@
+feature: checkout.quote
+
+policies:
+  quote_default:
+    default: { method: GROUND, days: 5 }
+    rules:
+      - id: express-active
+        name: Active customers get next day
+        when:
+          customer.active: true
+        then: { method: NEXT_DAY, days: 40 }
+
+bindings:
+  global: { policy: quote_default }
+
+examples:
+  - name: Active customer gets the express quote
+    context: {}
+    facts: { customer.active: true }
+    expect: { days: 1, method: NEXT_DAY }
+  - name: Missing customer gets the default quote
+    context: {}
+    facts: {}
+    expect: { method: GROUND, days: 5 }

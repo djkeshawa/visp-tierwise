@@ -1,0 +1,10 @@
+id: ex-explicit-children-list
+specVersion: "0.1"
+clauses: [POL-32, POL-37, POL-45]
+description: "In the explicit form a list under facts is not shorthand and is a FactSet structure violation."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 1, "facts", "item.stock_type"]
+      line: 43

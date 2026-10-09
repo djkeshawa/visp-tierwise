@@ -1,0 +1,10 @@
+id: "manifest-specversion-null"
+specVersion: "0.1"
+clauses: ["MANIFEST-4","MANIFEST-7","FIND-12"]
+description: "A null specVersion is present but not a string, so it is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["specVersion"]
+      line: 1

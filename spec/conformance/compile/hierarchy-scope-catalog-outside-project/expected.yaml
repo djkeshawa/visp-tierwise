@@ -1,0 +1,10 @@
+id: hierarchy-scope-catalog-outside-project
+specVersion: "0.1"
+clauses: ["SCOPE-27", "SCOPE-28"]
+description: "A from path that resolves outside the project directory is reported at the from member."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes", "from"]
+      line: 5

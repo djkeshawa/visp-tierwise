@@ -1,0 +1,13 @@
+id: merge/all-repeated-veto
+specVersion: "0.1"
+clauses: [MERGE-13, MERGE-14, MERGE-17, PROV-19, PROV-20, PROV-34, PROV-37, PROV-38]
+description: Two false values on the evaluation path are both labelled VETO, and the all key is false.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: south, site: s1 } }
+key: merge.all_flag
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: division, node: south, value: false, effect: VETO }
+    - { scope: level, name: site, node: s1, value: false, effect: VETO }

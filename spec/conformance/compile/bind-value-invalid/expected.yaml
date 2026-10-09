@@ -1,0 +1,10 @@
+id: bind-value-invalid
+specVersion: "0.1"
+clauses: [BIND-9, POL-17]
+description: "A binding value that is not valid for the setting's form is an invalid setting at that element."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "south", "allowed_on_credit_hold", 0]
+      line: 34

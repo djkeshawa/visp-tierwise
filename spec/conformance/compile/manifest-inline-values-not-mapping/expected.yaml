@@ -1,0 +1,10 @@
+id: "manifest-inline-values-not-mapping"
+specVersion: "0.1"
+clauses: ["MANIFEST-15","FIND-12"]
+description: "Inline values content that is not a mapping is reported as E_MANIFEST at values."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["values"]
+      line: 2

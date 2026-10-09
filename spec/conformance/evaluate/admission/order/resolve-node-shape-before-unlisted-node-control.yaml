@@ -1,0 +1,9 @@
+id: "admission/order/resolve-node-shape-before-unlisted-node-control"
+specVersion: "0.1"
+clauses: [CTX-9, CTX-12]
+description: "With the control character removed the unlisted channel node is the first failing step."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: north, channel: web } }
+key: edge.tier
+expect: { error: E_UNKNOWN_NODE }

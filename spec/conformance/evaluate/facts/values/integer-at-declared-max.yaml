@@ -1,0 +1,14 @@
+id: facts/values/integer-at-declared-max
+specVersion: "0.1"
+clauses: [FACT-35, TYPE-19]
+description: "An integer fact equal to its declared maximum is valid, because the bounds are inclusive."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "1.5", order.lines: 100 }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: exact-total, name: Total is exactly one and a half }
+  policy: gate
+  trace:
+    - { id: exact-total, matched: true }

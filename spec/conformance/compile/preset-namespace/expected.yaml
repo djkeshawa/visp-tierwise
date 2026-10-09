@@ -1,0 +1,10 @@
+id: "preset-namespace"
+specVersion: "0.1"
+clauses: ["NS-12","FIND-18","FIND-12"]
+description: "A preset that contains the namespace key is reported as E_PRESET at that key."
+expect:
+  findings:
+    - code: "E_PRESET"
+      file: "presets/ns.yaml"
+      path: ["namespace"]
+      line: 1

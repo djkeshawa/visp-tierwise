@@ -1,0 +1,14 @@
+id: axes/commutative/union-axes-widen-in-universe-order
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-5, MERGE-13, MERGE-14, MERGE-17, MERGE-18, AXIS-1, AXIS-2, PROV-20, PROV-21, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-37, PROV-38, TYPE-51, EVAL-7, CTX-19]
+description: A union of a seller set and a channel set gives the members in universe order, and the empty root set is labelled IGNORED.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { axes: { channel: shop, seller: acme } }
+key: axes.commutative.tags
+expect:
+  value: [A, B, C]
+  contributions:
+    - { scope: level, name: global, value: [], effect: IGNORED }
+    - { scope: axis, name: seller, node: acme, value: [B, C], effect: WIDENED }
+    - { scope: axis, name: channel, node: shop, value: [A], effect: WIDENED }

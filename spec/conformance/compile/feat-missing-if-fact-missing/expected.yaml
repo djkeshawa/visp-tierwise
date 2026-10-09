@@ -1,0 +1,10 @@
+id: feat-missing-if-fact-missing
+specVersion: "0.1"
+clauses: [FEAT-1, FEAT-2, FEAT-3]
+description: "A feature without if_fact_missing is reported as an invalid declaration at the feature mapping."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission"]
+      line: 18

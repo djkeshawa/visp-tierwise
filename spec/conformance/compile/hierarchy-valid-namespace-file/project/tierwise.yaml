@@ -1,0 +1,11 @@
+specVersion: "0.1"
+sources:
+  schema:
+    - schema/model.yaml
+  values:
+    - file: values/scopes.yaml
+  rules:
+    - rules/checkout-gate.yaml
+namespaces:
+  checkout:
+    schema: schema/checkout.yaml

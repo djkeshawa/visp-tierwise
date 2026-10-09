@@ -1,0 +1,10 @@
+id: facts/shape/child-element-string
+specVersion: "0.1"
+clauses: [FACT-32]
+description: "A string element of a child list instead of a child map raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2" }, children: { line: [ BULK ] } }
+expect:
+  error: E_FACTS_INVALID

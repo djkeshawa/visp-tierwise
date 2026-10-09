@@ -1,0 +1,6 @@
+id: pol-file-name-differs
+specVersion: "0.1"
+clauses: [POL-2, POL-4]
+description: "A rules file whose name differs from its feature compiles; the feature entry alone decides."
+expect:
+  bundle: "../../bundles/edge-features.json"

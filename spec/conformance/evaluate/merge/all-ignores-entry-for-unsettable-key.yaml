@@ -1,0 +1,23 @@
+id: merge/all-ignores-entry-for-unsettable-key
+specVersion: "0.1"
+clauses: [SVC-28, PROV-42, PROV-43, PROV-44]
+description: A null that the account provider returns for merge.note, which is not settable at account and is not being resolved, is ignored and leaves the result of merge.all_flag unchanged.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-1 } }
+key: merge.all_flag
+providers:
+  account:
+    acct-1:
+      values: { merge.all_flag: true, merge.note: null }
+exact: true
+expect:
+  key: merge.all_flag
+  strategy: all
+  value: true
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: true, effect: IGNORED }
+    - { scope: level, name: account, node: acct-1, value: true, effect: IGNORED }
+  providerCalls: { account: { acct-1: 1 } }

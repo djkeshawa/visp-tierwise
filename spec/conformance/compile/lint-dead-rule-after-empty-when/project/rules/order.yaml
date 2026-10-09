@@ -1,0 +1,56 @@
+feature: order.submission
+policies:
+  review:
+    settings:
+      allowed_stock: { list_of: item.stock, default: [STOCKED] }
+      no_stages: { list_of: order.stage, default: [] }
+    default: DENY
+    rules:
+      - id: paid
+        name: Paid order
+        when:
+          order.Paid: true
+        then: ALLOW
+      - id: stock_ok
+        name: Every item is allowed stock
+        when:
+          item.stock: { all_in: $allowed_stock }
+        then: ALLOW
+      - id: stage_closed
+        name: Closed order
+        when:
+          order.stage: CLOSED
+        then: DENY
+      - id: fallback
+        name: Fallback
+        when: {}
+        then: DENY
+      - id: none_closed
+        name: Never matches
+        when:
+          order.stage: { in: $no_stages }
+        then: DENY
+  allow_all:
+    default: ALLOW
+    rules: []
+bindings:
+  global: { policy: review }
+  region:
+    north: { policy: allow_all }
+examples:
+  - name: paid order
+    context: {}
+    facts: { order.Paid: true, order.stage: OPEN, item.stock: [STOCKED] }
+    expect: ALLOW
+  - name: mixed stock on the root binding
+    context: {}
+    facts: { order.Paid: false, order.stage: OPEN, item.stock: [STOCKED, DROP_SHIP] }
+    expect: DENY
+  - name: every item is allowed stock
+    context: {}
+    facts: { order.Paid: false, order.stage: OPEN, item.stock: [STOCKED] }
+    expect: ALLOW
+  - name: north region uses the allow-all policy
+    context: { levels: { region: north } }
+    facts: { order.Paid: false, order.stage: OPEN, item.stock: [DROP_SHIP] }
+    expect: ALLOW

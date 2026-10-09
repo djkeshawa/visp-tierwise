@@ -1,0 +1,6 @@
+id: neg-lint-mixed-collection
+specVersion: "0.1"
+clauses: [LINT-34, LINT-32]
+description: "The mixed example is mixed only against the setting value of the root binding, so examples/mixed-collection reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

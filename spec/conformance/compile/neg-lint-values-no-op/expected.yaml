@@ -1,0 +1,6 @@
+id: neg-lint-values-no-op
+specVersion: "0.1"
+clauses: [LINT-23, LINT-25]
+description: "No authored value equals its strategy identity, and the min key has no identity to match, so values/no-op reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

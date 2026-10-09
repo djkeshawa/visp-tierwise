@@ -1,0 +1,6 @@
+id: bind-unknown-setting-ok
+specVersion: "0.1"
+clauses: [BIND-8]
+description: "Negative control of bind-unknown-setting: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

@@ -1,0 +1,10 @@
+id: ex-shorthand-omitted-list-wrong-expect
+specVersion: "0.1"
+clauses: [POL-35, FACT-17]
+description: "An omitted child collection makes its child fact missing, so the feature's if_fact_missing applies. Wrong expect: the example fails."
+expect:
+  findings:
+    - code: E_EXAMPLE_FAILED
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 1, "expect"]
+      line: 44

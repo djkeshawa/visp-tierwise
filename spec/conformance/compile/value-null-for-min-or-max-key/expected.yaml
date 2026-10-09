@@ -1,0 +1,10 @@
+id: value-null-for-min-or-max-key
+specVersion: "0.1"
+clauses: [TYPE-78, TYPE-76, TYPE-77]
+description: "A null value is not a value of an integer key whose strategy is min or max (TYPE-78)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["spare_slots"]
+      line: 18

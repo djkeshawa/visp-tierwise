@@ -1,0 +1,10 @@
+id: bind-policy-unknown
+specVersion: "0.1"
+clauses: [BIND-5, BIND-6]
+description: "A binding whose policy names no policy of its rules file is an unknown policy."
+expect:
+  findings:
+    - code: E_UNKNOWN_POLICY
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "north", "policy"]
+      line: 33

@@ -1,0 +1,10 @@
+id: depth-form-precedence
+specVersion: "0.1"
+clauses: [RULE-28, RULE-11, RULE-13]
+description: "A depth failure on a grandchild fact takes precedence over the missing quantifier of the same condition."
+expect:
+  findings:
+    - code: E_DEPTH_UNSUPPORTED
+      file: rules/checkout.invoice_release.yaml
+      path: ["policies", "release_check", "rules", 1, "when", "item.stock_type"]
+      line: 13

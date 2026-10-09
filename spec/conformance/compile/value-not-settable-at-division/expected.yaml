@@ -1,0 +1,10 @@
+id: value-not-settable-at-division
+specVersion: "0.1"
+clauses: [KEY-11, KEY-6]
+description: "A value at a declared scope that is not in settable_at is E_NOT_SETTABLE_HERE (KEY-11)."
+expect:
+  findings:
+    - code: E_NOT_SETTABLE_HERE
+      file: "values/division/north.yaml"
+      path: ["courier"]
+      line: 7

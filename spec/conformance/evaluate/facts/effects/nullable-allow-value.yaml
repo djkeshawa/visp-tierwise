@@ -1,0 +1,15 @@
+id: facts/effects/nullable-allow-value
+specVersion: "0.1"
+clauses: [FEAT-7, PROV-66, RULE-48]
+description: "A nullable enum feature returns a listed string effect unchanged when a rule with that then wins."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.nullable_effect
+input: { facts: { order.label: "caf\u00e9" } }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: cafe-allows, name: Cafe allows }
+  policy: pick
+  trace:
+    - { id: tea-clears, matched: false, failed: { fact: order.label, op: eq } }
+    - { id: cafe-allows, matched: true }

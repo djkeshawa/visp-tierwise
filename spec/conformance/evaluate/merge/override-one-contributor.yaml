@@ -1,0 +1,13 @@
+id: merge/override-one-contributor
+specVersion: "0.1"
+clauses: [MERGE-16, MERGE-19, MERGE-25, PROV-28, PROV-38, PROV-46, PROV-47, PROV-50, PROV-52]
+description: A single division value replaces the default, is labelled SET, and is the source of the result.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.label
+expect:
+  value: north-label
+  source: { scope: level, name: division, node: north }
+  contributions:
+    - { scope: level, name: division, node: north, value: north-label, effect: SET }

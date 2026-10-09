@@ -1,0 +1,14 @@
+id: facts/decimal/gate-eq-canonical
+specVersion: "0.1"
+clauses: [FACT-39, NORM-10, NORM-15, RULE-37]
+description: "A decimal string \"+1.50\" is canonicalised to \"1.5\", so an eq condition with the literal \"1.5\" holds."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "+1.50" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: exact-total, name: Total is exactly one and a half }
+  policy: gate
+  trace:
+    - { id: exact-total, matched: true }

@@ -1,0 +1,10 @@
+id: hierarchy-scope-values-service-on-root
+specVersion: "0.1"
+clauses: ["SCOPE-12"]
+description: "A scopes entry for the root level is reported at its key, even when it sets values: service."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "global"]
+      line: 4

@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-root-named-with-ignored-scope"
+specVersion: "0.1"
+clauses: [CTX-3, CTX-18]
+description: "A root name raises E_CONTEXT_INVALID under the ignore policy of another scope, and the ignored scope is not skipped."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { global: north, site: site_999 } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

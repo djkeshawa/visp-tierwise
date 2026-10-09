@@ -1,0 +1,10 @@
+id: feat-unknown-member
+specVersion: "0.1"
+clauses: [FEAT-1, FEAT-2]
+description: "A feature member that the declaration does not allow is an invalid declaration at that member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "owner"]
+      line: 24

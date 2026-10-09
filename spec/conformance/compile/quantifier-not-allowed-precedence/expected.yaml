@@ -1,0 +1,10 @@
+id: quantifier-not-allowed-precedence
+specVersion: "0.1"
+clauses: [RULE-28, RULE-12, RULE-14]
+description: "A fact that is not in scope takes precedence over an any_in quantifier on a single-value form of the same condition."
+expect:
+  findings:
+    - code: E_FACT_NOT_IN_SCOPE
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "warehouse.open"]
+      line: 13

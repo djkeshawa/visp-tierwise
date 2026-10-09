@@ -1,0 +1,16 @@
+id: "admission/open/resolve-open-account-non-nfc-admitted-as-received"
+specVersion: "0.1"
+clauses: [CTX-7, CTX-8, CTX-13, SVC-15]
+description: "A non-NFC open node ID is admitted as received and reaches the provider under the same code points."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: "acct-ca\u0301fe" } }
+key: edge.min_qty
+providers: { account: { "acct-ca\u0301fe": { values: { edge.min_qty: 2 } } } }
+expect:
+  value: 2
+  contributions:
+    - { scope: level, name: global, value: 10, effect: NARROWED }
+    - { scope: level, name: account, node: "acct-ca\u0301fe", value: 2, effect: NARROWED }
+  skippedScopes: []
+  providerCalls: { account: { "acct-ca\u0301fe": 1 } }

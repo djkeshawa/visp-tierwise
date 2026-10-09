@@ -1,0 +1,6 @@
+id: neg-unknown-kind
+specVersion: "0.1"
+clauses: [KIND-13, KIND-2]
+description: "The baseline keys name only declared kinds, and compile with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

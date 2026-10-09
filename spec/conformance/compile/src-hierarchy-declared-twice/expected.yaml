@@ -1,0 +1,10 @@
+id: "src-hierarchy-declared-twice"
+specVersion: "0.1"
+clauses: ["SRC-39","MANIFEST-31","FIND-12"]
+description: "A decision hierarchy declared in a preset and again in the project is reported as E_DUPLICATE_DEFINITION at the project declaration."
+expect:
+  findings:
+    - code: "E_DUPLICATE_DEFINITION"
+      file: "schema/core.yaml"
+      path: ["decision_hierarchy"]
+      line: 1

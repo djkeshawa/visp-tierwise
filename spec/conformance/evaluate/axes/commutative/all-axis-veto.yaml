@@ -1,0 +1,14 @@
+id: axes/commutative/all-axis-veto
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-14, MERGE-17, AXIS-1, AXIS-2, PROV-20, PROV-21, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-37, PROV-38, EVAL-7, CTX-19]
+description: A channel axis that sets false vetoes an all key, and the identity true entries are labelled IGNORED.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { axes: { seller: acme, channel: shop } }
+key: axes.commutative.all_flag
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: global, value: true, effect: IGNORED }
+    - { scope: axis, name: seller, node: acme, value: true, effect: IGNORED }
+    - { scope: axis, name: channel, node: shop, value: false, effect: VETO }

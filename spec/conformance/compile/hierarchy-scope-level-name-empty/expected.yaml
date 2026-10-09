@@ -1,0 +1,10 @@
+id: hierarchy-scope-level-name-empty
+specVersion: "0.1"
+clauses: ["SCOPE-8", "SCOPE-9"]
+description: "An empty level name is reported at its list item."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "levels", 0]
+      line: 2

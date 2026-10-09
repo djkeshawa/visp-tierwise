@@ -1,0 +1,10 @@
+id: value-enum-not-member
+specVersion: "0.1"
+clauses: [TYPE-44, TYPE-71, KEY-13]
+description: "An enum value that is not an entry of values is E_TYPE_MISMATCH (TYPE-44)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["priority"]
+      line: 4

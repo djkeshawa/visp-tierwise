@@ -1,0 +1,5 @@
+keys:
+  checkout.allowed:
+    type: boolean
+    combine: all
+    settable_at: [global]

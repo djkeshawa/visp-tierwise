@@ -1,0 +1,19 @@
+id: providers/decide-default-partner-ignored-timeout
+specVersion: "0.1"
+clauses: [EVAL-8, SVC-22, CTX-14, PROV-56, PROV-75, RULE-50]
+description: Decide calls no provider even when the tenant stub would time out, and an ignored partner node appears in skippedScopes.
+call: decide
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1, partner: p-9 } }
+feature: order.express_allowed
+input: { facts: { order.express: false } }
+providers:
+  tenant:
+    t-1:
+      fail: timeout
+expect:
+  effect: DENY
+  reason: { type: DEFAULT }
+  skippedScopes:
+    - { scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }
+  providerCalls: { tenant: { t-1: 0 }, partner: { p-9: 0 } }

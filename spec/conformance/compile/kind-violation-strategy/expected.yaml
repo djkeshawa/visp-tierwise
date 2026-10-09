@@ -1,0 +1,10 @@
+id: kind-violation-strategy
+specVersion: "0.1"
+clauses: [KIND-2, KIND-4]
+description: "A key whose combine strategy is not in its kind's strategies list is reported as E_KIND_VIOLATION at combine."
+expect:
+  findings:
+    - code: E_KIND_VIOLATION
+      file: "schema/core.yaml"
+      path: [keys, access.enabled, combine]
+      line: 59

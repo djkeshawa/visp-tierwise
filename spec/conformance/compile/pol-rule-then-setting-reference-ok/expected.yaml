@@ -1,0 +1,6 @@
+id: pol-rule-then-setting-reference-ok
+specVersion: "0.1"
+clauses: [POL-27]
+description: "Negative control of pol-rule-then-setting-reference: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

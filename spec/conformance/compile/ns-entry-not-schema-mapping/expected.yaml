@@ -1,0 +1,10 @@
+id: "ns-entry-not-schema-mapping"
+specVersion: "0.1"
+clauses: ["NS-2","FIND-20","FIND-12"]
+description: "A namespace entry that is a string instead of a mapping with a schema member is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["namespaces","pos"]
+      line: 10

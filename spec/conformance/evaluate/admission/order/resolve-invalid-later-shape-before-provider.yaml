@@ -1,0 +1,10 @@
+id: "admission/order/resolve-invalid-later-shape-before-provider"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-9, CTX-10]
+description: "An integer node ID later in the context is rejected before the partner provider is called."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-1, division: 7 } }
+key: edge.enabled
+providers: { partner: { p-1: { values: { edge.enabled: true, edge.max_items: 20, edge.min_qty: 3 } } } }
+expect: { error: E_CONTEXT_INVALID, providerCalls: { partner: { p-1: 0 } } }

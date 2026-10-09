@@ -1,0 +1,20 @@
+id: decide/children/all-in-literal-omitted-collection
+specVersion: "0.1"
+clauses: [FACT-17, FACT-24, RULE-40, RULE-42, RULE-43, RULE-44, PROV-72, PROV-76, PROV-77, PROV-84, PROV-18, PROV-62, PROV-64, PROV-65, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52]
+description: "A child collection that the FactSet omits makes its child fact missing, so the precheck returns if_fact_missing HOLD with reason MISSING_FACT."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.all_in_literal
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.all_in_literal
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: MISSING_FACT, facts: [line.kind] }
+  trace: []

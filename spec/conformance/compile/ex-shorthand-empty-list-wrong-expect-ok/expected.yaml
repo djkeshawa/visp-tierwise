@@ -1,0 +1,6 @@
+id: ex-shorthand-empty-list-wrong-expect-ok
+specVersion: "0.1"
+clauses: [POL-34, RULE-33]
+description: "Negative control of ex-shorthand-empty-list-wrong-expect: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

@@ -1,0 +1,10 @@
+id: ex-expect-not-effect
+specVersion: "0.1"
+clauses: [POL-40, FEAT-14]
+description: "An example expect that is not a value of returns is an effect mismatch."
+expect:
+  findings:
+    - code: E_EFFECT_MISMATCH
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "expect"]
+      line: 40

@@ -1,0 +1,10 @@
+id: hierarchy-scope-axes-not-list
+specVersion: "0.1"
+clauses: ["SCOPE-9"]
+description: "An axes value that is not a list is reported at the axes key."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "axes"]
+      line: 3

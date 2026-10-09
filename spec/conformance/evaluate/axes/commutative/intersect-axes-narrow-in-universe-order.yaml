@@ -1,0 +1,15 @@
+id: axes/commutative/intersect-axes-narrow-in-universe-order
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-5, MERGE-13, MERGE-14, MERGE-17, MERGE-18, AXIS-1, AXIS-2, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-37, PROV-38, TYPE-51, EVAL-7, CTX-19]
+description: Region and axis sets intersect with the universe, the full universe is labelled IGNORED, and the result follows universe order.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme, channel: shop } }
+key: axes.commutative.methods
+expect:
+  value: [PICKUP]
+  contributions:
+    - { scope: level, name: global, value: [GROUND, PICKUP, NEXT_DAY], effect: IGNORED }
+    - { scope: level, name: region, node: north, value: [GROUND, PICKUP], effect: NARROWED }
+    - { scope: axis, name: seller, node: acme, value: [PICKUP, NEXT_DAY], effect: NARROWED }
+    - { scope: axis, name: channel, node: shop, value: [PICKUP], effect: NARROWED }

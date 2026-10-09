@@ -1,0 +1,13 @@
+id: "admission/skip/resolve-tier-root-only"
+specVersion: "0.1"
+clauses: [CTX-2, CTX-20, SCOPE-10, SCOPE-13, PROV-4, PROV-7]
+description: "With no context the root level alone supplies the value, and skippedScopes is an empty list."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+key: edge.tier
+expect:
+  value: SILVER
+  source: { scope: level, name: global }
+  contributions: [{ scope: level, name: global, value: SILVER, effect: SET }]
+  skippedScopes: []
+  bundleVersion: "sha256:eacee690d00111cc0bc1199fbe3d312b830d5de9d7ef1c24874a366bdd90e8dd"

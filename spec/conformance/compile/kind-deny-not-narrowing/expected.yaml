@@ -1,0 +1,10 @@
+id: kind-deny-not-narrowing
+specVersion: "0.1"
+clauses: [SVC-11, MERGE-2]
+description: "A deny key settable at a service-sourced level with a non-narrowing strategy is E_DENY_NOT_NARROWING at combine."
+expect:
+  findings:
+    - code: E_DENY_NOT_NARROWING
+      file: "schema/core.yaml"
+      path: [keys, access.emergency, combine]
+      line: 107

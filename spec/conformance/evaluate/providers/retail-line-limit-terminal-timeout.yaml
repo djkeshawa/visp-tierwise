@@ -1,0 +1,19 @@
+id: providers/retail-line-limit-terminal-timeout
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-9, SVC-23, SVC-24, SVC-39, MERGE-15, MERGE-17, PROV-29, PROV-41]
+description: On sample domain B (retail-pos), a timed-out terminal provider under deny gives the min key pos.basket.line_limit its declared minimum 1, below the platform and store values.
+call: resolve
+bundle: ../../bundles/retail-pos.json
+context: { levels: { store: harbor_street, terminal: t-1 } }
+key: pos.basket.line_limit
+providers:
+  terminal:
+    t-1:
+      fail: timeout
+expect:
+  value: 1
+  contributions:
+    - { scope: level, name: platform, value: 200, effect: NARROWED }
+    - { scope: level, name: store, node: harbor_street, value: 80, effect: NARROWED }
+    - { scope: level, name: terminal, node: t-1, value: 1, effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { terminal: { t-1: 1 } }

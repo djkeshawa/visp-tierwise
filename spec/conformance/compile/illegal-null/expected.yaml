@@ -1,0 +1,10 @@
+id: illegal-null
+specVersion: "0.1"
+clauses: [RULE-19]
+description: "A null literal in a condition is reported as E_ILLEGAL_FACT_VALUE."
+expect:
+  findings:
+    - code: E_ILLEGAL_FACT_VALUE
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "customer.credit_hold"]
+      line: 13

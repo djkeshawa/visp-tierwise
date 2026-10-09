@@ -1,0 +1,15 @@
+id: "admission/skip/resolve-tier-ignored-level-equals-omitted"
+specVersion: "0.1"
+clauses: [CTX-14, CTX-15, CTX-16, CTX-23, PROV-54, PROV-55, PROV-56, PROV-61]
+description: "An unlisted site node under ignore is skipped, so the result equals the omitted-site vector except for skippedScopes."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: south, site: site_999 } }
+key: edge.tier
+expect:
+  value: PLATINUM
+  source: { scope: level, name: division, node: south }
+  contributions:
+    - { scope: level, name: global, value: SILVER, effect: SET }
+    - { scope: level, name: division, node: south, value: PLATINUM, effect: SET }
+  skippedScopes: [{ scope: level, name: site, node: site_999, reason: UNKNOWN_NODE }]

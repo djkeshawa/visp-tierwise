@@ -1,0 +1,10 @@
+id: bind-level-unknown
+specVersion: "0.1"
+clauses: [BIND-11, SCOPE-46]
+description: "A bindings key that names no declared level is an unknown scope."
+expect:
+  findings:
+    - code: E_UNKNOWN_SCOPE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "region"]
+      line: 32

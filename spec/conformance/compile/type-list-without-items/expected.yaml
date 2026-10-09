@@ -1,0 +1,10 @@
+id: type-list-without-items
+specVersion: "0.1"
+clauses: [TYPE-53, TYPE-11]
+description: "A list declaration without items is an invalid declaration, reported at the key declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes"]
+      line: 63

@@ -1,0 +1,9 @@
+id: "admission/unknown-node/resolve-node-id-case-sensitive"
+specVersion: "0.1"
+clauses: [CTX-8, CTX-12]
+description: "Admission compares code points exactly, so South is not the listed node south."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: South } }
+key: edge.tier
+expect: { error: E_UNKNOWN_NODE }

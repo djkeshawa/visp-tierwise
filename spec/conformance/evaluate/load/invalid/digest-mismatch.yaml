@@ -1,0 +1,9 @@
+id: load/invalid/digest-mismatch
+specVersion: "0.1"
+clauses: [VEC-69, VEC-70, VEC-71, EVAL-2, EVAL-14, EVAL-22, EVAL-24, BUNDLE-6, BUNDLE-113, BUNDLE-114]
+description: "A bundle whose content changed while its bundleVersion kept the old digest is rejected at load with E_BUNDLE_INTEGRITY."
+call: resolve
+bundle: ../../../bundles/invalid/digest-mismatch.json
+key: example.lead_hours
+expect:
+  error: E_BUNDLE_INTEGRITY

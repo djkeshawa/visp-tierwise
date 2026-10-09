@@ -1,0 +1,10 @@
+id: kind-definition-bad-naming
+specVersion: "0.1"
+clauses: [KIND-12, LINT-16, LINT-14]
+description: "A kind whose naming member names no declared pattern is E_KIND_DEFINITION at naming."
+expect:
+  findings:
+    - code: E_KIND_DEFINITION
+      file: "schema/core.yaml"
+      path: [kinds, kn, naming]
+      line: 29

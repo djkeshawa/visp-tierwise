@@ -1,0 +1,10 @@
+id: eff-if-fact-missing
+specVersion: "0.1"
+clauses: [FEAT-3, FEAT-13, FEAT-14]
+description: "An if_fact_missing that is not a value of returns is an effect mismatch."
+expect:
+  findings:
+    - code: E_EFFECT_MISMATCH
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "if_fact_missing"]
+      line: 23

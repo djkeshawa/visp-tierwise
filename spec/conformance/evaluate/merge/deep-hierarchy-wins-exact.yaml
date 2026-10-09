@@ -1,0 +1,22 @@
+id: merge/deep-hierarchy-wins-exact
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-12, MERGE-13, MERGE-22, MERGE-23, MERGE-24, MERGE-25, CTX-19, PROV-10, PROV-28, PROV-34, PROV-46, PROV-47, PROV-53, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: Under hierarchy_wins the axis fold is merged first and the division value is merged last, so its cap wins while the promo unit stays, and the division is the source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context:
+  levels: { division: north }
+  axes: { seller: acme, promo: spring }
+key: merge.caps_hier
+exact: true
+expect:
+  key: merge.caps_hier
+  strategy: deep_merge
+  value: { cap: 20, unit: boxes }
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: { cap: 20 }, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: { cap: 25 }, effect: SET }
+    - { scope: axis, name: promo, node: spring, value: { cap: 30, unit: boxes }, effect: SET }
+  source: { scope: level, name: division, node: north }

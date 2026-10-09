@@ -1,0 +1,15 @@
+id: axes/override/min-last-axis-not-smallest
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, AXIS-8, MERGE-14, MERGE-19, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: The axis result under min is the last declared axis that contributes, so a smaller earlier axis value does not reach the comparison.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme, channel: web } }
+key: axes.override.min_cap
+expect:
+  value: 35
+  contributions:
+    - { scope: level, name: region, node: north, value: 40, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: 30, effect: SET }
+    - { scope: axis, name: channel, node: web, value: 35, effect: SET }
+  source: { scope: axis, name: channel, node: web }

@@ -1,0 +1,15 @@
+id: axes/deep-merge/axis-wins-seller-over-level-keeps-other-fields
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-11, MERGE-13, MERGE-14, MERGE-19, MERGE-20, MERGE-22, MERGE-23, MERGE-24, MERGE-25, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-28, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-53, EVAL-7, CTX-19]
+description: Under axis_wins a seller value replaces the open field of the level fold, while the close and slot fields that the axis does not set come from the level.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme } }
+key: axes.deep.axis_wins
+expect:
+  value: { open: 7, close: 16, slot: 30 }
+  contributions:
+    - { scope: level, name: global, value: { open: 9 }, effect: SET }
+    - { scope: level, name: region, node: north, value: { close: 16, slot: 30 }, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: { open: 7 }, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

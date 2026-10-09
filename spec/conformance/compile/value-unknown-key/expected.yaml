@@ -1,0 +1,10 @@
+id: value-unknown-key
+specVersion: "0.1"
+clauses: [KEY-10]
+description: "A value for an undeclared key name is E_UNKNOWN_KEY at the entry (KEY-10). The near name retry_cnt is close to retry_count, but a suggestion is not compared (VEC-101)."
+expect:
+  findings:
+    - code: E_UNKNOWN_KEY
+      file: "values/division/north.yaml"
+      path: ["retry_cnt"]
+      line: 7

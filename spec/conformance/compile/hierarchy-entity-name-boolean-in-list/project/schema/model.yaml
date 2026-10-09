@@ -1,0 +1,35 @@
+decision_hierarchy:
+  levels: [global, division, site]
+  scopes:
+    division:
+      nodes: [north, south]
+      on_unknown_node: error
+    site:
+      nodes: { from: catalogs/sites.json }
+      on_unknown_node: ignore
+entity_hierarchy:
+  customer: {}
+  invoice:
+    has_many: [true]
+  order:
+    belongs_to: [invoice, customer]
+  item:
+    belongs_to: []
+    has_many: []
+  carrier:
+    has_many: item
+facts:
+  order.total:
+    type: integer
+keys:
+  checkout.open:
+    type: boolean
+    combine: all
+    settable_at: [global, division, site]
+features:
+  checkout.gate:
+    decided_per: order
+    returns: { enum: [ALLOW, DENY] }
+    hit_policy: FIRST
+    binding_settable_at: [global, division, site]
+    if_fact_missing: DENY

@@ -1,0 +1,10 @@
+id: ex-context-unknown-level
+specVersion: "0.1"
+clauses: [POL-31, POL-43]
+description: "An example context that names an undeclared level is an unknown scope."
+expect:
+  findings:
+    - code: E_UNKNOWN_SCOPE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "context", "levels", "region"]
+      line: 38

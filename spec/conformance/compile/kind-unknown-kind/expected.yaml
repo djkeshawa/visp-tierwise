@@ -1,0 +1,10 @@
+id: kind-unknown-kind
+specVersion: "0.1"
+clauses: [KIND-13, KIND-2]
+description: "A key that names an undeclared kind is E_UNKNOWN_KIND at its kind member."
+expect:
+  findings:
+    - code: E_UNKNOWN_KIND
+      file: "schema/core.yaml"
+      path: [keys, access.beta, kind]
+      line: 116

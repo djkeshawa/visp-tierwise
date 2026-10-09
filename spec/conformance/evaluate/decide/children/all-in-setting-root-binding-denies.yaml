@@ -1,0 +1,25 @@
+id: decide/children/all-in-setting-root-binding-denies
+specVersion: "0.1"
+clauses: [RULE-27, RULE-31, RULE-50, RULE-51, RULE-54, RULE-55, BIND-23, PROV-62, PROV-71, PROV-75, PROV-78, PROV-80, PROV-82, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-81]
+description: "With the root binding list [GIFT], a child of kind STANDARD is outside the list, so the all_in setting reference fails and the default DENY is returned."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.all_in_setting
+input:
+  facts: {}
+  children:
+    line:
+      - { line.kind: GIFT }
+      - { line.kind: STANDARD }
+exact: true
+expect:
+  feature: edge.all_in_setting
+  effect: DENY
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: DEFAULT }
+  trace:
+    - { id: kinds-allowed, matched: false, failed: { fact: line.kind, op: all_in } }

@@ -1,0 +1,18 @@
+id: providers/sync-no-provider-needed
+specVersion: "0.1"
+clauses: [EVAL-9, EVAL-10, SVC-17, SVC-42, PROV-43]
+description: The synchronous resolve returns the same result as resolve when the supplied seat level is not settable for the key, so no provider call is needed.
+call: resolve
+sync: true
+bundle: ../../bundles/edge-providers.json
+context: { levels: { region: east, seat: s-1 } }
+key: quota.max_items
+providers:
+  seat:
+    s-1:
+      values: { quota.max_items: 1 }
+expect:
+  value: 6
+  contributions:
+    - { scope: level, name: region, node: east, value: 6, effect: NARROWED }
+  providerCalls: { seat: { s-1: 0 } }

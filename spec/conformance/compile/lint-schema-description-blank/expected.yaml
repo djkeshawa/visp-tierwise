@@ -1,0 +1,10 @@
+id: lint-schema-description-blank
+specVersion: "0.1"
+clauses: [LINT-45, LINT-44]
+description: "A description made only of spaces counts as missing for schema/description-required."
+expect:
+  findings:
+    - code: schema/description-required
+      file: "schema/core.yaml"
+      path: [keys, access.beta]
+      line: 112

@@ -1,0 +1,6 @@
+id: "src-nfc-duplicate-key-control"
+specVersion: "0.1"
+clauses: ["SRC-4"]
+description: "The second name of src-nfc-duplicate-key is an ASCII name that is not equal after NFC, so the schema file compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

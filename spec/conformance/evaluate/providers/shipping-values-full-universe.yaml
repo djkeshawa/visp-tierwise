@@ -1,0 +1,18 @@
+id: providers/shipping-values-full-universe
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-19, SVC-31, SVC-33, MERGE-17, PROV-21, PROV-34, PROV-38]
+description: A tenant set equal to the full universe is a valid identity of intersect, labelled IGNORED, and the result is the root set.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: shipping.methods
+providers:
+  tenant:
+    t-1:
+      values: { shipping.methods: [GROUND, PICKUP, NEXT_DAY] }
+expect:
+  value: [GROUND, PICKUP]
+  contributions:
+    - { scope: level, name: global, value: [GROUND, PICKUP], effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: [GROUND, PICKUP, NEXT_DAY], effect: IGNORED }
+  providerCalls: { tenant: { t-1: 1 } }

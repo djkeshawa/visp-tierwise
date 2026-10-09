@@ -1,0 +1,15 @@
+id: providers/create-missing-provider-none-registered
+specVersion: "0.1"
+clauses: [EVAL-4, EVAL-15, EVAL-26, SVC-14]
+description: A service-sourced level registered with no provider makes create evaluator raise E_PROVIDER_MISSING, even though no key is settable at that level.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: {}
+  seat: none
+expect:
+  error: E_PROVIDER_MISSING

@@ -1,0 +1,10 @@
+id: lint-naming-feature
+specVersion: "0.1"
+clauses: [LINT-19, LINT-21]
+description: "A feature name that breaks the feature pattern is reported by naming/feature at the feature declaration."
+expect:
+  findings:
+    - code: naming/feature
+      file: "schema/core.yaml"
+      path: [features, Order.submission]
+      line: 141

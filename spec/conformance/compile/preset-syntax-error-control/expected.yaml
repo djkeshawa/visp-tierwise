@@ -1,0 +1,6 @@
+id: "preset-syntax-error-control"
+specVersion: "0.1"
+clauses: ["SRC-5","FIND-18"]
+description: "The preset of preset-syntax-error, well-formed, compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

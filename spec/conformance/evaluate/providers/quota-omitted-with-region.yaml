@@ -1,0 +1,17 @@
+id: providers/quota-omitted-with-region
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-13, SVC-36, PROV-42]
+description: An omitted min key under deny is not a failure, so the result is the region value and no tenant entry appears.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { region: east, tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  value: 6
+  contributions:
+    - { scope: level, name: region, node: east, value: 6, effect: NARROWED }
+  providerCalls: { tenant: { t-1: 1 } }

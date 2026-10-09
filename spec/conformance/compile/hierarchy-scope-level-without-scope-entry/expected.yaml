@@ -1,0 +1,10 @@
+id: hierarchy-scope-level-without-scope-entry
+specVersion: "0.1"
+clauses: ["SCOPE-14"]
+description: "A non-root level with no scopes entry is located at the scopes mapping, by FIND-23."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes"]
+      line: 3

@@ -1,0 +1,6 @@
+id: feat-decided-per-unknown-ok
+specVersion: "0.1"
+clauses: [FEAT-4, FEAT-5]
+description: "Negative control of feat-decided-per-unknown: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features-small.json"

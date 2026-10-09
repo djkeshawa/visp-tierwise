@@ -1,0 +1,6 @@
+id: hierarchy-valid-model
+specVersion: "0.1"
+clauses: ["ENTITY-1", "ENTITY-4", "ENTITY-5", "ENTITY-8", "ENTITY-9", "ENTITY-11", "ENTITY-12", "ENTITY-13", "ENTITY-14", "ENTITY-15", "ENTITY-16", "ENTITY-17", "SCOPE-6", "SCOPE-13", "SCOPE-43", "FACT-1", "FACT-12", "BIND-2", "BIND-3", "BIND-13", "FEAT-18", "SRC-29", "SRC-30"]
+description: "A project with a root binding, node bindings, a node-level catalog, entity edges, an ENTITY-13 pair and a root value compiles with no finding."
+expect:
+  bundle: "../../bundles/edge-hierarchy-model.json"

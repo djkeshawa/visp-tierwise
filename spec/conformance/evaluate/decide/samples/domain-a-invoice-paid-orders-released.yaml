@@ -1,0 +1,26 @@
+id: decide/samples/domain-a-invoice-paid-orders-released
+specVersion: "0.1"
+clauses: [RULE-31, RULE-32, RULE-47, RULE-48, RULE-49, RULE-52, RULE-54, RULE-55, PROV-62, PROV-68, PROV-71, PROV-74, PROV-78, PROV-80, PROV-82, PROV-83, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, BIND-17, PROV-7, RULE-53, PROV-79, PROV-81]
+description: "Sample domain A: an invoice whose orders are all paid is released by the all_in rule under the root binding, after the any_in rule fails."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: {}
+feature: checkout.invoice_release
+input:
+  facts: {}
+  children:
+    order:
+      - { order.payment_state: PAID }
+      - { order.payment_state: PAID }
+exact: true
+expect:
+  feature: checkout.invoice_release
+  effect: RELEASE
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: global }
+  policy: payment_gate
+  reason: { type: RULE, id: all-orders-released, name: "Every order has a released payment state" }
+  trace:
+    - { id: any-held-order, matched: false, failed: { fact: order.payment_state, op: any_in } }
+    - { id: all-orders-released, matched: true }

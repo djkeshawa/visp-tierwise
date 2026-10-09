@@ -1,0 +1,6 @@
+id: neg-deny-bound-required
+specVersion: "0.1"
+clauses: [SVC-12]
+description: "The baseline deny key with min declares its min bound, and compiles with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

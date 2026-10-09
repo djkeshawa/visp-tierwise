@@ -1,0 +1,6 @@
+id: neg-lint-owner-required
+specVersion: "0.1"
+clauses: [LINT-48]
+description: "Every shared key has an owner and the namespaced key is owned by its file, so schema/owner-required reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

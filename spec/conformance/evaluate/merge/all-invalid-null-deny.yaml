@@ -1,0 +1,18 @@
+id: merge/all-invalid-null-deny
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-15, PROV-29, PROV-33, PROV-40, PROV-41, SVC-9, SVC-34, SVC-35, TYPE-76]
+description: A null from the account provider is INVALID, so under deny the all key takes its deny value false with the INVALID label and not VETO.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-3 } }
+key: merge.all_flag
+providers:
+  account:
+    acct-3:
+      values: { merge.all_flag: null }
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: division, node: north, value: true, effect: IGNORED }
+    - { scope: level, name: account, node: acct-3, value: false, effect: INVALID, onSourceFailure: deny }
+  providerCalls: { account: { acct-3: 1 } }

@@ -1,0 +1,23 @@
+id: merge/union-invalid-skip
+specVersion: "0.1"
+clauses: [MERGE-15, PROV-30, PROV-32, PROV-40, PROV-86, SVC-8, SVC-31, SVC-34, TYPE-70, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: An account set holding a member outside the universe is INVALID, so under skip it adds no value to the union.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: south, account: acct-3 } }
+key: merge.tags
+providers:
+  account:
+    acct-3:
+      values: { merge.tags: [purple] }
+exact: true
+expect:
+  key: merge.tags
+  strategy: union
+  value: [blue]
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: south, value: [blue], effect: WIDENED }
+    - { scope: level, name: account, node: acct-3, effect: INVALID, onSourceFailure: skip }
+  providerCalls: { account: { acct-3: 1 } }

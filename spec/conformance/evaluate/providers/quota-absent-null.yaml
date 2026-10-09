@@ -1,0 +1,16 @@
+id: providers/quota-absent-null
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-36, MERGE-6, PROV-7, PROV-17]
+description: A min key with no contributing scope has an absent result, which is JSON null.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  value: null
+  contributions: []
+  providerCalls: { tenant: { t-1: 1 } }

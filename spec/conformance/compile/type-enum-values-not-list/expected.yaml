@@ -1,0 +1,10 @@
+id: type-enum-values-not-list
+specVersion: "0.1"
+clauses: [TYPE-41, TYPE-11]
+description: "An enum values member that is not a list is an invalid declaration, reported at the values member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "values"]
+      line: 65

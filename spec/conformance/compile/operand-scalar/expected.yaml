@@ -1,0 +1,10 @@
+id: operand-scalar
+specVersion: "0.1"
+clauses: [RULE-6]
+description: "A single value where the in form requires a list is reported as E_INVALID_DECLARATION."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 2, "when", "order.lines"]
+      line: 21

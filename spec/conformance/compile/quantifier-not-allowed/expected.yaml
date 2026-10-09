@@ -1,0 +1,10 @@
+id: quantifier-not-allowed
+specVersion: "0.1"
+clauses: [RULE-14]
+description: "An any_in condition on a single-value fact is reported as E_QUANTIFIER_NOT_ALLOWED."
+expect:
+  findings:
+    - code: E_QUANTIFIER_NOT_ALLOWED
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "customer.active"]
+      line: 13

@@ -1,0 +1,10 @@
+id: "src-root-entry-non-root-scope"
+specVersion: "0.1"
+clauses: ["SRC-27","FIND-20","FIND-12"]
+description: "A root entry whose scope names a non-root level is reported as E_SOURCE_MAPPING at that scope member."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "tierwise.yaml"
+      path: ["sources","values",0,"scope"]
+      line: 7

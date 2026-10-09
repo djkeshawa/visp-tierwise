@@ -1,0 +1,6 @@
+id: bind-policy-unknown-ok
+specVersion: "0.1"
+clauses: [BIND-5, BIND-6]
+description: "Negative control of bind-policy-unknown: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

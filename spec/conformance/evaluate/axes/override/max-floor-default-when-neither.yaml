@@ -1,0 +1,12 @@
+id: axes/override/max-floor-default-when-neither
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-25, MERGE-14, PROV-7, PROV-45, PROV-48, EVAL-7, CTX-20]
+description: With no level and no axis value, the default is the value under max and the source is DEFAULT with no contributions.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: {}
+key: axes.override.max_floor
+expect:
+  value: 6
+  contributions: []
+  source: DEFAULT

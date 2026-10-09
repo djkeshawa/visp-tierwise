@@ -1,0 +1,10 @@
+id: type-optional-not-boolean
+specVersion: "0.1"
+clauses: [TYPE-5, TYPE-9, TYPE-11, TYPE-60]
+description: "An optional member that is not a boolean in an object field declaration is an invalid declaration (TYPE-9)."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "fields", "a", "optional"]
+      line: 65

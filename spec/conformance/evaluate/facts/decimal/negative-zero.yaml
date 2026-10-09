@@ -1,0 +1,14 @@
+id: facts/decimal/negative-zero
+specVersion: "0.1"
+clauses: [NORM-9, NORM-10, NORM-15]
+description: "A decimal string \"-0.0\" is canonicalised to \"0\", without a sign, so it is in the set."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "-0.0" }, children: { line: [] } }
+expect:
+  effect: HIT
+  reason: { type: RULE, id: total-in-set, name: Total is in the probe set }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: true }

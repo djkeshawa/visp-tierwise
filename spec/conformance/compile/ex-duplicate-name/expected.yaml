@@ -1,0 +1,10 @@
+id: ex-duplicate-name
+specVersion: "0.1"
+clauses: [POL-29, POL-30]
+description: "Two examples of one rules file with the same name are a duplicate value at the repeated name."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 1, "name"]
+      line: 41

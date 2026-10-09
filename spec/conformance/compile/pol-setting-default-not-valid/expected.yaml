@@ -1,0 +1,10 @@
+id: pol-setting-default-not-valid
+specVersion: "0.1"
+clauses: [POL-15, POL-17]
+description: "A list_of default with a value outside the fact's type is an invalid setting at that element."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "settings", "allowed_on_credit_hold", "default", 0]
+      line: 6

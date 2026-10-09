@@ -1,0 +1,12 @@
+id: merge/all-identity-ignored
+specVersion: "0.1"
+clauses: [MERGE-5, MERGE-14, MERGE-17, PROV-20, PROV-21, PROV-24, PROV-37, PROV-38]
+description: A division value equal to the identity true of all is labelled IGNORED and leaves the result at true.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.all_flag
+expect:
+  value: true
+  contributions:
+    - { scope: level, name: division, node: north, value: true, effect: IGNORED }

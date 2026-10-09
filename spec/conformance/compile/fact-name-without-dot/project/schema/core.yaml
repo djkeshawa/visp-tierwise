@@ -1,0 +1,37 @@
+decision_hierarchy:
+  levels: [global]
+
+entity_hierarchy:
+  customer: {}
+  warehouse: {}
+  invoice: { has_many: order }
+  order: { belongs_to: customer, has_many: item }
+  item: {}
+  shopper: {}
+  basket: { belongs_to: shopper, has_many: line }
+  line: {}
+
+facts:
+  active: { type: boolean }
+  customer.active: { type: boolean, source: customer-service }
+  customer.credit_hold: { type: boolean }
+  customer.rate: { type: decimal }
+  warehouse.open: { type: boolean }
+  invoice.locked: { type: boolean }
+  order.lines: { type: integer, min: 1, max: 500 }
+  order.ship.days: { type: integer, min: 0, max: 30 }
+  order.cutoff: { type: string, format: time_hhmm }
+  item.stock_type: { type: enum, values: [DROP_SHIP, SPECIAL_ORDER, STOCKED] }
+  item.unit_price: { type: decimal }
+  line.category: { type: enum, values: [ALCOHOL, GENERAL, GROCERY, PHARMACY] }
+  shopper.tier: { type: enum, values: [GOLD, STANDARD] }
+  shopper.fraud_flag: { type: boolean }
+  basket.tender: { type: enum, values: [CARD, CASH] }
+
+features:
+  pos.basket_check:
+    decided_per: basket
+    returns: { enum: [APPROVE, REJECT, REVIEW] }
+    hit_policy: FIRST
+    if_fact_missing: REVIEW
+    binding_settable_at: [global]

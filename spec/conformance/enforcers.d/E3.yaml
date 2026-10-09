@@ -1,0 +1,40 @@
+# Enforcers for the provider and evaluator-creation clauses that no evaluate vector can observe (VEC-125).
+# Work item E3 owns this file. Each value is one line that names the test that the owning implementation has not written yet.
+# SVC-38, SVC-48 and EVAL-28 are listed in enforcers.yaml, so they are not repeated here.
+
+# A stub can return only a mapping or a fail outcome (VEC-41, VEC-42), so a non-mapping provider result cannot be expressed.
+SVC-25: "Planned evaluator unit test: a provider result that is null, a list or a scalar gives an UNAVAILABLE failure entry for each key being resolved at that level."
+
+# A single-key resolve never calls a level at which its key is not settable (SVC-17), so an ignored non-settable entry cannot arise in a vector.
+SVC-29: "Planned evaluator unit test: a provider entry for a key being resolved at a level where that key is not settable is ignored, with no value and no failure, in a multi-key resolve."
+SVC-30: "Planned evaluator unit test: a provider entry ignored under SVC-29 adds no contribution entry for any contribution label."
+SVC-37: "Planned evaluator unit test: an entry classified under SVC-29 or SVC-34 changes the outcome of no other key in a multi-key resolve."
+
+# Multi-key requests and concurrency are not expressible in a single-key vector (VEC-68, VEC-125).
+SVC-20: "Planned evaluator unit test: a resolve that requests several keys is one evaluation call, so each service-sourced level is called at most once for the whole request."
+SVC-21: "Planned evaluator property test: a result does not change with the order or the concurrency of the provider calls of one evaluation."
+
+# The evaluator's own bookkeeping and wall-clock behaviour are not visible in a result (VEC-45).
+SVC-6: "Planned evaluator unit test: an evaluator records no source failure for a level that is not service-sourced."
+SVC-40: "Planned evaluator unit test: a provider result that arrives after its timeout has expired is never used, and the call counts as unavailable."
+SVC-41: "Planned evaluator unit test: a timeout is a positive integer number of milliseconds, measured from the start of the provider call until its result is available."
+
+# Listener events are not part of a result and are not asserted by vectors (EVAL-53, ADR 0014).
+SVC-43: "Planned listener unit test: the source failures reported to the listener are exactly those of SVC-23 and SVC-34."
+SVC-44: "Planned listener unit test: a timeout is reported to the listener as a source failure under SVC-23."
+SVC-45: "Planned listener unit test: the unknown keys reported to the listener are exactly the entries of SVC-27."
+SVC-46: "Planned listener unit test: a key that a provider result omits under SVC-36 is reported to the listener neither as a source failure nor as an unknown key."
+SVC-47: "Planned listener unit test: an entry ignored under SVC-29 is reported to the listener, and is neither a source failure nor an unknown key."
+
+# Creation rules that a vector cannot express: a YAML mapping holds one registration per level, and no vector carries a timeout or a listener (VEC-45).
+EVAL-5: "Planned evaluator unit test: create evaluator is a synchronous operation that returns its evaluator directly."
+EVAL-6: "Planned evaluator unit test: create evaluator calls no provider, including for a service-sourced level whose provider holds values."
+EVAL-27: "Planned evaluator unit test: registering two providers for one level raises E_EVALUATOR_OPTIONS, which a YAML mapping cannot express (VEC-125)."
+
+# Listener rules: vectors do not assert listener events (EVAL-41 and EVAL-53 with ADR 0014).
+EVAL-41: "Planned listener unit test: resolve reports to a configured listener the provider events that SVC-43 to SVC-47 define."
+EVAL-42: "Planned listener unit test: decide and the synchronous variants of resolve and decide report no provider event."
+EVAL-43: "Planned listener unit test: create evaluator emits one load event before it returns when it returns an evaluator, and emits none when it raises an error."
+EVAL-44: "Planned listener unit test: each listener event is delivered before the operation returns, one for each affected key, and a listener that throws changes no result."
+EVAL-45: "Planned listener unit test: no raised error and no skippedScopes entry is reported to the listener."
+EVAL-53: "Planned listener unit test: a listener tolerates concurrent calls, and each event carries type and bundleVersion."

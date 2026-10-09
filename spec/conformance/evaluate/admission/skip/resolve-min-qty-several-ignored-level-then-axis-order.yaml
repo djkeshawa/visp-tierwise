@@ -1,0 +1,22 @@
+id: "admission/skip/resolve-min-qty-several-ignored-level-then-axis-order"
+specVersion: "0.1"
+clauses: [CTX-14, CTX-16, CTX-17, SCOPE-6, SCOPE-7, PROV-57, PROV-58, PROV-59, PROV-60, PROV-61]
+description: "Four ignored scopes, two levels and two axes, are listed level first then axis, each in declared order, whatever the map order."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context:
+  levels: { site: site_999, partner: p-9, division: south }
+  axes: { "r\u00e9gion": nord, seller: zzz }
+key: edge.min_qty
+providers: { partner: { p-9: { values: { edge.enabled: false, edge.max_items: 999, edge.min_qty: 0 } } } }
+expect:
+  value: 4
+  contributions:
+    - { scope: level, name: global, value: 10, effect: NARROWED }
+    - { scope: level, name: division, node: south, value: 4, effect: NARROWED }
+  skippedScopes:
+    - { scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }
+    - { scope: level, name: site, node: site_999, reason: UNKNOWN_NODE }
+    - { scope: axis, name: seller, node: zzz, reason: UNKNOWN_NODE }
+    - { scope: axis, name: "r\u00e9gion", node: nord, reason: UNKNOWN_NODE }
+  providerCalls: { partner: { p-9: 0 } }

@@ -1,0 +1,24 @@
+id: merge/override-skip-unavailable
+specVersion: "0.1"
+clauses: [EVAL-39, MERGE-15, MERGE-19, PROV-30, PROV-32, PROV-33, PROV-39, PROV-46, PROV-47, PROV-50, PROV-52, SVC-8, SVC-23, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14, PROV-8, PROV-27]
+description: An unavailable account provider under skip adds nothing, so the division value remains the source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-2 } }
+key: merge.label
+providers:
+  account:
+    acct-2:
+      fail: unavailable
+exact: true
+expect:
+  key: merge.label
+  strategy: override
+  value: north-label
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: north-label, effect: SET }
+    - { scope: level, name: account, node: acct-2, effect: UNAVAILABLE, onSourceFailure: skip }
+  source: { scope: level, name: division, node: north }
+  providerCalls: { account: { acct-2: 1 } }

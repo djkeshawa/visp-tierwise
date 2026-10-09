@@ -1,0 +1,11 @@
+id: facts/unknown-names/resolve-declared-key-control
+specVersion: "0.1"
+clauses: [EVAL-34, EVAL-7, PROV-12, PROV-13]
+description: "The declared key of the same operation resolves to a Resolved result with its strategy, so the lookup does not raise."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+key: checkout.order.allowed_max_lines
+expect:
+  key: checkout.order.allowed_max_lines
+  strategy: min

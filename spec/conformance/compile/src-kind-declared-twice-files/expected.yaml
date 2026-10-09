@@ -1,0 +1,10 @@
+id: "src-kind-declared-twice-files"
+specVersion: "0.1"
+clauses: ["SRC-43","SRC-37","KIND-1","FIND-12"]
+description: "A kind declared in two project files is reported as E_DUPLICATE_DEFINITION at the later file. OPEN: which declaration is the second."
+expect:
+  findings:
+    - code: "E_DUPLICATE_DEFINITION"
+      file: "schema/extra.yaml"
+      path: ["kinds","k"]
+      line: 2

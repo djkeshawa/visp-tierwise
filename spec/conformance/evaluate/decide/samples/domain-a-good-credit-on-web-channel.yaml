@@ -1,0 +1,24 @@
+id: decide/samples/domain-a-good-credit-on-web-channel
+specVersion: "0.1"
+clauses: [BIND-16, BIND-17, CTX-19, CTX-21, RULE-29, RULE-40, RULE-45, RULE-47, RULE-48, RULE-49, RULE-53, PROV-62, PROV-69, PROV-74, PROV-78, PROV-79, PROV-83, PROV-18, PROV-64, PROV-65, PROV-68, PROV-71, PROV-73, PROV-7, RULE-52, PROV-80, PROV-82]
+description: "Sample domain A: the web channel has no binding, so the root binding applies, its precheck passes with every fact present, and its first rule allows good credit."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: { levels: { channel: web } }
+feature: checkout.order_submission
+input:
+  facts: { customer.active: true, customer.credit_hold: false }
+  children:
+    item:
+      - { item.stock_type: STOCKED }
+exact: true
+expect:
+  feature: checkout.order_submission
+  effect: ALLOW
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: global }
+  policy: credit_check
+  reason: { type: RULE, id: good-credit, name: "Good credit" }
+  trace:
+    - { id: good-credit, matched: true }

@@ -1,0 +1,10 @@
+id: "manifest-inline-rules-item-not-mapping"
+specVersion: "0.1"
+clauses: ["MANIFEST-16","FIND-20","FIND-12"]
+description: "An inline rules item that is not a mapping is reported as E_MANIFEST at that item."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["rules",0]
+      line: 3

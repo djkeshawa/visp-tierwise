@@ -1,0 +1,15 @@
+id: axes/override/axis-wins-channel-last-over-seller
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-19, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: Under axis_wins the last declared axis that contributes replaces the hierarchy value, so the channel value beats the seller value.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme, channel: web } }
+key: axes.override.axis_label
+expect:
+  value: web
+  contributions:
+    - { scope: level, name: region, node: north, value: north, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: acme, effect: SET }
+    - { scope: axis, name: channel, node: web, value: web, effect: SET }
+  source: { scope: axis, name: channel, node: web }

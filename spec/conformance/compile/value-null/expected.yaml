@@ -1,0 +1,10 @@
+id: value-null
+specVersion: "0.1"
+clauses: [TYPE-76, TYPE-77, TYPE-71, KEY-13]
+description: "A null value is E_TYPE_MISMATCH at the key (TYPE-76, TYPE-77)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["hold_flag"]
+      line: 1

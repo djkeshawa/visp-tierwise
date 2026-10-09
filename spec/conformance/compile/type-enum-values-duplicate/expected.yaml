@@ -1,0 +1,10 @@
+id: type-enum-values-duplicate
+specVersion: "0.1"
+clauses: [TYPE-43, TYPE-52, TYPE-41]
+description: "A repeated string in the values of an enum declaration is E_DUPLICATE_VALUE at the repeated (later) entry (TYPE-43, TYPE-52)."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "values", 2]
+      line: 65

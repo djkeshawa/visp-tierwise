@@ -1,0 +1,9 @@
+id: "admission/order/resolve-unlisted-node-then-unknown-name"
+specVersion: "0.1"
+clauses: [CTX-4, CTX-9, CTX-12]
+description: "An unlisted node of step 4 listed before an unknown level name of step 2 still gives E_UNKNOWN_SCOPE."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: west, warehouse: north } }
+key: edge.tier
+expect: { error: E_UNKNOWN_SCOPE }

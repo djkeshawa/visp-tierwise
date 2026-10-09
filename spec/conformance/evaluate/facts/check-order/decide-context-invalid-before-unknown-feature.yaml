@@ -1,0 +1,11 @@
+id: facts/check-order/decide-context-invalid-before-unknown-feature
+specVersion: "0.1"
+clauses: [EVAL-17, EVAL-18, EVAL-30, CTX-1]
+description: "A levels member that is a list raises E_CONTEXT_INVALID before the undeclared feature is looked up."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+context: { levels: [ north ] }
+feature: edge.unknown
+input: {}
+expect:
+  error: E_CONTEXT_INVALID

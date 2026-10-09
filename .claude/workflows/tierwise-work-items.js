@@ -1,7 +1,7 @@
 export const meta = {
   name: 'tierwise-work-items',
   description: 'Haiku 5.5 (high) drafts and cross-verifies Tierwise work items; Sonnet 5.5 (high) reviews each item; the main chat model does the final review',
-  whenToUse: 'Run one wave of Tierwise roadmap work items, where each item owns distinct files. Pass { root, wave, context, items: [{ id, title, files, sources, brief }], verifiers? (0-2, default 2), consistency? } as args.',
+  whenToUse: 'Run one wave of Tierwise roadmap work items, where each item owns distinct files. Pass { root, wave, context, items: [{ id, title, files, sources, brief }], verifiers? (0-2, default 2), consistency? } as args. Items may set reviewOnly: true and verifiers.',
   phases: [
     { title: 'Draft', detail: 'one Haiku 5.5 agent per work item', model: 'haiku' },
     { title: 'Verify', detail: 'two Haiku 5.5 verifiers per draft: faithfulness and precision', model: 'haiku' },
@@ -156,7 +156,7 @@ Return the files you changed, a short summary of what you changed, and any remai
 
 async function verifyAndReview(draft, item) {
   if (!draft) return { id: item.id, title: item.title, verdict: 'draft-failed' }
-  const lenses = LENSES.slice(0, args.verifiers ?? LENSES.length)
+  const lenses = LENSES.slice(0, item.verifiers ?? args.verifiers ?? LENSES.length)
   const verdicts = await parallel(lenses.map((lens) => () =>
     agent(verifyPrompt(item, draft, lens), { ...HAIKU, phase: 'Verify', label: `verify:${item.id}:${lens.key}`, schema: VERIFY })))
   const issues = verdicts.filter(Boolean).flatMap((v) => v.issues)
@@ -194,7 +194,10 @@ log(`Wave ${args.wave}: ${items.length} work item(s)`)
 
 const results = await pipeline(
   items,
-  (item) => agent(draftPrompt(item), { ...HAIKU, phase: 'Draft', label: `draft:${item.id}`, schema: DRAFT }),
+  // reviewOnly items treat the files already on disk as the draft (e.g. after an interrupted wave).
+  (item) => item.reviewOnly
+    ? { files: item.files, summary: `Existing files, not yet reviewed: ${item.brief}`, openPoints: [] }
+    : agent(draftPrompt(item), { ...HAIKU, phase: 'Draft', label: `draft:${item.id}`, schema: DRAFT }),
   (draft, item) => verifyAndReview(draft, item),
 )
 

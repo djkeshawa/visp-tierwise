@@ -1,0 +1,3 @@
+access.allowed: false
+quota.max_seats: 8
+Search.fallback_on: true

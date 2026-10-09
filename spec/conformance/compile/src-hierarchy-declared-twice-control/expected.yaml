@@ -1,0 +1,6 @@
+id: "src-hierarchy-declared-twice-control"
+specVersion: "0.1"
+clauses: ["SRC-39","MANIFEST-31"]
+description: "The preset of src-hierarchy-declared-twice without a hierarchy compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

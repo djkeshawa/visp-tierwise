@@ -1,0 +1,29 @@
+id: merge/lead-axis-wins-exact
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-13, MERGE-19, MERGE-20, CTX-19, PROV-10, PROV-34, PROV-38, PROV-46, PROV-47, PROV-50, PROV-52, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: Under axis_wins the axis result is the value of the last declared axis that contributes, promo, and it replaces the hierarchy result from the account.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context:
+  levels: { division: north, site: s1, account: acct-1 }
+  axes: { seller: acme, promo: spring }
+key: merge.lead_days
+providers:
+  account:
+    acct-1:
+      values: { merge.lead_days: 8 }
+exact: true
+expect:
+  key: merge.lead_days
+  strategy: override
+  value: 11
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: 5, effect: SET }
+    - { scope: level, name: site, node: s1, value: 7, effect: SET }
+    - { scope: level, name: account, node: acct-1, value: 8, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: 9, effect: SET }
+    - { scope: axis, name: promo, node: spring, value: 11, effect: SET }
+  source: { scope: axis, name: promo, node: spring }
+  providerCalls: { account: { acct-1: 1 } }

@@ -1,0 +1,6 @@
+id: "manifest-specversion-unsupported-control"
+specVersion: "0.1"
+clauses: ["MANIFEST-5","MANIFEST-8"]
+description: "The manifest of manifest-specversion-unsupported with specVersion 0.1 compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

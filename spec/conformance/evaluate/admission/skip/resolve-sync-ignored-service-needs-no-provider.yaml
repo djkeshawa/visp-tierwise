@@ -1,0 +1,15 @@
+id: "admission/skip/resolve-sync-ignored-service-needs-no-provider"
+specVersion: "0.1"
+clauses: [EVAL-10, CTX-15, SVC-42]
+description: "The synchronous variant returns the result when the only service-sourced scope is skipped, because no provider call is needed."
+call: resolve
+sync: true
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-9, division: south } }
+key: edge.enabled
+providers: { partner: { p-9: { values: { edge.enabled: false, edge.max_items: 999, edge.min_qty: 0 } } } }
+expect:
+  value: false
+  contributions: [{ scope: level, name: division, node: south, value: false, effect: VETO }]
+  skippedScopes: [{ scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }]
+  providerCalls: { partner: { p-9: 0 } }

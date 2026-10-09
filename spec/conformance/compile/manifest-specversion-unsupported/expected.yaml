@@ -1,0 +1,10 @@
+id: "manifest-specversion-unsupported"
+specVersion: "0.1"
+clauses: ["MANIFEST-5","MANIFEST-8","FIND-12"]
+description: "A specVersion of 0.1.0 is not the version 0.1 compared exactly, so E_MANIFEST is reported."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["specVersion"]
+      line: 1

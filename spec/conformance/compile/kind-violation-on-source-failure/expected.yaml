@@ -1,0 +1,10 @@
+id: kind-violation-on-source-failure
+specVersion: "0.1"
+clauses: [KIND-11, SVC-5, KIND-2]
+description: "A key whose on_source_failure differs from its kind's value is E_KIND_VIOLATION at that member."
+expect:
+  findings:
+    - code: E_KIND_VIOLATION
+      file: "schema/core.yaml"
+      path: [keys, access.audit_on, on_source_failure]
+      line: 89

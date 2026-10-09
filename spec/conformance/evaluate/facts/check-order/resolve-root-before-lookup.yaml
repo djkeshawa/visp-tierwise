@@ -1,0 +1,10 @@
+id: facts/check-order/resolve-root-before-lookup
+specVersion: "0.1"
+clauses: [EVAL-16, EVAL-30, CTX-3]
+description: "A context that names the root level is rejected before the undeclared key is looked up."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { global: north } }
+key: checkout.unknown
+expect:
+  error: E_CONTEXT_INVALID

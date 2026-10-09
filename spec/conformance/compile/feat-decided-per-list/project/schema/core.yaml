@@ -1,0 +1,12 @@
+decision_hierarchy:
+  levels: [global]
+entity_hierarchy:
+  customer: {}
+  order: { belongs_to: customer }
+features:
+  checkout.order_submission:
+    decided_per: [order]
+    returns: { enum: [ALLOW, DENY, "null"] }
+    hit_policy: FIRST
+    binding_settable_at: [global]
+    if_fact_missing: DENY

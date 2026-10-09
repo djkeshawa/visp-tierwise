@@ -1,0 +1,10 @@
+id: facts/values/decimal-number-float
+specVersion: "0.1"
+clauses: [FACT-38, TYPE-25]
+description: "A non-integral number given for a decimal fact raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: 1.5 }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

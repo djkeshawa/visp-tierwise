@@ -1,0 +1,10 @@
+id: type-enum-values-empty
+specVersion: "0.1"
+clauses: [TYPE-42, TYPE-11]
+description: "An empty enum values list is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "values"]
+      line: 65

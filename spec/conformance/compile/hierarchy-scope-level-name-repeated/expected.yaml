@@ -1,0 +1,10 @@
+id: hierarchy-scope-level-name-repeated
+specVersion: "0.1"
+clauses: ["SCOPE-3", "SCOPE-4"]
+description: "A level name repeated inside levels is reported at the later entry."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "levels", 2]
+      line: 2

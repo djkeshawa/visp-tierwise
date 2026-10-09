@@ -1,0 +1,10 @@
+id: pol-setting-name-policy
+specVersion: "0.1"
+clauses: [POL-20]
+description: "A setting named policy, which is reserved for the binding entry, is an invalid setting."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "settings", "policy"]
+      line: 7

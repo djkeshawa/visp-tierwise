@@ -1,0 +1,10 @@
+id: key-on-source-failure-invalid
+specVersion: "0.1"
+clauses: [KEY-5, KEY-3, SVC-4]
+description: "An on_source_failure value other than skip or deny is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "on_source_failure"]
+      line: 29

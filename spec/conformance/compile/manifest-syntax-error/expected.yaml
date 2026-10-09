@@ -1,0 +1,10 @@
+id: "manifest-syntax-error"
+specVersion: "0.1"
+clauses: ["SRC-5","FIND-23","FIND-12"]
+description: "A YAML syntax error in the manifest is reported as E_MANIFEST at the empty path and line 1."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: []
+      line: 1

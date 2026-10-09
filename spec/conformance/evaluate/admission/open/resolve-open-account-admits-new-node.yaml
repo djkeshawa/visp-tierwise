@@ -1,0 +1,17 @@
+id: "admission/open/resolve-open-account-admits-new-node"
+specVersion: "0.1"
+clauses: [CTX-13, SVC-15, SVC-17, SVC-19, SCOPE-40, SCOPE-41]
+description: "An open service-sourced catalog admits a node ID with spaces, a slash and a dot, and calls its provider once for it."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: south, account: "acme corp/eu.1" } }
+key: edge.min_qty
+providers: { account: { "acme corp/eu.1": { values: { edge.min_qty: 2 } } } }
+expect:
+  value: 2
+  contributions:
+    - { scope: level, name: global, value: 10, effect: NARROWED }
+    - { scope: level, name: division, node: south, value: 4, effect: NARROWED }
+    - { scope: level, name: account, node: "acme corp/eu.1", value: 2, effect: NARROWED }
+  skippedScopes: []
+  providerCalls: { account: { "acme corp/eu.1": 1 } }

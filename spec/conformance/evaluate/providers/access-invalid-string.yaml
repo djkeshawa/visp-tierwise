@@ -1,0 +1,17 @@
+id: providers/access-invalid-string
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-31, SVC-34, SVC-9, TYPE-12, PROV-40, PROV-41]
+description: A string where the boolean key expects a boolean fails validation as INVALID and contributes the deny value false.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: "true" }
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: false, effect: INVALID, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

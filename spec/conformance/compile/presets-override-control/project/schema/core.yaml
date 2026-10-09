@@ -1,0 +1,11 @@
+decision_hierarchy:
+  levels: [global, region]
+  scopes:
+    region:
+      nodes: ["1", no, off, on, yes]
+      on_unknown_node: error
+keys:
+  checkout.allowed:
+    type: boolean
+    combine: any
+    settable_at: [global, region]

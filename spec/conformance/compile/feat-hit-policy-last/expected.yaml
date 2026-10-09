@@ -1,0 +1,10 @@
+id: feat-hit-policy-last
+specVersion: "0.1"
+clauses: [FEAT-15, FEAT-16]
+description: "A hit_policy other than FIRST is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "hit_policy"]
+      line: 21

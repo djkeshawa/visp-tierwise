@@ -1,0 +1,6 @@
+id: "src-service-level-values-control"
+specVersion: "0.1"
+clauses: ["SRC-33","SCOPE-47"]
+description: "The project of src-service-level-values without the terminal values file compiles to the service bundle."
+expect:
+  bundle: "../../bundles/edge-manifest-service.json"

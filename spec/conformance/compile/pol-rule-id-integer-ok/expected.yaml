@@ -1,0 +1,6 @@
+id: pol-rule-id-integer-ok
+specVersion: "0.1"
+clauses: [POL-25]
+description: "Negative control of pol-rule-id-integer: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

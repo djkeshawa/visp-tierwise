@@ -1,0 +1,6 @@
+id: "manifest-inline-schema-control"
+specVersion: "0.1"
+clauses: ["SRC-36","MANIFEST-14","FIND-17"]
+description: "The single-file project of manifest-inline-schema-unknown-key without the undeclared key compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

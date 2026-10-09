@@ -1,0 +1,10 @@
+id: lint-naming-exact-over-wildcard
+specVersion: "0.1"
+clauses: [LINT-10, LINT-4]
+description: "An exact naming/key setting in the manifest runs that rule although the naming/* wildcard is off."
+expect:
+  findings:
+    - code: naming/key
+      file: "schema/core.yaml"
+      path: [keys, Search.fallback_on]
+      line: 126

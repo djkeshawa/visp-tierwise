@@ -1,0 +1,24 @@
+id: decide/children/all-in-literal-child-map-without-fact
+specVersion: "0.1"
+clauses: [FACT-19, RULE-40, RULE-42, RULE-43, RULE-44, PROV-76, PROV-77, PROV-84, PROV-18, PROV-62, PROV-64, PROV-65, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52, PROV-72]
+description: "A child fact is missing when one child map has no entry for it, even though another child map holds the fact, so the precheck returns HOLD."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.all_in_literal
+input:
+  facts: {}
+  children:
+    line:
+      - {}
+      - { line.kind: STANDARD }
+exact: true
+expect:
+  feature: edge.all_in_literal
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: MISSING_FACT, facts: [line.kind] }
+  trace: []

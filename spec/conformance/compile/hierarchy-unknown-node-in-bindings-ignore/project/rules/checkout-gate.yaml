@@ -1,0 +1,11 @@
+feature: checkout.gate
+policies:
+  open_all:
+    default: ALLOW
+    rules: []
+bindings:
+  global: { policy: open_all }
+  division:
+    north: { policy: open_all }
+  site:
+    s9: { policy: open_all }

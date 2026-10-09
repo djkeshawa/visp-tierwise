@@ -1,0 +1,10 @@
+id: "ns-inline-namespace-key"
+specVersion: "0.1"
+clauses: ["NS-7","MANIFEST-14","FIND-17","FIND-12"]
+description: "Inline schema content is a shared file, so a namespace key in it is reported as E_NAMESPACE_VIOLATION in the manifest."
+expect:
+  findings:
+    - code: "E_NAMESPACE_VIOLATION"
+      file: "tierwise.yaml"
+      path: ["schema","namespace"]
+      line: 14

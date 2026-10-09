@@ -1,0 +1,14 @@
+id: value-object-missing-and-unknown
+specVersion: "0.1"
+clauses: [TYPE-23, TYPE-63, TYPE-64]
+description: "An object with a missing required field and an unknown field gives two findings (TYPE-23). Tests two violations of one value."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["contact"]
+      line: 12
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["contact", "email"]
+      line: 15

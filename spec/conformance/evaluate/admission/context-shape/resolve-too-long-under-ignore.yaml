@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-too-long-under-ignore"
+specVersion: "0.1"
+clauses: [SCOPE-33, CTX-6, CTX-18, EVAL-30]
+description: "A node ID of 129 code points for the ignored site scope raises E_CONTEXT_INVALID and does not skip the scope."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

@@ -1,0 +1,10 @@
+id: facts/unknown-names/resolve-empty-key
+specVersion: "0.1"
+clauses: [EVAL-34, EVAL-37, EVAL-7]
+description: "An empty key name matches no declared key, so resolve raises E_UNKNOWN_KEY."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+key: ""
+expect:
+  error: E_UNKNOWN_KEY

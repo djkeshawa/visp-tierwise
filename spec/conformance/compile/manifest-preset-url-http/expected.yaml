@@ -1,0 +1,10 @@
+id: "manifest-preset-url-http"
+specVersion: "0.1"
+clauses: ["MANIFEST-26","FIND-20","FIND-12"]
+description: "A URL preset reference whose url is not an https URL is reported as E_MANIFEST at url."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["extends",0,"url"]
+      line: 3

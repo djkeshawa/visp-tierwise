@@ -1,0 +1,10 @@
+id: eff-then-mismatch
+specVersion: "0.1"
+clauses: [POL-22, FEAT-13, FEAT-14]
+description: "A rule then that is not a value of returns is an effect mismatch."
+expect:
+  findings:
+    - code: E_EFFECT_MISMATCH
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 0, "then"]
+      line: 14

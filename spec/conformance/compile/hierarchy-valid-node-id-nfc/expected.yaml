@@ -1,0 +1,6 @@
+id: hierarchy-valid-node-id-nfc
+specVersion: "0.1"
+clauses: ["SCOPE-35", "SCOPE-42", "BUNDLE-39"]
+description: "A source node ID written in decomposed form is normalised to NFC in the bundle, and the two IDs stay distinct."
+expect:
+  bundle: "../../bundles/edge-hierarchy-nfc.json"

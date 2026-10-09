@@ -1,0 +1,11 @@
+id: load/valid/edge-min-safe-root-value
+specVersion: "0.1"
+clauses: [EVAL-1, EVAL-2, BUNDLE-11, BUNDLE-12, DET-4, BUNDLE-113, BUNDLE-137, MERGE-19, PROV-18, PROV-47]
+description: "A root value equal to the smallest safe integer, minus 2^53 - 1, loads and replaces the default of the key."
+call: resolve
+bundle: ../../../bundles/edge-load.json
+key: example.min_safe
+expect:
+  value: -9007199254740991
+  source: { scope: level, name: global }
+  bundleVersion: "sha256:731f3fb3860038a2c343c4d105efe8609ce2ab79e745ffbf41d2870db122b84e"

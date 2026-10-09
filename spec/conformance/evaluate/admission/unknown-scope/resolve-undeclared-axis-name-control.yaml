@@ -1,0 +1,15 @@
+id: "admission/unknown-scope/resolve-undeclared-axis-name-control"
+specVersion: "0.1"
+clauses: [CTX-4, CTX-19]
+description: "With the declared seller axis name the node is admitted and the axis wins under axis_wins."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { axes: { seller: acme } }
+key: edge.tier
+expect:
+  value: GOLD
+  source: { scope: axis, name: seller, node: acme }
+  contributions:
+    - { scope: level, name: global, value: SILVER, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: GOLD, effect: SET }
+  skippedScopes: []

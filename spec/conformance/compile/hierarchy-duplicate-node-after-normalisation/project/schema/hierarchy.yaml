@@ -1,0 +1,6 @@
+decision_hierarchy:
+  levels: [global, division]
+  scopes:
+    division:
+      nodes: ["e\u0301", "\u00e9"]
+      on_unknown_node: error

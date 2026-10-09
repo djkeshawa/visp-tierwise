@@ -1,0 +1,20 @@
+id: axes/override/max-tie-names-hierarchy
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, AXIS-8, MERGE-14, MERGE-19, MERGE-20, PROV-12, PROV-13, PROV-18, PROV-20, PROV-22, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-51, PROV-52, EVAL-7, CTX-19]
+description: Under max a tie between the hierarchy result and the axis result gives the value of both, and the source names the hierarchy.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: globex } }
+key: axes.override.max_hours
+exact: true
+expect:
+  key: axes.override.max_hours
+  strategy: override
+  value: 6
+  bundleVersion: "sha256:05179da9ede881099ef2c24d893073bb5a23f3ce934d26e6d0b76def8dab2f7f"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: global, value: 2, effect: SET }
+    - { scope: level, name: region, node: north, value: 6, effect: SET }
+    - { scope: axis, name: seller, node: globex, value: 6, effect: SET }
+  source: { scope: level, name: region, node: north }

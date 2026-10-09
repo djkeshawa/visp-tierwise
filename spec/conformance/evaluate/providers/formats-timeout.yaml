@@ -1,0 +1,17 @@
+id: providers/formats-timeout
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-8, SVC-23, SVC-24, SVC-39, MERGE-5, PROV-30, PROV-32]
+description: Under skip, a timed-out tenant provider leaves a union key at the identity empty set, which is a present value and not null.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: export.formats
+providers:
+  tenant:
+    t-1:
+      fail: timeout
+expect:
+  value: []
+  contributions:
+    - { scope: level, name: tenant, node: t-1, effect: UNAVAILABLE, onSourceFailure: skip }
+  providerCalls: { tenant: { t-1: 1 } }

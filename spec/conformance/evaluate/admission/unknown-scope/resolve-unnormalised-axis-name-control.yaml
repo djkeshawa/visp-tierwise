@@ -1,0 +1,13 @@
+id: "admission/unknown-scope/resolve-unnormalised-axis-name-control"
+specVersion: "0.1"
+clauses: [CTX-4, CTX-14, PROV-54]
+description: "With the NFC name the axis is declared, and its unlisted node is skipped under ignore."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { axes: { "r\u00e9gion": nord } }
+key: edge.tier
+expect:
+  value: SILVER
+  source: { scope: level, name: global }
+  contributions: [{ scope: level, name: global, value: SILVER, effect: SET }]
+  skippedScopes: [{ scope: axis, name: "r\u00e9gion", node: nord, reason: UNKNOWN_NODE }]

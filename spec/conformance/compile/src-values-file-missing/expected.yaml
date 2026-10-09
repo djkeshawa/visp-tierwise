@@ -1,0 +1,10 @@
+id: "src-values-file-missing"
+specVersion: "0.1"
+clauses: ["SRC-17","FIND-22","FIND-12"]
+description: "A values entry whose file does not exist is reported as E_MANIFEST at the file member of that entry."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["sources","values",2,"file"]
+      line: 9

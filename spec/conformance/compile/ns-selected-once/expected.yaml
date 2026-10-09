@@ -1,0 +1,6 @@
+id: "ns-selected-once"
+specVersion: "0.1"
+clauses: ["SRC-20","NS-8","NS-3"]
+description: "A namespaced schema file selected by both a schema pattern and a namespaces entry is one file, so the namespaced bundle results."
+expect:
+  bundle: "../../bundles/edge-manifest-namespaced.json"

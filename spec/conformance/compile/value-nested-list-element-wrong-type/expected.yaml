@@ -1,0 +1,10 @@
+id: value-nested-list-element-wrong-type
+specVersion: "0.1"
+clauses: [TYPE-69, TYPE-56, TYPE-71]
+description: "An element of an inner list of a nested list is E_TYPE_MISMATCH at its path (TYPE-69, TYPE-56)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["route_groups", 0, 1]
+      line: 9

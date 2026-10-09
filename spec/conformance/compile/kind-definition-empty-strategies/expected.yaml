@@ -1,0 +1,10 @@
+id: kind-definition-empty-strategies
+specVersion: "0.1"
+clauses: [KIND-3, KIND-1]
+description: "A kind whose strategies list is empty is E_KIND_DEFINITION at strategies."
+expect:
+  findings:
+    - code: E_KIND_DEFINITION
+      file: "schema/core.yaml"
+      path: [kinds, unused_empty, strategies]
+      line: 30

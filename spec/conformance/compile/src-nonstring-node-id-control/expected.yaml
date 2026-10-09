@@ -1,0 +1,6 @@
+id: "src-nonstring-node-id-control"
+specVersion: "0.1"
+clauses: ["SRC-11","SCOPE-20"]
+description: "The node list of src-nonstring-node-id with the node written as a quoted string compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

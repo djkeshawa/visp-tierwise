@@ -1,0 +1,10 @@
+id: hierarchy-scope-entry-unknown-member
+specVersion: "0.1"
+clauses: ["SCOPE-18"]
+description: "A scope entry with a member other than nodes, on_unknown_node and values is reported at that member."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "label"]
+      line: 7

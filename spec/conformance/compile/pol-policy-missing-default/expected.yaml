@@ -1,0 +1,10 @@
+id: pol-policy-missing-default
+specVersion: "0.1"
+clauses: [POL-7, FEAT-2]
+description: "A policy without a default is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "unused"]
+      line: 4

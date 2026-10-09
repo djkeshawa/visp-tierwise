@@ -1,0 +1,10 @@
+id: hierarchy-invalid-node-id-in-values
+specVersion: "0.1"
+clauses: ["SCOPE-38", "SCOPE-39", "SRC-32"]
+description: "An empty node ID in a values file is E_INVALID_NODE_ID and is not also reported as an unknown node."
+expect:
+  findings:
+    - code: E_INVALID_NODE_ID
+      file: "values/scopes.yaml"
+      path: ["division", ""]
+      line: 4

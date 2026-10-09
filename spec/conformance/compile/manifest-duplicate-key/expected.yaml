@@ -1,0 +1,10 @@
+id: "manifest-duplicate-key"
+specVersion: "0.1"
+clauses: ["SRC-3","SRC-9","FIND-21","FIND-22","FIND-12"]
+description: "A repeated key in the manifest is reported as E_DUPLICATE_KEY at the second occurrence."
+expect:
+  findings:
+    - code: "E_DUPLICATE_KEY"
+      file: "tierwise.yaml"
+      path: ["specVersion"]
+      line: 2

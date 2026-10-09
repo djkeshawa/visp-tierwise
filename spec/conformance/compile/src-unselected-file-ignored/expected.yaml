@@ -1,0 +1,6 @@
+id: "src-unselected-file-ignored"
+specVersion: "0.1"
+clauses: ["SRC-13"]
+description: "A schema file that no sources entry selects does not contribute, so its conflicting declaration has no effect."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

@@ -1,0 +1,6 @@
+id: "src-invalid-utf8-values-control"
+specVersion: "0.1"
+clauses: ["SRC-10"]
+description: "The values file of src-invalid-utf8-values with a valid UTF-8 comment compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

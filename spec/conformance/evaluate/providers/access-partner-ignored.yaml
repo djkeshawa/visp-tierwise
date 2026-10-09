@@ -1,0 +1,18 @@
+id: providers/access-partner-ignored
+specVersion: "0.1"
+clauses: [EVAL-7, CTX-14, CTX-15, SVC-17, PROV-56, PROV-61]
+description: An unknown partner node under ignore skips the scope, so the partner provider is not called and no deny value applies.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1, partner: p-9 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  value: true
+  contributions: []
+  skippedScopes:
+    - { scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }
+  providerCalls: { tenant: { t-1: 1 }, partner: { p-9: 0 } }

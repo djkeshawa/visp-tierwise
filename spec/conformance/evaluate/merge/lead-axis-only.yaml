@@ -1,0 +1,13 @@
+id: merge/lead-axis-only
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-19, MERGE-20, PROV-46, PROV-47, PROV-50, PROV-52]
+description: With only the seller axis supplied, the override key takes the axis result, and the seller is the source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { axes: { seller: acme } }
+key: merge.lead_days
+expect:
+  value: 9
+  source: { scope: axis, name: seller, node: acme }
+  contributions:
+    - { scope: axis, name: seller, node: acme, value: 9, effect: SET }

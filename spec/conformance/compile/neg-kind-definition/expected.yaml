@@ -1,0 +1,6 @@
+id: neg-kind-definition
+specVersion: "0.1"
+clauses: [KIND-1, KIND-3, KIND-5, KIND-10, KIND-12, SVC-4]
+description: "The baseline kind definitions are consistent, and compile with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

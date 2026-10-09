@@ -1,0 +1,6 @@
+id: bnd-reference-clean
+specVersion: "0.1"
+clauses: [FEAT-1, FEAT-2, FEAT-3, FEAT-4, FEAT-5, FEAT-6, FEAT-7, FEAT-8, FEAT-11, FEAT-13, FEAT-15, FEAT-18, FEAT-19, FEAT-20, FEAT-21, POL-1, POL-2, POL-6, POL-7, POL-8, POL-9, POL-14, POL-15, POL-16, POL-20, POL-21, POL-22, POL-23, POL-24, POL-26, POL-28, POL-29, POL-31, POL-33, POL-41, POL-47, POL-48, BIND-1, BIND-2, BIND-3, BIND-4, BIND-5, BIND-8, BIND-9, BIND-10, BIND-11, BIND-12, BIND-13]
+description: "Clean reference project: every feature, policy, binding and example form in the base compiles with no finding."
+expect:
+  bundle: "../../bundles/edge-features.json"

@@ -1,0 +1,10 @@
+id: facts/unknown-names/resolve-key-case-differs
+specVersion: "0.1"
+clauses: [EVAL-34, NORM-6]
+description: "A key name that differs in case from a declared key is undeclared, and raises E_UNKNOWN_KEY."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+key: Checkout.order.allowed_max_lines
+expect:
+  error: E_UNKNOWN_KEY

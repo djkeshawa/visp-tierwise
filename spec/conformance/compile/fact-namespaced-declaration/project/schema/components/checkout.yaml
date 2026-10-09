@@ -1,0 +1,17 @@
+namespace: checkout
+
+features:
+  checkout.order_submission:
+    decided_per: order
+    returns: { enum: [ALLOW, DENY] }
+    hit_policy: FIRST
+    if_fact_missing: DENY
+    binding_settable_at: [global]
+  checkout.invoice_release:
+    decided_per: invoice
+    returns: { enum: [HOLD, RELEASE] }
+    hit_policy: FIRST
+    if_fact_missing: HOLD
+    binding_settable_at: [global]
+facts:
+  order.region: { type: string }

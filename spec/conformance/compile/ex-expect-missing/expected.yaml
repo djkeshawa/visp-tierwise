@@ -1,0 +1,10 @@
+id: ex-expect-missing
+specVersion: "0.1"
+clauses: [POL-28, FEAT-2]
+description: "An example without expect is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0]
+      line: 37

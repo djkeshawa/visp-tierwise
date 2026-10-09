@@ -1,0 +1,10 @@
+id: "manifest-inline-schema-not-mapping"
+specVersion: "0.1"
+clauses: ["MANIFEST-13","MANIFEST-14","FIND-12"]
+description: "Inline schema content that is not a mapping is reported as E_MANIFEST at schema."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["schema"]
+      line: 2

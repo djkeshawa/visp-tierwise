@@ -1,0 +1,10 @@
+id: "admission/unknown-scope/decide-undeclared-axis-name"
+specVersion: "0.1"
+clauses: [CTX-4, EVAL-32]
+description: "An axis name that the hierarchy does not declare raises E_UNKNOWN_SCOPE in decide."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { axes: { warehouse: north } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_UNKNOWN_SCOPE }

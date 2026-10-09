@@ -1,0 +1,16 @@
+id: "admission/context-shape/decide-list-value-under-ignore-control"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-19, BIND-16]
+description: "With the node ID written as a string the listed site node selects its own binding."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: site_001 } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: SHIP
+  skippedScopes: []
+  binding: { level: site, node: site_001 }
+  policy: ship_all
+  reason: { type: DEFAULT }
+  trace: []

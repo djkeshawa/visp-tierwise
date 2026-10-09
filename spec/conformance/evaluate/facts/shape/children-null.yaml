@@ -1,0 +1,10 @@
+id: facts/shape/children-null
+specVersion: "0.1"
+clauses: [FACT-28, FACT-30]
+description: "A null children member raises E_FACTS_INVALID, and is not read as an omitted collection."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2" }, children: null }
+expect:
+  error: E_FACTS_INVALID

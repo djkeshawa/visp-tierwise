@@ -1,0 +1,6 @@
+id: feat-binding-axis-ok
+specVersion: "0.1"
+clauses: [FEAT-20, BIND-15]
+description: "Negative control of feat-binding-axis: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

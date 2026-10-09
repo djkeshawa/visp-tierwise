@@ -1,0 +1,10 @@
+id: "ns-namespaces-not-mapping"
+specVersion: "0.1"
+clauses: ["NS-1","FIND-12"]
+description: "namespaces written as a sequence is reported as E_MANIFEST at namespaces."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["namespaces"]
+      line: 9

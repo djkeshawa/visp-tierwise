@@ -1,0 +1,6 @@
+id: "src-glob-doublestar-zero-dirs"
+specVersion: "0.1"
+clauses: ["SRC-18","SRC-19","MANIFEST-1","FIND-8"]
+description: "A ** segment matches zero directories, so schema/**/core.yaml selects schema/core.yaml, and a glob that matches nothing contributes no finding."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

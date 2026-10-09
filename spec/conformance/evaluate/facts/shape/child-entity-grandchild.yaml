@@ -1,0 +1,10 @@
+id: facts/shape/child-entity-grandchild
+specVersion: "0.1"
+clauses: [FACT-29, FACT-15]
+description: "A children entry for a grandchild entity of the decided entity raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2" }, children: { part: [ { part.code: A1 } ] } }
+expect:
+  error: E_FACTS_INVALID

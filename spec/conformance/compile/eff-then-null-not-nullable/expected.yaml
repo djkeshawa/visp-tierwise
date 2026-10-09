@@ -1,0 +1,10 @@
+id: eff-then-null-not-nullable
+specVersion: "0.1"
+clauses: [FEAT-9, FEAT-14]
+description: "A null effect is an effect mismatch when the enum form does not declare nullable: true."
+expect:
+  findings:
+    - code: E_EFFECT_MISMATCH
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 0, "then"]
+      line: 14

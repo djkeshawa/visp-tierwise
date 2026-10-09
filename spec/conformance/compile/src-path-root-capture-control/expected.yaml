@@ -1,0 +1,6 @@
+id: "src-path-root-capture-control"
+specVersion: "0.1"
+clauses: ["SRC-28","SRC-22"]
+description: "Without the root-level file that the pattern captures, src-path-root-capture compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

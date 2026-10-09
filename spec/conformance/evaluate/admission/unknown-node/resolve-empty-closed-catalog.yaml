@@ -1,0 +1,9 @@
+id: "admission/unknown-node/resolve-empty-closed-catalog"
+specVersion: "0.1"
+clauses: [SCOPE-21, CTX-12]
+description: "Every node is unlisted in a closed catalog with no node IDs, so a node under error raises E_UNKNOWN_NODE."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { channel: web } }
+key: edge.tier
+expect: { error: E_UNKNOWN_NODE }

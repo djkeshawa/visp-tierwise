@@ -1,0 +1,16 @@
+id: "admission/context-shape/decide-open-node-129-code-points-control"
+specVersion: "0.1"
+clauses: [SCOPE-33, CTX-13]
+description: "A node ID of exactly 128 code points is admitted by an open catalog, and the root binding applies."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: SHIP
+  skippedScopes: []
+  binding: { level: global }
+  policy: paid_only
+  reason: { type: RULE, id: paid, name: "Order is paid" }
+  trace: [{ id: paid, matched: true }]

@@ -1,0 +1,14 @@
+id: feat-binding-not-listed-level
+specVersion: "0.1"
+clauses: [BIND-12, BIND-3]
+description: "Bindings at division are not allowed when division is not listed in binding_settable_at; each node binding is reported."
+expect:
+  findings:
+    - code: E_BINDING_NOT_ALLOWED
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "north"]
+      line: 33
+    - code: E_BINDING_NOT_ALLOWED
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "south"]
+      line: 34

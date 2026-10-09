@@ -1,0 +1,10 @@
+id: "src-multi-node-scope-not-mapping"
+specVersion: "0.1"
+clauses: ["SRC-31","FIND-19","FIND-12"]
+description: "A non-root scope whose value is a sequence is reported as E_SOURCE_MAPPING at that scope."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "values/regions.yaml"
+      path: ["region"]
+      line: 1

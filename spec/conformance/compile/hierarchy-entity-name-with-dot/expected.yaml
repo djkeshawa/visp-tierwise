@@ -1,0 +1,10 @@
+id: hierarchy-entity-name-with-dot
+specVersion: "0.1"
+clauses: ["ENTITY-18"]
+description: "A declared entity name that contains a dot is E_INVALID_DECLARATION at the name."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "ledger.book"]
+      line: 21

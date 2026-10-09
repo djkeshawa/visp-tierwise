@@ -1,0 +1,6 @@
+id: "preset-specversion-control"
+specVersion: "0.1"
+clauses: ["MANIFEST-6","MANIFEST-36","FIND-18"]
+description: "The preset of preset-specversion without specVersion compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

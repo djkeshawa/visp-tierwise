@@ -1,0 +1,6 @@
+id: neg-lint-required-per-binding
+specVersion: "0.1"
+clauses: [LINT-30, LINT-31]
+description: "Each binding is selected by one example, so examples/required-per-binding reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

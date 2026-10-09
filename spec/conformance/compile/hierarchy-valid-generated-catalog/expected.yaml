@@ -1,0 +1,6 @@
+id: hierarchy-valid-generated-catalog
+specVersion: "0.1"
+clauses: ["SCOPE-19", "SCOPE-22", "SCOPE-27", "SCOPE-29", "SCOPE-31", "SCOPE-32", "BUNDLE-39"]
+description: "A closed catalog generated from a project file, given unsorted, compiles to the same sorted bundle as the inline form."
+expect:
+  bundle: "../../bundles/edge-hierarchy.json"

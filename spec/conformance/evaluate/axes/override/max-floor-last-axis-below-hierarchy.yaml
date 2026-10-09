@@ -1,0 +1,15 @@
+id: axes/override/max-floor-last-axis-below-hierarchy
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, AXIS-8, MERGE-14, MERGE-19, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: Under max the hierarchy value wins over the last declared axis value, even though an earlier axis holds a larger value.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme, channel: web } }
+key: axes.override.max_floor
+expect:
+  value: 3
+  contributions:
+    - { scope: level, name: region, node: north, value: 3, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: 5, effect: SET }
+    - { scope: axis, name: channel, node: web, value: 2, effect: SET }
+  source: { scope: level, name: region, node: north }

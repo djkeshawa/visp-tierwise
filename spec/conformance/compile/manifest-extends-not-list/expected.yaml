@@ -1,0 +1,10 @@
+id: "manifest-extends-not-list"
+specVersion: "0.1"
+clauses: ["MANIFEST-19","FIND-12"]
+description: "extends that is a string instead of a list is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["extends"]
+      line: 2

@@ -1,0 +1,16 @@
+id: facts/check-order/resolve-sync-unknown-key-before-provider
+specVersion: "0.1"
+clauses: [EVAL-16, EVAL-18, EVAL-34]
+description: "The synchronous resolve raises E_UNKNOWN_KEY, not E_PROVIDER_REQUIRED, because the lookup precedes the provider check."
+call: resolve
+sync: true
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south, account: acct-17 } }
+key: checkout.shipping.unknown
+providers:
+  account:
+    acct-17:
+      values: { checkout.shipping.allowed_methods: [ GROUND ] }
+expect:
+  error: E_UNKNOWN_KEY
+  providerCalls: { account: { acct-17: 0 } }

@@ -1,0 +1,9 @@
+id: "admission/order/resolve-root-then-unknown-name"
+specVersion: "0.1"
+clauses: [CTX-3, CTX-4, CTX-11, EVAL-19]
+description: "A root name and an undeclared name in one step raise E_CONTEXT_INVALID when the root name comes first."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { global: north, warehouse: south } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

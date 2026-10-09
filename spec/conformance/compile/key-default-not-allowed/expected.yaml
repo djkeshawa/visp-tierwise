@@ -1,0 +1,10 @@
+id: key-default-not-allowed
+specVersion: "0.1"
+clauses: [MERGE-4, MERGE-1]
+description: "A commutative key that declares default gives E_DEFAULT_NOT_ALLOWED at the default member."
+expect:
+  findings:
+    - code: E_DEFAULT_NOT_ALLOWED
+      file: "schema/keys.yaml"
+      path: ["keys", "hold_flag", "default"]
+      line: 12

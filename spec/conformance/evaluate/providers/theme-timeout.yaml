@@ -1,0 +1,18 @@
+id: providers/theme-timeout
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-8, SVC-23, SVC-24, SVC-39, PROV-30, PROV-32, PROV-48]
+description: Under skip, a timed-out tenant provider contributes no value, so an override key falls back to its default with source DEFAULT, and the failure entry is still listed.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: display.theme
+providers:
+  tenant:
+    t-1:
+      fail: timeout
+expect:
+  value: light
+  source: DEFAULT
+  contributions:
+    - { scope: level, name: tenant, node: t-1, effect: UNAVAILABLE, onSourceFailure: skip }
+  providerCalls: { tenant: { t-1: 1 } }

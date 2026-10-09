@@ -1,0 +1,12 @@
+id: merge/intersect-identity-ignored
+specVersion: "0.1"
+clauses: [MERGE-5, MERGE-14, MERGE-17, PROV-21, PROV-37, PROV-38, PROV-86]
+description: A division value equal to the full universe is labelled IGNORED and leaves the intersect at the full universe.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: south } }
+key: merge.regions
+expect:
+  value: [red, green, blue]
+  contributions:
+    - { scope: level, name: division, node: south, value: [red, green, blue], effect: IGNORED }

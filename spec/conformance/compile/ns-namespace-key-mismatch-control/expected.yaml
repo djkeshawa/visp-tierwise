@@ -1,0 +1,6 @@
+id: "ns-namespace-key-mismatch-control"
+specVersion: "0.1"
+clauses: ["NS-7"]
+description: "The namespaced file of ns-namespace-key-mismatch with a matching namespace key compiles to the namespaced bundle."
+expect:
+  bundle: "../../bundles/edge-manifest-namespaced.json"

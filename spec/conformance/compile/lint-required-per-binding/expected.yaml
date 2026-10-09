@@ -1,0 +1,10 @@
+id: lint-required-per-binding
+specVersion: "0.1"
+clauses: [LINT-29, LINT-30, LINT-31]
+description: "A non-root binding that no example selects is reported by examples/required-per-binding at the node entry."
+expect:
+  findings:
+    - code: examples/required-per-binding
+      file: "rules/order.yaml"
+      path: [features, order.submission, bindings, region, north]
+      line: 35

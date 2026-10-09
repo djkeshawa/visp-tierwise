@@ -1,0 +1,16 @@
+id: "admission/skip/decide-admitted-site-selects-its-binding"
+specVersion: "0.1"
+clauses: [BIND-16, BIND-17, CTX-21, RULE-50, RULE-51, PROV-68, PROV-69, PROV-70]
+description: "A listed site node selects its own binding, which is later than the root binding, and that policy has no rules."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: site_001 } }
+feature: edge.route
+input: { facts: { order.paid: false } }
+expect:
+  effect: SHIP
+  skippedScopes: []
+  binding: { level: site, node: site_001 }
+  policy: ship_all
+  reason: { type: DEFAULT }
+  trace: []

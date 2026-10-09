@@ -1,0 +1,24 @@
+# Enforcers for the decide clauses that no evaluate vector or compile case can observe (VEC-125).
+# Owner: work item E5 (evaluate vectors: decisions and rules). Each value is one line that names the enforcer.
+# A clause listed here is a promise to test it in the implementation, not evidence that it is tested.
+# Clauses that a compile case observes (the compiler-side checks of RULE and BIND) are not listed here;
+# they are covered by the compile cases under spec/conformance/compile/ (bind-*, bnd-reference-clean, the rules family),
+# and README-edge-decide.md section 4 names them.
+
+# A context cannot name the root level (CTX-3), so the root level never reaches skippedScopes.
+PROV-57: 'Planned evaluator unit test: skippedScopes never names the root level, because a context that names it raises E_CONTEXT_INVALID (CTX-3).'
+
+# A context gives each scope at most one node, so a scope is skipped at most once.
+PROV-59: 'Planned evaluator unit test: skippedScopes holds at most one entry for each scope, because a context gives each scope at most one node (PROV-59).'
+
+# skippedScopes is a property of the context, so every result from one context carries the same list.
+PROV-60: 'Planned evaluator unit test: resolve and decide over one context report the same skippedScopes, for every key and feature (PROV-60).'
+
+# Evaluator options, presets and project settings must not change the Decision result shape.
+PROV-2: 'Planned evaluator unit test: a preset, a project setting or an evaluator option leaves the member set of a Decision result unchanged (PROV-2).'
+
+# Serialised results are unordered JSON objects, so member order is not significant to a reader.
+PROV-85: 'Planned unit test: a serialised Decision result compares equal when only the order of its object members differs (PROV-85).'
+
+# Comparisons are by declared type and never coerce, so operands and fact values of different types are never equal.
+RULE-38: 'Planned evaluator unit test: a boolean fact never equals the string "true", no decimal equals a number, and no operand is coerced before a comparison (RULE-38, NORM-17).'

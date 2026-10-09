@@ -1,0 +1,18 @@
+id: merge/intersect-deny-timeout
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-15, MERGE-17, PROV-29, PROV-39, PROV-41, PROV-86, SVC-9, SVC-39, SVC-44, PROV-8, PROV-27]
+description: A timed-out account provider under deny gives the intersect key the empty set, labelled UNAVAILABLE, so the result is empty.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-2 } }
+key: merge.regions
+providers:
+  account:
+    acct-2:
+      fail: timeout
+expect:
+  value: []
+  contributions:
+    - { scope: level, name: division, node: north, value: [red, green], effect: NARROWED }
+    - { scope: level, name: account, node: acct-2, value: [], effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { account: { acct-2: 1 } }

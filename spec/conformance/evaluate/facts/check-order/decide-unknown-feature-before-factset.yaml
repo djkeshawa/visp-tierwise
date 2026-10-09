@@ -1,0 +1,10 @@
+id: facts/check-order/decide-unknown-feature-before-factset
+specVersion: "0.1"
+clauses: [EVAL-17, EVAL-18, EVAL-35, FACT-44]
+description: "An undeclared feature is reported before an invalid FactSet is checked, so E_UNKNOWN_FEATURE is raised."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.unknown
+input: { facts: { customer.active: "true" } }
+expect:
+  error: E_UNKNOWN_FEATURE

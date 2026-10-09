@@ -1,0 +1,26 @@
+id: decide/settings/north-binding-list
+specVersion: "0.1"
+clauses: [BIND-23, RULE-27, RULE-31, RULE-47, RULE-48, RULE-49, RULE-52, RULE-53, PROV-62, PROV-68, PROV-70, PROV-71, PROV-74, PROV-78, PROV-79, PROV-80, PROV-82, PROV-83, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, BIND-17, BIND-16, PROV-7, RULE-29, RULE-54, RULE-55, PROV-81]
+description: "At division north the bound list [BULK, GIFT, STANDARD] lets an all_in rule hold, while the omitted value setting keeps its default OPEN, so the held status fails the first rule."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: { levels: { division: north } }
+feature: edge.setting_values
+input:
+  facts: { order.status: HELD }
+  children:
+    line:
+      - { line.kind: BULK }
+      - { line.kind: GIFT }
+exact: true
+expect:
+  feature: edge.setting_values
+  effect: ALLOW
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: division, node: north }
+  policy: main
+  reason: { type: RULE, id: kinds-allowed, name: "Every line kind is allowed" }
+  trace:
+    - { id: status-matches, matched: false, failed: { fact: order.status, op: eq } }
+    - { id: kinds-allowed, matched: true }

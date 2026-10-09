@@ -1,0 +1,6 @@
+id: ex-context-root-level-ok
+specVersion: "0.1"
+clauses: [POL-31, POL-43]
+description: "Negative control of ex-context-root-level: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

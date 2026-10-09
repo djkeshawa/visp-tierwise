@@ -1,0 +1,10 @@
+id: hierarchy-entity-name-number-in-relation
+specVersion: "0.1"
+clauses: ["ENTITY-19"]
+description: "A number where an entity name is expected is E_TYPE_MISMATCH at the value."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "carrier", "has_many"]
+      line: 20

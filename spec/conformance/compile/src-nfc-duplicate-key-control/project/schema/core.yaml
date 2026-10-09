@@ -1,0 +1,14 @@
+decision_hierarchy:
+  levels: [global, region]
+  scopes:
+    region:
+      nodes: ["1", no, off, on, yes]
+      on_unknown_node: error
+keys:
+  checkout.allowed:
+    type: boolean
+    combine: any
+    settable_at: [global, region]
+naming:
+  café: {category: key, pattern: '^[a-z]+$'}
+  cafe: {category: key, pattern: '^[a-z]+$'}

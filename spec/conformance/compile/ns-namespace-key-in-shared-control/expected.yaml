@@ -1,0 +1,6 @@
+id: "ns-namespace-key-in-shared-control"
+specVersion: "0.1"
+clauses: ["NS-7","NS-3"]
+description: "The shared schema file of ns-namespace-key-in-shared without the namespace key compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

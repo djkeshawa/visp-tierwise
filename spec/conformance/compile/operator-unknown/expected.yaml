@@ -1,0 +1,10 @@
+id: operator-unknown
+specVersion: "0.1"
+clauses: [RULE-6]
+description: "An operator key outside the forms of Table 8.1 is reported as E_INVALID_DECLARATION."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 2, "when", "order.lines"]
+      line: 21

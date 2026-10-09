@@ -1,0 +1,20 @@
+id: decide/effects/nullable-effect-missing-null
+specVersion: "0.1"
+clauses: [FEAT-9, PROV-65, PROV-66, RULE-42, RULE-43, RULE-44, PROV-72, PROV-76, PROV-77, PROV-84, PROV-62, PROV-18, PROV-64, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52]
+description: "A nullable if_fact_missing of null is returned as JSON null when the precheck finds the missing fact."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.nullable_effect
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.nullable_effect
+  effect: null
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: MISSING_FACT, facts: [account.active] }
+  trace: []

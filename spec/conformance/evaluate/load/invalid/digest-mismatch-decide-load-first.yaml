@@ -1,0 +1,10 @@
+id: load/invalid/digest-mismatch-decide-load-first
+specVersion: "0.1"
+clauses: [VEC-24, VEC-70, VEC-74, EVAL-2, EVAL-8, EVAL-14, EVAL-17, EVAL-20, EVAL-22, EVAL-24, BUNDLE-113]
+description: "A decide call on a bundle with a digest mismatch raises E_BUNDLE_INTEGRITY, because load bundle runs before the feature lookup."
+call: decide
+bundle: ../../../bundles/invalid/digest-mismatch.json
+feature: checkout.order_submission
+input: { facts: {} }
+expect:
+  error: E_BUNDLE_INTEGRITY

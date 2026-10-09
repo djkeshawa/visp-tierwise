@@ -1,0 +1,10 @@
+id: lint-schema-unused-setting
+specVersion: "0.1"
+clauses: [LINT-40, LINT-42, LINT-43]
+description: "A setting that no condition in its policy refers to is reported by schema/unused, and its fact counts as used."
+expect:
+  findings:
+    - code: schema/unused
+      file: "rules/order.yaml"
+      path: [features, order.submission, policies, review, settings, spare_flag]
+      line: 7

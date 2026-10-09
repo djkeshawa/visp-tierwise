@@ -1,0 +1,10 @@
+id: key-settable-empty
+specVersion: "0.1"
+clauses: [KEY-7, KEY-5]
+description: "An empty settable_at list is an invalid declaration, reported at the list."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "settable_at"]
+      line: 28

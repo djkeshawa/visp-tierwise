@@ -1,0 +1,10 @@
+id: facts/unknown-names/decide-feature-empty
+specVersion: "0.1"
+clauses: [EVAL-35, EVAL-37]
+description: "An empty feature name matches no declared feature, so decide raises E_UNKNOWN_FEATURE."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: ""
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_UNKNOWN_FEATURE

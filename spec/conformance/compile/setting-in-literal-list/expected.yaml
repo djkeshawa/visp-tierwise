@@ -1,0 +1,10 @@
+id: setting-in-literal-list
+specVersion: "0.1"
+clauses: [RULE-4, RULE-23]
+description: "A setting reference inside a literal list is reported as E_INVALID_SETTING."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 1, "when", "item.stock_type"]
+      line: 17

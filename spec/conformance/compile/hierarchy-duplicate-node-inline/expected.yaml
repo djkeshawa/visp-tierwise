@@ -1,0 +1,10 @@
+id: hierarchy-duplicate-node-inline
+specVersion: "0.1"
+clauses: ["SCOPE-42"]
+description: "A node ID repeated in an inline nodes list is reported at the second entry."
+expect:
+  findings:
+    - code: E_DUPLICATE_NODE
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes", 1]
+      line: 5

@@ -1,0 +1,18 @@
+id: providers/quota-provider-called-though-region-wins
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-18, SVC-19, MERGE-17, PROV-20, PROV-38]
+description: The tenant provider is called although the region value is the winning minimum, and its valid entry still appears in contributions.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { region: east, tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      values: { quota.max_items: 9 }
+expect:
+  value: 6
+  contributions:
+    - { scope: level, name: region, node: east, value: 6, effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: 9, effect: NARROWED }
+  providerCalls: { tenant: { t-1: 1 } }

@@ -1,0 +1,10 @@
+id: value-boolean-given-string
+specVersion: "0.1"
+clauses: [TYPE-12, TYPE-70, TYPE-71, KEY-13, NORM-17]
+description: "A string where a boolean is declared is E_TYPE_MISMATCH at the value."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["hold_flag"]
+      line: 1

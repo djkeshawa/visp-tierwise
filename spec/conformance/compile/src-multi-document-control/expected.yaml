@@ -1,0 +1,6 @@
+id: "src-multi-document-control"
+specVersion: "0.1"
+clauses: ["SRC-6"]
+description: "The values file of src-multi-document with one document compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

@@ -1,0 +1,10 @@
+id: pol-unknown-top-level-key
+specVersion: "0.1"
+clauses: [POL-1, FEAT-2]
+description: "A top-level key that a rules file does not allow is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["notes"]
+      line: 41

@@ -1,0 +1,10 @@
+id: "preset-specversion"
+specVersion: "0.1"
+clauses: ["MANIFEST-6","MANIFEST-36","FIND-18","FIND-12"]
+description: "A preset that declares specVersion is reported as E_PRESET, because only the manifest declares a spec version."
+expect:
+  findings:
+    - code: "E_PRESET"
+      file: "presets/spec.yaml"
+      path: ["specVersion"]
+      line: 1

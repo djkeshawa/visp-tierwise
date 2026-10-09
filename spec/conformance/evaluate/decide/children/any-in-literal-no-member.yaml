@@ -1,0 +1,25 @@
+id: decide/children/any-in-literal-no-member
+specVersion: "0.1"
+clauses: [RULE-32, RULE-50, RULE-51, RULE-54, RULE-55, PROV-62, PROV-71, PROV-75, PROV-78, PROV-80, PROV-82, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-81]
+description: "An any_in condition does not hold when no child is a member of the literal list, so the default ALLOW of this policy is returned."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.any_in_literal
+input:
+  facts: {}
+  children:
+    line:
+      - { line.kind: BULK }
+      - { line.kind: STANDARD }
+exact: true
+expect:
+  feature: edge.any_in_literal
+  effect: ALLOW
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: DEFAULT }
+  trace:
+    - { id: gift-line, matched: false, failed: { fact: line.kind, op: any_in } }

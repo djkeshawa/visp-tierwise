@@ -1,0 +1,10 @@
+id: lint-schema-unused-policy
+specVersion: "0.1"
+clauses: [LINT-41, LINT-35, LINT-37]
+description: "A policy that no binding names is reported by schema/unused, and its mixed-collection rule is not checked."
+expect:
+  findings:
+    - code: schema/unused
+      file: "rules/order.yaml"
+      path: [features, order.submission, policies, spare]
+      line: 29

@@ -1,0 +1,6 @@
+id: "src-values-file-selected-twice-control"
+specVersion: "0.1"
+clauses: ["SRC-34"]
+description: "The values list of src-values-file-selected-twice with the file selected once compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

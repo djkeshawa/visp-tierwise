@@ -1,0 +1,20 @@
+id: decide/bindings/root-binding-no-level
+specVersion: "0.1"
+clauses: [BIND-14, BIND-19, BIND-22, BIND-16, PROV-1, PROV-3, PROV-4, PROV-6, PROV-63, PROV-7, PROV-62, PROV-64, PROV-65, PROV-68, PROV-69, PROV-71, PROV-72, PROV-73, PROV-75, PROV-18, BIND-17, RULE-50, RULE-51]
+description: "With an empty context, the root binding is the only candidate, so its policy default is returned and the binding has no node."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.binding_selection
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.binding_selection
+  effect: ROOT
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: root_policy
+  reason: { type: DEFAULT }
+  trace: []

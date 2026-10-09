@@ -1,0 +1,10 @@
+id: type-min-above-max
+specVersion: "0.1"
+clauses: [TYPE-14, TYPE-11]
+description: "A min greater than max is an invalid declaration, reported at the declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots"]
+      line: 23

@@ -1,0 +1,10 @@
+id: "src-duplicate-key-naming"
+specVersion: "0.1"
+clauses: ["SRC-3","SRC-9","FIND-22","FIND-12"]
+description: "A key repeated inside a nested mapping of a schema file is reported as E_DUPLICATE_KEY at the second occurrence."
+expect:
+  findings:
+    - code: "E_DUPLICATE_KEY"
+      file: "schema/core.yaml"
+      path: ["naming","key_a"]
+      line: 14

@@ -1,0 +1,10 @@
+id: "src-values-unknown-scope"
+specVersion: "0.1"
+clauses: ["SRC-32","SCOPE-46","FIND-12"]
+description: "A values file that names an undeclared scope is reported as E_UNKNOWN_SCOPE at that scope."
+expect:
+  findings:
+    - code: "E_UNKNOWN_SCOPE"
+      file: "values/regions.yaml"
+      path: ["zone"]
+      line: 6

@@ -1,0 +1,6 @@
+id: "presets-override-control"
+specVersion: "0.1"
+clauses: ["MANIFEST-31","MANIFEST-32","MANIFEST-34","LINT-49"]
+description: "The second preset of presets-override-replacement defines a kind with a new name, so nothing is replaced and the base bundle results."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

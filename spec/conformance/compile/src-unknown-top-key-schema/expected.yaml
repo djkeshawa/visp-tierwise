@@ -1,0 +1,10 @@
+id: "src-unknown-top-key-schema"
+specVersion: "0.1"
+clauses: ["SRC-14","SRC-16","FIND-12"]
+description: "A top-level key of a schema file that SRC-14 does not allow is reported as E_INVALID_DECLARATION."
+expect:
+  findings:
+    - code: "E_INVALID_DECLARATION"
+      file: "schema/core.yaml"
+      path: ["labels"]
+      line: 12

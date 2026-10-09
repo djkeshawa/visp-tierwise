@@ -1,0 +1,18 @@
+id: providers/shipping-values-narrowed
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-19, SVC-31, MERGE-17, PROV-20, PROV-34, PROV-38]
+description: A valid tenant set narrows the root set by intersection, and the contributions list the root first, then the tenant.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: shipping.methods
+providers:
+  tenant:
+    t-1:
+      values: { shipping.methods: [GROUND] }
+expect:
+  value: [GROUND]
+  contributions:
+    - { scope: level, name: global, value: [GROUND, PICKUP], effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: [GROUND], effect: NARROWED }
+  providerCalls: { tenant: { t-1: 1 } }

@@ -1,0 +1,10 @@
+id: lint-unknown-rule-name
+specVersion: "0.1"
+clauses: [LINT-10, LINT-2, LINT-1]
+description: "A manifest lint setting for an identifier that is not a lint rule is E_MANIFEST at the setting."
+expect:
+  findings:
+    - code: E_MANIFEST
+      file: "tierwise.yaml"
+      path: [lint, rules, rules/dead_rule]
+      line: 26

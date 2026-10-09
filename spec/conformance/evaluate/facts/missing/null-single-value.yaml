@@ -1,0 +1,14 @@
+id: facts/missing/null-single-value
+specVersion: "0.1"
+clauses: [FACT-16, FACT-21, RULE-42, RULE-43, RULE-44, FEAT-3]
+description: "A single-value fact given null is missing, so the feature's if_fact_missing is returned with reason MISSING_FACT and no rule is checked."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: null }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  effect: DENY
+  reason: { type: MISSING_FACT, facts: [ order.total ] }
+  policy: gate
+  binding: { level: global }
+  trace: []

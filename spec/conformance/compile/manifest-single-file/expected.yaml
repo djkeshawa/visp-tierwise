@@ -1,0 +1,6 @@
+id: "manifest-single-file"
+specVersion: "0.1"
+clauses: ["MANIFEST-1","MANIFEST-13","MANIFEST-14","MANIFEST-15","MANIFEST-16","SRC-30","FIND-8"]
+description: "A single-file project with inline schema, values and an empty rules list compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

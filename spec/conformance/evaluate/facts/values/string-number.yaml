@@ -1,0 +1,10 @@
+id: facts/values/string-number
+specVersion: "0.1"
+clauses: [FACT-35, TYPE-28, NORM-17]
+description: "A number given for a string fact raises E_FACTS_INVALID, because values do not coerce between types."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: 5, order.total: "2" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

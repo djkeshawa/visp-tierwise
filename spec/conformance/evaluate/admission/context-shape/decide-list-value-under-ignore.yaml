@@ -1,0 +1,10 @@
+id: "admission/context-shape/decide-list-value-under-ignore"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-18, EVAL-30]
+description: "A list in place of a node ID raises E_CONTEXT_INVALID in decide even though the site scope uses on_unknown_node: ignore."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: [site_001] } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

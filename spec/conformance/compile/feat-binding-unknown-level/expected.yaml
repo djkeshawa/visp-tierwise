@@ -1,0 +1,10 @@
+id: feat-binding-unknown-level
+specVersion: "0.1"
+clauses: [FEAT-17]
+description: "A binding_settable_at entry that names no declared scope is an unknown scope."
+expect:
+  findings:
+    - code: E_UNKNOWN_SCOPE
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "binding_settable_at", 2]
+      line: 22

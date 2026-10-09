@@ -1,0 +1,16 @@
+id: "admission/order/resolve-invalid-later-division-control"
+specVersion: "0.1"
+clauses: [SVC-17, SVC-19, PROV-20, PROV-38]
+description: "With the listed division node the same partner provider is called once, and both scopes contribute."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-1, division: south } }
+key: edge.enabled
+providers: { partner: { p-1: { values: { edge.enabled: true, edge.max_items: 20, edge.min_qty: 3 } } } }
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: partner, node: p-1, value: true, effect: IGNORED }
+    - { scope: level, name: division, node: south, value: false, effect: VETO }
+  skippedScopes: []
+  providerCalls: { partner: { p-1: 1 } }

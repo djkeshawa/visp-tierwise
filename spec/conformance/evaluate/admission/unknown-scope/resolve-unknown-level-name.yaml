@@ -1,0 +1,9 @@
+id: "admission/unknown-scope/resolve-unknown-level-name"
+specVersion: "0.1"
+clauses: [CTX-4, EVAL-32]
+description: "A level name that the hierarchy does not declare raises E_UNKNOWN_SCOPE."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { warehouse: north } }
+key: edge.tier
+expect: { error: E_UNKNOWN_SCOPE }

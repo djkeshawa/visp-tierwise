@@ -1,0 +1,10 @@
+id: fact-type-missing
+specVersion: "0.1"
+clauses: [FACT-6]
+description: "A fact declaration with no type member is reported as E_TYPE_REQUIRED at the declaration."
+expect:
+  findings:
+    - code: E_TYPE_REQUIRED
+      file: schema/core.yaml
+      path: ["facts", "customer.note"]
+      line: 15

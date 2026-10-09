@@ -1,0 +1,10 @@
+id: ex-fact-undeclared
+specVersion: "0.1"
+clauses: [POL-38, FACT-26]
+description: "An example fact that is not declared is an unknown fact."
+expect:
+  findings:
+    - code: E_UNKNOWN_FACT
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "facts", "customer.nickname"]
+      line: 39

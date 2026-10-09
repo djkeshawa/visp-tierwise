@@ -1,0 +1,10 @@
+id: value-set-given-scalar
+specVersion: "0.1"
+clauses: [TYPE-45, TYPE-71, KEY-13]
+description: "A set value that is not a list is E_TYPE_MISMATCH (TYPE-45)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["allowed_methods"]
+      line: 7

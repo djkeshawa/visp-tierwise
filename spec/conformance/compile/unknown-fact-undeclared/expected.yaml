@@ -1,0 +1,10 @@
+id: unknown-fact-undeclared
+specVersion: "0.1"
+clauses: [RULE-9]
+description: "A condition on a fact that is not declared, under a declared entity, is reported as E_UNKNOWN_FACT."
+expect:
+  findings:
+    - code: E_UNKNOWN_FACT
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "customer.nickname"]
+      line: 13

@@ -1,0 +1,4 @@
+# Enforcers for work item C4 (KIND, LINT and the compile-time clauses of SVC, VEC-125).
+# Every normative clause of those areas is cited by a compile case in compile/ (kind-*, lint-*, neg-*),
+# so none needs an enforcer here. SVC-6, SVC-8, SVC-9 and SVC-10 govern evaluation and belong to the evaluate items.
+{}

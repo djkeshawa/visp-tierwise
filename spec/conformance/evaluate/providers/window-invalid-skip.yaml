@@ -1,0 +1,18 @@
+id: providers/window-invalid-skip
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-8, SVC-31, SVC-34, TYPE-33, PROV-30, PROV-40, PROV-48]
+description: A provider object whose time field fails the time_hhmm format is INVALID, and under skip the default window stays in place.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: profile.window
+providers:
+  tenant:
+    t-1:
+      values: { profile.window: { close: "25:00" } }
+expect:
+  value: { close: "18:00", open: "08:00" }
+  source: DEFAULT
+  contributions:
+    - { scope: level, name: tenant, node: t-1, effect: INVALID, onSourceFailure: skip }
+  providerCalls: { tenant: { t-1: 1 } }

@@ -1,0 +1,10 @@
+id: value-object-missing-field
+specVersion: "0.1"
+clauses: [TYPE-62, TYPE-63, TYPE-10, TYPE-71]
+description: "A complete-object value of a non-deep_merge key missing a required field is E_TYPE_MISMATCH at the object (TYPE-63)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["contact"]
+      line: 12

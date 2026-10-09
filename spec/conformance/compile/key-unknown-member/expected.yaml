@@ -1,0 +1,10 @@
+id: key-unknown-member
+specVersion: "0.1"
+clauses: [KEY-3, KEY-5]
+description: "A key declaration with a member that KEY-3 does not allow is an invalid declaration at that member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "notes"]
+      line: 29

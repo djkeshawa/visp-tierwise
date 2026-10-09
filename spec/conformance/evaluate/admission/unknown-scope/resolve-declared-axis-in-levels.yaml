@@ -1,0 +1,9 @@
+id: "admission/unknown-scope/resolve-declared-axis-in-levels"
+specVersion: "0.1"
+clauses: [CTX-5, EVAL-32]
+description: "A declared axis supplied under levels raises E_UNKNOWN_SCOPE."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { seller: acme } }
+key: edge.tier
+expect: { error: E_UNKNOWN_SCOPE }

@@ -1,0 +1,10 @@
+id: "admission/context-shape/decide-empty-node-id-under-ignore"
+specVersion: "0.1"
+clauses: [SCOPE-33, CTX-6, CTX-18, EVAL-30]
+description: "An empty string for the ignored site scope is not a node ID, so decide raises E_CONTEXT_INVALID and does not skip the scope."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: "" } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

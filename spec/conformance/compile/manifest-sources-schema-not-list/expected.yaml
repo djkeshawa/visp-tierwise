@@ -1,0 +1,10 @@
+id: "manifest-sources-schema-not-list"
+specVersion: "0.1"
+clauses: ["MANIFEST-11","FIND-20","FIND-12"]
+description: "sources.schema written as a string instead of a list is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["sources","schema"]
+      line: 3

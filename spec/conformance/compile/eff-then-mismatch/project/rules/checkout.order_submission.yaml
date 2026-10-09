@@ -1,0 +1,40 @@
+feature: checkout.order_submission
+
+policies:
+  credit_check:
+    settings:
+      allowed_on_credit_hold: { list_of: item.stock_type, default: [] }
+    default: DENY
+    rules:
+      - id: good-credit
+        name: Good credit
+        when:
+          customer.active: true
+          customer.credit_hold: false
+        then: MAYBE
+      - id: credit-hold-allowed-stock
+        name: On credit hold, every item is an allowed stock type
+        when:
+          customer.active: true
+          customer.credit_hold: true
+          item.stock_type: { all_in: $allowed_on_credit_hold }
+        then: ALLOW
+  allow_all:
+    default: ALLOW
+    rules:
+      - id: good-credit
+        name: Always allow
+        when: {}
+        then: ALLOW
+
+bindings:
+  global: { policy: credit_check }
+  division:
+    north: { policy: allow_all }
+    south: { policy: credit_check, allowed_on_credit_hold: [STOCKED, SPECIAL_ORDER] }
+
+examples:
+  - name: Credit hold with only allowed stock is allowed
+    context: { levels: { division: south } }
+    facts: { customer.active: true, customer.credit_hold: true, item.stock_type: [STOCKED, SPECIAL_ORDER] }
+    expect: ALLOW

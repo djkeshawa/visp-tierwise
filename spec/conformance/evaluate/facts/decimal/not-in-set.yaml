@@ -1,0 +1,15 @@
+id: facts/decimal/not-in-set
+specVersion: "0.1"
+clauses: [RULE-37, RULE-30]
+description: "A decimal string \"1.51\" is not a member of the set, so the default applies."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "1.51" }, children: { line: [] } }
+expect:
+  effect: IGNORED
+  reason: { type: DEFAULT }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: false, failed: { fact: order.total, op: in } }
+    - { id: line-amount-probe, matched: false, failed: { fact: line.amount, op: any_in } }

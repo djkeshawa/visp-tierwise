@@ -1,0 +1,10 @@
+id: "preset-syntax-error"
+specVersion: "0.1"
+clauses: ["SRC-5","FIND-18","FIND-23"]
+description: "A YAML syntax error in a preset file is reported as E_PARSE at the empty path and line 1 of that preset."
+expect:
+  findings:
+    - code: "E_PARSE"
+      file: "presets/bad.yaml"
+      path: []
+      line: 1

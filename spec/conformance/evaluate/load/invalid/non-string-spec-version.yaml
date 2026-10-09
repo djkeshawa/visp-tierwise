@@ -1,0 +1,9 @@
+id: load/invalid/non-string-spec-version
+specVersion: "0.1"
+clauses: [VEC-69, VEC-70, VEC-71, EVAL-2, EVAL-14, EVAL-22, EVAL-25, EVAL-56, BUNDLE-17, BUNDLE-115, BUNDLE-137, BUNDLE-114]
+description: "A bundle whose specVersion is the integer 1 rather than the string 0.1 is rejected at load with E_BUNDLE_UNSUPPORTED."
+call: resolve
+bundle: ../../../bundles/invalid/non-string-spec-version.json
+key: example.lead_hours
+expect:
+  error: E_BUNDLE_UNSUPPORTED

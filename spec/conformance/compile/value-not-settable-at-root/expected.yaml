@@ -1,0 +1,10 @@
+id: value-not-settable-at-root
+specVersion: "0.1"
+clauses: [KEY-11, SCOPE-13]
+description: "A root value for a key that does not list the root level in settable_at is E_NOT_SETTABLE_HERE (KEY-11)."
+expect:
+  findings:
+    - code: E_NOT_SETTABLE_HERE
+      file: "values/global.yaml"
+      path: ["division_hint"]
+      line: 18

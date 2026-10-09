@@ -1,0 +1,15 @@
+id: providers/create-files-level-before-missing
+specVersion: "0.1"
+clauses: [EVAL-15, EVAL-26, EVAL-27, SVC-14]
+description: A registration for a level that is not service-sourced takes precedence over E_PROVIDER_MISSING for a service level with no provider.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  region:
+    east:
+      values: {}
+  seat: none
+expect:
+  error: E_EVALUATOR_OPTIONS

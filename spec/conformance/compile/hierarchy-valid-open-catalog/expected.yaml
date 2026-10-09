@@ -1,0 +1,6 @@
+id: hierarchy-valid-open-catalog
+specVersion: "0.1"
+clauses: ["SCOPE-24", "SCOPE-25", "SCOPE-45"]
+description: "An open catalog without on_unknown_node admits a node ID that no catalog lists."
+expect:
+  bundle: "../../bundles/edge-hierarchy-open.json"

@@ -1,0 +1,21 @@
+id: decide/effects/label-effect-set
+specVersion: "0.1"
+clauses: [FEAT-10, PROV-67, PROV-65, RULE-48, RULE-49, RULE-47, PROV-62, PROV-74, PROV-78, PROV-83, PROV-18, PROV-64, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-80, PROV-82]
+description: "A decision effect equal to the contribution label SET is returned unchanged, because labels have no meaning in a Decision."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.label_effect
+input:
+  facts: { order.status: HELD }
+exact: true
+expect:
+  feature: edge.label_effect
+  effect: SET
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: held, name: "Order is held" }
+  trace:
+    - { id: held, matched: true }

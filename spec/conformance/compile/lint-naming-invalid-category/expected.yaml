@@ -1,0 +1,10 @@
+id: lint-naming-invalid-category
+specVersion: "0.1"
+clauses: [LINT-14, LINT-15]
+description: "A naming entry whose category is not key, enum_value, node_id or feature is E_INVALID_DECLARATION at category."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/core.yaml"
+      path: [naming, node_id, category]
+      line: 48

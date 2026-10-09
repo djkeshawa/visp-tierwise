@@ -1,0 +1,17 @@
+id: providers/access-timeout
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-9, SVC-10, SVC-23, SVC-24, SVC-39, PROV-8, PROV-29, PROV-32, PROV-41]
+description: A tenant provider that times out under deny gives the same result as an unavailable one, false with an UNAVAILABLE failure entry.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      fail: timeout
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: false, effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

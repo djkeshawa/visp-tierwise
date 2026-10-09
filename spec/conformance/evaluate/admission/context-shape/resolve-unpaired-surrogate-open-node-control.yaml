@@ -1,0 +1,16 @@
+id: "admission/context-shape/resolve-unpaired-surrogate-open-node-control"
+specVersion: "0.1"
+clauses: [SCOPE-37, CTX-13, SVC-17]
+description: "With its low surrogate added the same ending is the valid code point U+1F600, which the open catalog admits and the provider receives once."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: "x\U0001F600" } }
+key: edge.min_qty
+providers: { account: { "x\U0001F600": { values: { edge.min_qty: 2 } } } }
+expect:
+  value: 2
+  contributions:
+    - { scope: level, name: global, value: 10, effect: NARROWED }
+    - { scope: level, name: account, node: "x\U0001F600", value: 2, effect: NARROWED }
+  skippedScopes: []
+  providerCalls: { account: { "x\U0001F600": 1 } }

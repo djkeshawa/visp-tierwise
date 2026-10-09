@@ -1,0 +1,21 @@
+id: decide/operators/in-decimal-canonical-listed
+specVersion: "0.1"
+clauses: [RULE-30, RULE-37, RULE-47, RULE-48, RULE-49, NORM-15, PROV-62, PROV-71, PROV-74, PROV-78, PROV-83, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-80, PROV-82]
+description: "A decimal fact written as 1.50 is canonicalised to 1.5 and matches the in list, so the decimal membership holds."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.in_decimal
+input:
+  facts: { order.total: "1.50" }
+exact: true
+expect:
+  feature: edge.in_decimal
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: listed, name: "Total is listed" }
+  trace:
+    - { id: listed, matched: true }

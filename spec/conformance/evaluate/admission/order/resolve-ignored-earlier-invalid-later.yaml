@@ -1,0 +1,10 @@
+id: "admission/order/resolve-ignored-earlier-invalid-later"
+specVersion: "0.1"
+clauses: [CTX-10, CTX-12, CTX-14, CTX-18]
+description: "An ignored earlier partner node does not hide an unlisted later division node, which still raises E_UNKNOWN_NODE with no provider call."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-9, division: west } }
+key: edge.enabled
+providers: { partner: { p-9: { values: { edge.enabled: false, edge.max_items: 999, edge.min_qty: 0 } } } }
+expect: { error: E_UNKNOWN_NODE, providerCalls: { partner: { p-9: 0 } } }

@@ -1,0 +1,6 @@
+id: "src-glob-hidden-file-control"
+specVersion: "0.1"
+clauses: ["SRC-18","SRC-19"]
+description: "Without the hidden file, the same glob selects only schema/core.yaml and compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

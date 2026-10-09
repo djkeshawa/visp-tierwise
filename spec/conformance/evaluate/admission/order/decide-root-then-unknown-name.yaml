@@ -1,0 +1,10 @@
+id: "admission/order/decide-root-then-unknown-name"
+specVersion: "0.1"
+clauses: [CTX-3, CTX-4, CTX-11, EVAL-19]
+description: "In decide a root name and an undeclared name in one step raise E_CONTEXT_INVALID whatever their order."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { global: north, warehouse: south } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

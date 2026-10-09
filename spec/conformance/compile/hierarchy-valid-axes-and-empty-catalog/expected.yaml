@@ -1,0 +1,6 @@
+id: hierarchy-valid-axes-and-empty-catalog
+specVersion: "0.1"
+clauses: ["SCOPE-7", "SCOPE-21", "BUNDLE-31", "BUNDLE-41"]
+description: "Axes keep their declared order, and an axis may have a closed catalog with no node IDs."
+expect:
+  bundle: "../../bundles/edge-hierarchy-axes.json"

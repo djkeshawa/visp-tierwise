@@ -1,0 +1,6 @@
+id: "src-yaml12-no-yes-on-off"
+specVersion: "0.1"
+clauses: ["SRC-1","BUNDLE-38","BUNDLE-39","BUNDLE-66","FIND-8"]
+description: "The unquoted node IDs no, yes, on and off compile as strings under the YAML 1.2 core schema, into the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

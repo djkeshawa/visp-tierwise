@@ -1,0 +1,10 @@
+id: facts/shape/grandchild-fact-in-facts
+specVersion: "0.1"
+clauses: [FACT-27, FACT-15]
+description: "A fact of a grandchild of the decided entity, placed among single-value facts, raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2", part.code: A1 }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

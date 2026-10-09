@@ -1,0 +1,6 @@
+id: neg-deny-not-narrowing
+specVersion: "0.1"
+clauses: [SVC-11, MERGE-2]
+description: "The baseline deny key uses the narrowing strategy all, and compiles with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

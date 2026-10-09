@@ -1,0 +1,10 @@
+id: lint-suppressed-by-engine-error
+specVersion: "0.1"
+clauses: [LINT-11, KIND-13, LINT-23]
+description: "A validation with an engine finding reports only that finding, although a lint rule would also fire."
+expect:
+  findings:
+    - code: E_UNKNOWN_KIND
+      file: "schema/core.yaml"
+      path: [keys, access.beta, kind]
+      line: 116

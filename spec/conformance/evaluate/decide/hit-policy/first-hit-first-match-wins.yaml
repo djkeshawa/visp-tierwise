@@ -1,0 +1,21 @@
+id: decide/hit-policy/first-hit-first-match-wins
+specVersion: "0.1"
+clauses: [RULE-46, RULE-47, RULE-48, RULE-49, RULE-52, RULE-53, RULE-30, PROV-74, PROV-78, PROV-82, PROV-83, PROV-62, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, PROV-79, PROV-80]
+description: "Under FIRST, the first matching rule is the winner, and later rules that would also match are not checked and are absent from the trace."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.first_hit
+input:
+  facts: { order.status: HELD }
+exact: true
+expect:
+  feature: edge.first_hit
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: closed-or-held, name: "Order is closed or held" }
+  trace:
+    - { id: closed-or-held, matched: true }

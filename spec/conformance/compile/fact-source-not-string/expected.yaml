@@ -1,0 +1,10 @@
+id: fact-source-not-string
+specVersion: "0.1"
+clauses: [FACT-11]
+description: "A fact source member that is not a string is reported as E_INVALID_DECLARATION."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: schema/core.yaml
+      path: ["facts", "customer.active", "source"]
+      line: 15

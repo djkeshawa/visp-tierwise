@@ -1,0 +1,10 @@
+id: hierarchy-scope-on-unknown-node-invalid
+specVersion: "0.1"
+clauses: ["SCOPE-23"]
+description: "An on_unknown_node value other than error or ignore is reported at that member."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "on_unknown_node"]
+      line: 6

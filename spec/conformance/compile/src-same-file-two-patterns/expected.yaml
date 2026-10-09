@@ -1,0 +1,6 @@
+id: "src-same-file-two-patterns"
+specVersion: "0.1"
+clauses: ["SRC-20","SRC-18","FIND-8"]
+description: "A file matched by two patterns of one schema list is selected once and compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

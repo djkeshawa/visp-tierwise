@@ -1,0 +1,10 @@
+id: "ns-namespaced-naming"
+specVersion: "0.1"
+clauses: ["NS-4","NS-3","FIND-12"]
+description: "A namespaced file that contains naming is reported as E_NAMESPACE_VIOLATION at that key."
+expect:
+  findings:
+    - code: "E_NAMESPACE_VIOLATION"
+      file: "schema/pos.yaml"
+      path: ["naming"]
+      line: 7

@@ -1,0 +1,12 @@
+decision_hierarchy:
+  levels: [global, account]
+  scopes:
+    account:
+      nodes: open
+      values: service
+keys:
+  checkout.open:
+    type: boolean
+    combine: all
+    settable_at: [global, account]
+    on_source_failure: skip

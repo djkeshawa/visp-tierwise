@@ -1,0 +1,18 @@
+id: providers/theme-values
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-19, SVC-31, PROV-20, PROV-38, PROV-46, PROV-50]
+description: A valid tenant value replaces the default of an override key under skip, and the source names the tenant node.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: display.theme
+providers:
+  tenant:
+    t-1:
+      values: { display.theme: solar }
+expect:
+  value: solar
+  source: { scope: level, name: tenant, node: t-1 }
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: solar, effect: SET }
+  providerCalls: { tenant: { t-1: 1 } }

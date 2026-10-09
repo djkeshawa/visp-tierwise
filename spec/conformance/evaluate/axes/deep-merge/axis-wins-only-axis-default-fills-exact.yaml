@@ -1,0 +1,19 @@
+id: axes/deep-merge/axis-wins-only-axis-default-fills-exact
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-10, MERGE-11, MERGE-14, MERGE-22, MERGE-23, MERGE-24, MERGE-25, PROV-12, PROV-13, PROV-18, PROV-20, PROV-22, PROV-23, PROV-24, PROV-25, PROV-26, PROV-28, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-53, EVAL-7, CTX-19]
+description: Under axis_wins with an axis value and the root value, the default supplies the close field, and an exact result has no field beyond open and close.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { axes: { seller: acme } }
+key: axes.deep.axis_wins
+exact: true
+expect:
+  key: axes.deep.axis_wins
+  strategy: deep_merge
+  value: { open: 7, close: 18 }
+  bundleVersion: "sha256:05179da9ede881099ef2c24d893073bb5a23f3ce934d26e6d0b76def8dab2f7f"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: global, value: { open: 9 }, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: { open: 7 }, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

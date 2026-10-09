@@ -1,0 +1,10 @@
+id: hierarchy-entity-declaration-null
+specVersion: "0.1"
+clauses: ["ENTITY-7", "ENTITY-4"]
+description: "An entity declared as a YAML null is E_INVALID_DECLARATION at the entity name."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "legacy"]
+      line: 21

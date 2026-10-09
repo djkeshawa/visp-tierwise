@@ -1,0 +1,6 @@
+id: neg-kind-violation
+specVersion: "0.1"
+clauses: [KIND-2, KIND-4, KIND-6, KIND-7, KIND-9, KIND-11, SVC-5, SVC-7]
+description: "The baseline uses only legal forms of kinds and source-failure behaviour, and compiles with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

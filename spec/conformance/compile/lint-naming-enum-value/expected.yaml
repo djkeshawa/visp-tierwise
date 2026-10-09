@@ -1,0 +1,10 @@
+id: lint-naming-enum-value
+specVersion: "0.1"
+clauses: [LINT-19, LINT-21]
+description: "An enum value that breaks the enum_value pattern is reported at its sequence position in the fact declaration."
+expect:
+  findings:
+    - code: naming/enum_value
+      file: "schema/core.yaml"
+      path: [facts, item.stock, values, 3]
+      line: 21

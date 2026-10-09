@@ -1,0 +1,10 @@
+id: hierarchy-entity-declaration-extra-member
+specVersion: "0.1"
+clauses: ["ENTITY-7", "ENTITY-4"]
+description: "An entity declaration with a member other than belongs_to and has_many is reported at that member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "order", "label"]
+      line: 16

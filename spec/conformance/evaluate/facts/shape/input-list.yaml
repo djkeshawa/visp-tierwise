@@ -1,0 +1,10 @@
+id: facts/shape/input-list
+specVersion: "0.1"
+clauses: [FACT-22, EVAL-36]
+description: "A FactSet that is a list is not a map, so decide raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: [ { facts: { customer.active: true } } ]
+expect:
+  error: E_FACTS_INVALID

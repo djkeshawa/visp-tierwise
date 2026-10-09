@@ -1,0 +1,11 @@
+id: facts/check-order/decide-unknown-scope-before-unknown-feature
+specVersion: "0.1"
+clauses: [EVAL-17, EVAL-18, EVAL-32, CTX-4]
+description: "An undeclared level in the context raises E_UNKNOWN_SCOPE before the undeclared feature is looked up."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+context: { levels: { warehouse: north } }
+feature: edge.unknown
+input: {}
+expect:
+  error: E_UNKNOWN_SCOPE

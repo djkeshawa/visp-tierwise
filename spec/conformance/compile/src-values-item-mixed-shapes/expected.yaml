@@ -1,0 +1,10 @@
+id: "src-values-item-mixed-shapes"
+specVersion: "0.1"
+clauses: ["SRC-21","FIND-22","FIND-12"]
+description: "A values item that mixes a file with a pattern has neither allowed shape and is reported as E_SOURCE_MAPPING."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "tierwise.yaml"
+      path: ["sources","values",0]
+      line: 6

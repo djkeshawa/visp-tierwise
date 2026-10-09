@@ -1,0 +1,6 @@
+id: "src-file-two-roles-control"
+specVersion: "0.1"
+clauses: ["SRC-20","SRC-12"]
+description: "The values entry of src-file-two-roles names a separate empty values file, and the project compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

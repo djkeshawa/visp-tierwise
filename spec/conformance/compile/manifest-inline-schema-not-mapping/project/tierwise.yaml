@@ -1,0 +1,11 @@
+specVersion: "0.1"
+schema:
+  - decision_hierarchy
+values:
+  global:
+    checkout.allowed: true
+  region:
+    no:
+      checkout.allowed: true
+    yes:
+      checkout.allowed: true

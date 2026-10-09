@@ -1,0 +1,10 @@
+id: hierarchy-unknown-entity-in-fact-name
+specVersion: "0.1"
+clauses: ["FACT-2"]
+description: "A fact whose entity part is not a declared entity is reported at the fact name."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: "schema/model.yaml"
+      path: ["facts", "ordr.total"]
+      line: 22

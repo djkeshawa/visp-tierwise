@@ -1,0 +1,25 @@
+id: decide/samples/domain-b-mixed-basket-flagged-shopper-rejected
+specVersion: "0.1"
+clauses: [RULE-8, RULE-29, RULE-47, RULE-48, RULE-49, RULE-52, RULE-53, BIND-16, BIND-17, BIND-18, BIND-21, PROV-18, PROV-62, PROV-64, PROV-65, PROV-68, PROV-69, PROV-70, PROV-71, PROV-73, PROV-74, PROV-78, PROV-79, PROV-80, PROV-82, PROV-83, PROV-7]
+description: "Sample domain B: a mixed basket of a flagged shopper at harbor_street under the strict policy is denied by REJECT, the only denying effect of this returns list, by the first rule."
+call: decide
+bundle: ../../../bundles/retail-pos.json
+context: { levels: { store: harbor_street } }
+feature: pos.basket_check
+input:
+  facts: { basket.tender: CASH, shopper.fraud_flag: true }
+  children:
+    line:
+      - { line.category: GROCERY }
+      - { line.category: GENERAL }
+exact: true
+expect:
+  feature: pos.basket_check
+  effect: REJECT
+  bundleVersion: "sha256:5acebbd8528de939c2ca351ef15f2845f9d156eb6c4f275c57501c9edb039df0"
+  skippedScopes: []
+  binding: { level: store, node: harbor_street }
+  policy: strict
+  reason: { type: RULE, id: flagged-shopper, name: "Flagged shopper is rejected" }
+  trace:
+    - { id: flagged-shopper, matched: true }

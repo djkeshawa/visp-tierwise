@@ -1,0 +1,10 @@
+id: lint-dead-rule-literal-empty
+specVersion: "0.1"
+clauses: [LINT-26, LINT-7]
+description: "A condition with a literal empty in list is reported by rules/dead-rule at the rule item."
+expect:
+  findings:
+    - code: rules/dead-rule
+      file: "rules/order.yaml"
+      path: [features, order.submission, policies, review, rules, 4]
+      line: 29

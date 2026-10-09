@@ -1,0 +1,10 @@
+id: "manifest-root-not-mapping"
+specVersion: "0.1"
+clauses: ["MANIFEST-2","FIND-19","FIND-22","FIND-12"]
+description: "A manifest whose root node is a sequence is reported as E_MANIFEST at the empty path."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: []
+      line: 1

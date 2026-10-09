@@ -1,0 +1,10 @@
+id: lint-naming-key
+specVersion: "0.1"
+clauses: [LINT-12, LINT-19, LINT-21]
+description: "A key name that breaks the key pattern is reported by naming/key at the key declaration."
+expect:
+  findings:
+    - code: naming/key
+      file: "schema/core.yaml"
+      path: [keys, Search.fallback_on]
+      line: 126

@@ -1,0 +1,10 @@
+id: "manifest-lint-rules-not-mapping"
+specVersion: "0.1"
+clauses: ["MANIFEST-38","FIND-12"]
+description: "lint.rules written as a sequence is reported as E_MANIFEST at rules."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["lint","rules"]
+      line: 10

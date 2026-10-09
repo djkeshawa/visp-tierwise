@@ -1,0 +1,10 @@
+id: value-integer-given-non-integer-float
+specVersion: "0.1"
+clauses: [TYPE-15, TYPE-71, KEY-13]
+description: "A YAML float 1.5 where an integer is declared is E_TYPE_MISMATCH (TYPE-15)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["max_lines"]
+      line: 1

@@ -1,0 +1,9 @@
+decision_hierarchy:
+  levels: [global, division]
+  scopes:
+    global:
+      nodes: open
+      values: service
+    division:
+      nodes: [north, south]
+      on_unknown_node: error

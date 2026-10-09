@@ -1,0 +1,10 @@
+id: quantifier-required-precedence-literal
+specVersion: "0.1"
+clauses: [RULE-28, RULE-13, RULE-18]
+description: "A missing quantifier on a child fact takes precedence over an illegal literal of the same condition."
+expect:
+  findings:
+    - code: E_QUANTIFIER_REQUIRED
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 1, "when", "item.stock_type"]
+      line: 17

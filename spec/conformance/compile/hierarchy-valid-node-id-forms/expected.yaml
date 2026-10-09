@@ -1,0 +1,6 @@
+id: hierarchy-valid-node-id-forms
+specVersion: "0.1"
+clauses: ["BUNDLE-38", "SCOPE-33", "SCOPE-36", "SCOPE-40", "SCOPE-41", "SRC-1", "VEC-106"]
+description: "Node IDs with spaces and slashes, the values no, yes, on and off as strings, and a 130-code-point source ID that normalises to 65 code points all compile."
+expect:
+  bundle: "../../bundles/edge-hierarchy-nodes.json"

@@ -1,0 +1,5 @@
+retry_count: 9007199254740993
+lead_hours: 8
+courier: ups
+handling_days: 1
+label_source: partner

@@ -1,0 +1,11 @@
+id: facts/check-order/decide-unknown-node-before-feature
+specVersion: "0.1"
+clauses: [EVAL-17, EVAL-18, EVAL-33, CTX-10, CTX-12]
+description: "An unlisted region node is rejected by context validation before the undeclared feature is looked up."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+context: { levels: { region: east } }
+feature: edge.unknown
+input: {}
+expect:
+  error: E_UNKNOWN_NODE

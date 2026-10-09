@@ -1,0 +1,18 @@
+id: providers/shipping-invalid-outside-universe
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-9, SVC-31, SVC-34, TYPE-47, PROV-40, PROV-41]
+description: A set value with a member outside the universe fails validation as INVALID and contributes the empty deny value.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: shipping.methods
+providers:
+  tenant:
+    t-1:
+      values: { shipping.methods: [GROUND, BOAT] }
+expect:
+  value: []
+  contributions:
+    - { scope: level, name: global, value: [GROUND, PICKUP], effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: [], effect: INVALID, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

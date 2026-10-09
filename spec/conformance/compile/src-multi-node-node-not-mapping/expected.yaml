@@ -1,0 +1,10 @@
+id: "src-multi-node-node-not-mapping"
+specVersion: "0.1"
+clauses: ["SRC-31","FIND-19","FIND-12"]
+description: "A node whose value is a scalar instead of a mapping of entries is reported as E_SOURCE_MAPPING at that node."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "values/regions.yaml"
+      path: ["region","no"]
+      line: 2

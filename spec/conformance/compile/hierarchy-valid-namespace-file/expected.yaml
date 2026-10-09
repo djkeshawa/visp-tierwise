@@ -1,0 +1,6 @@
+id: hierarchy-valid-namespace-file
+specVersion: "0.1"
+clauses: ["ENTITY-2", "NS-2", "NS-3", "NS-7", "NS-8"]
+description: "A namespaced schema file that declares no entity compiles with no finding, so the shared entity declarations are the only ones."
+expect:
+  bundle: "../../bundles/edge-hierarchy-model.json"

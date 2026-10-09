@@ -1,0 +1,6 @@
+id: feat-string-null-effect
+specVersion: "0.1"
+clauses: [FEAT-7, FEAT-10, FEAT-13]
+description: "The string null is an ordinary effect when the enum lists it; it needs no nullable member."
+expect:
+  bundle: "../../bundles/edge-features-small.json"

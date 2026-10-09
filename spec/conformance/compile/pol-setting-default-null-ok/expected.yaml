@@ -1,0 +1,6 @@
+id: pol-setting-default-null-ok
+specVersion: "0.1"
+clauses: [POL-18, POL-17]
+description: "Negative control of pol-setting-default-null: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

@@ -1,0 +1,15 @@
+id: axes/commutative/min-axis-narrows
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-2, MERGE-13, MERGE-14, MERGE-17, AXIS-1, AXIS-2, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-37, PROV-38, EVAL-7, CTX-19]
+description: The smallest integer over the root, a region and two axes is the result, and each contributing scope is labelled NARROWED.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: globex, channel: web } }
+key: axes.commutative.cap
+expect:
+  value: 30
+  contributions:
+    - { scope: level, name: global, value: 60, effect: NARROWED }
+    - { scope: level, name: region, node: north, value: 40, effect: NARROWED }
+    - { scope: axis, name: seller, node: globex, value: 30, effect: NARROWED }
+    - { scope: axis, name: channel, node: web, value: 45, effect: NARROWED }

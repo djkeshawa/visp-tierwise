@@ -1,0 +1,10 @@
+id: "manifest-lint-unknown-rule"
+specVersion: "0.1"
+clauses: ["MANIFEST-39","LINT-10","FIND-20","FIND-12"]
+description: "A lint setting that names no rule of the spec is reported as E_MANIFEST at that setting."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["lint","rules","values/no-such"]
+      line: 11

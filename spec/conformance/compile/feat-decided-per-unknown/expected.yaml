@@ -1,0 +1,10 @@
+id: feat-decided-per-unknown
+specVersion: "0.1"
+clauses: [FEAT-4, FEAT-5]
+description: "A feature whose decided_per names an undeclared entity is reported as an unknown entity."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "decided_per"]
+      line: 8

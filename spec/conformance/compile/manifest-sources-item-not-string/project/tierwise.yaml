@@ -1,0 +1,5 @@
+specVersion: "0.1"
+sources:
+  schema:
+    - 5
+    - "schema/core.yaml"

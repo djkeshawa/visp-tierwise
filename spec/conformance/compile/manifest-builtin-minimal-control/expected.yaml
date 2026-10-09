@@ -1,0 +1,6 @@
+id: "manifest-builtin-minimal-control"
+specVersion: "0.1"
+clauses: ["MANIFEST-21","MANIFEST-22"]
+description: "The extends item tierwise:minimal in place of tierwise:unknown compiles to the base bundle, because the minimal preset raises no finding on it."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

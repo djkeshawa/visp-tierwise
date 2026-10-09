@@ -1,0 +1,10 @@
+id: "manifest-preset-duplicate"
+specVersion: "0.1"
+clauses: ["MANIFEST-30","FIND-23","FIND-12"]
+description: "The same preset named twice in extends is reported as E_PRESET at the second reference."
+expect:
+  findings:
+    - code: "E_PRESET"
+      file: "tierwise.yaml"
+      path: ["extends",1]
+      line: 4

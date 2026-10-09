@@ -1,0 +1,10 @@
+id: feat-quote-nullable-object
+specVersion: "0.1"
+clauses: [FEAT-12]
+description: "A nullable member in the object form of returns is a member that the declaration does not allow."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/core.yaml"
+      path: ["features", "checkout.quote", "returns", "nullable"]
+      line: 31

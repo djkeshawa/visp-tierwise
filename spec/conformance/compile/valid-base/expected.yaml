@@ -1,0 +1,6 @@
+id: valid-base
+specVersion: "0.1"
+clauses: [TYPE-1, TYPE-2, TYPE-3, TYPE-5, TYPE-7, TYPE-8, TYPE-9, TYPE-10, TYPE-12, TYPE-13, TYPE-14, TYPE-15, TYPE-16, TYPE-18, TYPE-19, TYPE-24, TYPE-26, TYPE-28, TYPE-29, TYPE-30, TYPE-31, TYPE-32, TYPE-33, TYPE-34, TYPE-40, TYPE-41, TYPE-42, TYPE-44, TYPE-45, TYPE-47, TYPE-49, TYPE-50, TYPE-53, TYPE-54, TYPE-55, TYPE-56, TYPE-57, TYPE-58, TYPE-59, TYPE-60, TYPE-61, TYPE-62, TYPE-65, TYPE-66, TYPE-68, TYPE-69, KEY-2, KEY-3, KEY-4, KEY-6, KEY-7, KEY-8, KEY-9, KEY-11, KEY-13, MERGE-1, MERGE-3, MERGE-7, MERGE-8, MERGE-9, MERGE-10, MERGE-11, MERGE-12, AXIS-1, AXIS-3, AXIS-4, AXIS-5, NORM-1, NORM-9, NORM-10, NORM-11, NORM-13]
+description: "The base project compiles with no finding, and its bundle holds each valid form the keys area admits (negative control for every fault case)."
+expect:
+  bundle: "../../bundles/edge-keys.json"

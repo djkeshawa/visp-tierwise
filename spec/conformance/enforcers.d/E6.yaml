@@ -1,0 +1,27 @@
+# Enforcers for work item E6 (FactSet, effect and operation-error vectors), VEC-125.
+# Each key is a normative clause ID in the FACT, NORM, FEAT or EVAL areas that no vector can observe.
+# Each value is one line that names the enforcer. Entries that say "Planned" name a test that is not written yet.
+
+# A fact's source member is documentation only. Bundles drop it (BUNDLE-109), so no bundle carries it into an evaluate vector.
+# The compile side is observed by compile cases that compile a fact with a source member to a bundle without it (VEC-94). This entry supplements them.
+FACT-10: "Planned evaluator unit test: the source content of a fact declaration is never read, and only its type is checked (FACT-11); the evaluator cannot use it, because a bundle does not carry it (BUNDLE-109). The compile side is observed by compile cases (VEC-94)."
+
+# Repeated FactSet entry names. Every vector file, FactSets included, is read by the strict YAML loader of the check tool.
+FACT-34: "Check tool: spec-tools loadYamlFile rejects a repeated mapping key in every vector file, FactSets included, with E_DUPLICATE_KEY (VEC-7, SRC-3). Runners apply the same SRC rules to vector files (VEC-7)."
+
+# An unpaired surrogate cannot be written as a character in a UTF-8 vector file (VEC-6). It could be written only as a YAML escape such as \uD800.
+# VEC-6 and VEC-7 do not settle whether a vector may use that escape, and the check tool's loader accepts it, so the suite carries no such vector (open point of E6, see README-edge-facts.md).
+NORM-8: "Planned evaluator unit test: a FactSet string that holds an unpaired surrogate fails validation with E_FACTS_INVALID (NORM-8, FACT-35). The suite carries no such string, because a vector file cannot hold one as UTF-8 text (VEC-6) and no clause settles whether the YAML escape form is allowed."
+
+# Values of different declared types. FACT-35 rejects a value of the wrong type before any comparison, so no vector reaches one.
+NORM-18: "Planned evaluator unit test: values of different declared types never compare equal (NORM-18). FACT-35 rejects a wrong-type FactSet value first, so no decision vector reaches such a comparison."
+
+# Equality of set, list and object values. Conditions compare scalars only (RULE-35 to RULE-38), so no decision vector compares these.
+# Compile cases observe object equality, ignoring field order, through the object-valued example effects of POL-41 and POL-48. This entry supplements them.
+NORM-19: "Planned unit test of the value equality of NORM-19 for set and list values and for nested values. Compile cases with object-valued example effects observe object equality (POL-41, POL-48). No decision vector compares these values, because conditions compare scalars only (RULE-35 to RULE-38)."
+
+# A context that is present but is not a map. The vector schema admits only a mapping for context (VEC-28), so no vector can pass another value.
+EVAL-31: "Planned evaluator unit test: a context argument that is present but is not a map, such as a list or a string, raises E_CONTEXT_INVALID (EVAL-31, ADR 0009). The vector schema admits only a mapping (VEC-28)."
+
+# The raised error codes. Vectors cannot observe a code that an operation raises outside its triggers, so the raising sites are unit tests.
+EVAL-38: "Check tool: spec-tools checkEnums compares the errorCode enum of vector-evaluate.schema.json with the evaluation codes of error-codes.md. Planned evaluator unit test: each operation raises only those codes, at the triggers that EVAL-24 to EVAL-37 give."

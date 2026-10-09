@@ -1,0 +1,10 @@
+id: value-object-field-null
+specVersion: "0.1"
+clauses: [TYPE-67, TYPE-76, TYPE-77]
+description: "A present field whose value is null is E_TYPE_MISMATCH at the field (TYPE-67)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["contact", "phone"]
+      line: 14

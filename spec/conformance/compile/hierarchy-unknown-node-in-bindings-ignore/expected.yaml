@@ -1,0 +1,10 @@
+id: hierarchy-unknown-node-in-bindings-ignore
+specVersion: "0.1"
+clauses: ["SCOPE-43", "SCOPE-44", "BIND-10"]
+description: "A binding node that a generated closed catalog with on_unknown_node: ignore does not list is still reported at compile time."
+expect:
+  findings:
+    - code: E_UNKNOWN_NODE
+      file: "rules/checkout-gate.yaml"
+      path: ["bindings", "site", "s9"]
+      line: 11

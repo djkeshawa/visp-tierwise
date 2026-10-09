@@ -1,0 +1,6 @@
+id: hierarchy-valid-closed-catalog
+specVersion: "0.1"
+clauses: ["SCOPE-1", "SCOPE-5", "SCOPE-6", "SCOPE-10", "SCOPE-14", "SCOPE-17", "SCOPE-19", "SCOPE-22", "SCOPE-23"]
+description: "A root level with one inline closed catalog and the error policy compiles with no finding."
+expect:
+  bundle: "../../bundles/edge-hierarchy.json"

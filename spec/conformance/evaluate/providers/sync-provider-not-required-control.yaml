@@ -1,0 +1,17 @@
+id: providers/sync-provider-not-required-control
+specVersion: "0.1"
+clauses: [EVAL-10, EVAL-11, SVC-17, SVC-42]
+description: The negative control of sync-provider-required, which differs only in its context, naming the seat level at which the key is not settable, so no provider call is needed and the synchronous resolve returns its result.
+call: resolve
+sync: true
+bundle: ../../bundles/edge-providers.json
+context: { levels: { seat: s-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: false }
+expect:
+  value: true
+  contributions: []
+  providerCalls: { tenant: { t-1: 0 }, seat: { s-1: 0 } }

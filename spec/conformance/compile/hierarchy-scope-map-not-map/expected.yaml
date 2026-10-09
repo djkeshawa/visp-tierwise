@@ -1,0 +1,10 @@
+id: hierarchy-scope-map-not-map
+specVersion: "0.1"
+clauses: ["SCOPE-15", "SCOPE-16"]
+description: "A scopes value that is a list, not a map, is reported at scopes."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes"]
+      line: 3

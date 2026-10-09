@@ -1,0 +1,10 @@
+id: fact-namespaced-declaration
+specVersion: "0.1"
+clauses: [NS-4, FACT-4]
+description: "A facts map in a namespaced file is reported as E_NAMESPACE_VIOLATION at the facts member."
+expect:
+  findings:
+    - code: E_NAMESPACE_VIOLATION
+      file: schema/components/checkout.yaml
+      path: ["facts"]
+      line: 16

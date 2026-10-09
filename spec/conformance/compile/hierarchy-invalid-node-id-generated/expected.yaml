@@ -1,0 +1,10 @@
+id: hierarchy-invalid-node-id-generated
+specVersion: "0.1"
+clauses: ["SCOPE-38", "SCOPE-33"]
+description: "An empty node ID in a generated catalog is reported as E_INVALID_NODE_ID at its entry."
+expect:
+  findings:
+    - code: E_INVALID_NODE_ID
+      file: "catalogs/divisions.json"
+      path: ["nodes", 0]
+      line: 3

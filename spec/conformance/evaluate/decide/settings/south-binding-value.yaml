@@ -1,0 +1,25 @@
+id: decide/settings/south-binding-value
+specVersion: "0.1"
+clauses: [BIND-23, BIND-24, RULE-27, RULE-29, RULE-48, RULE-49, RULE-52, RULE-53, PROV-62, PROV-68, PROV-70, PROV-71, PROV-74, PROV-78, PROV-83, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, BIND-17, BIND-16, PROV-7, RULE-47, PROV-79, PROV-80, PROV-82]
+description: "At division south the bound value HELD for the value setting is used by the first rule, which wins before the list rule is checked."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: { levels: { division: south } }
+feature: edge.setting_values
+input:
+  facts: { order.status: HELD }
+  children:
+    line:
+      - { line.kind: GIFT }
+      - { line.kind: STANDARD }
+exact: true
+expect:
+  feature: edge.setting_values
+  effect: ALLOW
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: main
+  reason: { type: RULE, id: status-matches, name: "Status is the expected status" }
+  trace:
+    - { id: status-matches, matched: true }

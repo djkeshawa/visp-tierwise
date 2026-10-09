@@ -1,0 +1,9 @@
+id: "admission/unknown-node/resolve-nfd-node-under-error-policy"
+specVersion: "0.1"
+clauses: [CTX-7, CTX-8, CTX-12]
+description: "A decomposed node ID is not the NFC catalog member and is not normalised, so it raises E_UNKNOWN_NODE under error."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: "cafe\u0301" } }
+key: edge.tier
+expect: { error: E_UNKNOWN_NODE }

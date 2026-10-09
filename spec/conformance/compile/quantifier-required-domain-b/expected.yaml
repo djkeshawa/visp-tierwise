@@ -1,0 +1,10 @@
+id: quantifier-required-domain-b
+specVersion: "0.1"
+clauses: [RULE-13, FACT-14]
+description: "An in condition on a child fact of the basket-level feature is reported as E_QUANTIFIER_REQUIRED."
+expect:
+  findings:
+    - code: E_QUANTIFIER_REQUIRED
+      file: rules/pos.basket_check.yaml
+      path: ["policies", "standard", "rules", 1, "when", "line.category"]
+      line: 16

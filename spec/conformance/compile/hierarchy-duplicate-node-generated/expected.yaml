@@ -1,0 +1,10 @@
+id: hierarchy-duplicate-node-generated
+specVersion: "0.1"
+clauses: ["SCOPE-42"]
+description: "A generated catalog that lists one node ID twice is reported at the second entry."
+expect:
+  findings:
+    - code: E_DUPLICATE_NODE
+      file: "catalogs/divisions.json"
+      path: ["nodes", 2]
+      line: 5

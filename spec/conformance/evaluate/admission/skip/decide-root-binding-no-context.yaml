@@ -1,0 +1,31 @@
+id: "admission/skip/decide-root-binding-no-context"
+specVersion: "0.1"
+clauses:
+  - BIND-13
+  - BIND-16
+  - BIND-19
+  - CTX-20
+  - RULE-46
+  - RULE-47
+  - RULE-48
+  - RULE-49
+  - PROV-4
+  - PROV-68
+  - PROV-69
+  - PROV-71
+  - PROV-74
+  - PROV-82
+  - PROV-83
+description: "With no context the root binding is selected, and the first rule of its policy wins."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: SHIP
+  bundleVersion: "sha256:eacee690d00111cc0bc1199fbe3d312b830d5de9d7ef1c24874a366bdd90e8dd"
+  skippedScopes: []
+  binding: { level: global }
+  policy: paid_only
+  reason: { type: RULE, id: paid, name: "Order is paid" }
+  trace: [{ id: paid, matched: true }]

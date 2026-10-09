@@ -1,0 +1,16 @@
+id: providers/sync-provider-required
+specVersion: "0.1"
+clauses: [EVAL-9, EVAL-11, EVAL-29, SVC-42]
+description: The synchronous resolve raises E_PROVIDER_REQUIRED for a key settable at a supplied service level, and it makes no provider call.
+call: resolve
+sync: true
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: false }
+expect:
+  error: E_PROVIDER_REQUIRED
+  providerCalls: { tenant: { t-1: 0 } }

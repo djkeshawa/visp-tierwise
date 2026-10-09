@@ -1,0 +1,15 @@
+id: facts/check-order/resolve-unknown-key-no-provider-call
+specVersion: "0.1"
+clauses: [EVAL-16, EVAL-20, EVAL-34]
+description: "An undeclared key raises E_UNKNOWN_KEY after a valid context, and the account provider is not called."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south, account: acct-17 } }
+key: checkout.unknown
+providers:
+  account:
+    acct-17:
+      values: {}
+expect:
+  error: E_UNKNOWN_KEY
+  providerCalls: { account: { acct-17: 0 } }

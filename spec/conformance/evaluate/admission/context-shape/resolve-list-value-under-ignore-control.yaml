@@ -1,0 +1,15 @@
+id: "admission/context-shape/resolve-list-value-under-ignore-control"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-19, PROV-42]
+description: "With the node ID written as a string the listed site node contributes its BASIC value."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: site_001 } }
+key: edge.tier
+expect:
+  value: BASIC
+  source: { scope: level, name: site, node: site_001 }
+  contributions:
+    - { scope: level, name: global, value: SILVER, effect: SET }
+    - { scope: level, name: site, node: site_001, value: BASIC, effect: SET }
+  skippedScopes: []

@@ -1,0 +1,13 @@
+decision_hierarchy:
+  levels: [global, division]
+  axes: [seller, channel]
+  scopes:
+    division:
+      nodes: [north, south]
+      on_unknown_node: error
+    seller:
+      nodes: [acme]
+      on_unknown_node: error
+    channel:
+      nodes: []
+      on_unknown_node: error

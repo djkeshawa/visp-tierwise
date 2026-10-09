@@ -1,0 +1,12 @@
+id: axes/deep-merge/hierarchy-wins-neither-default
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-10, MERGE-25, PROV-7, PROV-42, PROV-45, PROV-48, PROV-53, EVAL-7, CTX-19]
+description: With a supplied level that holds no value for the key, the default alone is the result, with source DEFAULT and no contributions.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: south } }
+key: axes.deep.hierarchy_wins
+expect:
+  value: { open: 8, close: 18 }
+  contributions: []
+  source: DEFAULT

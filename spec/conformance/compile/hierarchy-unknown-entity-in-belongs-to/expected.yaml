@@ -1,0 +1,10 @@
+id: hierarchy-unknown-entity-in-belongs-to
+specVersion: "0.1"
+clauses: ["ENTITY-6"]
+description: "A belongs_to name that is not a declared entity is reported at that list item."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "order", "belongs_to", 1]
+      line: 15

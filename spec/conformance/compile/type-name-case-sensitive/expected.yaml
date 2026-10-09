@@ -1,0 +1,10 @@
+id: type-name-case-sensitive
+specVersion: "0.1"
+clauses: [TYPE-2, TYPE-11]
+description: "A type name that differs in case from a TYPE-2 name is an invalid declaration, reported at the type member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "type"]
+      line: 65

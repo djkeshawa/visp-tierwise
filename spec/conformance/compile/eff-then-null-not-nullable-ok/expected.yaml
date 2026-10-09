@@ -1,0 +1,6 @@
+id: eff-then-null-not-nullable-ok
+specVersion: "0.1"
+clauses: [FEAT-9, FEAT-14]
+description: "Negative control of eff-then-null-not-nullable: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

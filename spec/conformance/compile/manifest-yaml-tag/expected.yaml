@@ -1,0 +1,10 @@
+id: "manifest-yaml-tag"
+specVersion: "0.1"
+clauses: ["SRC-7","MANIFEST-9","FIND-12"]
+description: "An explicit tag on a manifest scalar is reported as E_YAML_FEATURE at that scalar."
+expect:
+  findings:
+    - code: "E_YAML_FEATURE"
+      file: "tierwise.yaml"
+      path: ["specVersion"]
+      line: 1

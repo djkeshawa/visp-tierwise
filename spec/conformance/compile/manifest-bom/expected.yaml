@@ -1,0 +1,10 @@
+id: "manifest-bom"
+specVersion: "0.1"
+clauses: ["SRC-10","MANIFEST-9","FIND-23","FIND-12"]
+description: "A manifest that begins with a byte-order mark is reported as E_MANIFEST at the empty path and line 1."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: []
+      line: 1

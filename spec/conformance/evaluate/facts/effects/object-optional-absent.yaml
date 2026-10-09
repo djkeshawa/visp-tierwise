@@ -1,0 +1,20 @@
+id: facts/effects/object-optional-absent
+specVersion: "0.1"
+clauses: [FEAT-11, TYPE-66, NORM-15, RULE-37]
+description: "A winning object effect omits its optional member, which is then absent and not null."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.object_quote
+input: { facts: { order.total: "2.0" }, children: { line: [ { line.kind: SINGLE } ] } }
+exact: true
+expect:
+  feature: edge.object_quote
+  effect: { amount: "2", tier: GOLD }
+  bundleVersion: sha256:f9de5c2b27288aae83c618a1e780f5a42837a47cdabe5f7c58b2fe5d96a193dc
+  skippedScopes: []
+  binding: { level: global }
+  policy: quote
+  reason: { type: RULE, id: total-gold, name: A total of two earns gold }
+  trace:
+    - { id: bulk-gold, matched: false, failed: { fact: line.kind, op: any_in } }
+    - { id: total-gold, matched: true }

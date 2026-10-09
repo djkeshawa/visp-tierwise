@@ -1,0 +1,13 @@
+id: "admission/context-shape/resolve-control-character-closed-node-control"
+specVersion: "0.1"
+clauses: [CTX-12, PROV-42]
+description: "Without the control character the node is admitted and has no value, so only the root contributes."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: north } }
+key: edge.tier
+expect:
+  value: SILVER
+  source: { scope: level, name: global }
+  contributions: [{ scope: level, name: global, value: SILVER, effect: SET }]
+  skippedScopes: []

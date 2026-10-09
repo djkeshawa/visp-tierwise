@@ -1,0 +1,6 @@
+id: "src-values-file-missing-control"
+specVersion: "0.1"
+clauses: ["SRC-17"]
+description: "The values entry of src-values-file-missing names a file that exists, and compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

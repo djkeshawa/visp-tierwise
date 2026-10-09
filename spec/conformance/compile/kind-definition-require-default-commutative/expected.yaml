@@ -1,0 +1,10 @@
+id: kind-definition-require-default-commutative
+specVersion: "0.1"
+clauses: [KIND-10, MERGE-1]
+description: "A require_default kind that lists the commutative strategy all is E_KIND_DEFINITION at that strategy item."
+expect:
+  findings:
+    - code: E_KIND_DEFINITION
+      file: "schema/core.yaml"
+      path: [kinds, defaulted, strategies, 1]
+      line: 27

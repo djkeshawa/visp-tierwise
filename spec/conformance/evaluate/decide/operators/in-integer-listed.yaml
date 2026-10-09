@@ -1,0 +1,21 @@
+id: decide/operators/in-integer-listed
+specVersion: "0.1"
+clauses: [RULE-30, RULE-36, RULE-47, RULE-48, RULE-49, PROV-62, PROV-71, PROV-74, PROV-78, PROV-83, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-80, PROV-82]
+description: "An in condition on an integer holds when the fact numerically equals a listed integer."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.in_integer
+input:
+  facts: { order.priority: 2 }
+exact: true
+expect:
+  feature: edge.in_integer
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: small, name: "Priority is one or two" }
+  trace:
+    - { id: small, matched: true }

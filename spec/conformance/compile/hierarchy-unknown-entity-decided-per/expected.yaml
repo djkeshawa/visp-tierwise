@@ -1,0 +1,10 @@
+id: hierarchy-unknown-entity-decided-per
+specVersion: "0.1"
+clauses: ["FEAT-5"]
+description: "A feature whose decided_per names no declared entity is reported at decided_per."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: "schema/model.yaml"
+      path: ["features", "checkout.gate", "decided_per"]
+      line: 31

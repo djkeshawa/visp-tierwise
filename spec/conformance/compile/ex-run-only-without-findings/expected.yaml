@@ -1,0 +1,10 @@
+id: ex-run-only-without-findings
+specVersion: "0.1"
+clauses: [POL-47, BIND-6]
+description: "Examples are not run when validation has another engine finding; the wrong expect is not reported."
+expect:
+  findings:
+    - code: E_UNKNOWN_POLICY
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "north", "policy"]
+      line: 33

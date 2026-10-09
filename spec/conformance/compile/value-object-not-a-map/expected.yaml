@@ -1,0 +1,10 @@
+id: value-object-not-a-map
+specVersion: "0.1"
+clauses: [TYPE-61, TYPE-71]
+description: "An object key given a scalar is E_TYPE_MISMATCH at the key (TYPE-61)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["contact"]
+      line: 12

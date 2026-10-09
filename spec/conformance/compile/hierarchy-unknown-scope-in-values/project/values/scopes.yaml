@@ -1,0 +1,8 @@
+global:
+  checkout.open: true
+region:
+  north:
+    checkout.open: true
+site:
+  s1:
+    checkout.open: false

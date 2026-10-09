@@ -1,0 +1,18 @@
+id: merge/min-deny-unavailable
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-15, MERGE-17, PROV-29, PROV-39, PROV-41, SVC-9, SVC-23, PROV-8, PROV-27]
+description: An unavailable account provider under deny gives the min key the minimum bound 1 as its deny value, so the result is 1.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-2 } }
+key: merge.floor
+providers:
+  account:
+    acct-2:
+      fail: unavailable
+expect:
+  value: 1
+  contributions:
+    - { scope: level, name: division, node: north, value: 100, effect: NARROWED }
+    - { scope: level, name: account, node: acct-2, value: 1, effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { account: { acct-2: 1 } }

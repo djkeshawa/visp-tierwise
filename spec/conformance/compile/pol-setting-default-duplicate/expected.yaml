@@ -1,0 +1,10 @@
+id: pol-setting-default-duplicate
+specVersion: "0.1"
+clauses: [POL-19]
+description: "A list_of default that repeats an element is a duplicate value at the repeated element."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "settings", "allowed_on_credit_hold", "default", 1]
+      line: 6

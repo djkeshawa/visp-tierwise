@@ -1,0 +1,18 @@
+id: "admission/skip/decide-admitted-service-node-makes-no-call"
+specVersion: "0.1"
+clauses: [SVC-22, CTX-19, BIND-16]
+description: "An admitted service-sourced node is on the evaluation path, but decide calls no provider and binds nothing at that level."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-1, division: south } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+providers: { partner: { p-1: { values: { edge.enabled: true, edge.max_items: 20, edge.min_qty: 3 } } } }
+expect:
+  effect: HOLD
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: manual
+  reason: { type: DEFAULT }
+  trace: []
+  providerCalls: { partner: { p-1: 0 } }

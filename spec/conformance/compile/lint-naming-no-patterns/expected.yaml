@@ -1,0 +1,6 @@
+id: lint-naming-no-patterns
+specVersion: "0.1"
+clauses: [LINT-13, LINT-10, LINT-12]
+description: "A project that declares no naming pattern performs no naming checks, although naming/* is set to error."
+expect:
+  bundle: ../../bundles/edge-kinds.json

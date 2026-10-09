@@ -1,0 +1,11 @@
+id: facts/check-order/decide-root-level-before-factset
+specVersion: "0.1"
+clauses: [EVAL-18, EVAL-30, CTX-3, CTX-9]
+description: "A context that names the root level is rejected before the invalid FactSet is checked."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+context: { levels: { global: north } }
+feature: edge.order_gate
+input: { facts: { customer.active: "true" } }
+expect:
+  error: E_CONTEXT_INVALID

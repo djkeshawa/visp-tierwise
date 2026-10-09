@@ -1,0 +1,10 @@
+id: axis-combine-max-on-string
+specVersion: "0.1"
+clauses: [AXIS-5, AXIS-4]
+description: "combine_across_axes max on a string key is E_AXIS_COMBINE_INVALID at the member (AXIS-5)."
+expect:
+  findings:
+    - code: E_AXIS_COMBINE_INVALID
+      file: "schema/keys.yaml"
+      path: ["keys", "courier", "combine_across_axes"]
+      line: 114

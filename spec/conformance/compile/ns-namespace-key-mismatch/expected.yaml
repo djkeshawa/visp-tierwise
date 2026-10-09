@@ -1,0 +1,10 @@
+id: "ns-namespace-key-mismatch"
+specVersion: "0.1"
+clauses: ["NS-7","FIND-12"]
+description: "A namespaced file whose namespace key differs from the name that namespaces lists it under is reported as E_NAMESPACE_VIOLATION."
+expect:
+  findings:
+    - code: "E_NAMESPACE_VIOLATION"
+      file: "schema/pos.yaml"
+      path: ["namespace"]
+      line: 1

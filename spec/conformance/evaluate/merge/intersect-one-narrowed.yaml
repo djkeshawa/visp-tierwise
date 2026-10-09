@@ -1,0 +1,12 @@
+id: merge/intersect-one-narrowed
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-14, MERGE-17, PROV-37, PROV-38, PROV-86]
+description: A strict subset from one division is labelled NARROWED, and the intersect becomes that subset.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.regions
+expect:
+  value: [red, green]
+  contributions:
+    - { scope: level, name: division, node: north, value: [red, green], effect: NARROWED }

@@ -1,0 +1,6 @@
+id: hierarchy-valid-entity-graph-acyclic
+specVersion: "0.1"
+clauses: ["ENTITY-5", "ENTITY-9", "ENTITY-11", "ENTITY-12", "ENTITY-14", "ENTITY-15", "ENTITY-16", "ENTITY-17"]
+description: "An acyclic entity graph with a parent that also has a child compiles, and the child does not gain the parent's edges."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

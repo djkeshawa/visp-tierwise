@@ -1,0 +1,10 @@
+id: key-invalid-on-source-failure
+specVersion: "0.1"
+clauses: [KEY-5, SVC-4, SVC-3]
+description: "A key whose on_source_failure is neither skip nor deny is E_INVALID_DECLARATION at that member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/core.yaml"
+      path: [keys, search.fallback_on, on_source_failure]
+      line: 132

@@ -1,0 +1,10 @@
+id: facts/check-order/resolve-unknown-scope-before-lookup
+specVersion: "0.1"
+clauses: [EVAL-16, EVAL-32, CTX-4]
+description: "An undeclared level in the context is rejected before the undeclared key is looked up."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { warehouse: north } }
+key: checkout.unknown
+expect:
+  error: E_UNKNOWN_SCOPE

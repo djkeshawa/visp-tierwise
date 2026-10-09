@@ -1,0 +1,10 @@
+namespace: pos
+keys:
+  pos.flag:
+    type: boolean
+    combine: any
+    settable_at: [global]
+  other.flag:
+    type: boolean
+    combine: any
+    settable_at: [global]

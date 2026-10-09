@@ -1,0 +1,8 @@
+global:
+  checkout.open: true
+division:
+  north:
+    checkout.open: true
+site:
+  s9:
+    checkout.open: false

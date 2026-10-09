@@ -1,0 +1,18 @@
+id: providers/decide-express-allowed
+specVersion: "0.1"
+clauses: [EVAL-8, SVC-22, BIND-13, PROV-65, PROV-68, PROV-69, PROV-74, RULE-48]
+description: Decide calls no provider, so a tenant stub that holds values is never invoked, and the root binding decides the effect.
+call: decide
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+feature: order.express_allowed
+input: { facts: { order.express: true } }
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: false }
+expect:
+  effect: ALLOW
+  binding: { level: global }
+  reason: { type: RULE, id: express-ok, name: "Express orders are allowed" }
+  providerCalls: { tenant: { t-1: 0 } }

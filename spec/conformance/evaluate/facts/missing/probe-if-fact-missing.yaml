@@ -1,0 +1,13 @@
+id: facts/missing/probe-if-fact-missing
+specVersion: "0.1"
+clauses: [FEAT-3, FACT-17, RULE-43]
+description: "An omitted children member makes line.amount missing, so the probe returns its if_fact_missing value MISS."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "1.5" } }
+expect:
+  effect: MISS
+  reason: { type: MISSING_FACT, facts: [ line.amount ] }
+  policy: probe
+  trace: []

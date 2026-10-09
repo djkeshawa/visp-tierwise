@@ -1,0 +1,6 @@
+id: hierarchy-valid-root-only-null
+specVersion: "0.1"
+clauses: ["SCOPE-10", "SCOPE-16"]
+description: "A hierarchy with only the root level may set scopes to null."
+expect:
+  bundle: "../../bundles/edge-hierarchy-root.json"

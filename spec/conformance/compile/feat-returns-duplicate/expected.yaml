@@ -1,0 +1,10 @@
+id: feat-returns-duplicate
+specVersion: "0.1"
+clauses: [FEAT-6, FEAT-7, FEAT-8]
+description: "An enum-form returns list that repeats an effect reports the repeated item as a duplicate value."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "returns", "enum", 2]
+      line: 20

@@ -1,0 +1,10 @@
+id: bind-policy-unknown-skips-entries
+specVersion: "0.1"
+clauses: [BIND-6, BIND-7]
+description: "When a binding names an unknown policy, its other entries are not checked against settings."
+expect:
+  findings:
+    - code: E_UNKNOWN_POLICY
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "south", "policy"]
+      line: 34

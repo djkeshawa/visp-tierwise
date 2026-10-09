@@ -1,0 +1,10 @@
+id: "manifest-lint-engine-code"
+specVersion: "0.1"
+clauses: ["LINT-8","MANIFEST-39","FIND-12"]
+description: "A lint setting that names an engine error code is reported as E_PRESET at the setting in the manifest."
+expect:
+  findings:
+    - code: "E_PRESET"
+      file: "tierwise.yaml"
+      path: ["lint","rules","E_UNKNOWN_KEY"]
+      line: 11

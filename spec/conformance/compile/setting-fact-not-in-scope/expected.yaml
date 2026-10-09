@@ -1,0 +1,10 @@
+id: setting-fact-not-in-scope
+specVersion: "0.1"
+clauses: [POL-16, FACT-15]
+description: "A setting whose value_of fact is not eligible for the decision is reported as E_FACT_NOT_IN_SCOPE at the value_of member."
+expect:
+  findings:
+    - code: E_FACT_NOT_IN_SCOPE
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "settings", "held_flag", "value_of"]
+      line: 8

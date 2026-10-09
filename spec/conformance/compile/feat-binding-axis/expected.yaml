@@ -1,0 +1,10 @@
+id: feat-binding-axis
+specVersion: "0.1"
+clauses: [FEAT-20, BIND-15]
+description: "An axis in binding_settable_at is a binding that is not allowed, because only levels carry bindings."
+expect:
+  findings:
+    - code: E_BINDING_NOT_ALLOWED
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "binding_settable_at", 2]
+      line: 22

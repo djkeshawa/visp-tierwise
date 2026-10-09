@@ -1,0 +1,10 @@
+id: "src-path-root-capture"
+specVersion: "0.1"
+clauses: ["SRC-28","SRC-22","FIND-20","FIND-12"]
+description: "A path pattern whose scope captures the root level name is reported as E_SOURCE_MAPPING at its pattern member."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "tierwise.yaml"
+      path: ["sources","values",0,"pattern"]
+      line: 6

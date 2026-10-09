@@ -1,0 +1,10 @@
+id: lint-naming-key-line-feed
+specVersion: "0.1"
+clauses: [LINT-18, LINT-12]
+description: "A key name that ends in a line feed fails the anchored key pattern, because $ matches only at the true end of the name."
+expect:
+  findings:
+    - code: naming/key
+      file: "schema/core.yaml"
+      path: [keys, "search.fallback_on\n"]
+      line: 126

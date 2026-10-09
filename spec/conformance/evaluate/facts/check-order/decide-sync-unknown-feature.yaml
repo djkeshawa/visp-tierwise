@@ -1,0 +1,11 @@
+id: facts/check-order/decide-sync-unknown-feature
+specVersion: "0.1"
+clauses: [EVAL-9, EVAL-12, EVAL-35]
+description: "The synchronous variant of decide raises E_UNKNOWN_FEATURE for an undeclared feature."
+call: decide
+sync: true
+bundle: ../../../bundles/edge-facts.json
+feature: edge.unknown
+input: {}
+expect:
+  error: E_UNKNOWN_FEATURE

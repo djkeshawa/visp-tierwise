@@ -1,0 +1,6 @@
+region:
+  no:
+    checkout.allowed: true
+  yes:
+    checkout.allowed: true
+    checkout.nope: true

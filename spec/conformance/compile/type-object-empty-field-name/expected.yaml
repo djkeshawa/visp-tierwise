@@ -1,0 +1,10 @@
+id: type-object-empty-field-name
+specVersion: "0.1"
+clauses: [TYPE-5, TYPE-68, TYPE-11]
+description: "An empty field name in an object declaration is an invalid declaration (TYPE-68)."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "fields", ""]
+      line: 65

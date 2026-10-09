@@ -1,0 +1,12 @@
+id: merge/union-identity-ignored
+specVersion: "0.1"
+clauses: [MERGE-5, MERGE-14, MERGE-17, PROV-21, PROV-37, PROV-38]
+description: An empty set from a division is the identity of union, labelled IGNORED, and the result stays empty.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.tags
+expect:
+  value: []
+  contributions:
+    - { scope: level, name: division, node: north, value: [], effect: IGNORED }

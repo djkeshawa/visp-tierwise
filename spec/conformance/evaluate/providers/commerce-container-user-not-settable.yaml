@@ -1,0 +1,17 @@
+id: providers/commerce-container-user-not-settable
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-14, SVC-17, SVC-33, PROV-21, PROV-38, PROV-43]
+description: On sample domain A, a supplied user level at which the key is not settable is not called, and the account identity value is IGNORED.
+call: resolve
+bundle: ../../bundles/commerce.json
+context: { levels: { division: south, account: acct-17, user: u-9 } }
+key: checkout.container_order.allowed
+providers:
+  account:
+    acct-17:
+      values: { checkout.container_order.allowed: true }
+expect:
+  value: true
+  contributions:
+    - { scope: level, name: account, node: acct-17, value: true, effect: IGNORED }
+  providerCalls: { account: { acct-17: 1 }, user: { u-9: 0 } }

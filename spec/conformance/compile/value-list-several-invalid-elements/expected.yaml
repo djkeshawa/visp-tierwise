@@ -1,0 +1,14 @@
+id: value-list-several-invalid-elements
+specVersion: "0.1"
+clauses: [TYPE-23, TYPE-56, TYPE-71]
+description: "Each invalid element of a list gives its own finding (TYPE-23)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["tags", 0]
+      line: 8
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["tags", 2]
+      line: 8

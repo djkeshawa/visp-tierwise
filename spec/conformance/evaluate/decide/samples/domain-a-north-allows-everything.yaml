@@ -1,0 +1,20 @@
+id: decide/samples/domain-a-north-allows-everything
+specVersion: "0.1"
+clauses: [BIND-17, BIND-21, RULE-45, RULE-50, RULE-51, PROV-7, PROV-62, PROV-68, PROV-71, PROV-73, PROV-75, PROV-18, PROV-64, PROV-65, PROV-69, BIND-16, PROV-70]
+description: "Sample domain A: the north division binds a policy with no rules, so the precheck set is empty and its default ALLOW is returned with reason DEFAULT."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: north } }
+feature: checkout.order_submission
+input:
+  facts: {}
+exact: true
+expect:
+  feature: checkout.order_submission
+  effect: ALLOW
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: division, node: north }
+  policy: allow_all
+  reason: { type: DEFAULT }
+  trace: []

@@ -1,0 +1,19 @@
+id: providers/calls-not-settable-level
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-14, SVC-17, PROV-42, PROV-43]
+description: A supplied service level at which no key is settable is not called, even when its provider would hold a value for the key.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1, seat: s-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: {}
+  seat:
+    s-1:
+      values: { access.allowed: false }
+expect:
+  value: true
+  contributions: []
+  providerCalls: { tenant: { t-1: 1 }, seat: { s-1: 0 } }

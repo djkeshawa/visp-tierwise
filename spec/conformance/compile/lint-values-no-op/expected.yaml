@@ -1,0 +1,10 @@
+id: lint-values-no-op
+specVersion: "0.1"
+clauses: [LINT-23, LINT-24]
+description: "An authored value equal to the identity of its key's strategy is reported at the value entry."
+expect:
+  findings:
+    - code: values/no-op
+      file: "values/root.yaml"
+      path: [search.fallback_on]
+      line: 11

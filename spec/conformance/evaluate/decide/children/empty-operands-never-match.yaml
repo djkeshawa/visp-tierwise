@@ -1,0 +1,27 @@
+id: decide/children/empty-operands-never-match
+specVersion: "0.1"
+clauses: [RULE-27, RULE-30, RULE-31, RULE-32, RULE-34, RULE-50, RULE-51, RULE-54, RULE-55, PROV-62, PROV-71, PROV-75, PROV-78, PROV-80, PROV-82, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-81]
+description: "In, any_in and all_in conditions whose operand list is empty, literal or setting, never hold, so no rule matches even though every fact is present."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.empty_operands
+input:
+  facts: { order.status: HELD }
+  children:
+    line:
+      - { line.kind: BULK }
+exact: true
+expect:
+  feature: edge.empty_operands
+  effect: DENY
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: DEFAULT }
+  trace:
+    - { id: empty-in, matched: false, failed: { fact: order.status, op: in } }
+    - { id: empty-any, matched: false, failed: { fact: line.kind, op: any_in } }
+    - { id: empty-all, matched: false, failed: { fact: line.kind, op: all_in } }
+    - { id: empty-setting, matched: false, failed: { fact: order.status, op: in } }

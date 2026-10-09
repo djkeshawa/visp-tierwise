@@ -1,0 +1,6 @@
+id: pol-rule-missing-name-ok
+specVersion: "0.1"
+clauses: [POL-21, FEAT-2]
+description: "Negative control of pol-rule-missing-name: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

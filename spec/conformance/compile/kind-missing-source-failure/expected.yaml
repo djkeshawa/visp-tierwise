@@ -1,0 +1,10 @@
+id: kind-missing-source-failure
+specVersion: "0.1"
+clauses: [SVC-2, SVC-1, KEY-8]
+description: "A key settable at a service-sourced level with no source-failure behaviour is E_MISSING_SOURCE_FAILURE at its declaration."
+expect:
+  findings:
+    - code: E_MISSING_SOURCE_FAILURE
+      file: "schema/core.yaml"
+      path: [keys, access.partner_gate]
+      line: 89

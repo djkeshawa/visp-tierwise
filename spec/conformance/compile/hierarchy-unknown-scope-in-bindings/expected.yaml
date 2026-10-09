@@ -1,0 +1,10 @@
+id: hierarchy-unknown-scope-in-bindings
+specVersion: "0.1"
+clauses: ["SCOPE-46", "BIND-11"]
+description: "A binding written under an undeclared level is reported at that level key."
+expect:
+  findings:
+    - code: E_UNKNOWN_SCOPE
+      file: "rules/checkout-gate.yaml"
+      path: ["bindings", "regon"]
+      line: 8

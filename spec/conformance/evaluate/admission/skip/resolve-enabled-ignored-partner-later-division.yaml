@@ -1,0 +1,14 @@
+id: "admission/skip/resolve-enabled-ignored-partner-later-division"
+specVersion: "0.1"
+clauses: [CTX-14, CTX-15, CTX-17, SVC-17, PROV-56, PROV-61]
+description: "An unlisted partner node under ignore makes no provider call, and the later division still contributes."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-9, division: south } }
+key: edge.enabled
+providers: { partner: { p-9: { values: { edge.enabled: false, edge.max_items: 999, edge.min_qty: 0 } } } }
+expect:
+  value: false
+  contributions: [{ scope: level, name: division, node: south, value: false, effect: VETO }]
+  skippedScopes: [{ scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }]
+  providerCalls: { partner: { p-9: 0 } }

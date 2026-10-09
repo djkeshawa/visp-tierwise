@@ -1,0 +1,10 @@
+id: "src-glob-hidden-file"
+specVersion: "0.1"
+clauses: ["SRC-18","SRC-5","FIND-23","FIND-12"]
+description: "A hidden file matched by a glob is included, so its syntax error is reported as E_PARSE."
+expect:
+  findings:
+    - code: "E_PARSE"
+      file: "schema/.draft.yaml"
+      path: []
+      line: 1

@@ -1,0 +1,10 @@
+id: type-format-not-defined
+specVersion: "0.1"
+clauses: [TYPE-31, TYPE-11]
+description: "A format member that is neither time_hhmm nor iana_tz is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "format"]
+      line: 65

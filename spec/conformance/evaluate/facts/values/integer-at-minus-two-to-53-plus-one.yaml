@@ -1,0 +1,14 @@
+id: facts/values/integer-at-minus-two-to-53-plus-one
+specVersion: "0.1"
+clauses: [FACT-41, TYPE-18]
+description: "An integer fact equal to -(2^53 - 1) is inside the range of integer values and is valid."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "1.5", order.units: -9007199254740991 }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: exact-total, name: Total is exactly one and a half }
+  policy: gate
+  trace:
+    - { id: exact-total, matched: true }

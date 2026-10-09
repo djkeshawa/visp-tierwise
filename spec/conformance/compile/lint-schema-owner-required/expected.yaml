@@ -1,0 +1,10 @@
+id: lint-schema-owner-required
+specVersion: "0.1"
+clauses: [LINT-47, LINT-48]
+description: "A shared key with no owner member is reported by schema/owner-required when namespaces are declared."
+expect:
+  findings:
+    - code: schema/owner-required
+      file: "schema/core.yaml"
+      path: [keys, access.beta]
+      line: 112

@@ -1,0 +1,29 @@
+id: "admission/skip/decide-ignored-site-uses-root-binding"
+specVersion: "0.1"
+clauses:
+  - CTX-14
+  - CTX-15
+  - CTX-16
+  - CTX-23
+  - BIND-13
+  - BIND-16
+  - EVAL-21
+  - RULE-50
+  - RULE-51
+  - RULE-54
+  - PROV-54
+  - PROV-55
+  - PROV-56
+description: "An unlisted site node is skipped, so the decision uses the root binding and not the binding of the listed site_001."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: site_999 } }
+feature: edge.route
+input: { facts: { order.paid: false } }
+expect:
+  effect: HOLD
+  skippedScopes: [{ scope: level, name: site, node: site_999, reason: UNKNOWN_NODE }]
+  binding: { level: global }
+  policy: paid_only
+  reason: { type: DEFAULT }
+  trace: [{ id: paid, matched: false, failed: { fact: order.paid, op: eq } }]

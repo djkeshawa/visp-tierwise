@@ -1,0 +1,6 @@
+id: neg-lint-naming-enum-value
+specVersion: "0.1"
+clauses: [LINT-20, LINT-19]
+description: "The set universe of shipping.methods is lower case and not checked, so naming/enum_value reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

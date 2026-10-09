@@ -1,0 +1,7 @@
+# Enforcers for admission and context clauses that no vector can observe (VEC-125).
+# No entry is needed. Every CTX clause, every runtime SCOPE clause and every PROV skippedScopes clause
+# is cited by an evaluate vector or by a compile case of another item. SCOPE-32 (catalog order does not
+# matter) is cited by the compile case hierarchy-valid-generated-catalog. SCOPE-37 (an unpaired surrogate
+# in a node ID) is cited by the evaluate vectors context-shape/*-unpaired-surrogate-open-node*, which
+# write the surrogate as a YAML escape (see README-edge-admission.md, "Unpaired surrogates").
+{}

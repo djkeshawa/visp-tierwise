@@ -1,0 +1,10 @@
+id: lint-naming-node-id
+specVersion: "0.1"
+clauses: [LINT-19, LINT-21]
+description: "A closed-catalog node ID that breaks the node_id pattern is reported at its sequence position in the catalog."
+expect:
+  findings:
+    - code: naming/node_id
+      file: "schema/core.yaml"
+      path: [decision_hierarchy, scopes, region, nodes, 2]
+      line: 4

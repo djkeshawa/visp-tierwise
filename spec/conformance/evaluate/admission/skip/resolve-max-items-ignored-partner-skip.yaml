@@ -1,0 +1,14 @@
+id: "admission/skip/resolve-max-items-ignored-partner-skip"
+specVersion: "0.1"
+clauses: [CTX-14, CTX-15, PROV-61]
+description: "A skipped service-sourced node under skip makes no provider call and leaves no failure entry in contributions."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-9 } }
+key: edge.max_items
+providers: { partner: { p-9: { values: { edge.enabled: false, edge.max_items: 999, edge.min_qty: 0 } } } }
+expect:
+  value: 50
+  contributions: [{ scope: level, name: global, value: 50, effect: WIDENED }]
+  skippedScopes: [{ scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }]
+  providerCalls: { partner: { p-9: 0 } }

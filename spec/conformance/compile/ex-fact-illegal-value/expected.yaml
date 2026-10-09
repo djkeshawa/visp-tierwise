@@ -1,0 +1,10 @@
+id: ex-fact-illegal-value
+specVersion: "0.1"
+clauses: [POL-39, FACT-35]
+description: "An example fact value that is not valid for the fact's type is an illegal fact value."
+expect:
+  findings:
+    - code: E_ILLEGAL_FACT_VALUE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "facts", "customer.active"]
+      line: 39

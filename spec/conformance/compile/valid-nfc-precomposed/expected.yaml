@@ -1,0 +1,6 @@
+id: valid-nfc-precomposed
+specVersion: "0.1"
+clauses: [NORM-1, TYPE-28, TYPE-29]
+description: "A string already in NFC compiles to the same bundle as its decomposed form in valid-base (NFC normalisation, NORM-1)."
+expect:
+  bundle: "../../bundles/edge-keys.json"

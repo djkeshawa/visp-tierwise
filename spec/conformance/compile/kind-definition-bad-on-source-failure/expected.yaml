@@ -1,0 +1,10 @@
+id: kind-definition-bad-on-source-failure
+specVersion: "0.1"
+clauses: [SVC-4, KIND-3]
+description: "A kind whose on_source_failure is neither skip nor deny is E_KIND_DEFINITION at on_source_failure."
+expect:
+  findings:
+    - code: E_KIND_DEFINITION
+      file: "schema/core.yaml"
+      path: [kinds, sf_bad, on_source_failure]
+      line: 32

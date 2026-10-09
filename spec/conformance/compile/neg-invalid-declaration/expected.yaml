@@ -1,0 +1,6 @@
+id: neg-invalid-declaration
+specVersion: "0.1"
+clauses: [KEY-5, SVC-3, SVC-4]
+description: "The baseline keys give on_source_failure only as skip or deny, and compile with no finding."
+expect:
+  bundle: ../../bundles/edge-kinds.json

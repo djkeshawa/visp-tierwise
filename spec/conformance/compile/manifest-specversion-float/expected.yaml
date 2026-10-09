@@ -1,0 +1,10 @@
+id: "manifest-specversion-float"
+specVersion: "0.1"
+clauses: ["MANIFEST-4","SRC-1","FIND-12"]
+description: "specVersion written as the YAML float 0.1 is not a string and is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["specVersion"]
+      line: 1

@@ -1,0 +1,10 @@
+id: fact-type-set
+specVersion: "0.1"
+clauses: [FACT-8]
+description: "A fact declared with the set type is reported as E_INVALID_DECLARATION at the type member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: schema/core.yaml
+      path: ["facts", "item.tags", "type"]
+      line: 15

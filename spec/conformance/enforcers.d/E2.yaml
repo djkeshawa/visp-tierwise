@@ -1,0 +1,5 @@
+# Enforcers for work item E2 (evaluate vectors for the axes area: AXIS, and the axis parts of PROV), VEC-125.
+# This file lists no clause. The AXIS clauses that an evaluator can observe are cited by vectors under
+# spec/conformance/evaluate/axes/. AXIS-3 to AXIS-6 and the compile half of AXIS-2 reject a declaration, and a compile
+# case can observe them, so VEC-125 allows no enforcer for them; they belong to the keys compile item.
+{}

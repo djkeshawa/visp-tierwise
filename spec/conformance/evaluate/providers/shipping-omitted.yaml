@@ -1,0 +1,17 @@
+id: providers/shipping-omitted
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-13, SVC-36, PROV-42]
+description: An omitted intersect key under deny is not a failure, so the root set stands alone.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: shipping.methods
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  value: [GROUND, PICKUP]
+  contributions:
+    - { scope: level, name: global, value: [GROUND, PICKUP], effect: NARROWED }
+  providerCalls: { tenant: { t-1: 1 } }

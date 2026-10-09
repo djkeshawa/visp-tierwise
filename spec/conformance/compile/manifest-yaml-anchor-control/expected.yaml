@@ -1,0 +1,6 @@
+id: "manifest-yaml-anchor-control"
+specVersion: "0.1"
+clauses: ["SRC-7","SRC-8"]
+description: "The manifest of manifest-yaml-anchor without the anchor compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

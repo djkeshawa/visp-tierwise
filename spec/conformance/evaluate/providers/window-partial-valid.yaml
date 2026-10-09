@@ -1,0 +1,18 @@
+id: providers/window-partial-valid
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-31, SVC-32, MERGE-11, MERGE-12, MERGE-23, PROV-28, PROV-53]
+description: A partial object from a provider is valid for a deep_merge key and is merged over the default field by field, with the tenant as source.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: profile.window
+providers:
+  tenant:
+    t-1:
+      values: { profile.window: { close: "17:00" } }
+expect:
+  value: { close: "17:00", open: "08:00" }
+  source: { scope: level, name: tenant, node: t-1 }
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: { close: "17:00" }, effect: SET }
+  providerCalls: { tenant: { t-1: 1 } }

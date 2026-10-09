@@ -1,0 +1,10 @@
+id: "src-nfc-duplicate-key"
+specVersion: "0.1"
+clauses: ["SRC-4","SRC-3","FIND-20","FIND-12"]
+description: "Two keys that are equal after NFC normalisation are duplicates, reported as E_DUPLICATE_KEY at the second one."
+expect:
+  findings:
+    - code: "E_DUPLICATE_KEY"
+      file: "schema/core.yaml"
+      path: ["naming","café"]
+      line: 14

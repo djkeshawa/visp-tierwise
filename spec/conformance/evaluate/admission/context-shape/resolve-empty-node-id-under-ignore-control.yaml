@@ -1,0 +1,13 @@
+id: "admission/context-shape/resolve-empty-node-id-under-ignore-control"
+specVersion: "0.1"
+clauses: [CTX-14, CTX-16, CTX-18]
+description: "With a valid node ID that the catalog does not list, the site scope is skipped as usual."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: s } }
+key: edge.tier
+expect:
+  value: SILVER
+  source: { scope: level, name: global }
+  contributions: [{ scope: level, name: global, value: SILVER, effect: SET }]
+  skippedScopes: [{ scope: level, name: site, node: s, reason: UNKNOWN_NODE }]

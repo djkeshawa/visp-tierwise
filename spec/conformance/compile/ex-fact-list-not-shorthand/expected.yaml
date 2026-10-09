@@ -1,0 +1,10 @@
+id: ex-fact-list-not-shorthand
+specVersion: "0.1"
+clauses: [POL-37, POL-45]
+description: "A list value on a single-value fact in an example is a FactSet structure violation."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "facts", "customer.active"]
+      line: 39

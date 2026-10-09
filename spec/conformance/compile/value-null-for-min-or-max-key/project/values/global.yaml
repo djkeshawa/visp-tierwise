@@ -1,0 +1,18 @@
+hold_flag: true
+max_lines: 100
+retry_count: -0
+fee_rate: "2.00"
+zone: US/Eastern
+greeting: "Café"
+allowed_methods: [NEXT_DAY, GROUND]
+tags: [vip, eu, vip]
+route_groups: [[north, south], []]
+window:
+  open: "09:00"
+contact:
+  name: Ann
+  phone: "555-0100"
+  Région: north
+courier: dhl
+handling_days: 0o17
+spare_slots:

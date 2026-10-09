@@ -1,0 +1,24 @@
+id: merge/all-several-exact
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-2, MERGE-13, MERGE-14, MERGE-16, MERGE-17, CTX-19, PROV-10, PROV-18, PROV-20, PROV-21, PROV-22, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: Identity values from a division and an account and a veto from a site combine to false, with every contribution listed in path order.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, site: s1, account: acct-1 } }
+key: merge.all_flag
+providers:
+  account:
+    acct-1:
+      values: { merge.all_flag: true }
+exact: true
+expect:
+  key: merge.all_flag
+  strategy: all
+  value: false
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: true, effect: IGNORED }
+    - { scope: level, name: site, node: s1, value: false, effect: VETO }
+    - { scope: level, name: account, node: acct-1, value: true, effect: IGNORED }
+  providerCalls: { account: { acct-1: 1 } }

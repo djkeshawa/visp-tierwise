@@ -1,0 +1,21 @@
+id: decide/effects/object-effect-rule
+specVersion: "0.1"
+clauses: [FEAT-11, PROV-66, PROV-65, RULE-47, RULE-48, RULE-49, PROV-62, PROV-74, PROV-78, PROV-83, PROV-18, PROV-64, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-80, PROV-82]
+description: "An object-form effect is returned as a complete object value when its rule matches."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.object_effect
+input:
+  facts: { order.status: HELD }
+exact: true
+expect:
+  feature: edge.object_effect
+  effect: { code: EXPEDITE, days: 1 }
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: expedite, name: "Order is held" }
+  trace:
+    - { id: expedite, matched: true }

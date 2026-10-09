@@ -1,0 +1,10 @@
+id: hierarchy-scope-values-service-on-axis
+specVersion: "0.1"
+clauses: ["SCOPE-26", "SCOPE-25"]
+description: "An axis that declares values: service is reported at the values member."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "seller", "values"]
+      line: 11

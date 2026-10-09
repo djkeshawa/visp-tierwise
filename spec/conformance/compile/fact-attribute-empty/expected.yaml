@@ -1,0 +1,10 @@
+id: fact-attribute-empty
+specVersion: "0.1"
+clauses: [FACT-3]
+description: "A fact name whose attribute part is empty is reported as E_INVALID_DECLARATION."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: schema/core.yaml
+      path: ["facts", "customer."]
+      line: 15

@@ -1,0 +1,19 @@
+id: facts/effects/object-winning-rule
+specVersion: "0.1"
+clauses: [FEAT-11, PROV-66, RULE-48, PROV-18]
+description: "A winning rule returns its object-form then, a complete object with the optional field present."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.object_quote
+input: { facts: { order.total: "2" }, children: { line: [ { line.kind: BULK } ] } }
+exact: true
+expect:
+  feature: edge.object_quote
+  effect: { amount: "10.5", note: bulk, tier: GOLD }
+  bundleVersion: sha256:f9de5c2b27288aae83c618a1e780f5a42837a47cdabe5f7c58b2fe5d96a193dc
+  skippedScopes: []
+  binding: { level: global }
+  policy: quote
+  reason: { type: RULE, id: bulk-gold, name: A bulk line earns gold }
+  trace:
+    - { id: bulk-gold, matched: true }

@@ -1,0 +1,10 @@
+id: "src-null-schema-member"
+specVersion: "0.1"
+clauses: ["SRC-45","FIND-12"]
+description: "A top-level schema member whose value is null is reported as E_INVALID_DECLARATION at that member."
+expect:
+  findings:
+    - code: "E_INVALID_DECLARATION"
+      file: "schema/core.yaml"
+      path: ["facts"]
+      line: 12

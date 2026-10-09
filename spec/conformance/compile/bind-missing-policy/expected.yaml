@@ -1,0 +1,10 @@
+id: bind-missing-policy
+specVersion: "0.1"
+clauses: [BIND-4, FEAT-2]
+description: "A binding without a policy entry is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "south"]
+      line: 34

@@ -1,0 +1,10 @@
+id: fact-has-many-parent
+specVersion: "0.1"
+clauses: [RULE-12, FACT-15, ENTITY-12]
+description: "A fact of an entity that names the decided entity in has_many, and is not its ancestor, is reported as E_FACT_NOT_IN_SCOPE."
+expect:
+  findings:
+    - code: E_FACT_NOT_IN_SCOPE
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 0, "when", "invoice.locked"]
+      line: 13

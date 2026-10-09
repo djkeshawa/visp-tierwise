@@ -1,0 +1,10 @@
+id: value-set-member-not-in-universe
+specVersion: "0.1"
+clauses: [TYPE-47, TYPE-48, TYPE-50]
+description: "A set member that is not in universe is E_NOT_IN_UNIVERSE at the member (TYPE-48)."
+expect:
+  findings:
+    - code: E_NOT_IN_UNIVERSE
+      file: "values/global.yaml"
+      path: ["allowed_methods", 1]
+      line: 7

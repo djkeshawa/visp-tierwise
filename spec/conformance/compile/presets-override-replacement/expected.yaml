@@ -1,0 +1,10 @@
+id: "presets-override-replacement"
+specVersion: "0.1"
+clauses: ["MANIFEST-31","MANIFEST-32","MANIFEST-34","SRC-38","LINT-4","LINT-7","LINT-49","LINT-50","FIND-6","FIND-13","FIND-18","FIND-2"]
+description: "A kind that a later preset defines again is reported once by presets/override at the replacing definition, and the validation does not fail."
+expect:
+  findings:
+    - code: "presets/override"
+      file: "presets/second.yaml"
+      path: ["kinds","strict"]
+      line: 2

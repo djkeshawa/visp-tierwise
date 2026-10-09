@@ -1,0 +1,15 @@
+id: facts/decimal/child-any-of-two
+specVersion: "0.1"
+clauses: [RULE-32, RULE-16]
+description: "any_in on a decimal child fact holds when one child matches, even when another child does not."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "9" }, children: { line: [ { line.amount: "9" }, { line.amount: "2.5" } ] } }
+expect:
+  effect: HIT
+  reason: { type: RULE, id: line-amount-probe, name: A line amount is 2.5 }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: false, failed: { fact: order.total, op: in } }
+    - { id: line-amount-probe, matched: true }

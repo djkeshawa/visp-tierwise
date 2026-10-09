@@ -1,0 +1,16 @@
+id: "admission/skip/decide-omitted-site-control"
+specVersion: "0.1"
+clauses: [CTX-21, BIND-16, PROV-56]
+description: "Without a site entry the division binding is selected, and skippedScopes is empty."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: south } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: HOLD
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: manual
+  reason: { type: DEFAULT }
+  trace: []

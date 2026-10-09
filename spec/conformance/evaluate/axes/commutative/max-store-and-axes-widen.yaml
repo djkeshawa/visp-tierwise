@@ -1,0 +1,15 @@
+id: axes/commutative/max-store-and-axes-widen
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-13, MERGE-14, MERGE-17, AXIS-1, AXIS-2, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-37, PROV-38, EVAL-7, CTX-19]
+description: The largest integer over the root, a level and two axes is the result, and each contributing scope is labelled WIDENED.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { store: s2 }, axes: { seller: acme, channel: shop } }
+key: axes.commutative.peak
+expect:
+  value: 25
+  contributions:
+    - { scope: level, name: global, value: 10, effect: WIDENED }
+    - { scope: level, name: store, node: s2, value: 25, effect: WIDENED }
+    - { scope: axis, name: seller, node: acme, value: 20, effect: WIDENED }
+    - { scope: axis, name: channel, node: shop, value: 15, effect: WIDENED }

@@ -1,0 +1,10 @@
+id: "manifest-sources-not-mapping"
+specVersion: "0.1"
+clauses: ["MANIFEST-10","FIND-12"]
+description: "sources written as a sequence is reported as E_MANIFEST at sources."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["sources"]
+      line: 2

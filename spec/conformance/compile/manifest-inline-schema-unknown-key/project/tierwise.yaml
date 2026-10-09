@@ -1,0 +1,23 @@
+specVersion: "0.1"
+schema:
+  decision_hierarchy:
+    levels: [global, region]
+    scopes:
+      region:
+        nodes: ["1", no, off, on, yes]
+        on_unknown_node: error
+  keys:
+    checkout.allowed:
+      type: boolean
+      combine: any
+      settable_at: [global, region]
+  labels:
+    owner: docs
+values:
+  global:
+    checkout.allowed: true
+  region:
+    no:
+      checkout.allowed: true
+    yes:
+      checkout.allowed: true

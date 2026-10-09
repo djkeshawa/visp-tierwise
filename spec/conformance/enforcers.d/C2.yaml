@@ -1,0 +1,5 @@
+# Enforcers for work item C2 (compile cases: hierarchy, scopes and entities), VEC-125.
+# No entry is needed. Every SCOPE and ENTITY clause that a compile case can observe is cited
+# by one, and SCOPE-37 is already listed by E4. SCOPE-11 and ENTITY-10 are open for the
+# reviewer (see README-edge-hierarchy.md), because a vector can observe them.
+{}

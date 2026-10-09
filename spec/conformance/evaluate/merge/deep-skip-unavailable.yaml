@@ -1,0 +1,27 @@
+id: merge/deep-skip-unavailable
+specVersion: "0.1"
+clauses: [EVAL-39, MERGE-15, MERGE-23, MERGE-25, PROV-30, PROV-32, PROV-39, PROV-53, SVC-8, SVC-23, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14, PROV-8, PROV-27]
+description: An unavailable account provider under skip adds nothing, so the division partial object is merged over the default and the division is the source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-2 } }
+key: merge.window
+providers:
+  account:
+    acct-2:
+      fail: unavailable
+exact: true
+expect:
+  key: merge.window
+  strategy: deep_merge
+  value:
+    closed_days: [SUN]
+    hours: { close: "15:00", open: "08:00" }
+    label: standard
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: { hours: { close: "15:00" } }, effect: SET }
+    - { scope: level, name: account, node: acct-2, effect: UNAVAILABLE, onSourceFailure: skip }
+  source: { scope: level, name: division, node: north }
+  providerCalls: { account: { acct-2: 1 } }

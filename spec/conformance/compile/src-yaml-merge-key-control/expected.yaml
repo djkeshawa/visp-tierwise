@@ -1,0 +1,6 @@
+id: "src-yaml-merge-key-control"
+specVersion: "0.1"
+clauses: ["SRC-2"]
+description: "The quoted key \"<<\" is an ordinary string key, so the schema file of src-yaml-merge-key compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

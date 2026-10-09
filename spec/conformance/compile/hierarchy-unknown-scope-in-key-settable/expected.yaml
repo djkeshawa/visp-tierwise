@@ -1,0 +1,10 @@
+id: hierarchy-unknown-scope-in-key-settable
+specVersion: "0.1"
+clauses: ["SCOPE-46", "KEY-6"]
+description: "A key settable_at entry that names an undeclared scope is reported at that entry."
+expect:
+  findings:
+    - code: E_UNKNOWN_SCOPE
+      file: "schema/model.yaml"
+      path: ["keys", "checkout.open", "settable_at", 3]
+      line: 28

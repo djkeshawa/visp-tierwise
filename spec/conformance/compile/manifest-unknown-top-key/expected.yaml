@@ -1,0 +1,10 @@
+id: "manifest-unknown-top-key"
+specVersion: "0.1"
+clauses: ["MANIFEST-3","FIND-5","FIND-7","FIND-12"]
+description: "A manifest top-level key outside the allowed list is reported as E_MANIFEST and no bundle is written."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["owner"]
+      line: 2

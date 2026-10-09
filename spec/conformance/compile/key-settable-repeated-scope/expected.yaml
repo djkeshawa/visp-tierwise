@@ -1,0 +1,10 @@
+id: key-settable-repeated-scope
+specVersion: "0.1"
+clauses: [KEY-7, TYPE-52]
+description: "A scope name repeated in settable_at is E_DUPLICATE_VALUE at the repeated (later) item (KEY-7)."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "settable_at", 1]
+      line: 28

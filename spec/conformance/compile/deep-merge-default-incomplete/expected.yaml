@@ -1,0 +1,10 @@
+id: deep-merge-default-incomplete
+specVersion: "0.1"
+clauses: [MERGE-10, MERGE-9, TYPE-62, TYPE-63]
+description: "A deep_merge starting value missing a required field gives E_TYPE_MISMATCH at the default object (MERGE-10)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "schema/keys.yaml"
+      path: ["keys", "window", "default"]
+      line: 91

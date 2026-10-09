@@ -1,0 +1,17 @@
+id: facts/text/note-nfc-matches
+specVersion: "0.1"
+clauses: [NORM-6, RULE-35, FACT-36]
+description: "A string fact in NFC equal to a NFC literal matches the condition, so the rule holds."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: "caf\u00e9", order.total: "2" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: note-cafe, name: Note is cafe }
+  policy: gate
+  trace:
+    - { id: exact-total, matched: false, failed: { fact: order.total, op: eq } }
+    - { id: label-cafe, matched: false, failed: { fact: order.label, op: eq } }
+    - { id: bulk-line-active, matched: false, failed: { fact: line.kind, op: any_in } }
+    - { id: note-cafe, matched: true }

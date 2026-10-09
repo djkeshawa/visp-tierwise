@@ -1,0 +1,10 @@
+id: kind-deny-bound-required
+specVersion: "0.1"
+clauses: [SVC-12]
+description: "A min key with deny settable at a service-sourced level and no min bound is E_DENY_BOUND_REQUIRED at its declaration."
+expect:
+  findings:
+    - code: E_DENY_BOUND_REQUIRED
+      file: "schema/core.yaml"
+      path: [keys, access.seat_cap]
+      line: 96

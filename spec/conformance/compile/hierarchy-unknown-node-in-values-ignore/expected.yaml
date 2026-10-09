@@ -1,0 +1,10 @@
+id: hierarchy-unknown-node-in-values-ignore
+specVersion: "0.1"
+clauses: ["SCOPE-43", "SCOPE-44"]
+description: "A values node that a generated closed catalog with on_unknown_node: ignore does not list is still reported at compile time."
+expect:
+  findings:
+    - code: E_UNKNOWN_NODE
+      file: "values/scopes.yaml"
+      path: ["site", "s9"]
+      line: 7

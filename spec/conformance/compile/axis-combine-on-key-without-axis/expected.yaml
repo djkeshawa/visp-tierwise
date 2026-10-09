@@ -1,0 +1,10 @@
+id: axis-combine-on-key-without-axis
+specVersion: "0.1"
+clauses: [AXIS-6, AXIS-1]
+description: "A key settable on no axis that declares combine_across_axes is E_AXIS_COMBINE_INVALID at the member (AXIS-6)."
+expect:
+  findings:
+    - code: E_AXIS_COMBINE_INVALID
+      file: "schema/keys.yaml"
+      path: ["keys", "greeting", "combine_across_axes"]
+      line: 50

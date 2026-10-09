@@ -1,0 +1,6 @@
+id: "src-kind-declared-twice-files-control"
+specVersion: "0.1"
+clauses: ["SRC-43","KIND-1"]
+description: "The second schema file of src-kind-declared-twice-files, empty, leaves one kind declaration and compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

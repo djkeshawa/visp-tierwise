@@ -1,0 +1,16 @@
+id: "admission/context-shape/decide-levels-not-a-map-control"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-21, BIND-16]
+description: "With a levels map in place of null the same decide succeeds and selects the division binding."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: south } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: HOLD
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: manual
+  reason: { type: DEFAULT }
+  trace: []

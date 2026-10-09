@@ -1,0 +1,20 @@
+id: decide/precheck/precheck-forward-omitted-children
+specVersion: "0.1"
+clauses: [RULE-40, RULE-42, RULE-43, RULE-44, FACT-17, PROV-72, PROV-76, PROV-77, PROV-84, PROV-62, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52]
+description: "A first rule that would match is not checked when the precheck finds the omitted child fact line.kind missing, so the result is if_fact_missing with MISSING_FACT."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.precheck_forward
+input:
+  facts: { account.active: true, order.priority: 3 }
+exact: true
+expect:
+  feature: edge.precheck_forward
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: MISSING_FACT, facts: [line.kind] }
+  trace: []

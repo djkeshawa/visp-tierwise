@@ -1,0 +1,22 @@
+id: merge/deep-root-then-partial
+specVersion: "0.1"
+clauses: [MERGE-10, MERGE-11, MERGE-22, MERGE-23, PROV-25, PROV-34, PROV-46, PROV-53, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: With no default, the root value starts the fold and a division partial object is merged over it, so the result has no default fill.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.window_no_default
+exact: true
+expect:
+  key: merge.window_no_default
+  strategy: deep_merge
+  value:
+    closed_days: [SAT, SUN]
+    hours: { close: "15:00", open: "09:00" }
+    label: root
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: global, value: { closed_days: [SAT, SUN], hours: { close: "17:00", open: "09:00" }, label: root }, effect: SET }
+    - { scope: level, name: division, node: north, value: { hours: { close: "15:00" } }, effect: SET }
+  source: { scope: level, name: division, node: north }

@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-unpaired-surrogate-open-node"
+specVersion: "0.1"
+clauses: [SCOPE-37, CTX-6, NORM-8, EVAL-30]
+description: "A node ID that ends in an unpaired high surrogate raises E_CONTEXT_INVALID in an open catalog."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: "x\uD83D" } }
+key: edge.min_qty
+expect: { error: E_CONTEXT_INVALID }

@@ -1,0 +1,23 @@
+id: merge/intersect-several-exact
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-13, MERGE-14, MERGE-16, MERGE-17, CTX-19, PROV-10, PROV-18, PROV-37, PROV-38, PROV-45, PROV-86, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: A division subset and an account subset both narrow the intersect, so only the common member remains.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-1 } }
+key: merge.regions
+providers:
+  account:
+    acct-1:
+      values: { merge.regions: [green, blue] }
+exact: true
+expect:
+  key: merge.regions
+  strategy: intersect
+  value: [green]
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: [red, green], effect: NARROWED }
+    - { scope: level, name: account, node: acct-1, value: [green, blue], effect: NARROWED }
+  providerCalls: { account: { acct-1: 1 } }

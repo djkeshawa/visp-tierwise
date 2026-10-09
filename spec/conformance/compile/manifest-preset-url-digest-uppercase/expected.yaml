@@ -1,0 +1,10 @@
+id: "manifest-preset-url-digest-uppercase"
+specVersion: "0.1"
+clauses: ["MANIFEST-26","FIND-20","FIND-12"]
+description: "A URL preset digest with uppercase hexadecimal digits breaks the shape of the reference and is reported as E_MANIFEST at sha256."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["extends",0,"sha256"]
+      line: 4

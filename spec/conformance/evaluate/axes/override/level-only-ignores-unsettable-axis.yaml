@@ -1,0 +1,14 @@
+id: axes/override/level-only-ignores-unsettable-axis
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-19, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-43, PROV-45, PROV-46, PROV-47, PROV-50, EVAL-7, CTX-19]
+description: A key not settable on any axis gets no contribution from a supplied axis, so the store level value is the result and the axis is absent from contributions.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north, store: s1 }, axes: { seller: acme } }
+key: axes.override.level_only
+expect:
+  value: s1-level
+  contributions:
+    - { scope: level, name: region, node: north, value: north-level, effect: SET }
+    - { scope: level, name: store, node: s1, value: s1-level, effect: SET }
+  source: { scope: level, name: store, node: s1 }

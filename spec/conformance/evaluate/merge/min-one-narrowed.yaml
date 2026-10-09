@@ -1,0 +1,12 @@
+id: merge/min-one-narrowed
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-14, MERGE-17, PROV-37, PROV-38]
+description: One integer from a division is labelled NARROWED, and the min key takes that integer.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north } }
+key: merge.floor
+expect:
+  value: 100
+  contributions:
+    - { scope: level, name: division, node: north, value: 100, effect: NARROWED }

@@ -1,0 +1,14 @@
+id: facts/effects/nullable-rule-null
+specVersion: "0.1"
+clauses: [FEAT-9, PROV-65, PROV-66, RULE-48]
+description: "A rule whose then is null returns the null effect of a nullable enum, with reason RULE."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.nullable_effect
+input: { facts: { order.label: tea } }
+expect:
+  effect: null
+  reason: { type: RULE, id: tea-clears, name: Tea clears the effect }
+  policy: pick
+  trace:
+    - { id: tea-clears, matched: true }

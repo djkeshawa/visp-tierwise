@@ -1,0 +1,6 @@
+id: "ns-selected-by-namespaces-only"
+specVersion: "0.1"
+clauses: ["NS-8","NS-3","NS-6","NS-11","MANIFEST-1","FIND-8"]
+description: "A namespaced schema file that no pattern selects still contributes, through its namespaces entry, and gives the namespaced bundle."
+expect:
+  bundle: "../../bundles/edge-manifest-namespaced.json"

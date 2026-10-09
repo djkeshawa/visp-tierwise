@@ -1,0 +1,10 @@
+id: pol-setting-default-null
+specVersion: "0.1"
+clauses: [POL-18, POL-17]
+description: "A null setting default is an invalid setting."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "settings", "allowed_on_credit_hold", "default"]
+      line: 6

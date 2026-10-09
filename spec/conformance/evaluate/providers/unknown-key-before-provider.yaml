@@ -1,0 +1,15 @@
+id: providers/unknown-key-before-provider
+specVersion: "0.1"
+clauses: [EVAL-16, EVAL-20, EVAL-34, SVC-17]
+description: An undeclared key raises E_UNKNOWN_KEY at the lookup step, before any provider call.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: no.such.key
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  error: E_UNKNOWN_KEY
+  providerCalls: { tenant: { t-1: 0 } }

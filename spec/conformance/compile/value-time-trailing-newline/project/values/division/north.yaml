@@ -1,0 +1,9 @@
+max_lines: 500
+fee_rate: "+007.100"
+opens_at: "09:15\n"
+priority: HIGH
+allowed_methods: []
+lead_hours: 6
+window:
+  close: "15:00"
+division_hint: ""

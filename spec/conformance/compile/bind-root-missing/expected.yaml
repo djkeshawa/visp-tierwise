@@ -1,0 +1,10 @@
+id: bind-root-missing
+specVersion: "0.1"
+clauses: [BIND-13, BIND-2]
+description: "A feature whose rules file gives no root binding has no root binding."
+expect:
+  findings:
+    - code: E_ROOT_BINDING_MISSING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings"]
+      line: 30

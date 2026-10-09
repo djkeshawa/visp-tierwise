@@ -1,0 +1,6 @@
+id: feat-hit-policy-last-ok
+specVersion: "0.1"
+clauses: [FEAT-15, FEAT-16]
+description: "Negative control of feat-hit-policy-last: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

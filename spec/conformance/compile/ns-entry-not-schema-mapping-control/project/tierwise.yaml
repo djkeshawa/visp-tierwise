@@ -1,0 +1,10 @@
+specVersion: "0.1"
+sources:
+  schema:
+    - "schema/core.yaml"
+  values:
+    - file: "values/root.yaml"
+      scope: global
+    - file: "values/regions.yaml"
+namespaces:
+  pos: {schema: "schema/pos.yaml"}

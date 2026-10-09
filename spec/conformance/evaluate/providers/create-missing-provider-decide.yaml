@@ -1,0 +1,13 @@
+id: providers/create-missing-provider-decide
+specVersion: "0.1"
+clauses: [EVAL-4, EVAL-8, EVAL-26, SVC-14]
+description: The same creation check applies before decide, so a missing provider for a service level makes create evaluator raise E_PROVIDER_MISSING.
+call: decide
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+feature: order.express_allowed
+input: { facts: { order.express: true } }
+providers:
+  seat: none
+expect:
+  error: E_PROVIDER_MISSING

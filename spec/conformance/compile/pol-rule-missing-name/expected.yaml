@@ -1,0 +1,10 @@
+id: pol-rule-missing-name
+specVersion: "0.1"
+clauses: [POL-21, FEAT-2]
+description: "A rule without name is an invalid declaration at the rule."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 0]
+      line: 9

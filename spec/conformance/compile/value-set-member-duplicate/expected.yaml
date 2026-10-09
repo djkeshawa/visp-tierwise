@@ -1,0 +1,10 @@
+id: value-set-member-duplicate
+specVersion: "0.1"
+clauses: [TYPE-46, TYPE-52, TYPE-47]
+description: "A set value that repeats a member is E_DUPLICATE_VALUE at the repeated (later) member (TYPE-46, TYPE-52)."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "values/global.yaml"
+      path: ["allowed_methods", 2]
+      line: 7

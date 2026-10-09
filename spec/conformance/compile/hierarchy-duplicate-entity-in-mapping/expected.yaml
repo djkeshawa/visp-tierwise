@@ -1,0 +1,10 @@
+id: hierarchy-duplicate-entity-in-mapping
+specVersion: "0.1"
+clauses: ["ENTITY-3", "SRC-3"]
+description: "An entity name repeated in one entity_hierarchy mapping is E_DUPLICATE_KEY at the second occurrence."
+expect:
+  findings:
+    - code: E_DUPLICATE_KEY
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "customer"]
+      line: 21

@@ -1,0 +1,10 @@
+id: key-missing-default
+specVersion: "0.1"
+clauses: [MERGE-7, MERGE-1]
+description: "An order-dependent key with neither default nor root value gives E_MISSING_DEFAULT at the key declaration (FIND-23)."
+expect:
+  findings:
+    - code: E_MISSING_DEFAULT
+      file: "schema/keys.yaml"
+      path: ["keys", "lead_hours"]
+      line: 101

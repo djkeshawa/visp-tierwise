@@ -1,0 +1,10 @@
+id: facts/check-order/resolve-unknown-node-before-lookup
+specVersion: "0.1"
+clauses: [EVAL-16, EVAL-33, CTX-10, CTX-12]
+description: "An unlisted division node is rejected by context validation before the undeclared key is looked up."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: north-pole } }
+key: checkout.unknown
+expect:
+  error: E_UNKNOWN_NODE

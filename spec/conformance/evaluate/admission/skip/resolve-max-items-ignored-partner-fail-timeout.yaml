@@ -1,0 +1,14 @@
+id: "admission/skip/resolve-max-items-ignored-partner-fail-timeout"
+specVersion: "0.1"
+clauses: [CTX-15, SVC-17, PROV-61, PROV-42, SVC-39]
+description: "A skipped service-sourced node whose stub would time out under skip is not called, so the global value stands with no failure entry."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-9 } }
+key: edge.max_items
+providers: { partner: { p-9: { fail: timeout } } }
+expect:
+  value: 50
+  contributions: [{ scope: level, name: global, value: 50, effect: WIDENED }]
+  skippedScopes: [{ scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }]
+  providerCalls: { partner: { p-9: 0 } }

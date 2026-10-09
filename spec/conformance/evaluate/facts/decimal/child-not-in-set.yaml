@@ -1,0 +1,15 @@
+id: facts/decimal/child-not-in-set
+specVersion: "0.1"
+clauses: [RULE-16, RULE-37]
+description: "A child decimal \"2.51\" is not a member of the child literal list, so the default applies."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "9" }, children: { line: [ { line.amount: "2.51" } ] } }
+expect:
+  effect: IGNORED
+  reason: { type: DEFAULT }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: false, failed: { fact: order.total, op: in } }
+    - { id: line-amount-probe, matched: false, failed: { fact: line.amount, op: any_in } }

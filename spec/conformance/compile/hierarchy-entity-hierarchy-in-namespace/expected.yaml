@@ -1,0 +1,10 @@
+id: hierarchy-entity-hierarchy-in-namespace
+specVersion: "0.1"
+clauses: ["ENTITY-2", "NS-4"]
+description: "An entity_hierarchy in a namespaced schema file is reported at that key, and the entity is not declared."
+expect:
+  findings:
+    - code: E_NAMESPACE_VIOLATION
+      file: "schema/checkout.yaml"
+      path: ["entity_hierarchy"]
+      line: 2

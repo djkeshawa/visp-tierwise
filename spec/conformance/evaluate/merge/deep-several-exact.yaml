@@ -1,0 +1,31 @@
+id: merge/deep-several-exact
+specVersion: "0.1"
+clauses: [MERGE-9, MERGE-11, MERGE-12, MERGE-13, MERGE-16, MERGE-22, MERGE-23, MERGE-25, MERGE-26, CTX-19, PROV-10, PROV-28, PROV-34, PROV-46, PROV-47, PROV-53, SVC-32, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: Partial values from a division, a site and a complete optional exception from an account merge field by field, and the account is the source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, site: s1, account: acct-1 } }
+key: merge.window
+providers:
+  account:
+    acct-1:
+      values:
+        merge.window: { label: vip, exception: { from: "12:00", to: "13:00" } }
+exact: true
+expect:
+  key: merge.window
+  strategy: deep_merge
+  value:
+    closed_days: [MON]
+    hours: { close: "15:00", open: "07:30" }
+    label: vip
+    slot_minutes: 15
+    exception: { from: "12:00", to: "13:00" }
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: north, value: { hours: { close: "15:00" } }, effect: SET }
+    - { scope: level, name: site, node: s1, value: { closed_days: [MON], hours: { open: "07:30" }, slot_minutes: 15 }, effect: SET }
+    - { scope: level, name: account, node: acct-1, value: { label: vip, exception: { from: "12:00", to: "13:00" } }, effect: SET }
+  source: { scope: level, name: account, node: acct-1 }
+  providerCalls: { account: { acct-1: 1 } }

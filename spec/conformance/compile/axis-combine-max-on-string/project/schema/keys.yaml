@@ -1,0 +1,140 @@
+decision_hierarchy:
+  levels: [global, division, account]
+  axes: [seller]
+  scopes:
+    division: { nodes: [north, south], on_unknown_node: error }
+    account: { nodes: open, values: service }
+    seller: { nodes: [acme], on_unknown_node: error }
+keys:
+  hold_flag:
+    type: boolean
+    combine: all
+    settable_at: [global, division]
+  max_lines:
+    type: integer
+    min: 1
+    max: 500
+    combine: max
+    settable_at: [global, division]
+  retry_count:
+    type: integer
+    combine: max
+    settable_at: [global, seller]
+  spare_slots:
+    type: integer
+    min: 5
+    max: 10
+    combine: max
+    settable_at: [global]
+  fee_rate:
+    type: decimal
+    combine: override
+    default: "1.50"
+    settable_at: [global, division]
+  opens_at:
+    type: string
+    format: time_hhmm
+    combine: override
+    default: "08:00"
+    settable_at: [global, division]
+  zone:
+    type: string
+    format: iana_tz
+    combine: override
+    default: "Europe/London"
+    settable_at: [global]
+  greeting:
+    type: string
+    combine: override
+    settable_at: [global]
+    description: Shown on the start page.
+    owner: commerce
+  allowed_methods:
+    type: set
+    universe: [GROUND, PICKUP, NEXT_DAY]
+    combine: union
+    settable_at: [global, division]
+  priority:
+    type: enum
+    values: [LOW, HIGH]
+    combine: override
+    default: LOW
+    settable_at: [global, division]
+  blocked_codes:
+    type: list
+    items: { type: string }
+    combine: override
+    default: []
+    settable_at: [global]
+  tags:
+    type: list
+    items: { type: string }
+    combine: override
+    settable_at: [global]
+  route_groups:
+    type: list
+    items: { type: list, items: { type: string } }
+    combine: override
+    settable_at: [global]
+  window:
+    type: object
+    fields:
+      open: { type: string, format: time_hhmm }
+      close: { type: string, format: time_hhmm }
+      slot:
+        type: object
+        optional: true
+        fields:
+          open: { type: string, format: time_hhmm }
+          close: { type: string, format: time_hhmm }
+    combine: deep_merge
+    default: { open: "08:00", close: "18:00" }
+    settable_at: [global, division]
+  contact:
+    type: object
+    fields:
+      name: { type: string }
+      phone: { type: string }
+      Région: { type: string }
+    combine: override
+    settable_at: [global]
+  lead_hours:
+    type: integer
+    min: 0
+    max: 168
+    combine: override
+    default: 4
+    settable_at: [global, division, seller]
+    combine_across_axes: max
+  courier:
+    type: string
+    combine: override
+    default: post
+    settable_at: [global, seller]
+    combine_across_axes: max
+  handling_days:
+    type: integer
+    min: 0
+    max: 30
+    combine: override
+    default: 2
+    settable_at: [global, seller]
+    combine_across_axes: min
+    on_source_failure: deny
+  label_source:
+    type: string
+    combine: override
+    default: catalog
+    settable_at: [global, seller]
+    combine_across_axes: hierarchy_wins
+  plan_tier:
+    type: string
+    combine: override
+    default: free
+    settable_at: [global, account]
+    on_source_failure: skip
+  division_hint:
+    type: string
+    combine: override
+    default: none
+    settable_at: [division]

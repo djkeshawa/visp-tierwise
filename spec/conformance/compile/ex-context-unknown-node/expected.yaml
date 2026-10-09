@@ -1,0 +1,10 @@
+id: ex-context-unknown-node
+specVersion: "0.1"
+clauses: [POL-44, CTX-12]
+description: "An example context that names a node the closed catalog does not list is an unknown node."
+expect:
+  findings:
+    - code: E_UNKNOWN_NODE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "context", "levels", "division"]
+      line: 38

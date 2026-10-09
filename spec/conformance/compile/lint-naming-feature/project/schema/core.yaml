@@ -1,0 +1,147 @@
+decision_hierarchy:
+  levels: [global, region, account]
+  scopes:
+    region: { nodes: [north, south], on_unknown_node: error }
+    account: { nodes: open, values: service }
+
+entity_hierarchy:
+  order: { has_many: item }
+  item: {}
+
+facts:
+  order.Paid:
+    type: boolean
+    description: "The order is paid in full."
+  order.stage:
+    type: enum
+    values: [CLOSED, OPEN]
+    description: "Whether the order is still open."
+  item.stock:
+    type: enum
+    values: [DROP_SHIP, SPECIAL, STOCKED]
+    description: "How the item is supplied."
+
+kinds:
+  flag: { strategies: [all, any] }
+  narrow: { strategies: [all], narrowing_only: true }
+  defaulted: { strategies: [override], require_default: true }
+  sfkind: { on_source_failure: skip }
+  kn: { naming: kind_key }
+  unused_empty: { strategies: [all] }
+  narrow_bad: { strategies: [all, intersect], narrowing_only: true }
+  sf_bad: { on_source_failure: skip }
+
+naming:
+  key:
+    category: key
+    pattern: '^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$'
+    description: "Keys have at least two dot-separated segments of lowercase letters, digits and underscores."
+  kind_key:
+    category: key
+    pattern: '\.[a-z_]+_flag$'
+    description: "Keys of the kind kn end in _flag."
+  enum_value:
+    category: enum_value
+    pattern: '^[A-Z][A-Z0-9_]*$'
+    description: "Enum values are upper-case letters, digits and underscores."
+  node_id:
+    category: node_id
+    pattern: '^[a-z][a-z0-9_]*$'
+    description: "Node IDs are lowercase letters, digits and underscores."
+  feature:
+    category: feature
+    pattern: '^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$'
+    description: "Feature names have at least two dot-separated segments."
+
+keys:
+  access.enabled:
+    type: boolean
+    combine: all
+    settable_at: [global, region]
+    kind: flag
+    description: "Access is granted when every scope allows it."
+    owner: access-team
+  access.allowed:
+    type: boolean
+    combine: all
+    settable_at: [global, region]
+    kind: narrow
+    on_source_failure: deny
+    description: "Access is allowed unless a narrower scope removes it."
+    owner: access-team
+  quota.max_seats:
+    type: integer
+    min: 0
+    max: 100
+    combine: override
+    default: 4
+    settable_at: [global, region]
+    kind: defaulted
+    description: "Seats available to one account."
+    owner: billing-team
+  access.audit_on:
+    type: boolean
+    combine: all
+    settable_at: [global, region, account]
+    kind: sfkind
+    description: "Audit logging is on when every scope allows it."
+    owner: audit-team
+  access.partner_gate:
+    type: boolean
+    combine: all
+    settable_at: [global, region, account]
+    on_source_failure: skip
+    description: "A partner gate that a service-sourced account level can close."
+    owner: partner-team
+  access.seat_cap:
+    type: integer
+    min: 0
+    max: 100
+    combine: min
+    settable_at: [global, region, account]
+    on_source_failure: deny
+    description: "Seat cap that a service-sourced account level can lower."
+    owner: billing-team
+  access.emergency:
+    type: boolean
+    combine: all
+    settable_at: [global, account]
+    on_source_failure: deny
+    description: "Emergency access that an account level can revoke."
+    owner: access-team
+  access.beta:
+    type: boolean
+    combine: all
+    settable_at: [global]
+    kind: flag
+    description: "Beta access for the whole product."
+    owner: product-team
+  search.ranked_flag:
+    type: boolean
+    combine: all
+    settable_at: [global]
+    kind: kn
+    description: "Ranked search results are enabled."
+    owner: search-team
+  search.fallback_on:
+    type: boolean
+    combine: any
+    settable_at: [global, region]
+    description: "The fallback search is used when the ranked search fails."
+    owner: search-team
+  shipping.methods:
+    type: set
+    universe: [ground, pickup]
+    combine: union
+    settable_at: [global]
+    description: "Shipping methods offered to buyers."
+    owner: shipping-team
+
+features:
+  Order.submission:
+    description: "Whether an order may be submitted."
+    decided_per: order
+    returns: { enum: [ALLOW, DENY] }
+    hit_policy: FIRST
+    binding_settable_at: [global, region]
+    if_fact_missing: DENY

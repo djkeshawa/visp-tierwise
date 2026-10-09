@@ -1,0 +1,18 @@
+id: providers/theme-invalid-integer
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-8, SVC-31, SVC-34, PROV-30, PROV-40, PROV-48, TYPE-28]
+description: An integer where a string is declared fails validation as INVALID, and under skip it contributes no value.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: display.theme
+providers:
+  tenant:
+    t-1:
+      values: { display.theme: 42 }
+expect:
+  value: light
+  source: DEFAULT
+  contributions:
+    - { scope: level, name: tenant, node: t-1, effect: INVALID, onSourceFailure: skip }
+  providerCalls: { tenant: { t-1: 1 } }

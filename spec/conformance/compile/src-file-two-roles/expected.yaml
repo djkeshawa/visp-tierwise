@@ -1,0 +1,10 @@
+id: "src-file-two-roles"
+specVersion: "0.1"
+clauses: ["SRC-20","SRC-12","FIND-22","FIND-12"]
+description: "A file that a schema pattern and a values entry both select is reported as E_SOURCE_MAPPING at the values entry."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "tierwise.yaml"
+      path: ["sources","values",2]
+      line: 9

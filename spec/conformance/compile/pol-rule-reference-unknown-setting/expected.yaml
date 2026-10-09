@@ -1,0 +1,10 @@
+id: pol-rule-reference-unknown-setting
+specVersion: "0.1"
+clauses: [POL-26, RULE-22]
+description: "A setting reference in a condition that names no setting of the policy is an unknown setting."
+expect:
+  findings:
+    - code: E_UNKNOWN_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 1, "when", "item.stock_type", "all_in"]
+      line: 20

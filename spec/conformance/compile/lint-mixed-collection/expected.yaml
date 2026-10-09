@@ -1,0 +1,10 @@
+id: lint-mixed-collection
+specVersion: "0.1"
+clauses: [LINT-32, LINT-36, LINT-33]
+description: "A policy with an all_in rule and no mixed example is reported by examples/mixed-collection at the policy entry."
+expect:
+  findings:
+    - code: examples/mixed-collection
+      file: "rules/order.yaml"
+      path: [features, order.submission, policies, review]
+      line: 3

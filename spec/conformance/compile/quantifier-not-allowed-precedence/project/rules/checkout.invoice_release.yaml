@@ -1,0 +1,21 @@
+feature: checkout.invoice_release
+
+policies:
+  release_check:
+    default: HOLD
+    rules:
+      - id: unlocked
+        name: Invoice not locked
+        when: { invoice.locked: false }
+        then: RELEASE
+      - id: small-invoice
+        name: Invoice of few orders
+        when: { order.lines: { any_in: [1, 2] } }
+        then: RELEASE
+      - id: any-invoice
+        name: Any other invoice
+        when: {}
+        then: HOLD
+
+bindings:
+  global: { policy: release_check }

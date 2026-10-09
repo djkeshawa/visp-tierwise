@@ -1,0 +1,10 @@
+id: "manifest-yaml-anchor"
+specVersion: "0.1"
+clauses: ["SRC-7","SRC-8","FIND-22","FIND-12"]
+description: "An anchor without an alias in the manifest is reported as E_YAML_FEATURE at the node that carries it."
+expect:
+  findings:
+    - code: "E_YAML_FEATURE"
+      file: "tierwise.yaml"
+      path: ["sources"]
+      line: 2

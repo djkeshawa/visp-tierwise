@@ -1,0 +1,25 @@
+id: decide/children/decimal-child-watch-setting
+specVersion: "0.1"
+clauses: [RULE-4, RULE-16, RULE-27, RULE-32, RULE-37, RULE-47, RULE-48, RULE-49, NORM-15, PROV-62, PROV-71, PROV-74, PROV-78, PROV-83, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-52, RULE-53, PROV-79, PROV-80, PROV-82]
+description: "A decimal child fact written as 0.50 is canonicalised to 0.5, so an any_in condition with a decimal listOf setting holds on it."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.decimal_child
+input:
+  facts: {}
+  children:
+    line:
+      - { line.rate: "0.50" }
+      - { line.rate: "1.5" }
+exact: true
+expect:
+  feature: edge.decimal_child
+  effect: HOLD
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: watch-hit, name: "A line rate is watched" }
+  trace:
+    - { id: watch-hit, matched: true }

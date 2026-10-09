@@ -1,0 +1,10 @@
+id: type-enum-values-entry-not-string
+specVersion: "0.1"
+clauses: [TYPE-41, TYPE-11]
+description: "An enum values entry that is a number is an invalid declaration, reported at the entry."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "values", 1]
+      line: 65

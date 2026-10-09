@@ -1,0 +1,13 @@
+id: axes/deep-merge/hierarchy-wins-only-level-over-default
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-10, MERGE-11, MERGE-14, MERGE-19, MERGE-22, MERGE-23, MERGE-25, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-28, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-53, EVAL-7, CTX-19]
+description: With only a level value under hierarchy_wins, the default is merged under the level's fields, so the open field comes from the default.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north } }
+key: axes.deep.hierarchy_wins
+expect:
+  value: { open: 8, close: 16, slot: 30 }
+  contributions:
+    - { scope: level, name: region, node: north, value: { close: 16, slot: 30 }, effect: SET }
+  source: { scope: level, name: region, node: north }

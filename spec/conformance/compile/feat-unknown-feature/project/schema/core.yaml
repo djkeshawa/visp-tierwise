@@ -1,0 +1,5 @@
+decision_hierarchy:
+  levels: [global]
+entity_hierarchy:
+  customer: {}
+  order: { belongs_to: customer }

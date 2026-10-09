@@ -1,0 +1,10 @@
+id: value-object-unknown-field
+specVersion: "0.1"
+clauses: [TYPE-64, TYPE-71]
+description: "An object key naming no declared field is E_TYPE_MISMATCH at that key (TYPE-64)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["contact", "email"]
+      line: 16

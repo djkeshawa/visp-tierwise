@@ -1,0 +1,10 @@
+id: type-min-not-integer
+specVersion: "0.1"
+clauses: [TYPE-13, TYPE-11, TYPE-15]
+description: "An integer bound written as a string is not a source integer and is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "min"]
+      line: 25

@@ -1,0 +1,20 @@
+id: decide/bindings/site-without-binding-keeps-division
+specVersion: "0.1"
+clauses: [BIND-16, BIND-17, CTX-19, CTX-22, PROV-68, PROV-70, PROV-71, PROV-75, PROV-7, PROV-62, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, RULE-50, RULE-51]
+description: "An admitted site with no binding, site_002, adds no candidate, so the division binding stays selected."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: { levels: { division: north, site: site_002 } }
+feature: edge.binding_selection
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.binding_selection
+  effect: DIVISION
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: division, node: north }
+  policy: division_policy
+  reason: { type: DEFAULT }
+  trace: []

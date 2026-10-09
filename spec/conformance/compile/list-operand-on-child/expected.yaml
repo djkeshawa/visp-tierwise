@@ -1,0 +1,10 @@
+id: list-operand-on-child
+specVersion: "0.1"
+clauses: [RULE-6, RULE-13, RULE-28]
+description: "A child fact given a bare list, item.stock_type: [STOCKED], is a malformed condition and is reported as E_INVALID_DECLARATION, which takes precedence over the missing quantifier."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: rules/checkout.order_submission.yaml
+      path: ["policies", "credit_check", "rules", 1, "when", "item.stock_type"]
+      line: 17

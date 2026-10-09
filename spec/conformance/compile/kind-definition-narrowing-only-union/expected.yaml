@@ -1,0 +1,10 @@
+id: kind-definition-narrowing-only-union
+specVersion: "0.1"
+clauses: [KIND-5, MERGE-2]
+description: "A narrowing_only kind that lists union is E_KIND_DEFINITION at the non-narrowing strategy item."
+expect:
+  findings:
+    - code: E_KIND_DEFINITION
+      file: "schema/core.yaml"
+      path: [kinds, narrow_bad, strategies, 1]
+      line: 31

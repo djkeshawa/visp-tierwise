@@ -1,0 +1,10 @@
+id: facts/values/boolean-string-true
+specVersion: "0.1"
+clauses: [FACT-35, NORM-17, RULE-38]
+description: "A boolean fact given the string \"true\" raises E_FACTS_INVALID, because values do not coerce between types."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: "true", order.label: water, order.note: x, order.total: "2" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

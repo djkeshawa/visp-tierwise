@@ -1,0 +1,10 @@
+namespace: pos
+keys:
+  pos.flag:
+    type: boolean
+    combine: any
+    settable_at: [global]
+naming:
+  key:
+    category: key
+    pattern: '^[a-z]+$'

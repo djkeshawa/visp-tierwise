@@ -1,0 +1,10 @@
+id: "admission/context-shape/decide-root-named-with-ignored-scope"
+specVersion: "0.1"
+clauses: [CTX-3, CTX-18]
+description: "A root name raises E_CONTEXT_INVALID in decide under the ignore policy of another scope."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { global: north, site: site_999 } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

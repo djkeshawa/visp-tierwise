@@ -1,0 +1,6 @@
+id: "ns-key-outside-namespace-control"
+specVersion: "0.1"
+clauses: ["NS-5","NS-10"]
+description: "The namespaced file of ns-key-outside-namespace with only keys in the namespace compiles to the namespaced bundle."
+expect:
+  bundle: "../../bundles/edge-manifest-namespaced.json"

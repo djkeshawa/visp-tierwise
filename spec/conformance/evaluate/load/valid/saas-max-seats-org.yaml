@@ -1,0 +1,11 @@
+id: load/valid/saas-max-seats-org
+specVersion: "0.1"
+clauses: [EVAL-1, EVAL-2, BUNDLE-6, BUNDLE-113, BUNDLE-137, MERGE-17, PROV-18]
+description: "The saas-entitlements bundle loads, and the min strategy combines the plan value with the org value of a key."
+call: resolve
+bundle: ../../../bundles/saas-entitlements.json
+context: { levels: { org: acme } }
+key: usage.max_seats
+expect:
+  value: 10
+  bundleVersion: "sha256:836c45a782d4c0beb15052f381ec1a7eb4a507b20ce3885d049d3ecb3f5a3c51"

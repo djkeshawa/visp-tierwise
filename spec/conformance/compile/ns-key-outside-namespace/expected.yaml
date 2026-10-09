@@ -1,0 +1,10 @@
+id: "ns-key-outside-namespace"
+specVersion: "0.1"
+clauses: ["NS-5","NS-10","FIND-12"]
+description: "A key in a namespaced file whose name does not begin with the namespace is reported as E_NAMESPACE_VIOLATION at that key."
+expect:
+  findings:
+    - code: "E_NAMESPACE_VIOLATION"
+      file: "schema/pos.yaml"
+      path: ["keys","other.flag"]
+      line: 7

@@ -1,0 +1,13 @@
+id: "admission/skip/resolve-ignored-non-nfc-node-is-skipped"
+specVersion: "0.1"
+clauses: [CTX-7, CTX-8, CTX-14, CTX-16]
+description: "A decomposed spelling of the listed site node sit\u00e9 is a different code point sequence, so the ignored site scope is skipped and not rejected."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: "site\u0301" } }
+key: edge.tier
+expect:
+  value: SILVER
+  source: { scope: level, name: global }
+  contributions: [{ scope: level, name: global, value: SILVER, effect: SET }]
+  skippedScopes: [{ scope: level, name: site, node: "site\u0301", reason: UNKNOWN_NODE }]

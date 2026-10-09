@@ -1,0 +1,10 @@
+id: key-strategy-type-all-on-string
+specVersion: "0.1"
+clauses: [MERGE-3, MERGE-1, KEY-13]
+description: "A string key with the commutative strategy all is E_STRATEGY_TYPE, located at the key declaration."
+expect:
+  findings:
+    - code: E_STRATEGY_TYPE
+      file: "schema/keys.yaml"
+      path: ["keys", "greeting"]
+      line: 46

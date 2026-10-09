@@ -1,0 +1,6 @@
+id: pol-rule-reference-in-literal-list-ok
+specVersion: "0.1"
+clauses: [POL-26, RULE-23]
+description: "Negative control of pol-rule-reference-in-literal-list: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

@@ -1,0 +1,14 @@
+id: axes/deep-merge/hierarchy-wins-fields-of-level-over-axis
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-11, MERGE-14, MERGE-19, MERGE-20, MERGE-22, MERGE-23, MERGE-24, MERGE-25, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-28, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-53, EVAL-7, CTX-19]
+description: Under hierarchy_wins the fields that the level sets replace the axis fields, the field that only the axis sets survives, and the source names the level.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme } }
+key: axes.deep.hierarchy_wins
+expect:
+  value: { open: 7, close: 16, slot: 30 }
+  contributions:
+    - { scope: level, name: region, node: north, value: { close: 16, slot: 30 }, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: { open: 7, close: 12 }, effect: SET }
+  source: { scope: level, name: region, node: north }

@@ -1,0 +1,10 @@
+id: key-combine-unknown-strategy
+specVersion: "0.1"
+clauses: [KEY-5, MERGE-1]
+description: "A combine value that names no strategy of MERGE-1 is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "combine"]
+      line: 27

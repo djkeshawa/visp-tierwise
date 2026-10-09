@@ -1,0 +1,10 @@
+id: hierarchy-fact-name-without-entity
+specVersion: "0.1"
+clauses: ["FACT-3"]
+description: "A fact name with no dot is E_UNKNOWN_ENTITY at the fact name."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: "schema/model.yaml"
+      path: ["facts", "ordertotal"]
+      line: 22

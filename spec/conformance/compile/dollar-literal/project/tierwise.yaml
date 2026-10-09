@@ -1,0 +1,10 @@
+specVersion: "0.1"
+
+sources:
+  schema:
+    - "schema/**/*.yaml"
+  rules:
+    - "rules/**/*.yaml"
+
+namespaces:
+  checkout: { schema: "schema/components/checkout.yaml" }

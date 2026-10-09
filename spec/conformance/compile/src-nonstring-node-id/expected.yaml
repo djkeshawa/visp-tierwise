@@ -1,0 +1,10 @@
+id: "src-nonstring-node-id"
+specVersion: "0.1"
+clauses: ["SRC-11","SCOPE-20","FIND-20","FIND-12"]
+description: "An integer written where a node ID is expected is reported as E_SCOPE_DECLARATION at that entry, and is not converted to a string."
+expect:
+  findings:
+    - code: "E_SCOPE_DECLARATION"
+      file: "schema/core.yaml"
+      path: ["decision_hierarchy","scopes","region","nodes",0]
+      line: 5

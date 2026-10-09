@@ -1,0 +1,6 @@
+id: neg-lint-description-required
+specVersion: "0.1"
+clauses: [LINT-44]
+description: "Every key, fact and feature has a description, so schema/description-required reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

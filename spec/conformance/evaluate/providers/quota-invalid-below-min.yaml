@@ -1,0 +1,18 @@
+id: providers/quota-invalid-below-min
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-9, SVC-31, SVC-34, TYPE-19, PROV-40, PROV-41, MERGE-15]
+description: A value below the declared minimum fails validation as INVALID and contributes the deny value 2 under deny.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { region: east, tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      values: { quota.max_items: 1 }
+expect:
+  value: 2
+  contributions:
+    - { scope: level, name: region, node: east, value: 6, effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: 2, effect: INVALID, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

@@ -1,0 +1,10 @@
+id: axis-missing-combine-across-axes
+specVersion: "0.1"
+clauses: [AXIS-3, AXIS-1]
+description: "An order-dependent key settable on an axis without combine_across_axes gives E_MISSING_AXIS_COMBINE at the key declaration."
+expect:
+  findings:
+    - code: E_MISSING_AXIS_COMBINE
+      file: "schema/keys.yaml"
+      path: ["keys", "courier"]
+      line: 109

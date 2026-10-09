@@ -1,0 +1,6 @@
+id: pol-policy-wrong-shape-ok
+specVersion: "0.1"
+clauses: [POL-6, FEAT-2]
+description: "Negative control of pol-policy-wrong-shape: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

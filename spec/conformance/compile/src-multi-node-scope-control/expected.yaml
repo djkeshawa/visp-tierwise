@@ -1,0 +1,6 @@
+id: "src-multi-node-scope-control"
+specVersion: "0.1"
+clauses: ["SRC-31"]
+description: "The values file of src-multi-node-scope-not-mapping with mapping nodes compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

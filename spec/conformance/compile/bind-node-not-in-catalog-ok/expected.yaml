@@ -1,0 +1,6 @@
+id: bind-node-not-in-catalog-ok
+specVersion: "0.1"
+clauses: [BIND-10, SCOPE-43]
+description: "Negative control of bind-node-not-in-catalog: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

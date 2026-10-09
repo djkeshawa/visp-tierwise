@@ -1,0 +1,6 @@
+id: "src-split-values-reordered"
+specVersion: "0.1"
+clauses: ["SRC-37","SRC-42","FIND-8"]
+description: "Values files listed in the reverse order give the same union, so the project compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

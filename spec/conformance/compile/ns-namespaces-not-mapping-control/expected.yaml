@@ -1,0 +1,6 @@
+id: "ns-namespaces-not-mapping-control"
+specVersion: "0.1"
+clauses: ["NS-1"]
+description: "An empty namespaces mapping is valid and compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

@@ -1,0 +1,10 @@
+id: ex-context-root-level
+specVersion: "0.1"
+clauses: [POL-31, POL-43]
+description: "An example context that names the root level is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "context", "levels", "global"]
+      line: 38

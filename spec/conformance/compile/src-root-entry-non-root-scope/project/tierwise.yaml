@@ -1,0 +1,8 @@
+specVersion: "0.1"
+sources:
+  schema:
+    - "schema/core.yaml"
+  values:
+    - file: "values/root.yaml"
+      scope: region
+    - file: "values/regions.yaml"

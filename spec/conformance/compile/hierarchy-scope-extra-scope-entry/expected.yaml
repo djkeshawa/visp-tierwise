@@ -1,0 +1,10 @@
+id: hierarchy-scope-extra-scope-entry
+specVersion: "0.1"
+clauses: ["SCOPE-14"]
+description: "A scopes entry for a name that is not a declared level or axis is reported at its key."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "site"]
+      line: 7

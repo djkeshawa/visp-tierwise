@@ -1,0 +1,10 @@
+id: hierarchy-scope-nodes-object-without-from
+specVersion: "0.1"
+clauses: ["SCOPE-19"]
+description: "A nodes object whose only property is not from is reported at nodes."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes"]
+      line: 5

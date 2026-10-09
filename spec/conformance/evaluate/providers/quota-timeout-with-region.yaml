@@ -1,0 +1,18 @@
+id: providers/quota-timeout-with-region
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-39, SVC-9, SVC-23, SVC-24, SVC-39, MERGE-15, MERGE-17, PROV-29, PROV-41]
+description: Under deny, a timed-out tenant provider gives a min key the declared minimum 2 as its deny value, which narrows the region value 6 to 2.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { region: east, tenant: t-1 } }
+key: quota.max_items
+providers:
+  tenant:
+    t-1:
+      fail: timeout
+expect:
+  value: 2
+  contributions:
+    - { scope: level, name: region, node: east, value: 6, effect: NARROWED }
+    - { scope: level, name: tenant, node: t-1, value: 2, effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

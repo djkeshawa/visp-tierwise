@@ -1,0 +1,10 @@
+id: hierarchy-entity-name-boolean-in-list
+specVersion: "0.1"
+clauses: ["ENTITY-19", "ENTITY-5"]
+description: "A boolean list element where an entity name is expected is E_TYPE_MISMATCH at that element."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "invoice", "has_many", 0]
+      line: 13

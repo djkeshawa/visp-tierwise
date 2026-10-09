@@ -1,0 +1,10 @@
+id: "src-invalid-utf8-values"
+specVersion: "0.1"
+clauses: ["SRC-10","FIND-23","FIND-12"]
+description: "A values file that is not valid UTF-8 is reported as E_PARSE at the empty path and line 1, although the invalid byte is in a comment."
+expect:
+  findings:
+    - code: "E_PARSE"
+      file: "values/extra.yaml"
+      path: []
+      line: 1

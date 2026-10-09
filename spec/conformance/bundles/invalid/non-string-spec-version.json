@@ -1,0 +1,1 @@
+{"bundleVersion":"sha256:b8275d70ff83293003dcd1dc03e18a6c57cff586a11ffce800a9040e7b455c0b","content":{"bundleFormatVersion":"1","entities":{},"facts":{},"features":{},"hierarchy":{"axes":[],"levels":["global"],"scopes":{}},"keys":{"example.lead_hours":{"combine":"override","default":4,"settableAt":["global"],"type":{"type":"integer"}}},"specVersion":1,"values":{}}}

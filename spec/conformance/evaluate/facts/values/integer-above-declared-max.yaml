@@ -1,0 +1,10 @@
+id: facts/values/integer-above-declared-max
+specVersion: "0.1"
+clauses: [FACT-35, FACT-9, TYPE-19]
+description: "An integer fact above its declared maximum raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2", order.lines: 101 }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

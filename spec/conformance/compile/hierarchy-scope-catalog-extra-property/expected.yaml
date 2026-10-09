@@ -1,0 +1,10 @@
+id: hierarchy-scope-catalog-extra-property
+specVersion: "0.1"
+clauses: ["SCOPE-30"]
+description: "A catalog file with a property other than nodes is reported at that property."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "catalogs/divisions.json"
+      path: ["owner"]
+      line: 6

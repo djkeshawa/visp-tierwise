@@ -1,0 +1,7 @@
+global:
+  checkout.allowed: true
+region:
+  no:
+    checkout.allowed: true
+  yes:
+    checkout.allowed: true

@@ -1,0 +1,16 @@
+id: axes/override/max-most-specific-level-is-hierarchy
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, AXIS-8, MERGE-14, MERGE-19, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: The hierarchy result is the most specific level, not the largest level, so the store value wins a max against a smaller axis value.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north, store: s1 }, axes: { seller: acme } }
+key: axes.override.max_hours
+expect:
+  value: 10
+  contributions:
+    - { scope: level, name: global, value: 2, effect: SET }
+    - { scope: level, name: region, node: north, value: 6, effect: SET }
+    - { scope: level, name: store, node: s1, value: 10, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: 8, effect: SET }
+  source: { scope: level, name: store, node: s1 }

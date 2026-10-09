@@ -1,0 +1,21 @@
+id: decide/bindings/skipped-site-not-eligible
+specVersion: "0.1"
+clauses: [CTX-14, CTX-15, CTX-16, CTX-17, BIND-16, PROV-54, PROV-55, PROV-56, PROV-61, PROV-58, PROV-68, PROV-70, PROV-71, PROV-75, PROV-7, PROV-18, PROV-62, PROV-64, PROV-65, PROV-69, PROV-73, BIND-17, RULE-50, RULE-51]
+description: "An unknown site under on_unknown_node ignore is skipped, so the site level is not on the evaluation path and no site binding is eligible; the division binding is selected."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: { levels: { division: north, site: site_999 } }
+feature: edge.binding_selection
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.binding_selection
+  effect: DIVISION
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes:
+    - { scope: level, name: site, node: site_999, reason: UNKNOWN_NODE }
+  binding: { level: division, node: north }
+  policy: division_policy
+  reason: { type: DEFAULT }
+  trace: []

@@ -1,0 +1,20 @@
+id: decide/effects/object-effect-missing
+specVersion: "0.1"
+clauses: [FEAT-11, PROV-66, PROV-65, RULE-42, RULE-43, RULE-44, PROV-72, PROV-76, PROV-77, PROV-84, PROV-62, PROV-18, PROV-64, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52]
+description: "The if_fact_missing object is returned as the effect when the precheck finds the missing status fact."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.object_effect
+input:
+  facts: {}
+exact: true
+expect:
+  feature: edge.object_effect
+  effect: { code: HOLD, days: 0 }
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: MISSING_FACT, facts: [order.status] }
+  trace: []

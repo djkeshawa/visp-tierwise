@@ -1,0 +1,10 @@
+id: "src-key-declared-twice-preset"
+specVersion: "0.1"
+clauses: ["SRC-40","SRC-41","MANIFEST-31","FIND-12"]
+description: "A key declared identically in a preset and in the project is reported as E_DUPLICATE_DEFINITION at the project declaration."
+expect:
+  findings:
+    - code: "E_DUPLICATE_DEFINITION"
+      file: "schema/core.yaml"
+      path: ["keys","checkout.allowed"]
+      line: 8

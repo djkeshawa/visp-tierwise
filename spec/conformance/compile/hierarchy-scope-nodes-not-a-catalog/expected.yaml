@@ -1,0 +1,10 @@
+id: hierarchy-scope-nodes-not-a-catalog
+specVersion: "0.1"
+clauses: ["SCOPE-19"]
+description: "A nodes value that is a string other than open is reported at nodes."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes"]
+      line: 5

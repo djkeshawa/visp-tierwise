@@ -1,0 +1,24 @@
+id: decide/samples/domain-a-empty-order-on-credit-hold
+specVersion: "0.1"
+clauses: [RULE-33, RULE-50, RULE-51, RULE-52, RULE-54, RULE-55, FACT-18, BIND-17, PROV-62, PROV-68, PROV-71, PROV-75, PROV-78, PROV-80, PROV-82, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, BIND-16, PROV-70, PROV-7, RULE-53, PROV-79, RULE-29, PROV-81, RULE-31]
+description: "Sample domain A: an empty item collection is present, so no item fact is missing, and the all_in condition does not hold on it, which gives the default DENY."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+feature: checkout.order_submission
+input:
+  facts: { customer.active: true, customer.credit_hold: true }
+  children:
+    item: []
+exact: true
+expect:
+  feature: checkout.order_submission
+  effect: DENY
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: credit_check
+  reason: { type: DEFAULT }
+  trace:
+    - { id: good-credit, matched: false, failed: { fact: customer.credit_hold, op: eq } }
+    - { id: credit-hold-allowed-stock, matched: false, failed: { fact: item.stock_type, op: all_in } }

@@ -1,0 +1,10 @@
+id: "admission/context-shape/decide-control-character-under-ignore"
+specVersion: "0.1"
+clauses: [SCOPE-34, CTX-6, CTX-18, EVAL-30]
+description: "A control character in the node ID of the ignored site scope raises E_CONTEXT_INVALID and does not skip the scope."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: "site\u0001" } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

@@ -1,0 +1,17 @@
+id: providers/calls-node-id-as-supplied
+specVersion: "0.1"
+clauses: [EVAL-7, CTX-7, CTX-8, CTX-13, SVC-15, SVC-19, PROV-26]
+description: A node ID that is not in NFC is admitted by an open catalog and passed to its provider exactly as the context supplied it.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: "café" } }
+key: access.allowed
+providers:
+  tenant:
+    "café":
+      values: { access.allowed: false }
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: tenant, node: "café", value: false, effect: VETO }
+  providerCalls: { tenant: { "café": 1 } }

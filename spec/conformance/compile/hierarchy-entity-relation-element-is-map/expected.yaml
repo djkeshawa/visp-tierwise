@@ -1,0 +1,10 @@
+id: hierarchy-entity-relation-element-is-map
+specVersion: "0.1"
+clauses: ["ENTITY-7"]
+description: "A list element of a has_many value that is a map is E_INVALID_DECLARATION at that element."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", "invoice", "has_many", 0]
+      line: 13

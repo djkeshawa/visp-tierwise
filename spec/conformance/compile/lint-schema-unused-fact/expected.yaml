@@ -1,0 +1,10 @@
+id: lint-schema-unused-fact
+specVersion: "0.1"
+clauses: [LINT-37, LINT-39, LINT-43]
+description: "A declared fact that no rule condition or setting uses is reported by schema/unused at the fact entry."
+expect:
+  findings:
+    - code: schema/unused
+      file: "schema/core.yaml"
+      path: [facts, order.spare]
+      line: 23

@@ -1,0 +1,6 @@
+id: ex-run-only-without-findings-ok
+specVersion: "0.1"
+clauses: [POL-47, BIND-6]
+description: "Negative control of ex-run-only-without-findings: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

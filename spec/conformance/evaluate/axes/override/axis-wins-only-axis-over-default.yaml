@@ -1,0 +1,13 @@
+id: axes/override/axis-wins-only-axis-over-default
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-20, MERGE-25, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: With no hierarchy value under axis_wins, the axis value is the result and the declared default is not used.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { axes: { seller: acme } }
+key: axes.override.axis_label
+expect:
+  value: acme
+  contributions:
+    - { scope: axis, name: seller, node: acme, value: acme, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

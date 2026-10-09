@@ -1,0 +1,10 @@
+id: bind-node-not-in-catalog
+specVersion: "0.1"
+clauses: [BIND-10, SCOPE-43]
+description: "A binding at a closed level for a node that the catalog does not list is an unknown node."
+expect:
+  findings:
+    - code: E_UNKNOWN_NODE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "east"]
+      line: 35

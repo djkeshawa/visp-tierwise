@@ -1,0 +1,17 @@
+id: merge/kind-named-in-result
+specVersion: "0.1"
+clauses: [PROV-13, PROV-14, PROV-15, MERGE-19, PROV-38, PROV-50]
+description: A key that opts into a kind carries the kind name in its Resolved result, and an override key with a root value and a division value takes the division value.
+call: resolve
+bundle: ../../bundles/commerce.json
+context: { levels: { division: south } }
+key: checkout.pickup.lead_hours
+expect:
+  key: checkout.pickup.lead_hours
+  strategy: override
+  kind: configuration
+  value: 6
+  contributions:
+    - { scope: level, name: global, value: 2, effect: SET }
+    - { scope: level, name: division, node: south, value: 6, effect: SET }
+  source: { scope: level, name: division, node: south }

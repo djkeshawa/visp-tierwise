@@ -1,0 +1,10 @@
+id: value-decimal-given-float
+specVersion: "0.1"
+clauses: [TYPE-25, TYPE-71, KEY-13, NORM-14]
+description: "A YAML float where a decimal is declared is E_TYPE_MISMATCH (TYPE-25)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["fee_rate"]
+      line: 2

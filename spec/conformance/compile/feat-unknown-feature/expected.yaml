@@ -1,0 +1,10 @@
+id: feat-unknown-feature
+specVersion: "0.1"
+clauses: [POL-2, POL-3]
+description: "A rules file whose feature names no declared feature is an unknown feature."
+expect:
+  findings:
+    - code: E_UNKNOWN_FEATURE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["feature"]
+      line: 1

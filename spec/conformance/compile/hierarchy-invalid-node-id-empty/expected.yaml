@@ -1,0 +1,10 @@
+id: hierarchy-invalid-node-id-empty
+specVersion: "0.1"
+clauses: ["SCOPE-33", "SCOPE-39"]
+description: "An empty node ID is E_INVALID_NODE_ID, and is not also reported as an unknown node."
+expect:
+  findings:
+    - code: E_INVALID_NODE_ID
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes", 0]
+      line: 5

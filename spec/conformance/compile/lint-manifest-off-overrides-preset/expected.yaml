@@ -1,0 +1,6 @@
+id: lint-manifest-off-overrides-preset
+specVersion: "0.1"
+clauses: [LINT-4, LINT-6, MANIFEST-31]
+description: "A manifest setting of off overrides the preset's info, so presets/override does not run and no finding is reported."
+expect:
+  bundle: ../../bundles/edge-kinds.json

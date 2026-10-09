@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-integer-node-id"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-6]
+description: "A node ID written as an integer is a map value that is not a string, so resolve raises E_CONTEXT_INVALID."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: 7 } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

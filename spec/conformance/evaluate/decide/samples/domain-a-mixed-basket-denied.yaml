@@ -1,0 +1,26 @@
+id: decide/samples/domain-a-mixed-basket-denied
+specVersion: "0.1"
+clauses: [RULE-8, RULE-31, RULE-50, RULE-51, RULE-52, RULE-54, RULE-55, BIND-17, BIND-21, PROV-1, PROV-62, PROV-63, PROV-68, PROV-71, PROV-73, PROV-75, PROV-78, PROV-80, PROV-82, PROV-18, PROV-64, PROV-65, PROV-69, BIND-16, PROV-70, PROV-7, RULE-53, PROV-79, RULE-29, PROV-81]
+description: "Sample domain A: a mixed basket on a credit hold under the restrictive south policy takes the policy default DENY, with both rules traced."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+feature: checkout.order_submission
+input:
+  facts: { customer.active: true, customer.credit_hold: true }
+  children:
+    item:
+      - { item.stock_type: STOCKED }
+      - { item.stock_type: DROP_SHIP }
+exact: true
+expect:
+  feature: checkout.order_submission
+  effect: DENY
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: credit_check
+  reason: { type: DEFAULT }
+  trace:
+    - { id: good-credit, matched: false, failed: { fact: customer.credit_hold, op: eq } }
+    - { id: credit-hold-allowed-stock, matched: false, failed: { fact: item.stock_type, op: all_in } }

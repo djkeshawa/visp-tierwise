@@ -1,0 +1,6 @@
+id: lint-unnamed-rule-off
+specVersion: "0.1"
+clauses: [LINT-5, LINT-6, LINT-44]
+description: "A rule that no lint setting names is off, so a missing description reports nothing."
+expect:
+  bundle: ../../bundles/edge-kinds.json

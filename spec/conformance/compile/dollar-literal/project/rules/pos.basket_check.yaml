@@ -1,0 +1,24 @@
+feature: pos.basket_check
+
+policies:
+  standard:
+    settings:
+      restricted_categories: { list_of: line.category, default: [ALCOHOL] }
+      trusted_tender: { value_of: basket.tender, default: CARD }
+    default: REVIEW
+    rules:
+      - id: flagged-shopper
+        name: Flagged shopper is rejected
+        when: { shopper.fraud_flag: true }
+        then: REJECT
+      - id: restricted-line
+        name: A restricted line sends the basket to review
+        when: { line.category: { any_in: $restricted_categories } }
+        then: REVIEW
+      - id: trusted-tender
+        name: Trusted shopper pays with the trusted tender
+        when: { shopper.tier: "$GOLD", basket.tender: $trusted_tender }
+        then: APPROVE
+
+bindings:
+  global: { policy: standard }

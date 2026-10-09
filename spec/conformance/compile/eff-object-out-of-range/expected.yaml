@@ -1,0 +1,10 @@
+id: eff-object-out-of-range
+specVersion: "0.1"
+clauses: [FEAT-11, FEAT-13, FEAT-14, TYPE-72]
+description: "An object-valued effect that breaks the declared field bounds is an effect mismatch."
+expect:
+  findings:
+    - code: E_EFFECT_MISMATCH
+      file: "rules/checkout.quote.yaml"
+      path: ["policies", "quote_default", "rules", 0, "then"]
+      line: 11

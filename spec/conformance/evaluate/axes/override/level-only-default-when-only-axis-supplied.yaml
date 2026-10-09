@@ -1,0 +1,12 @@
+id: axes/override/level-only-default-when-only-axis-supplied
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-25, PROV-7, PROV-43, PROV-45, PROV-48, EVAL-7, CTX-19]
+description: A key not settable on any axis takes its default when only an axis is supplied, and the axis appears in no contribution.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { axes: { seller: acme } }
+key: axes.override.level_only
+expect:
+  value: base
+  contributions: []
+  source: DEFAULT

@@ -1,0 +1,10 @@
+id: value-integer-above-max
+specVersion: "0.1"
+clauses: [TYPE-21, TYPE-19, TYPE-71]
+description: "An integer above its declared max is E_OUT_OF_RANGE (TYPE-21)."
+expect:
+  findings:
+    - code: E_OUT_OF_RANGE
+      file: "values/division/north.yaml"
+      path: ["max_lines"]
+      line: 1

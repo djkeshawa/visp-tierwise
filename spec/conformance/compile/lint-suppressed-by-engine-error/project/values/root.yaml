@@ -1,0 +1,11 @@
+access.enabled: false
+access.allowed: false
+access.audit_on: false
+access.emergency: false
+access.beta: false
+access.seat_cap: 50
+search.ranked_flag: false
+ns1.owned_flag: false
+quota.max_seats: 6
+shipping.methods: [ground]
+search.fallback_on: false

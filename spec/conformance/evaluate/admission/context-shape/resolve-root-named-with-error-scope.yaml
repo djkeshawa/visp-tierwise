@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-root-named-with-error-scope"
+specVersion: "0.1"
+clauses: [CTX-3, CTX-11]
+description: "A root name raises E_CONTEXT_INVALID under the error policy of another scope too."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { global: north, division: south } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

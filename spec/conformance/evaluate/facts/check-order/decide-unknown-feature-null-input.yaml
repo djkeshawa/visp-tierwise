@@ -1,0 +1,10 @@
+id: facts/check-order/decide-unknown-feature-null-input
+specVersion: "0.1"
+clauses: [EVAL-17, EVAL-18, EVAL-35]
+description: "An undeclared feature with a null FactSet raises E_UNKNOWN_FEATURE, because the lookup precedes FactSet validation."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.unknown
+input: null
+expect:
+  error: E_UNKNOWN_FEATURE

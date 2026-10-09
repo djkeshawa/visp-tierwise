@@ -1,0 +1,10 @@
+id: kind-violation-require-default
+specVersion: "0.1"
+clauses: [KIND-8, KIND-2]
+description: "A key that uses a require_default kind and declares no default is E_KIND_VIOLATION at its declaration."
+expect:
+  findings:
+    - code: E_KIND_VIOLATION
+      file: "schema/core.yaml"
+      path: [keys, quota.max_seats]
+      line: 72

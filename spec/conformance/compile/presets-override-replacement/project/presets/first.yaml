@@ -1,0 +1,6 @@
+kinds:
+  strict:
+    strategies: [override]
+lint:
+  rules:
+    presets/override: info

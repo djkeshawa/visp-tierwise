@@ -1,0 +1,10 @@
+id: facts/values/integer-below-declared-min
+specVersion: "0.1"
+clauses: [FACT-35, TYPE-19]
+description: "An integer fact below its declared minimum raises E_FACTS_INVALID."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2", order.lines: -1 }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_FACTS_INVALID

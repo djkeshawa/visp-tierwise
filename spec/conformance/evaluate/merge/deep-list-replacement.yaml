@@ -1,0 +1,23 @@
+id: merge/deep-list-replacement
+specVersion: "0.1"
+clauses: [MERGE-11, MERGE-13, MERGE-22, MERGE-23, MERGE-25, PROV-28, PROV-46, PROV-47, PROV-53, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: A later list replaces an earlier list as a whole, so the site closed days are the only closed days in the result.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: south, site: s1 } }
+key: merge.window
+exact: true
+expect:
+  key: merge.window
+  strategy: deep_merge
+  value:
+    closed_days: [MON]
+    hours: { close: "18:00", open: "07:30" }
+    label: standard
+    slot_minutes: 15
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: south, value: { closed_days: [SAT, SUN] }, effect: SET }
+    - { scope: level, name: site, node: s1, value: { closed_days: [MON], hours: { open: "07:30" }, slot_minutes: 15 }, effect: SET }
+  source: { scope: level, name: site, node: s1 }

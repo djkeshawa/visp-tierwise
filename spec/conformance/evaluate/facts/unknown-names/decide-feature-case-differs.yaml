@@ -1,0 +1,10 @@
+id: facts/unknown-names/decide-feature-case-differs
+specVersion: "0.1"
+clauses: [EVAL-35, NORM-6]
+description: "A feature name that differs in case from a declared name is undeclared, and raises E_UNKNOWN_FEATURE."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: Edge.order_gate
+input: { facts: { customer.active: true, order.label: water, order.note: x, order.total: "2" }, children: { line: [ { line.kind: SINGLE } ] } }
+expect:
+  error: E_UNKNOWN_FEATURE

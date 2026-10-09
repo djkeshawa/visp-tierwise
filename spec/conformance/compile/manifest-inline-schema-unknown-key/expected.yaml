@@ -1,0 +1,10 @@
+id: "manifest-inline-schema-unknown-key"
+specVersion: "0.1"
+clauses: ["SRC-36","SRC-16","MANIFEST-14","FIND-17","FIND-12"]
+description: "An undeclared top-level key in inline schema content is reported as E_INVALID_DECLARATION in the manifest, under the inline key path."
+expect:
+  findings:
+    - code: "E_INVALID_DECLARATION"
+      file: "tierwise.yaml"
+      path: ["schema","labels"]
+      line: 14

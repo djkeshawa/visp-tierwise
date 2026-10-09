@@ -1,0 +1,10 @@
+id: feat-binding-service-level
+specVersion: "0.1"
+clauses: [FEAT-19, BIND-12]
+description: "A service-sourced level in binding_settable_at is a binding that is not allowed."
+expect:
+  findings:
+    - code: E_BINDING_NOT_ALLOWED
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "binding_settable_at", 2]
+      line: 22

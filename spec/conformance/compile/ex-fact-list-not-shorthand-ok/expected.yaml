@@ -1,0 +1,6 @@
+id: ex-fact-list-not-shorthand-ok
+specVersion: "0.1"
+clauses: [POL-37, POL-45]
+description: "Negative control of ex-fact-list-not-shorthand: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

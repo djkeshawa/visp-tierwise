@@ -1,0 +1,40 @@
+# Enforcers for clauses of the MANIFEST, SRC, NS and FIND areas that no compile case of work item C1
+# observes (VEC-125). Each key is a clause ID. Each value is one line that names the enforcer.
+# A value that says "Planned" names a test that is not written yet, so it is a promise to test the clause.
+
+# Runner behaviour: finding lists are compared as sets (VEC-98), so repeated runs are checked by the runner.
+FIND-4: "Planned runner test: validate the same project twice, with its files and patterns listed in a different order, and compare the finding keys (FIND-4)."
+
+# Evaluation is not validation, and the evaluate vectors cover the error path (FIND-9, EVAL-22).
+FIND-9: "Planned evaluator unit test: resolve and decide never run a validation, and an evaluation error is raised rather than returned as a finding (FIND-9, EVAL-22)."
+
+# Finding fields other than the finding key are not compared by the suite (VEC-101).
+FIND-10: "Planned validator unit test: every finding carries code, severity, file, path, line and message, with the types that FIND-10 gives."
+FIND-11: "Planned validator unit test: a finding may omit suggestion, and a present suggestion is an ordinary optional member (FIND-11). VEC-101 does not compare it."
+FIND-15: "Planned validator unit test: every engine finding has severity error whatever the lint settings are (FIND-15, LINT-9)."
+FIND-16: "Planned validator unit test: each lint finding carries the resolved severity of its rule, and a rule that resolves to off reports nothing (FIND-16, LINT-6)."
+FIND-25: "Planned validator unit test: two checks that produce the same finding key report one finding for that key (FIND-25)."
+FIND-26: "Planned validator unit test: findings are listed by file, line, path and code as FIND-26 gives. VEC-98 compares sets, so the order is not observable in a compile case."
+FIND-28: "Planned validator unit test: a suggestion is the exact text of a declared name or rule identifier (FIND-28). Suggestions are tested outside the suite."
+
+# Specification-review rule and the explain command (FIND-14, FIND-29, FIND-30).
+FIND-14: "Specification-review rule: a code keeps its meaning in later versions. It is checked when the catalogue changes, not by a runner."
+FIND-29: "Planned CLI test: the explain command prints the catalogue entry for every engine code and lint rule in spec/error-codes.md (FIND-29)."
+FIND-30: "Planned CLI test: explain for a naming rule prints the pattern description, or the family explanation followed by the pattern (FIND-30)."
+
+# A URL preset and a path outside the project root are not expressible in a compile case: VEC-92 forbids
+# a case from naming a path that resolves outside its project root (MANIFEST-12).
+MANIFEST-12: "Planned compile-time unit test: a manifest path, or a glob match, that resolves outside the project root after symbolic links are resolved is E_MANIFEST. VEC-92 forbids such a path in a compile case."
+MANIFEST-18: "Blocked on an open point: a project with no declarations has no defined hierarchy. Planned test once settled: a manifest with specVersion alone is accepted."
+
+# Retrieval of URL presets needs a fake retrieval interface, which the suite cannot serve (MANIFEST-27 note).
+MANIFEST-28: "Planned unit test with a fake retrieval interface: retrieved bytes whose SHA-256 differs from the pinned digest are reported as E_PRESET (MANIFEST-28)."
+MANIFEST-29: "Planned unit test with a fake retrieval interface: a URL preset whose digest does not match contributes nothing, and its content is not read before the digest check (MANIFEST-29)."
+
+# A replaced kind keeps none of the earlier definition's fields. No compile case in C1 exercises it (MANIFEST-33).
+MANIFEST-33: "Planned compile unit test: a kind replaced by a later layer keeps none of the fields of the earlier definition (MANIFEST-33)."
+
+# Pointer and portability clauses.
+SRC-15: "Pointer clause: a rules file's top-level keys and its one feature are defined by POL-1 and POL-2 in section 7, which the POL compile cases observe."
+SRC-24: "Planned compile unit test with a non-ASCII placeholder capture: a path capture in NFD becomes a node name in NFC (SRC-24). Non-ASCII file names are kept out of the suite."
+SRC-44: "Planned compile unit test: two rules documents for one feature are E_DUPLICATE_DEFINITION (SRC-44, POL-5). It needs a valid rules document from section 7, so it waits for the POL cases."

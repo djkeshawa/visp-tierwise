@@ -1,0 +1,10 @@
+id: type-bound-outside-engine-range
+specVersion: "0.1"
+clauses: [TYPE-13, TYPE-22, TYPE-20]
+description: "A declared max outside plus or minus (2^53 - 1) is reported as E_INTEGER_RANGE at the max member."
+expect:
+  findings:
+    - code: E_INTEGER_RANGE
+      file: "schema/keys.yaml"
+      path: ["keys", "lead_hours", "max"]
+      line: 104

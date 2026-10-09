@@ -1,0 +1,10 @@
+id: merge-optional-object-field-incomplete
+specVersion: "0.1"
+clauses: [MERGE-26, MERGE-9, TYPE-63, MERGE-11]
+description: "An authored value that sets an optional object field the starting value does not set must give it complete (MERGE-26)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["window", "slot"]
+      line: 9

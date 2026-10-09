@@ -1,0 +1,14 @@
+id: facts/decimal/plus-leading-zeros
+specVersion: "0.1"
+clauses: [FACT-39, NORM-10, NORM-11, NORM-15, RULE-37]
+description: "A decimal string \"+007.100\" is canonicalised to \"7.1\" before the membership test, so it is in the set."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "+007.100" }, children: { line: [] } }
+expect:
+  effect: HIT
+  reason: { type: RULE, id: total-in-set, name: Total is in the probe set }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: true }

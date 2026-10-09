@@ -1,0 +1,10 @@
+id: hierarchy-scope-values-invalid
+specVersion: "0.1"
+clauses: ["SCOPE-25"]
+description: "A values member that is neither files nor service is reported at that member."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "values"]
+      line: 7

@@ -1,0 +1,25 @@
+id: decide/samples/domain-a-invoice-failed-payment-held-south
+specVersion: "0.1"
+clauses: [RULE-32, RULE-47, RULE-48, RULE-49, RULE-27, BIND-17, BIND-23, PROV-62, PROV-68, PROV-70, PROV-71, PROV-74, PROV-78, PROV-80, PROV-82, PROV-83, PROV-18, PROV-64, PROV-65, PROV-69, PROV-73, BIND-16, PROV-7, RULE-52, RULE-53, PROV-79]
+description: "Sample domain A: at division south the held states are FAILED only, so one failed order holds the invoice by the first rule and the later rule is not checked."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+feature: checkout.invoice_release
+input:
+  facts: {}
+  children:
+    order:
+      - { order.payment_state: PAID }
+      - { order.payment_state: FAILED }
+exact: true
+expect:
+  feature: checkout.invoice_release
+  effect: HOLD
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: division, node: south }
+  policy: payment_gate
+  reason: { type: RULE, id: any-held-order, name: "At least one order has a held payment state" }
+  trace:
+    - { id: any-held-order, matched: true }

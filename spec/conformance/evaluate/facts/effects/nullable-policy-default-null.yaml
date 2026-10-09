@@ -1,0 +1,15 @@
+id: facts/effects/nullable-policy-default-null
+specVersion: "0.1"
+clauses: [FEAT-9, PROV-66, RULE-50, RULE-51]
+description: "No rule matches, so the policy default null is returned with reason DEFAULT."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.nullable_effect
+input: { facts: { order.label: water } }
+expect:
+  effect: null
+  reason: { type: DEFAULT }
+  policy: pick
+  trace:
+    - { id: tea-clears, matched: false, failed: { fact: order.label, op: eq } }
+    - { id: cafe-allows, matched: false, failed: { fact: order.label, op: eq } }

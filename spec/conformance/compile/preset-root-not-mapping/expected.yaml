@@ -1,0 +1,10 @@
+id: "preset-root-not-mapping"
+specVersion: "0.1"
+clauses: ["SRC-6","FIND-18","FIND-19"]
+description: "A preset whose root node is a sequence is reported as E_PARSE at the empty path."
+expect:
+  findings:
+    - code: "E_PARSE"
+      file: "presets/list.yaml"
+      path: []
+      line: 1

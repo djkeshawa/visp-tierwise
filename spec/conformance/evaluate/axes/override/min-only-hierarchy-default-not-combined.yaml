@@ -1,0 +1,13 @@
+id: axes/override/min-only-hierarchy-default-not-combined
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-19, MERGE-25, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, EVAL-7, CTX-19]
+description: With no axis value under min, the hierarchy value is the result and the default, which is smaller, is not combined with it.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: south } }
+key: axes.override.min_cap
+expect:
+  value: 60
+  contributions:
+    - { scope: level, name: region, node: south, value: 60, effect: SET }
+  source: { scope: level, name: region, node: south }

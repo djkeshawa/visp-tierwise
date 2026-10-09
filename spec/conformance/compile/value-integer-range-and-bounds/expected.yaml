@@ -1,0 +1,14 @@
+id: value-integer-range-and-bounds
+specVersion: "0.1"
+clauses: [TYPE-79, TYPE-20, TYPE-21]
+description: "An integer outside both the engine range and its declared bounds gives both codes at one value (TYPE-79)."
+expect:
+  findings:
+    - code: E_INTEGER_RANGE
+      file: "values/division/north.yaml"
+      path: ["max_lines"]
+      line: 1
+    - code: E_OUT_OF_RANGE
+      file: "values/division/north.yaml"
+      path: ["max_lines"]
+      line: 1

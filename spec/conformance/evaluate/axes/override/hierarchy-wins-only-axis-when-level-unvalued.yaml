@@ -1,0 +1,13 @@
+id: axes/override/hierarchy-wins-only-axis-when-level-unvalued
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-14, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-42, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: A supplied level with no value for the key is not on any contribution, so the axis value is the result under hierarchy_wins.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { store: s2 }, axes: { seller: acme } }
+key: axes.override.hier_label
+expect:
+  value: acme
+  contributions:
+    - { scope: axis, name: seller, node: acme, value: acme, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

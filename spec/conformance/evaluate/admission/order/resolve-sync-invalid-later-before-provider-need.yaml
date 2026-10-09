@@ -1,0 +1,11 @@
+id: "admission/order/resolve-sync-invalid-later-before-provider-need"
+specVersion: "0.1"
+clauses: [CTX-10, EVAL-11, EVAL-16]
+description: "The synchronous resolve raises the context error before it decides whether a provider is needed."
+call: resolve
+sync: true
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { partner: p-1, division: west } }
+key: edge.enabled
+providers: { partner: { p-1: { values: { edge.enabled: true, edge.max_items: 20, edge.min_qty: 3 } } } }
+expect: { error: E_UNKNOWN_NODE }

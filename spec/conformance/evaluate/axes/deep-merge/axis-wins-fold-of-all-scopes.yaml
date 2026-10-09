@@ -1,0 +1,16 @@
+id: axes/deep-merge/axis-wins-fold-of-all-scopes
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-10, MERGE-11, MERGE-13, MERGE-14, MERGE-19, MERGE-20, MERGE-22, MERGE-23, MERGE-24, MERGE-25, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-28, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-53, EVAL-7, CTX-19]
+description: Under axis_wins the result is the default merged with the level fold and then the axis fold, the later axis fields win, and the source names the last declared contributing axis.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme, channel: web } }
+key: axes.deep.axis_wins
+expect:
+  value: { open: 7, close: 20, slot: 15 }
+  contributions:
+    - { scope: level, name: global, value: { open: 9 }, effect: SET }
+    - { scope: level, name: region, node: north, value: { close: 16, slot: 30 }, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: { open: 7 }, effect: SET }
+    - { scope: axis, name: channel, node: web, value: { slot: 15, close: 20 }, effect: SET }
+  source: { scope: axis, name: channel, node: web }

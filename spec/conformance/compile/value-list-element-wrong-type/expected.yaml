@@ -1,0 +1,10 @@
+id: value-list-element-wrong-type
+specVersion: "0.1"
+clauses: [TYPE-56, TYPE-71, TYPE-55]
+description: "A list element of the wrong form is E_TYPE_MISMATCH at the element (TYPE-56)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["tags", 1]
+      line: 8

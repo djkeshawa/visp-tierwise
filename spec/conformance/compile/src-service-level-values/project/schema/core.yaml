@@ -1,0 +1,15 @@
+decision_hierarchy:
+  levels: [global, region, terminal]
+  scopes:
+    region:
+      nodes: ["1", no, off, on, yes]
+      on_unknown_node: error
+    terminal:
+      nodes: open
+      values: service
+keys:
+  checkout.allowed:
+    type: boolean
+    combine: any
+    on_source_failure: skip
+    settable_at: [global, region, terminal]

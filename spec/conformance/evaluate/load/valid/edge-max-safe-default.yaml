@@ -1,0 +1,11 @@
+id: load/valid/edge-max-safe-default
+specVersion: "0.1"
+clauses: [EVAL-1, EVAL-2, BUNDLE-11, BUNDLE-12, DET-4, BUNDLE-113, BUNDLE-137, PROV-18, PROV-48]
+description: "A default equal to the largest safe integer, 2^53 - 1, loads and is returned without change."
+call: resolve
+bundle: ../../../bundles/edge-load.json
+key: example.max_safe
+expect:
+  value: 9007199254740991
+  source: DEFAULT
+  bundleVersion: "sha256:731f3fb3860038a2c343c4d105efe8609ce2ab79e745ffbf41d2870db122b84e"

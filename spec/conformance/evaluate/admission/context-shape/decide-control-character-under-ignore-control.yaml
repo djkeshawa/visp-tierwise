@@ -1,0 +1,16 @@
+id: "admission/context-shape/decide-control-character-under-ignore-control"
+specVersion: "0.1"
+clauses: [CTX-14, CTX-16, CTX-18]
+description: "With a valid node ID that the catalog does not list, decide skips the site scope and selects the root binding."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: site } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: SHIP
+  skippedScopes: [{ scope: level, name: site, node: site, reason: UNKNOWN_NODE }]
+  binding: { level: global }
+  policy: paid_only
+  reason: { type: RULE, id: paid, name: "Order is paid" }
+  trace: [{ id: paid, matched: true }]

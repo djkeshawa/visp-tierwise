@@ -1,0 +1,10 @@
+id: lint-dead-rule-after-empty-when
+specVersion: "0.1"
+clauses: [LINT-27, LINT-7]
+description: "A rule that follows a rule with an empty when is reported by rules/dead-rule at the rule item."
+expect:
+  findings:
+    - code: rules/dead-rule
+      file: "rules/order.yaml"
+      path: [features, order.submission, policies, review, rules, 4]
+      line: 28

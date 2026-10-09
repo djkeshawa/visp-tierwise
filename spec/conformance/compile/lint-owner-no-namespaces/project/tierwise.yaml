@@ -1,0 +1,22 @@
+specVersion: "0.1"
+
+sources:
+  schema:
+    - "schema/**/*.yaml"
+  values:
+    - file: "values/root.yaml"
+      scope: global
+    - pattern: "values/{scope}/{node}.yaml"
+  rules:
+    - "rules/**/*.yaml"
+
+lint:
+  rules:
+    "naming/*": error
+    values/no-op: error
+    rules/dead-rule: error
+    examples/required-per-binding: error
+    examples/mixed-collection: error
+    schema/unused: error
+    schema/description-required: error
+    schema/owner-required: error

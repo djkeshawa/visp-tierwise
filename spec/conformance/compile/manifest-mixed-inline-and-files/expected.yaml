@@ -1,0 +1,6 @@
+id: "manifest-mixed-inline-and-files"
+specVersion: "0.1"
+clauses: ["MANIFEST-17","MANIFEST-14","SRC-37"]
+description: "Inline schema combined with values files compiles to the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

@@ -1,0 +1,14 @@
+id: facts/decimal/trailing-zeros
+specVersion: "0.1"
+clauses: [NORM-10, NORM-12, RULE-37]
+description: "A decimal string \"1.50\" is canonicalised to \"1.5\", the same canonical string as the literal."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.decimal_probe
+input: { facts: { order.total: "1.50" }, children: { line: [] } }
+expect:
+  effect: HIT
+  reason: { type: RULE, id: total-in-set, name: Total is in the probe set }
+  policy: probe
+  trace:
+    - { id: total-in-set, matched: true }

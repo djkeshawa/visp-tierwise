@@ -1,0 +1,15 @@
+id: "admission/skip/resolve-tier-omitted-level"
+specVersion: "0.1"
+clauses: [CTX-19, CTX-21, CTX-22, PROV-42]
+description: "An omitted site level contributes nothing, and no node is inferred for it from the supplied division."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: south } }
+key: edge.tier
+expect:
+  value: PLATINUM
+  source: { scope: level, name: division, node: south }
+  contributions:
+    - { scope: level, name: global, value: SILVER, effect: SET }
+    - { scope: level, name: division, node: south, value: PLATINUM, effect: SET }
+  skippedScopes: []

@@ -1,0 +1,15 @@
+id: "admission/context-shape/resolve-levels-not-a-map-control"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-21]
+description: "With a levels map in place of null the same resolve succeeds."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: south } }
+key: edge.tier
+expect:
+  value: PLATINUM
+  source: { scope: level, name: division, node: south }
+  contributions:
+    - { scope: level, name: global, value: SILVER, effect: SET }
+    - { scope: level, name: division, node: south, value: PLATINUM, effect: SET }
+  skippedScopes: []

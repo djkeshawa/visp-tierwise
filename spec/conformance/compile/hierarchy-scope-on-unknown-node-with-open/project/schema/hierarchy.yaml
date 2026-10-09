@@ -1,0 +1,11 @@
+decision_hierarchy:
+  levels: [global, division]
+  scopes:
+    division:
+      nodes: open
+      on_unknown_node: error
+keys:
+  checkout.open:
+    type: boolean
+    combine: all
+    settable_at: [global, division]

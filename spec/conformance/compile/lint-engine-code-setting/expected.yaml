@@ -1,0 +1,10 @@
+id: lint-engine-code-setting
+specVersion: "0.1"
+clauses: [LINT-8, LINT-9, LINT-11]
+description: "A manifest lint setting that names an engine error code is E_PRESET at the setting, and the engine check keeps its error."
+expect:
+  findings:
+    - code: E_PRESET
+      file: "tierwise.yaml"
+      path: [lint, rules, E_KIND_VIOLATION]
+      line: 26

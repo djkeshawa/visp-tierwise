@@ -1,0 +1,19 @@
+id: axes/commutative/any-region-and-channel-exact
+specVersion: "0.1"
+clauses: [MERGE-1, MERGE-13, MERGE-14, MERGE-17, AXIS-1, AXIS-2, PROV-12, PROV-13, PROV-18, PROV-20, PROV-21, PROV-22, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-37, PROV-38, PROV-45, EVAL-7, CTX-19]
+description: An any key takes true from a region and ignores the identity false of a channel axis, and an exact result has no source.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { channel: web } }
+key: axes.commutative.any_flag
+exact: true
+expect:
+  key: axes.commutative.any_flag
+  strategy: any
+  value: true
+  bundleVersion: "sha256:05179da9ede881099ef2c24d893073bb5a23f3ce934d26e6d0b76def8dab2f7f"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: global, value: false, effect: IGNORED }
+    - { scope: level, name: region, node: north, value: true, effect: WIDENED }
+    - { scope: axis, name: channel, node: web, value: false, effect: IGNORED }

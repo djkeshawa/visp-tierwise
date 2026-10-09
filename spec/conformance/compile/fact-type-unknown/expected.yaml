@@ -1,0 +1,10 @@
+id: fact-type-unknown
+specVersion: "0.1"
+clauses: [FACT-7, TYPE-11]
+description: "A fact whose type is not one of the five fact types is reported as E_INVALID_DECLARATION at the type member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: schema/core.yaml
+      path: ["facts", "customer.note", "type"]
+      line: 15

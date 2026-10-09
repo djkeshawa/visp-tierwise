@@ -1,0 +1,10 @@
+id: bind-value-duplicate
+specVersion: "0.1"
+clauses: [BIND-9, POL-19]
+description: "A binding list value that repeats an element is a duplicate value at the repeated element."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "south", "allowed_on_credit_hold", 1]
+      line: 34

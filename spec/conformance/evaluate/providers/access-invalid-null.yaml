@@ -1,0 +1,17 @@
+id: providers/access-invalid-null
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-31, SVC-34, SVC-35, PROV-40, PROV-41, SVC-9]
+description: A null value for the key being resolved fails validation as INVALID and contributes the deny value false.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: null }
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: false, effect: INVALID, onSourceFailure: deny }
+  providerCalls: { tenant: { t-1: 1 } }

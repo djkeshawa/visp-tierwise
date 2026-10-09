@@ -1,0 +1,16 @@
+id: providers/access-omitted
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-13, SVC-36, PROV-42, MERGE-5]
+description: A tenant provider that returns no entry for the key leaves the level silent, so the identity true stands with no contribution and no failure.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  value: true
+  contributions: []
+  providerCalls: { tenant: { t-1: 1 } }

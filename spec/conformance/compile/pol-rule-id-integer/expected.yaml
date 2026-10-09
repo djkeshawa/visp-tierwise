@@ -1,0 +1,10 @@
+id: pol-rule-id-integer
+specVersion: "0.1"
+clauses: [POL-25]
+description: "A rule id that the YAML core schema reads as an integer is an invalid declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 0, "id"]
+      line: 9

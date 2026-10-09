@@ -1,0 +1,10 @@
+id: lint-invalid-severity
+specVersion: "0.1"
+clauses: [LINT-3, LINT-10]
+description: "A lint severity that is not error, warn, info or off is E_MANIFEST at the setting."
+expect:
+  findings:
+    - code: E_MANIFEST
+      file: "tierwise.yaml"
+      path: [lint, rules, values/no-op]
+      line: 19

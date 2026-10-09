@@ -1,0 +1,10 @@
+id: "src-path-pattern-glob"
+specVersion: "0.1"
+clauses: ["SRC-23","SRC-22","FIND-20","FIND-12"]
+description: "A path pattern that contains a glob wildcard is reported as E_SOURCE_MAPPING at its pattern member."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "tierwise.yaml"
+      path: ["sources","values",1,"pattern"]
+      line: 8

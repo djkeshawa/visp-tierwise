@@ -1,0 +1,10 @@
+id: hierarchy-invalid-node-id-in-bindings
+specVersion: "0.1"
+clauses: ["SCOPE-38", "SCOPE-39", "BIND-10"]
+description: "An empty node ID in a binding is E_INVALID_NODE_ID and is not also reported as an unknown node."
+expect:
+  findings:
+    - code: E_INVALID_NODE_ID
+      file: "rules/checkout-gate.yaml"
+      path: ["bindings", "division", ""]
+      line: 9

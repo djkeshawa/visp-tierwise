@@ -1,0 +1,10 @@
+id: type-object-no-field-declared
+specVersion: "0.1"
+clauses: [TYPE-68, TYPE-59, TYPE-11]
+description: "An object declaration with an empty fields map declares no field and is an invalid declaration (TYPE-68)."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "fields"]
+      line: 65

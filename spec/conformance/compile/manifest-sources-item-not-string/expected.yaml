@@ -1,0 +1,10 @@
+id: "manifest-sources-item-not-string"
+specVersion: "0.1"
+clauses: ["MANIFEST-11","FIND-20","FIND-12"]
+description: "A non-string glob item in sources.schema is reported as E_MANIFEST at that item."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["sources","schema",0]
+      line: 4

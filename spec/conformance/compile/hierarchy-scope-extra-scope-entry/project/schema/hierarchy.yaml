@@ -1,0 +1,9 @@
+decision_hierarchy:
+  levels: [global, division]
+  scopes:
+    division:
+      nodes: [north, south]
+      on_unknown_node: error
+    site:
+      nodes: [s1]
+      on_unknown_node: ignore

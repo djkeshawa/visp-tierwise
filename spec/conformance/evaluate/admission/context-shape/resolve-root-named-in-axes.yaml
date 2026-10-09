@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-root-named-in-axes"
+specVersion: "0.1"
+clauses: [CTX-3, EVAL-30]
+description: "Naming the root level in the axes map also raises E_CONTEXT_INVALID."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { axes: { global: north } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

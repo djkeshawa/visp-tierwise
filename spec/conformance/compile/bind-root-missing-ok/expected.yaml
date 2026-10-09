@@ -1,0 +1,6 @@
+id: bind-root-missing-ok
+specVersion: "0.1"
+clauses: [BIND-13, BIND-2]
+description: "Negative control of bind-root-missing: the same project with the trigger removed compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

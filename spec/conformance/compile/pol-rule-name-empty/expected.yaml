@@ -1,0 +1,10 @@
+id: pol-rule-name-empty
+specVersion: "0.1"
+clauses: [POL-25]
+description: "An empty rule name is an invalid declaration; the name is required to be a non-empty string."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 0, "name"]
+      line: 10

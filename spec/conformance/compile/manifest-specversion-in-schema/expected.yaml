@@ -1,0 +1,10 @@
+id: "manifest-specversion-in-schema"
+specVersion: "0.1"
+clauses: ["MANIFEST-6","SRC-14","SRC-16","FIND-12"]
+description: "A schema file that declares specVersion is reported as E_INVALID_DECLARATION, because only the manifest declares it."
+expect:
+  findings:
+    - code: "E_INVALID_DECLARATION"
+      file: "schema/core.yaml"
+      path: ["specVersion"]
+      line: 1

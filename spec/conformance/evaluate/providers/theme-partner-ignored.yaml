@@ -1,0 +1,20 @@
+id: providers/theme-partner-ignored
+specVersion: "0.1"
+clauses: [EVAL-7, CTX-14, CTX-15, SVC-17, PROV-50, PROV-56, PROV-61]
+description: An ignored partner scope makes no provider call and no failure, so the tenant value stands and the partner is only listed as skipped.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1, partner: p-9 } }
+key: display.theme
+providers:
+  tenant:
+    t-1:
+      values: { display.theme: solar }
+expect:
+  value: solar
+  source: { scope: level, name: tenant, node: t-1 }
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: solar, effect: SET }
+  skippedScopes:
+    - { scope: level, name: partner, node: p-9, reason: UNKNOWN_NODE }
+  providerCalls: { tenant: { t-1: 1 }, partner: { p-9: 0 } }

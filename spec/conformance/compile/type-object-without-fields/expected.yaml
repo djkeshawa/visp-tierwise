@@ -1,0 +1,10 @@
+id: type-object-without-fields
+specVersion: "0.1"
+clauses: [TYPE-59, TYPE-11]
+description: "An object declaration without fields is an invalid declaration, reported at the items declaration."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items"]
+      line: 65

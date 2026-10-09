@@ -1,0 +1,9 @@
+feature: checkout.order_submission
+
+policies:
+  allow_all:
+    default: "null"
+    rules: []
+
+bindings:
+  global: { policy: allow_all }

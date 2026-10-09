@@ -1,0 +1,10 @@
+id: pol-rule-id-duplicate
+specVersion: "0.1"
+clauses: [POL-24]
+description: "Two rules of one policy with the same id are a duplicate rule id at the repeated id."
+expect:
+  findings:
+    - code: E_DUPLICATE_RULE_ID
+      file: "rules/checkout.order_submission.yaml"
+      path: ["policies", "credit_check", "rules", 1, "id"]
+      line: 15

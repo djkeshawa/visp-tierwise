@@ -1,0 +1,10 @@
+id: "preset-chained-extends"
+specVersion: "0.1"
+clauses: ["MANIFEST-35","FIND-18","FIND-12"]
+description: "A preset that contains extends is reported as E_PRESET at that key in the preset file."
+expect:
+  findings:
+    - code: "E_PRESET"
+      file: "presets/chained.yaml"
+      path: ["extends"]
+      line: 1

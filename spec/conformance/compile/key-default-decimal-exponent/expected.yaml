@@ -1,0 +1,10 @@
+id: key-default-decimal-exponent
+specVersion: "0.1"
+clauses: [MERGE-8, KEY-13, TYPE-24, NORM-14]
+description: "A default that is not a valid value of its declared type is reported at the default (MERGE-8)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "schema/keys.yaml"
+      path: ["keys", "fee_rate", "default"]
+      line: 32

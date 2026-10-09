@@ -1,0 +1,11 @@
+id: "admission/order/decide-sync-unknown-scope"
+specVersion: "0.1"
+clauses: [CTX-4, CTX-9, EVAL-17]
+description: "The synchronous decide raises the context name error of CTX-9 step 2, which is raised in step 1 of EVAL-17."
+call: decide
+sync: true
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { warehouse: north } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_UNKNOWN_SCOPE }

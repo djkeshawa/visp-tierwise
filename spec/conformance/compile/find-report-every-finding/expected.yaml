@@ -1,0 +1,18 @@
+id: "find-report-every-finding"
+specVersion: "0.1"
+clauses: ["FIND-1","FIND-3","FIND-5","FIND-24","FIND-12","FIND-17","SRC-16","SRC-35","MANIFEST-3"]
+description: "Three independent faults in three files are each reported, so a validation reports every finding it determines rather than the first."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["owner"]
+      line: 2
+    - code: "E_INVALID_DECLARATION"
+      file: "schema/core.yaml"
+      path: ["labels"]
+      line: 12
+    - code: "E_UNKNOWN_KEY"
+      file: "values/regions.yaml"
+      path: ["region","yes","checkout.nope"]
+      line: 6

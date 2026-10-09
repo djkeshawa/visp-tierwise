@@ -1,0 +1,10 @@
+id: bind-unknown-setting
+specVersion: "0.1"
+clauses: [BIND-8]
+description: "A binding entry that names no setting of its policy is an unknown setting."
+expect:
+  findings:
+    - code: E_UNKNOWN_SETTING
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "division", "south", "allowed_on_hold"]
+      line: 34

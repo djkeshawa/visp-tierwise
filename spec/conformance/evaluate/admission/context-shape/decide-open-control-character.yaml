@@ -1,0 +1,10 @@
+id: "admission/context-shape/decide-open-control-character"
+specVersion: "0.1"
+clauses: [SCOPE-34, CTX-6]
+description: "A node ID with a C1 control character is invalid in an open catalog, so decide raises E_CONTEXT_INVALID."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: "x\u0085y" } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

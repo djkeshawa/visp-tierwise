@@ -1,0 +1,10 @@
+id: "admission/context-shape/decide-open-node-129-code-points"
+specVersion: "0.1"
+clauses: [SCOPE-33, CTX-6, EVAL-30]
+description: "A node ID of 129 code points raises E_CONTEXT_INVALID in decide even in an open catalog."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { account: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect: { error: E_CONTEXT_INVALID }

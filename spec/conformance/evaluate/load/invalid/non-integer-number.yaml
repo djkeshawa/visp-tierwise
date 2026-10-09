@@ -1,0 +1,9 @@
+id: load/invalid/non-integer-number
+specVersion: "0.1"
+clauses: [VEC-69, VEC-70, VEC-80, EVAL-2, EVAL-14, EVAL-22, EVAL-24, BUNDLE-11, BUNDLE-116, BUNDLE-114]
+description: "A bundle with a non-integer number, 4.5, is rejected at load with E_BUNDLE_INTEGRITY."
+call: resolve
+bundle: ../../../bundles/invalid/non-integer-number.json
+key: example.lead_hours
+expect:
+  error: E_BUNDLE_INTEGRITY

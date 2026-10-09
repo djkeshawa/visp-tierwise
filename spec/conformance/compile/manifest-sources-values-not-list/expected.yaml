@@ -1,0 +1,10 @@
+id: "manifest-sources-values-not-list"
+specVersion: "0.1"
+clauses: ["MANIFEST-11","FIND-20","FIND-12"]
+description: "sources.values written as a mapping instead of a list is reported as E_MANIFEST."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: ["sources","values"]
+      line: 3

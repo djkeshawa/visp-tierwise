@@ -1,0 +1,10 @@
+id: value-tz-wrong-case
+specVersion: "0.1"
+clauses: [TYPE-34, TYPE-35, TYPE-71]
+description: "An iana_tz name that differs from a listed name in case is E_TYPE_MISMATCH (TYPE-34, code point for code point)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/global.yaml"
+      path: ["zone"]
+      line: 5

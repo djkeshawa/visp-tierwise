@@ -1,0 +1,10 @@
+id: value-time-minute-60
+specVersion: "0.1"
+clauses: [TYPE-33, TYPE-32, TYPE-71]
+description: "A time_hhmm value with minutes 60 is E_TYPE_MISMATCH (TYPE-33)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["opens_at"]
+      line: 3

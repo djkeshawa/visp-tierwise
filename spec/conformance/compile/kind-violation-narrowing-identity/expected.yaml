@@ -1,0 +1,10 @@
+id: kind-violation-narrowing-identity
+specVersion: "0.1"
+clauses: [KIND-6, KIND-2, LINT-11, LINT-25]
+description: "An authored true under a narrowing_only kind that uses all is E_KIND_VIOLATION at the value entry; no lint runs."
+expect:
+  findings:
+    - code: E_KIND_VIOLATION
+      file: "values/root.yaml"
+      path: [access.allowed]
+      line: 2

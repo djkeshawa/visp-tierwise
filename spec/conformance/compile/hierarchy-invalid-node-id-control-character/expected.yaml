@@ -1,0 +1,10 @@
+id: hierarchy-invalid-node-id-control-character
+specVersion: "0.1"
+clauses: ["SCOPE-34", "SCOPE-38"]
+description: "A node ID with a control character is E_INVALID_NODE_ID."
+expect:
+  findings:
+    - code: E_INVALID_NODE_ID
+      file: "schema/hierarchy.yaml"
+      path: ["decision_hierarchy", "scopes", "division", "nodes", 0]
+      line: 5

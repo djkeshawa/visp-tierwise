@@ -1,0 +1,10 @@
+id: fact-entity-undeclared
+specVersion: "0.1"
+clauses: [FACT-1, FACT-2]
+description: "A fact declared on an entity that the project does not declare is reported as E_UNKNOWN_ENTITY."
+expect:
+  findings:
+    - code: E_UNKNOWN_ENTITY
+      file: schema/core.yaml
+      path: ["facts", "visitor.active"]
+      line: 15

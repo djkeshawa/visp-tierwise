@@ -1,0 +1,10 @@
+id: hierarchy-unknown-scope-in-values
+specVersion: "0.1"
+clauses: ["SCOPE-46"]
+description: "A values file that names an undeclared level is reported at that level key."
+expect:
+  findings:
+    - code: E_UNKNOWN_SCOPE
+      file: "values/scopes.yaml"
+      path: ["region"]
+      line: 3

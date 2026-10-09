@@ -1,0 +1,21 @@
+id: providers/calls-once-per-scope
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-17, SVC-18, SVC-19, PROV-20, PROV-38]
+description: Each service level that holds a settable key is called exactly once, and both levels contribute.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1, partner: p-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: { access.allowed: true }
+  partner:
+    p-1:
+      values: { access.allowed: false }
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: tenant, node: t-1, value: true, effect: IGNORED }
+    - { scope: level, name: partner, node: p-1, value: false, effect: VETO }
+  providerCalls: { tenant: { t-1: 1 }, partner: { p-1: 1 } }

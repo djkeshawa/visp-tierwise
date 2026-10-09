@@ -1,0 +1,15 @@
+id: axes/override/max-axis-larger-wins
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, AXIS-8, MERGE-14, MERGE-19, MERGE-20, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-50, PROV-52, EVAL-7, CTX-19]
+description: Under max the larger of the hierarchy result and the axis result is the value, and a larger axis value names the axis as source.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { levels: { region: north }, axes: { seller: acme } }
+key: axes.override.max_hours
+expect:
+  value: 8
+  contributions:
+    - { scope: level, name: global, value: 2, effect: SET }
+    - { scope: level, name: region, node: north, value: 6, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: 8, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

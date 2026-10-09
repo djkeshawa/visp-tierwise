@@ -1,0 +1,3 @@
+kinds:
+  k:
+    strategies: [any]

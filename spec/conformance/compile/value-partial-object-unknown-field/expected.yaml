@@ -1,0 +1,10 @@
+id: value-partial-object-unknown-field
+specVersion: "0.1"
+clauses: [MERGE-12, MERGE-11, TYPE-64]
+description: "A partial value of a deep_merge key may omit fields, but an unknown field is still E_TYPE_MISMATCH (MERGE-12, TYPE-64)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["window", "lunch"]
+      line: 9

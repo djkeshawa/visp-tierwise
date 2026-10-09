@@ -1,0 +1,18 @@
+id: merge/all-deny-timeout
+specVersion: "0.1"
+clauses: [MERGE-2, MERGE-15, PROV-29, PROV-39, PROV-41, SVC-9, SVC-39, SVC-44, PROV-8, PROV-27]
+description: A timed-out account provider under deny gives the all key its deny value false, labelled UNAVAILABLE and not VETO.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: north, account: acct-2 } }
+key: merge.all_flag
+providers:
+  account:
+    acct-2:
+      fail: timeout
+expect:
+  value: false
+  contributions:
+    - { scope: level, name: division, node: north, value: true, effect: IGNORED }
+    - { scope: level, name: account, node: acct-2, value: false, effect: UNAVAILABLE, onSourceFailure: deny }
+  providerCalls: { account: { acct-2: 1 } }

@@ -1,0 +1,12 @@
+id: providers/create-missing-before-key-lookup
+specVersion: "0.1"
+clauses: [EVAL-4, EVAL-15, EVAL-26]
+description: Creating the evaluator fails with E_PROVIDER_MISSING before the operation looks up its key, so an undeclared key does not replace the creation error.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: no.such.key
+providers:
+  seat: none
+expect:
+  error: E_PROVIDER_MISSING

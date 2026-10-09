@@ -1,0 +1,14 @@
+id: facts/missing/absent-all-single-values
+specVersion: "0.1"
+clauses: [FACT-24, FACT-16, FACT-17, RULE-44]
+description: "An empty FactSet has every fact of the precheck set missing, listed in code point order."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.order_gate
+input: {}
+expect:
+  effect: DENY
+  reason: { type: MISSING_FACT, facts: [ customer.active, line.kind, order.label, order.note, order.total ] }
+  policy: gate
+  binding: { level: global }
+  trace: []

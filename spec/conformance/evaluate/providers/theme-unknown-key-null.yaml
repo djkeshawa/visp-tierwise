@@ -1,0 +1,17 @@
+id: providers/theme-unknown-key-null
+specVersion: "0.1"
+clauses: [EVAL-7, EVAL-40, SVC-27, PROV-48]
+description: An undeclared key with a null value is ignored under skip and leaves the default in effect.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: display.theme
+providers:
+  tenant:
+    t-1:
+      values: { no.such.key: null }
+expect:
+  value: light
+  source: DEFAULT
+  contributions: []
+  providerCalls: { tenant: { t-1: 1 } }

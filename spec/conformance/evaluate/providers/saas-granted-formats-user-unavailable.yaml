@@ -1,0 +1,18 @@
+id: providers/saas-granted-formats-user-unavailable
+specVersion: "0.1"
+clauses: [EVAL-7, SVC-8, SVC-23, SVC-24, PROV-30, PROV-32, PROV-38]
+description: On the docs-only saas-entitlements sample, an unavailable user provider under skip leaves the plan's granted formats in place.
+call: resolve
+bundle: ../../bundles/saas-entitlements.json
+context: { levels: { org: acme, user: u-1 } }
+key: export.granted_formats
+providers:
+  user:
+    u-1:
+      fail: unavailable
+expect:
+  value: [csv]
+  contributions:
+    - { scope: level, name: plan, value: [csv], effect: WIDENED }
+    - { scope: level, name: user, node: u-1, effect: UNAVAILABLE, onSourceFailure: skip }
+  providerCalls: { user: { u-1: 1 } }

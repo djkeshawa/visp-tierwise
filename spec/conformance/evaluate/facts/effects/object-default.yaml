@@ -1,0 +1,20 @@
+id: facts/effects/object-default
+specVersion: "0.1"
+clauses: [FEAT-11, RULE-50, RULE-51]
+description: "No rule matches, so the object-form default is returned unchanged with reason DEFAULT."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.object_quote
+input: { facts: { order.total: "3" }, children: { line: [ { line.kind: SINGLE } ] } }
+exact: true
+expect:
+  feature: edge.object_quote
+  effect: { amount: "0", tier: SILVER }
+  bundleVersion: sha256:f9de5c2b27288aae83c618a1e780f5a42837a47cdabe5f7c58b2fe5d96a193dc
+  skippedScopes: []
+  binding: { level: global }
+  policy: quote
+  reason: { type: DEFAULT }
+  trace:
+    - { id: bulk-gold, matched: false, failed: { fact: line.kind, op: any_in } }
+    - { id: total-gold, matched: false, failed: { fact: order.total, op: eq } }

@@ -1,0 +1,3 @@
+terminal:
+  t1:
+    checkout.allowed: true

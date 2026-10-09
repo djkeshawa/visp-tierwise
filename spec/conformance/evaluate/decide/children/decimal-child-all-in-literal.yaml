@@ -1,0 +1,26 @@
+id: decide/children/decimal-child-all-in-literal
+specVersion: "0.1"
+clauses: [RULE-16, RULE-31, RULE-37, RULE-47, RULE-48, RULE-49, RULE-52, RULE-54, RULE-55, NORM-15, PROV-62, PROV-71, PROV-74, PROV-78, PROV-79, PROV-80, PROV-82, PROV-83, PROV-18, PROV-64, PROV-65, PROV-68, PROV-69, PROV-73, BIND-17, PROV-7, RULE-53, RULE-32, PROV-81]
+description: "An all_in condition on a decimal child fact compares canonical strings, so the values 1.50 and 2.5 are both members of the literal list, after the any_in rule fails."
+call: decide
+bundle: ../../../bundles/edge-decide.json
+context: {}
+feature: edge.decimal_child
+input:
+  facts: {}
+  children:
+    line:
+      - { line.rate: "1.50" }
+      - { line.rate: "2.5" }
+exact: true
+expect:
+  feature: edge.decimal_child
+  effect: ALLOW
+  bundleVersion: "sha256:27903b3197b5a3efc2948383605beafac375ed4f434e54ca8fd35c0ae867e1a1"
+  skippedScopes: []
+  binding: { level: global }
+  policy: main
+  reason: { type: RULE, id: all-standard-rates, name: "Every line rate is standard" }
+  trace:
+    - { id: watch-hit, matched: false, failed: { fact: line.rate, op: any_in } }
+    - { id: all-standard-rates, matched: true }

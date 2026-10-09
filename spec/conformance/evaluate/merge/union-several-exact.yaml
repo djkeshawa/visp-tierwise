@@ -1,0 +1,21 @@
+id: merge/union-several-exact
+specVersion: "0.1"
+clauses: [AXIS-2, MERGE-1, MERGE-13, MERGE-14, MERGE-16, MERGE-17, CTX-19, PROV-10, PROV-18, PROV-34, PROV-38, PROV-45, PROV-86, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: Sets from a division, a site and a promo axis widen the union into universe order, and each contribution is listed in path order.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context:
+  levels: { division: south, site: s1 }
+  axes: { promo: spring }
+key: merge.tags
+exact: true
+expect:
+  key: merge.tags
+  strategy: union
+  value: [red, green, blue]
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: level, name: division, node: south, value: [blue], effect: WIDENED }
+    - { scope: level, name: site, node: s1, value: [green, blue], effect: WIDENED }
+    - { scope: axis, name: promo, node: spring, value: [red], effect: WIDENED }

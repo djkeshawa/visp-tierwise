@@ -1,0 +1,10 @@
+id: "manifest-specversion-missing"
+specVersion: "0.1"
+clauses: ["MANIFEST-4","FIND-23","FIND-12"]
+description: "A manifest without specVersion is reported at its root mapping, the enclosing mapping of the missing entry."
+expect:
+  findings:
+    - code: "E_MANIFEST"
+      file: "tierwise.yaml"
+      path: []
+      line: 1

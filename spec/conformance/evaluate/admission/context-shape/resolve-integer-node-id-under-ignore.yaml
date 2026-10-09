@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-integer-node-id-under-ignore"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-18, EVAL-30]
+description: "An integer for the ignored site scope is not a string, so the call raises E_CONTEXT_INVALID and does not skip the scope."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: 7 } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

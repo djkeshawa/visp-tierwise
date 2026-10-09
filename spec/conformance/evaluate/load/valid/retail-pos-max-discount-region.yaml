@@ -1,0 +1,11 @@
+id: load/valid/retail-pos-max-discount-region
+specVersion: "0.1"
+clauses: [EVAL-1, EVAL-2, BUNDLE-6, BUNDLE-113, BUNDLE-137, MERGE-17, PROV-18]
+description: "The retail-pos bundle loads, and the max strategy combines the platform value with the region value of a key."
+call: resolve
+bundle: ../../../bundles/retail-pos.json
+context: { levels: { region: inland } }
+key: pos.pricing.max_discount_percent
+expect:
+  value: 15
+  bundleVersion: "sha256:5acebbd8528de939c2ca351ef15f2845f9d156eb6c4f275c57501c9edb039df0"

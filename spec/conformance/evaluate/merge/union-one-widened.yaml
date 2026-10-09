@@ -1,0 +1,12 @@
+id: merge/union-one-widened
+specVersion: "0.1"
+clauses: [MERGE-14, MERGE-17, PROV-37, PROV-38, PROV-86]
+description: A non-empty set from one division is labelled WIDENED and becomes the union.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { levels: { division: south } }
+key: merge.tags
+expect:
+  value: [blue]
+  contributions:
+    - { scope: level, name: division, node: south, value: [blue], effect: WIDENED }

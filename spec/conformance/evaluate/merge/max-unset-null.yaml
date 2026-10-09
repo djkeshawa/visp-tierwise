@@ -1,0 +1,15 @@
+id: merge/max-unset-null
+specVersion: "0.1"
+clauses: [MERGE-5, MERGE-6, MERGE-14, PROV-7, PROV-10, PROV-17, PROV-18, PROV-45, PROV-1, PROV-4, PROV-5, PROV-11, PROV-12, PROV-13, PROV-14]
+description: With no scope setting merge.ceiling, the max key has no identity value, so its result is absent, given as null, with no source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+key: merge.ceiling
+exact: true
+expect:
+  key: merge.ceiling
+  strategy: max
+  value: null
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions: []

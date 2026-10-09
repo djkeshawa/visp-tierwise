@@ -1,0 +1,10 @@
+id: fact-duplicate-key
+specVersion: "0.1"
+clauses: [FACT-5, SRC-3]
+description: "A fact name that repeats within the facts mapping is reported as E_DUPLICATE_KEY at the second occurrence."
+expect:
+  findings:
+    - code: E_DUPLICATE_KEY
+      file: schema/core.yaml
+      path: ["facts", "customer.active"]
+      line: 16

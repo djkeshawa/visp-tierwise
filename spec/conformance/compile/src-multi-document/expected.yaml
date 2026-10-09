@@ -1,0 +1,10 @@
+id: "src-multi-document"
+specVersion: "0.1"
+clauses: ["SRC-6","FIND-23","FIND-12"]
+description: "A values file that holds two YAML documents is reported as E_PARSE at the empty path and line 1."
+expect:
+  findings:
+    - code: "E_PARSE"
+      file: "values/extra.yaml"
+      path: []
+      line: 1

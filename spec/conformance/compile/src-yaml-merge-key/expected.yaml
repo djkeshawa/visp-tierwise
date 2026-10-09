@@ -1,0 +1,10 @@
+id: "src-yaml-merge-key"
+specVersion: "0.1"
+clauses: ["SRC-2","FIND-19","FIND-12"]
+description: "A plain merge key in a schema file is reported as E_YAML_FEATURE at the merge key."
+expect:
+  findings:
+    - code: "E_YAML_FEATURE"
+      file: "schema/core.yaml"
+      path: ["naming","<<"]
+      line: 14

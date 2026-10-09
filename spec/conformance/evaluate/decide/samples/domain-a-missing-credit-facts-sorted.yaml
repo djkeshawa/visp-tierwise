@@ -1,0 +1,20 @@
+id: decide/samples/domain-a-missing-credit-facts-sorted
+specVersion: "0.1"
+clauses: [RULE-40, RULE-42, RULE-43, RULE-44, FACT-16, FACT-17, BIND-21, PROV-72, PROV-76, PROV-77, PROV-84, PROV-18, PROV-62, PROV-64, PROV-65, PROV-68, PROV-69, PROV-71, PROV-73, BIND-17, PROV-7, RULE-52]
+description: "Sample domain A: with no facts supplied, the precheck reports every missing fact of the selected policy in code point order and returns if_fact_missing."
+call: decide
+bundle: ../../../bundles/commerce.json
+context: {}
+feature: checkout.order_submission
+input:
+  facts: {}
+exact: true
+expect:
+  feature: checkout.order_submission
+  effect: DENY
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"
+  skippedScopes: []
+  binding: { level: global }
+  policy: credit_check
+  reason: { type: MISSING_FACT, facts: [customer.active, customer.credit_hold, item.stock_type] }
+  trace: []

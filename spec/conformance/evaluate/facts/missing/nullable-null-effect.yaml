@@ -1,0 +1,14 @@
+id: facts/missing/nullable-null-effect
+specVersion: "0.1"
+clauses: [FEAT-9, FEAT-3, RULE-43, FACT-16]
+description: "A missing fact returns the nullable if_fact_missing effect, which is null."
+call: decide
+bundle: ../../../bundles/edge-facts.json
+feature: edge.nullable_effect
+input: { facts: { order.label: null } }
+expect:
+  effect: null
+  reason: { type: MISSING_FACT, facts: [ order.label ] }
+  policy: pick
+  binding: { level: global }
+  trace: []

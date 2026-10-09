@@ -1,0 +1,14 @@
+id: axes/deep-merge/root-start-axis-wins-no-default
+specVersion: "0.1"
+clauses: [AXIS-1, AXIS-7, MERGE-7, MERGE-10, MERGE-14, MERGE-22, MERGE-23, MERGE-24, PROV-20, PROV-23, PROV-24, PROV-25, PROV-26, PROV-28, PROV-34, PROV-38, PROV-45, PROV-46, PROV-47, PROV-53, EVAL-7, CTX-19]
+description: A deep_merge key with no default starts from its root value, so the axis value merges over the root value and no default takes part.
+call: resolve
+bundle: ../../../bundles/edge-axes.json
+context: { axes: { seller: acme } }
+key: axes.deep.root_start
+expect:
+  value: { open: 7, close: 17 }
+  contributions:
+    - { scope: level, name: global, value: { open: 9, close: 17 }, effect: SET }
+    - { scope: axis, name: seller, node: acme, value: { open: 7 }, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

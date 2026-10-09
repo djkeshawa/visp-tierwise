@@ -1,0 +1,10 @@
+id: value-string-given-number
+specVersion: "0.1"
+clauses: [TYPE-28, TYPE-71, KEY-13]
+description: "A number where a string is declared is E_TYPE_MISMATCH (TYPE-28)."
+expect:
+  findings:
+    - code: E_TYPE_MISMATCH
+      file: "values/division/north.yaml"
+      path: ["division_hint"]
+      line: 9

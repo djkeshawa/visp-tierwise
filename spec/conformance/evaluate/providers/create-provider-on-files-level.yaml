@@ -1,0 +1,14 @@
+id: providers/create-provider-on-files-level
+specVersion: "0.1"
+clauses: [EVAL-4, EVAL-15, EVAL-27, SVC-14]
+description: A provider registered for a level that is not service-sourced makes create evaluator raise E_EVALUATOR_OPTIONS.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: quota.max_items
+providers:
+  region:
+    east:
+      values: { quota.max_items: 3 }
+expect:
+  error: E_EVALUATOR_OPTIONS

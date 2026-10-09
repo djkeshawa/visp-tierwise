@@ -1,0 +1,10 @@
+id: ex-shorthand-two-keys
+specVersion: "0.1"
+clauses: [POL-33, POL-36]
+description: "An example with two shorthand lists for the same child entity is an invalid declaration at the second key."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "rules/checkout.order_submission.yaml"
+      path: ["examples", 0, "facts", "item.weight"]
+      line: 39

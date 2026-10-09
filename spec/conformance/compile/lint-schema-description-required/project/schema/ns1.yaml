@@ -1,0 +1,7 @@
+namespace: ns1
+keys:
+  ns1.owned_flag:
+    type: boolean
+    combine: all
+    settable_at: [global]
+    description: "A flag that the ns1 namespace owns."

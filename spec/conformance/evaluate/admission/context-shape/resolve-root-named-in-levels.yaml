@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-root-named-in-levels"
+specVersion: "0.1"
+clauses: [CTX-3, EVAL-30]
+description: "Naming the root level in levels raises E_CONTEXT_INVALID."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { global: north } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

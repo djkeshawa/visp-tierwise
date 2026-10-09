@@ -1,0 +1,10 @@
+id: hierarchy-entity-name-empty
+specVersion: "0.1"
+clauses: ["ENTITY-18"]
+description: "A declared entity name that is empty is E_INVALID_DECLARATION at the name."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/model.yaml"
+      path: ["entity_hierarchy", ""]
+      line: 21

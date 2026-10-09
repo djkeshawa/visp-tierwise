@@ -1,0 +1,12 @@
+id: load/valid/commerce-lead-hours-division
+specVersion: "0.1"
+clauses: [EVAL-1, EVAL-2, BUNDLE-6, BUNDLE-113, BUNDLE-137, MERGE-19, AXIS-7, PROV-18, PROV-47, PROV-50]
+description: "The commerce bundle loads, and the division value of a key overrides both its root value and its default."
+call: resolve
+bundle: ../../../bundles/commerce.json
+context: { levels: { division: south } }
+key: checkout.pickup.lead_hours
+expect:
+  value: 6
+  source: { scope: level, name: division, node: south }
+  bundleVersion: "sha256:ab1cd3a96be4ab7569ccaba61cb65dbd14b5efd8239de35f16643ab791af6859"

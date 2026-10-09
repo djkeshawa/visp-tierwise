@@ -1,0 +1,16 @@
+id: providers/create-provider-all-present-control
+specVersion: "0.1"
+clauses: [EVAL-4, EVAL-7, EVAL-26, SVC-14]
+description: The negative control of create-missing-provider-none-registered, which differs only by dropping the none registration, so the seat level gets an empty stub and the call returns its result.
+call: resolve
+bundle: ../../bundles/edge-providers.json
+context: { levels: { tenant: t-1 } }
+key: access.allowed
+providers:
+  tenant:
+    t-1:
+      values: {}
+expect:
+  value: true
+  contributions: []
+  providerCalls: { tenant: { t-1: 1 } }

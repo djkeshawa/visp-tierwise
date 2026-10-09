@@ -1,0 +1,10 @@
+# Enforcers for work item C3 (compile cases: types, keys, strategies and axes), VEC-125.
+# Every compile-observable clause of TYPE, KEY, MERGE and AXIS that this item covers is cited by a case under
+# spec/conformance/compile/keys/, so it is not listed here. Only data-file rules remain, which no vector or compile
+# case can observe. Entries that say "Planned" name a test that is not written yet.
+
+# The format of the tz name file is a property of the data file, not of any compile result.
+TYPE-36: "Planned spec-tool test: spec/data/tz-names.txt is UTF-8 with LF line endings, one zone or link name per line, with no comment and no blank line, sorted by code point, and the constant in spec/spec.md names the same release."
+
+# The content of the tz name file is the Zone and Link list of one release, which no compile result exposes.
+TYPE-80: "Planned spec-tool test: spec/data/tz-names.txt lists exactly the Zone and Link names of IANA tz release 2026e in its main files and in backward, excluding Factory and the backzone file."

@@ -1,0 +1,10 @@
+id: "src-values-file-selected-twice"
+specVersion: "0.1"
+clauses: ["SRC-34","FIND-22","FIND-12"]
+description: "A values file that two sources.values items select is reported as E_SOURCE_MAPPING at the second item. OPEN: the location of this finding."
+expect:
+  findings:
+    - code: "E_SOURCE_MAPPING"
+      file: "tierwise.yaml"
+      path: ["sources","values",3]
+      line: 10

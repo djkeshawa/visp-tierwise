@@ -1,0 +1,18 @@
+id: merge/deep-axis-only-source
+specVersion: "0.1"
+clauses: [AXIS-7, MERGE-12, MERGE-24, MERGE-25, PROV-28, PROV-46, PROV-47, PROV-53]
+description: With only the seller axis contributing, H is absent, the result is the default merged with the axis value, and the seller is the source.
+call: resolve
+bundle: ../../bundles/edge-merge.json
+context: { axes: { seller: acme } }
+key: merge.caps
+exact: true
+expect:
+  key: merge.caps
+  strategy: deep_merge
+  value: { cap: 25, unit: items }
+  bundleVersion: "sha256:49c9633623285fdf3ac2385eedda4327e7975811d3e3f0f1ce69625a737b90c8"
+  skippedScopes: []
+  contributions:
+    - { scope: axis, name: seller, node: acme, value: { cap: 25 }, effect: SET }
+  source: { scope: axis, name: seller, node: acme }

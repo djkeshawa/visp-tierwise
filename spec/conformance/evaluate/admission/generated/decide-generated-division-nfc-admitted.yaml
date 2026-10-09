@@ -1,0 +1,16 @@
+id: "admission/generated/decide-generated-division-nfc-admitted"
+specVersion: "0.1"
+clauses: [CTX-7, CTX-8, BIND-16, SCOPE-31]
+description: "The NFC form of a generated catalog node is admitted, and it has no binding, so the root binding applies."
+call: decide
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: "caf\u00e9" } }
+feature: edge.route
+input: { facts: { order.paid: true } }
+expect:
+  effect: SHIP
+  skippedScopes: []
+  binding: { level: global }
+  policy: paid_only
+  reason: { type: RULE, id: paid, name: "Order is paid" }
+  trace: [{ id: paid, matched: true }]

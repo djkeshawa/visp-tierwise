@@ -1,0 +1,13 @@
+id: "admission/generated/resolve-generated-division-admits-nfc-id-without-values"
+specVersion: "0.1"
+clauses: [CTX-7, CTX-8, CTX-19, PROV-42, SCOPE-31]
+description: "A generated closed catalog admits the NFC form of a node, which has no value, so only the root contributes."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { division: "caf\u00e9" } }
+key: edge.tier
+expect:
+  value: SILVER
+  source: { scope: level, name: global }
+  contributions: [{ scope: level, name: global, value: SILVER, effect: SET }]
+  skippedScopes: []

@@ -1,0 +1,8 @@
+global:
+  checkout.open: true
+division:
+  "":
+    checkout.open: true
+site:
+  s1:
+    checkout.open: false

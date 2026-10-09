@@ -1,0 +1,6 @@
+id: "src-path-mapped-values"
+specVersion: "0.1"
+clauses: ["SRC-22","SRC-25","SRC-26","SRC-23","MANIFEST-1","FIND-8"]
+description: "A path-mapped entry captures scope and node from the file path, and its flat files give the same values as the base bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

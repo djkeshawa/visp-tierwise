@@ -1,0 +1,9 @@
+id: "admission/context-shape/resolve-list-value-under-ignore"
+specVersion: "0.1"
+clauses: [CTX-1, CTX-18]
+description: "A list in place of a node ID raises E_CONTEXT_INVALID even though the site scope uses on_unknown_node: ignore."
+call: resolve
+bundle: "../../../bundles/edge-admission.json"
+context: { levels: { site: [site_001] } }
+key: edge.tier
+expect: { error: E_CONTEXT_INVALID }

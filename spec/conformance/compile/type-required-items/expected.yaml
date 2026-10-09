@@ -1,0 +1,10 @@
+id: type-required-items
+specVersion: "0.1"
+clauses: [TYPE-3, TYPE-4, TYPE-11]
+description: "An items declaration with no type member is reported as E_TYPE_REQUIRED at the items declaration."
+expect:
+  findings:
+    - code: E_TYPE_REQUIRED
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items"]
+      line: 65
