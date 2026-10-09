@@ -88,7 +88,7 @@ The Maven group id `io.github.tierwise` is verified against this organisation in
 
 `SECURITY.md` routes reports through GitHub private vulnerability reporting, and `CODE_OF_CONDUCT.md` routes conduct reports to the maintainer through GitHub. No email address is published. What remains:
 
-1. Enable private vulnerability reporting once the repository is in its final home (Settings, Code security, or `gh api -X PUT repos/tierwise/tierwise/private-vulnerability-reporting`), and check that the maintainer is notified.
+1. Enable private vulnerability reporting once the repository is in its final home (Settings, Code security, or `gh api -X PUT repos/tierwise/tierwise/private-vulnerability-reporting`), and check that the maintainer is notified. GitHub offers it only on public repositories: on 2026-10-10 the call answered 404 for the private `djkeshawa/visp-tierwise`. Do this step after the repository is public (O6).
 
 ### 5. Register the Maven Central namespace and create a token
 
@@ -121,7 +121,7 @@ The workflow uploads with the server id `central`, which is what `central-publis
    gpg --armor --export-secret-keys <KEYID>
    ```
 
-4. In the repository settings create the environment `release`. Add required reviewers (you), so that every publishing job waits for an approval, and restrict the deployment to tags that match `v*`. A job that uses `environment: release` gets the environment's secrets only after the approval.
+4. In the repository settings create the environment `release`. Required reviewers need a public repository or a paid plan: on 2026-10-10 the API refused them for the private `djkeshawa/visp-tierwise` (422, "billing plan"), so create the environment after the repository is public or in an organisation on a plan that supports them. Add required reviewers (you), so that every publishing job waits for an approval, and restrict the deployment to tags that match `v*`. A job that uses `environment: release` gets the environment's secrets only after the approval.
 5. Add these secrets to the **environment** (not to the repository):
 
    | Secret | Value |

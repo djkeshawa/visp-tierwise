@@ -104,7 +104,7 @@ The evaluate vectors compare result fields in both evaluators. The server return
 
 ### 14. ADRs for every decision not dictated: met
 
-ADRs 0001–0027 are in `docs/adr/`. The decisions made during release hardening are:
+ADRs 0001–0027 are in `docs/adr/`. ADR 0021 is amended for the Temurin 25 images (Dependabot #3). The decisions made during release hardening are:
 
 - ADR 0024: server API and store choices.
 - ADR 0025: the provider timeout bound.
@@ -143,9 +143,8 @@ Every remaining item is an owner action or a scheduled run. The steps are in [`d
 | O2 | Create the `tierwise` GitHub organisation and transfer the repository to it; claim the `@tierwise` npm scope. | Owner | Publishing, criterion 13 |
 | O6 | Decide whether the repository is public now or at release. | Owner | Announcing |
 | O-12 | Register the Maven Central namespace `io.github.tierwise`. Create the release secrets: Central token, GPG key, npm token. Then run `release.yml` with `dry_run=false`. | Owner | Criterion 13, publication |
-| O-SEC | Turn on private vulnerability reporting once the repository is in its final home. | Owner | `SECURITY.md` routing |
+| O-SEC | Turn on private vulnerability reporting, and create the `release` environment with you as the required reviewer. GitHub allows both only on a public repository (or, for the reviewers, a paid plan). The API refused both for the private repository on 2026-10-10. | Owner, after O6 | `SECURITY.md` routing; protected publishing |
 | O-4 | Confirm that enforcer-only clauses (VEC-125) meet criterion 1. | Owner | Criterion 1 wording |
 | O-3 | Accept phases 0 and 4 to 8, including `tierwise-e2e` as the Phase 7 exit test, and Phase 9. | Owner | Phase acceptance |
 | O-15 | Accept the plain benchmark harness in place of JMH for Phase 3 (ADR 0021). | Owner | Phase 3 wording |
-| O-DEP | Major-version Dependabot PRs: actions/checkout 7, setup-java 6, setup-node 7, pnpm/action-setup 6, JUnit 6.1 and the Temurin 25 runtime image. All are green. The first four remove the "Node.js 20 is deprecated" warning on every run. | Owner | Nothing; recommended |
 | O-S3 | Optional: run `scripts/s3-it.sh` against real AWS S3. That needs an account and credentials. | Owner | Nothing (MinIO is verified) |
