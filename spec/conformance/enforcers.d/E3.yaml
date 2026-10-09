@@ -1,40 +1,42 @@
 # Enforcers for the provider and evaluator-creation clauses that no evaluate vector can observe (VEC-125).
-# Work item E3 owns this file. Each value is one line that names the test that the owning implementation has not written yet.
+# Work item E3 owns this file. Each value is one line that names the unit or property tests that enforce the clause.
+# A multi-key request is not part of the public evaluator API: Java tests reach it through EvaluatorImpl#resolveAll,
+# and JS tests through the internal Resolver#resolveMany of the build output.
 # SVC-38, SVC-48 and EVAL-28 are listed in enforcers.yaml, so they are not repeated here.
 
 # A stub can return only a mapping or a fail outcome (VEC-41, VEC-42), so a non-mapping provider result cannot be expressed.
-SVC-25: "Planned evaluator unit test: a provider result that is null, a list or a scalar gives an UNAVAILABLE failure entry for each key being resolved at that level."
+SVC-25: "Java: tierwise-core ProviderOutcomesTest#SVC_25_aResultThatIsNotAMappingIsAnUnavailableFailureForEachKeyBeingResolved (null; the typed Java provider interface cannot return a list or a scalar). JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-25: a result that is null, a list or a scalar is UNAVAILABLE for each key being resolved at the level\"."
 
 # A single-key resolve never calls a level at which its key is not settable (SVC-17), so an ignored non-settable entry cannot arise in a vector.
-SVC-29: "Planned evaluator unit test: a provider entry for a key being resolved at a level where that key is not settable is ignored, with no value and no failure, in a multi-key resolve."
-SVC-30: "Planned evaluator unit test: a provider entry ignored under SVC-29 adds no contribution entry for any contribution label."
-SVC-37: "Planned evaluator unit test: an entry classified under SVC-29 or SVC-34 changes the outcome of no other key in a multi-key resolve."
+SVC-29: "Java: tierwise-core ProviderOutcomesTest#SVC_29_anEntryForAKeyBeingResolvedThatIsNotSettableAtTheLevelIsIgnored. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-29: an entry for a key being resolved that is not settable at the level is ignored, with no value and no failure\"."
+SVC-30: "Java: tierwise-core ProviderOutcomesTest#SVC_30_anIgnoredEntryAddsNoContributionEntryOfAnyLabel. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-30: an ignored entry adds no contribution entry for any label, and no deny value at that level\"."
+SVC-37: "Java: tierwise-core ProviderOutcomesTest#SVC_37_anIgnoredOrInvalidEntryChangesNoOtherKey. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-37: an ignored or invalid entry changes the outcome of no other key\"."
 
 # Multi-key requests and concurrency are not expressible in a single-key vector (VEC-68, VEC-125).
-SVC-20: "Planned evaluator unit test: a resolve that requests several keys is one evaluation call, so each service-sourced level is called at most once for the whole request."
-SVC-21: "Planned evaluator property test: a result does not change with the order or the concurrency of the provider calls of one evaluation."
+SVC-20: "Java: tierwise-core ProviderOutcomesTest#SVC_20_aRequestForSeveralKeysIsOneEvaluationCall. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-20: a request for several keys is one evaluation call, so the provider of a level is called once\" and \"SVC-20: a multi-key request calls each service-sourced level at most once\"."
+SVC-21: "Java: tierwise-core ProviderCallOrderTest#SVC_21_theResultDoesNotDependOnTheOrderInWhichTheProviderCallsFinish and #SVC_21_theResultDoesNotDependOnConcurrentEvaluationCalls (jqwik properties). JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-21: property: a result does not depend on the order in which the provider calls finish\" and \"SVC-21: property: concurrent evaluation calls give the result each gives alone\"."
 
 # The evaluator's own bookkeeping and wall-clock behaviour are not visible in a result (VEC-45).
-SVC-6: "Planned evaluator unit test: an evaluator records no source failure for a level that is not service-sourced."
-SVC-40: "Planned evaluator unit test: a provider result that arrives after its timeout has expired is never used, and the call counts as unavailable."
-SVC-41: "Planned evaluator unit test: a timeout is a positive integer number of milliseconds, measured from the start of the provider call until its result is available."
+SVC-6: "Java: tierwise-core ProviderOutcomesTest#SVC_6_noSourceFailureIsRecordedForALevelThatIsNotServiceSourced. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-6: no source failure is recorded for a level that is not service-sourced\"."
+SVC-40: "Java: tierwise-core ProviderOutcomesTest#SVC_40_aResultThatArrivesAfterTheTimeoutIsNeverUsed. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-40, SVC-41: a result that becomes available after the timeout is not used, even when the provider blocked the timer\" and js/evaluator/test/evaluator.test.mjs \"a provider that does not return in time is unavailable, and a late result is not used (SVC-39, SVC-40, SVC-41)\"."
+SVC-41: "Java: tierwise-core ProviderOutcomesTest#SVC_41_aResultThatIsAvailableBeforeTheTimeoutIsUsed and #SVC_39_aProviderThatExceedsItsTimeoutIsUnavailable, EvaluatorCreationTest#EVAL_28_aTimeoutThatIsNotAPositiveWholeNumberOfMillisecondsRaisesEvaluatorOptions. JS: js/evaluator/test/provider-outcomes.test.mjs \"SVC-41: a result that is available before the timeout is used\" and \"SVC-40, SVC-41: a result that becomes available after the timeout is not used, even when the provider blocked the timer\", js/evaluator/test/evaluator.test.mjs \"a provider registration needs a function and a positive integer timeout (SVC-38, SVC-48)\"."
 
 # Listener events are not part of a result and are not asserted by vectors (EVAL-53, ADR 0014).
-SVC-43: "Planned listener unit test: the source failures reported to the listener are exactly those of SVC-23 and SVC-34."
-SVC-44: "Planned listener unit test: a timeout is reported to the listener as a source failure under SVC-23."
-SVC-45: "Planned listener unit test: the unknown keys reported to the listener are exactly the entries of SVC-27."
-SVC-46: "Planned listener unit test: a key that a provider result omits under SVC-36 is reported to the listener neither as a source failure nor as an unknown key."
-SVC-47: "Planned listener unit test: an entry ignored under SVC-29 is reported to the listener, and is neither a source failure nor an unknown key."
+SVC-43: "Java: tierwise-core ListenerEventsTest#EVAL_41_andSVC_43_aProviderFailureIsReportedOncePerAffectedKey and #SVC_43_anInvalidValueIsReportedAsASourceFailureForItsKeyOnly. JS: js/evaluator/test/listener-events.test.mjs \"SVC-43: the source failures reported are exactly the UNAVAILABLE and INVALID outcomes\"."
+SVC-44: "Java: tierwise-core ListenerEventsTest#SVC_44_aTimeoutIsReportedAsASourceFailure. JS: js/evaluator/test/listener-events.test.mjs \"SVC-44: a timeout is reported as an UNAVAILABLE source failure\"."
+SVC-45: "Java: tierwise-core ListenerEventsTest#SVC_45_theUnknownKeysReportedAreExactlyTheEntriesForUndeclaredKeys. JS: js/evaluator/test/listener-events.test.mjs \"SVC-45: the unknown keys reported are exactly the entries for undeclared keys, whatever their value\"."
+SVC-46: "Java: tierwise-core ListenerEventsTest#SVC_46_aKeyTheResultOmitsIsReportedNeitherAsAFailureNorAsUnknown. JS: js/evaluator/test/listener-events.test.mjs \"SVC-46: a key that the provider result leaves out is reported neither as a source failure nor as an unknown key\"."
+SVC-47: "Java: tierwise-core ListenerEventsTest#SVC_47_anIgnoredEntryIsReportedAsNeitherAFailureNorAnUnknownKey. JS: js/evaluator/test/listener-events.test.mjs \"SVC-47: an ignored entry is reported, and is neither a source failure nor an unknown key\"."
 
 # Creation rules that a vector cannot express: a YAML mapping holds one registration per level, and no vector carries a timeout or a listener (VEC-45).
-EVAL-5: "Planned evaluator unit test: create evaluator is a synchronous operation that returns its evaluator directly."
-EVAL-6: "Planned evaluator unit test: create evaluator calls no provider, including for a service-sourced level whose provider holds values."
-EVAL-27: "Planned evaluator unit test: registering two providers for one level raises E_EVALUATOR_OPTIONS, which a YAML mapping cannot express (VEC-125)."
+EVAL-5: "Java: tierwise-core EvaluatorCreationTest#EVAL_5_createEvaluatorIsSynchronousAndReturnsTheEvaluatorDirectly. JS: js/evaluator/test/evaluator-creation.test.mjs \"EVAL-5: create evaluator is synchronous and returns its evaluator directly\"."
+EVAL-6: "Java: tierwise-core EvaluatorCreationTest#EVAL_6_createEvaluatorCallsNoProvider. JS: js/evaluator/test/evaluator-creation.test.mjs \"EVAL-6: create evaluator calls no provider, including a provider that holds values\"."
+EVAL-27: "Java: tierwise-core EvaluatorCreationTest#EVAL_27_aLevelRegisteredTwiceRaisesEvaluatorOptions, #EVAL_27_aLevelTheBundleDoesNotDeclareRaisesEvaluatorOptions and #EVAL_27_aDeclaredLevelThatIsNotServiceSourcedRaisesEvaluatorOptions. JS: js/evaluator/test/evaluator.test.mjs \"a provider for a level that is undeclared or not service-sourced raises E_EVALUATOR_OPTIONS (EVAL-27)\"; the JS providers option is an object keyed by level name, so it cannot register one level twice."
 
 # Listener rules: vectors do not assert listener events (EVAL-41 and EVAL-53 with ADR 0014).
-EVAL-41: "Planned listener unit test: resolve reports to a configured listener the provider events that SVC-43 to SVC-47 define."
-EVAL-42: "Planned listener unit test: decide and the synchronous variants of resolve and decide report no provider event."
-EVAL-43: "Planned listener unit test: create evaluator emits one load event before it returns when it returns an evaluator, and emits none when it raises an error."
-EVAL-44: "Planned listener unit test: each listener event is delivered before the operation returns, one for each affected key, and a listener that throws changes no result."
-EVAL-45: "Planned listener unit test: no raised error and no skippedScopes entry is reported to the listener."
-EVAL-53: "Planned listener unit test: a listener tolerates concurrent calls, and each event carries type and bundleVersion."
+EVAL-41: "Java: tierwise-core ListenerEventsTest#EVAL_41_andSVC_43_aProviderFailureIsReportedOncePerAffectedKey. JS: js/evaluator/test/listener-events.test.mjs \"EVAL-41: resolve reports to a configured listener the provider events of the calls it makes\"."
+EVAL-42: "Java: tierwise-core ListenerEventsTest#EVAL_42_decideAndTheSynchronousVariantsReportNoProviderEvent. JS: js/evaluator/test/listener-events.test.mjs \"EVAL-42: decide and the synchronous variants of resolve and decide report no provider event\"."
+EVAL-43: "Java: tierwise-core ListenerEventsTest#EVAL_43_createEvaluatorEmitsOneLoadEventBeforeItReturns and #EVAL_43_createEvaluatorEmitsNoEventWhenItRaisesAnError. JS: js/evaluator/test/listener-events.test.mjs \"EVAL-43: create evaluator emits one load event before it returns, and none when it raises an error\"."
+EVAL-44: "Java: tierwise-core ListenerEventsTest#EVAL_44_eventsAreDeliveredBeforeTheOperationReturns, #EVAL_44_aListenerThatThrowsChangesNoResultAndRaisesNoError and #EVAL_41_andSVC_43_aProviderFailureIsReportedOncePerAffectedKey. JS: js/evaluator/test/listener-events.test.mjs \"EVAL-44: each event is delivered before the operation returns, one for each affected key\" and \"EVAL-44: a listener that throws changes no result and raises no error\"."
+EVAL-45: "Java: tierwise-core ListenerEventsTest#EVAL_45_noRaisedErrorAndNoSkippedScopeIsReported. JS: js/evaluator/test/listener-events.test.mjs \"EVAL-45: no raised error and no skipped scope is reported to the listener\"."
+EVAL-53: "Java: tierwise-core ListenerEventsTest#EVAL_53_aListenerToleratesConcurrentCallsAndEveryEventCarriesTypeAndBundleVersion. JS: js/evaluator/test/listener-events.test.mjs \"EVAL-53: the evaluator does not wait for a listener, and every event carries type and bundleVersion\"."

@@ -3,9 +3,9 @@
 # MERGE-3, MERGE-4, MERGE-7 and MERGE-8 are not listed: a compile case observes them, and compile/keys cites them.
 
 # The path fixes the order in which contributed values are combined, so no vector can vary that order.
-MERGE-18: "Planned evaluator property test: for each commutative strategy, the result is the same under every permutation of the contributed values."
+MERGE-18: "Java: tierwise-core StrategiesTest#MERGE_18_allDoesNotDependOnTheOrderOfTheValues, #MERGE_18_integerStrategiesDoNotDependOnTheOrderOfTheValues and #MERGE_18_setStrategiesDoNotDependOnTheOrderOfTheValues (jqwik properties over all six commutative strategies). JS: js/evaluator/test/properties.test.mjs \"property: the commutative ${name} result and its contribution effects do not depend on input order\" (one test for each commutative strategy)."
 
 # A deny value is never written by a source, and only a narrowing strategy can carry one (SVC-11), so a Resolved result never
 # holds a deny failure entry for an order-dependent key. The compiler rejects a bundle source that would allow one with
-# E_DENY_NOT_NARROWING, and a loaded canonical bundle is not checked for it (BUNDLE-118 to BUNDLE-136).
-PROV-49: "Planned evaluator property test: for every Resolved result of an order-dependent key, no failure entry under deny appears, because SVC-11 stops a compiler from producing a bundle that allows one."
+# E_DENY_NOT_NARROWING, and the loader rejects such a canonical bundle with E_BUNDLE_INTEGRITY (BUNDLE-118).
+PROV-49: "Java: tierwise-core OrderDependentDenyTest#PROV_49_anOrderDependentKeyNeverHasAFailureEntryUnderDeny and #PROV_49_aFailureOfAnOrderDependentKeyIsRecordedUnderSkip (jqwik properties), BundleExtraChecksTest#SVC_11_denyNeedsANarrowingStrategy. JS: js/evaluator/test/provider-outcomes.test.mjs \"PROV-49: property: no Resolved result of an order-dependent key has a failure entry under deny\" and \"PROV-49: a bundle with deny on an order-dependent key does not load\"."
