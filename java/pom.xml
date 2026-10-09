@@ -7,8 +7,15 @@
   <artifactId>tierwise-parent</artifactId>
   <version>0.1.0-dev.0</version>
   <packaging>pom</packaging>
-  <name>Tierwise — provisional foundations</name>
-  <description>Phase 0 reactor; no reviewed specification or production APIs yet.</description>
+  <name>Tierwise</name>
+  <description>Tierwise parent POM: the Java reference toolchain, runtimes and control plane for tiered feature and entitlement configuration.</description>
+  <!--
+    The GitHub organisation is not claimed yet (open question O2). Until it is, the URLs below are the
+    proposed home. If the owner picks another home, change url and the three scm URLs together, and
+    docs/release-process.md step 1 explains the checks.
+  -->
+  <url>https://github.com/tierwise/tierwise</url>
+  <inceptionYear>2026</inceptionYear>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -16,6 +23,30 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  <!--
+    Maven Central requires at least one <developers> entry. MAINTAINERS.md says no maintainer is assigned
+    (open question O3), and nobody may be listed without agreeing to it. The owner adds the entry before the
+    first release; the Central validation rejects a release without it. Format:
+      <developers>
+        <developer>
+          <id>github-user-name</id>
+          <name>Full name</name>
+          <url>https://github.com/github-user-name</url>
+        </developer>
+      </developers>
+    Do not add an email address unless the person asks for it: it ends up in the public POM.
+  -->
+  <scm>
+    <!-- The attributes keep the module POMs from appending their artifactId to these URLs. -->
+    <url child.scm.url.inherit.append.path="false">https://github.com/tierwise/tierwise</url>
+    <connection child.scm.connection.inherit.append.path="false">scm:git:https://github.com/tierwise/tierwise.git</connection>
+    <developerConnection child.scm.developerConnection.inherit.append.path="false">scm:git:ssh://git@github.com/tierwise/tierwise.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/tierwise/tierwise/issues</url>
+  </issueManagement>
   <modules>
     <module>tierwise-core</module>
     <module>tierwise-cli</module>
@@ -24,6 +55,8 @@
     <module>tierwise-server</module>
     <module>tierwise-server-s3</module>
     <module>tierwise-openfeature</module>
+    <!-- Test-only: the end-to-end test. It publishes nothing (maven.deploy.skip). -->
+    <module>tierwise-e2e</module>
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,6 +77,21 @@
          A module with tests passes this property to surefire's excludedGroups. -->
     <tierwise.excludedGroups>conformance</tierwise.excludedGroups>
 
+    <!--
+      Switches of the release profile. A module that must not be published (the end-to-end test module and
+      any module that holds only tests) sets maven.deploy.skip to true in its own properties, as tierwise-e2e
+      does; the release profile then builds no sources or Javadoc JAR for it, and leaves it out of the Central
+      bundle. scripts/check-foundation.py checks that every module outside its list of published modules sets it.
+    -->
+    <maven.deploy.skip>false</maven.deploy.skip>
+    <!--
+      Signing is off unless the release workflow turns it on with -Dtierwise.gpg.skip=false (a PGP key was
+      imported) and -Dtierwise.sigstore.skip=false (the job has an OIDC token). A local build and the dry
+      run therefore never sign anything and need no secrets.
+    -->
+    <tierwise.gpg.skip>true</tierwise.gpg.skip>
+    <tierwise.sigstore.skip>true</tierwise.sigstore.skip>
+
     <!-- Library versions approved in ADR 0012. -->
     <version.snakeyaml-engine>3.1.1</version.snakeyaml-engine>
     <version.jackson>2.22.3</version.jackson>
@@ -62,6 +110,12 @@
     <version.site>3.22.0</version.site>
     <version.enforcer>3.6.3</version.enforcer>
     <version.shade>3.6.2</version.shade>
+    <!-- Release tooling (ADR 0022). These plugins run only in the release profile. -->
+    <version.source>3.4.0</version.source>
+    <version.javadoc>3.12.0</version.javadoc>
+    <version.gpg>3.2.8</version.gpg>
+    <version.sigstore>2.3.0</version.sigstore>
+    <version.central-publishing>0.11.0</version.central-publishing>
     <!-- Runtime integration dependencies (ADR 0020). Spring and AWS BOMs are imported by the modules that use them. -->
     <version.spring-boot>4.1.1</version.spring-boot>
     <version.awssdk>2.55.0</version.awssdk>
@@ -175,6 +229,42 @@
           <version>${version.shade}</version>
         </plugin>
         <plugin>
+          <!-- Sources JAR, required by Maven Central. Bound by the release profile (ADR 0022). -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${version.source}</version>
+        </plugin>
+        <plugin>
+          <!-- Javadoc JAR, required by Maven Central. Bound by the release profile (ADR 0022). -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${version.javadoc}</version>
+        </plugin>
+        <plugin>
+          <!-- PGP signatures, required by Maven Central. Skipped unless a key is provided (ADR 0022). -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${version.gpg}</version>
+        </plugin>
+        <plugin>
+          <!-- Sigstore bundles (keyless; the workflow's OIDC token is the identity). Skipped by default. -->
+          <groupId>dev.sigstore</groupId>
+          <artifactId>sigstore-maven-plugin</artifactId>
+          <version>${version.sigstore}</version>
+        </plugin>
+        <plugin>
+          <!-- Central Portal upload, in the release profile only, with autoPublish=false (ADR 0022). -->
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${version.central-publishing}</version>
+        </plugin>
+        <plugin>
+          <!-- Repackages tierwise-server as an executable JAR (classifier exec). The Spring Boot BOM version. -->
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${version.spring-boot}</version>
+        </plugin>
+        <plugin>
           <!-- Native image build of the CLI, bound only by the native profile of tierwise-cli (ADR 0012). -->
           <groupId>org.graalvm.buildtools</groupId>
           <artifactId>native-maven-plugin</artifactId>
@@ -224,6 +314,137 @@
   </build>
 
   <profiles>
+    <profile>
+      <!--
+        Release build (ADR 0022, docs/release-process.md). Adds what Maven Central requires on top of the normal
+        build: a sources JAR and a Javadoc JAR for every module, a CycloneDX SBOM attached to every module,
+        PGP signatures and Sigstore bundles for every attached file, and the Central Portal upload.
+
+        Nothing here publishes by itself: the upload happens only in the deploy phase, and only with credentials
+        for the server id "central" in settings.xml. The release workflow calls deploy only when its dry_run input
+        is false. "verify -Prelease" builds and checks everything and uploads nothing.
+
+        The build is reproducible: project.build.outputTimestamp fixes every timestamp, and
+        scripts/reproducibility-check.sh compares two builds of the same sources.
+      -->
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <configuration>
+              <skipSource>${maven.deploy.skip}</skipSource>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <skip>${maven.deploy.skip}</skip>
+              <release>${maven.compiler.release}</release>
+              <quiet>true</quiet>
+              <!-- Everything but "missing": a private serialized field without a comment is not an API gap. -->
+              <doclint>all,-missing</doclint>
+              <failOnWarnings>true</failOnWarnings>
+              <failOnError>true</failOnError>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <!--
+              One SBOM for every module, attached as <artifact>-<version>-cyclonedx.json. The id "sbom" is the id that
+              tierwise-cli already uses, so the CLI keeps its own configuration (projectType application) and runs the
+              goal once.
+            -->
+            <groupId>org.cyclonedx</groupId>
+            <artifactId>cyclonedx-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sbom</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>makeBom</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <!--
+              Sigstore comes before GPG on purpose: both run in the verify phase in POM order, so the PGP plugin
+              then also signs the .sigstore.json bundles, and Central gets a signature for every file.
+            -->
+            <groupId>dev.sigstore</groupId>
+            <artifactId>sigstore-maven-plugin</artifactId>
+            <configuration>
+              <skip>${tierwise.sigstore.skip}</skip>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sigstore-sign</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <skip>${tierwise.gpg.skip}</skip>
+              <!-- The key is imported by the workflow; the passphrase comes from MAVEN_GPG_PASSPHRASE. -->
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <!--
+              Replaces the deploy plugin for the reactor: collects every module into one bundle and uploads it to the
+              Central Portal. autoPublish=false leaves the validated deployment waiting in the portal, so a person
+              reviews it and presses Publish there (docs/release-process.md). The credentials are the server id
+              "central" in settings.xml; the release workflow writes them from secrets.
+            -->
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>false</autoPublish>
+              <waitUntil>validated</waitUntil>
+              <skipPublishing>${maven.deploy.skip}</skipPublishing>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <!-- Runs the spec conformance suite (tests tagged "conformance") with the other tests. -->
       <id>conformance</id>

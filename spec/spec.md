@@ -1,6 +1,6 @@
 # Tierwise specification
 
-- **Spec version:** 0.1 (draft, not accepted)
+- **Spec version:** 0.1 (accepted 2026-10-09; see docs/phase-1-review.md)
 - **Bundle format version:** 1 (draft)
 - **IANA tz database release:** 2026e ([TYPE-80])
 

@@ -11,8 +11,8 @@
   </parent>
   <artifactId>tierwise-server-s3</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-server-s3</name>
-  <description>Optional S3 bundle store for the Tierwise server (ADR 0020)</description>
+  <name>Tierwise Server S3</name>
+  <description>Optional S3 bundle store for the Tierwise server.</description>
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>

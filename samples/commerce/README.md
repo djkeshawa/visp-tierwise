@@ -117,7 +117,7 @@ Every binding of both features has at least one example, as
 
 ## Results derived from the clauses (non-normative)
 
-These results were worked out by hand from the clauses above. No tool has run them.
+These results were first worked out by hand from the clauses. The reference evaluator now reproduces them (see `docs/guides/` and the end-to-end test).
 They are the expected values for a resolve or decide call, for a reader who wants to
 check the project against the merge rules.
 
@@ -142,12 +142,7 @@ call ([CTX-14], [CTX-16]).
 
 ## Validation status
 
-No compiler is in this repository yet. The `java/` modules hold only package stubs, so
-`tierwise validate` cannot run on this project. The project is written to produce zero
-findings under the specification, and the reasoning is recorded above. The examples
-have been checked by hand. The manifest, the two schema files, the two rules files and
-the values files also match the structure schemas in `spec/schemas/`, which check
-structure only. Only a compiler run can confirm the zero-findings claim.
+`tierwise validate samples/commerce` reports no findings, and `tierwise compile` reproduces `spec/conformance/bundles/commerce.json` byte for byte (compile case `sample-commerce`). Validation also runs every example.
 
 The claim also rests on one reading of section 7: that a feature declaration may carry
 `description` (see the first open point).

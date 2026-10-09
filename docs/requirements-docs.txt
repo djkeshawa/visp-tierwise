@@ -1,0 +1,7 @@
+# The documentation toolchain (ADR 0022). Built in CI only: .github/workflows/docs.yml installs this file into a
+# virtual environment and runs `mkdocs build --strict`.
+#
+# mkdocs-material is the only direct dependency, pinned to an exact version. It brings in MkDocs 1.6.1 and the
+# Markdown extensions it needs. Those are not pinned here.
+# (OPEN) Pin the whole resolved set, with hashes, once a lock-file tool for pip is approved (ADR 0012 approves none).
+mkdocs-material==9.7.7

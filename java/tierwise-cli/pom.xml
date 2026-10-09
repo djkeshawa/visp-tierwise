@@ -11,8 +11,8 @@
   </parent>
   <artifactId>tierwise-cli</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-cli</name>
-  <description>The tierwise command line: init, validate, lint, test, compile, explain.</description>
+  <name>Tierwise CLI</name>
+  <description>The tierwise command line: init, validate, lint, test, compile, codegen and explain. Published as a library JAR and as a runnable all-in-one JAR.</description>
 
   <properties>
     <tierwise.cli.mainClass>io.github.tierwise.cli.Main</tierwise.cli.mainClass>

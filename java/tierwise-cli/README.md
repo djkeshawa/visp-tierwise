@@ -42,5 +42,4 @@ and checks the digest ([MANIFEST-25] to [MANIFEST-29]).
 [`templates/`](templates), next to the module rather than in its sources, because they are example
 projects that name the kinds and keys of the presets.
 
-`CodegenCommand` is a placeholder for the codegen work item. It is not registered until that item
-uncomments the marked line in `TierwiseCli.create`.
+`tierwise codegen --lang java|ts` generates typed key and feature handles (see the CLI reference in `docs/guides/`).

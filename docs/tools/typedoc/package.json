@@ -1,0 +1,19 @@
+{
+  "name": "tierwise-typedoc",
+  "version": "0.1.0-dev.0",
+  "private": true,
+  "description": "Builds the TypeScript API reference of the Tierwise packages. A separate project, outside the js workspace, because TypeDoc needs the TypeScript compiler API of TypeScript 6 (ADR 0022).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@11.3.0",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "typedoc --options typedoc.json"
+  },
+  "devDependencies": {
+    "typedoc": "0.28.20",
+    "typescript": "6.0.3"
+  }
+}

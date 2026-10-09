@@ -11,8 +11,8 @@
   </parent>
   <artifactId>tierwise-spring-boot-starter</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-spring-boot-starter</name>
-  <description>Spring Boot auto-configuration for Tierwise: bundle loading and refresh, Resolver and DecisionEngine beans, provider wiring and Micrometer metrics</description>
+  <name>Tierwise Spring Boot Starter</name>
+  <description>Spring Boot auto-configuration for Tierwise: bundle loading and refresh, Resolver and DecisionEngine beans, provider wiring and Micrometer metrics.</description>
 
   <properties>
     <maven.compiler.release>21</maven.compiler.release>

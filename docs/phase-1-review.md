@@ -9,11 +9,11 @@
 | --- | --- |
 | `spec/spec.md`, `spec/sections/01`–`13` | 1,106 normative clauses with stable IDs; no open points |
 | `spec/error-codes.md` | 59 codes (51 engine, 11 evaluation including shared ones, 1 tooling) and 9 lint rules, each with meaning, triggers, example and fix |
-| `spec/schemas/` | 13 JSON Schemas (2020-12): manifest, preset, schema/values/rules files, bundle, provenance, results, and the vector formats |
+| `spec/schemas/` | 12 JSON Schemas (2020-12): manifest, preset, schema/values/rules files, bundle, provenance, results, and the vector formats |
 | `spec/data/tz-names.txt` | IANA tz release 2026e (597 names) |
 | `presets/` | `recommended`, `minimal`, `entitlements` |
 | `samples/` | commerce (domain A), retail-pos (domain B, custom kinds, no preset) and saas-entitlements (single-file docs sample) |
-| `spec/conformance/` | Bundles for every sample, edge bundles and invalid bundles; 572 evaluate vectors, 32 canonical vectors, 580 compile cases and 15 provenance cases; `COVERAGE.md` |
+| `spec/conformance/` | Bundles for every sample, edge bundles and invalid bundles; 576 evaluate vectors, 32 canonical vectors, 580 compile cases and 15 provenance cases; `COVERAGE.md` |
 | `js/spec-tools/` | `canonicalize` (JCS + SHA-256) and `check` (schema validation, digests, citations, coverage) |
 | `js/scripts/check-genericity.mjs` | Domain-name scan of production code, run in CI |
 

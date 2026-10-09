@@ -49,6 +49,7 @@ jobs:
           mkdir -p dist/sbom
           for module in java/tierwise-*/; do
             name=$(basename "$module")
+            [ "$name" = tierwise-e2e ] && continue  # test-only module, nothing to ship
             for jar in "$module"target/*.jar; do cp "$jar" dist/; done
             cp "$module"target/bom.json "dist/sbom/$name.cdx.json"
           done

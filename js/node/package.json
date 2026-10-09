@@ -2,15 +2,35 @@
   "name": "@tierwise/node",
   "version": "0.1.0-dev.0",
   "private": true,
-  "description": "Phase 0 node placeholder; no public API yet",
+  "description": "Tierwise bundle loader for Node: fetch with ETag refresh, last-known-good and atomic swap",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tierwise/tierwise.git",
+    "directory": "js/node"
+  },
+  "homepage": "https://github.com/tierwise/tierwise/tree/main/js/node#readme",
+  "bugs": {
+    "url": "https://github.com/tierwise/tierwise/issues"
+  },
+  "keywords": [
+    "tierwise",
+    "entitlements",
+    "feature-flags",
+    "tiers",
+    "configuration",
+    "node",
+    "bundle"
+  ],
   "type": "module",
   "engines": {
     "node": ">=20"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "NOTICE"
   ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -26,6 +46,10 @@
   "tierwise": {
     "supportedSpecVersions": [],
     "supportedBundleFormatVersions": []
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs",

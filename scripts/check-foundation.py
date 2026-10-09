@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent.parent
 NS = {"m": "http://maven.apache.org/POM/4.0.0"}
+ET.register_namespace("", NS["m"])  # so that ET.tostring writes plain element names
 MODULES = {
     "tierwise-core": 17,
     "tierwise-cli": 17,
@@ -17,6 +18,20 @@ MODULES = {
     "tierwise-server": 21,
     "tierwise-server-s3": 21,
     "tierwise-openfeature": 17,
+    # Test-only: the end-to-end test. It is part of the reactor and is never published (see PUBLISHED below).
+    "tierwise-e2e": 21,
+}
+# The modules that go to Maven Central. Every other module of the reactor must set maven.deploy.skip to true,
+# which the release profile of java/pom.xml turns into "no sources or Javadoc JAR, left out of the Central bundle".
+PUBLISHED = set(MODULES) - {"tierwise-e2e"}
+# The Maven plugins of the release profile (ADR 0022). Each is pinned by a property in java/pom.xml.
+RELEASE_PLUGINS = {
+    "org.apache.maven.plugins:maven-source-plugin": "version.source",
+    "org.apache.maven.plugins:maven-javadoc-plugin": "version.javadoc",
+    "org.apache.maven.plugins:maven-gpg-plugin": "version.gpg",
+    "dev.sigstore:sigstore-maven-plugin": "version.sigstore",
+    "org.sonatype.central:central-publishing-maven-plugin": "version.central-publishing",
+    "org.cyclonedx:cyclonedx-maven-plugin": None,
 }
 # ADR 0012. Later phases extend these sets when their dependencies are approved.
 APPROVED_DEPENDENCIES = {
@@ -28,6 +43,9 @@ APPROVED_DEPENDENCIES = {
     "tierwise-server-s3": {"io.github.tierwise:tierwise-server", "software.amazon.awssdk:*", "org.springframework.boot:*"},
     "tierwise-openfeature": {"io.github.tierwise:tierwise-core", "dev.openfeature:sdk"},
     "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli", "org.snakeyaml:snakeyaml-engine"},
+    # The end-to-end test runs the server and the starter in one JVM, all in test scope.
+    "tierwise-e2e": {"io.github.tierwise:tierwise-core", "io.github.tierwise:tierwise-server",
+                     "io.github.tierwise:tierwise-spring-boot-starter", "org.springframework.boot:*"},
 }
 APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik", "org.springframework.security:spring-security-test"}
 # BOMs the parent may import in dependencyManagement. They only pin versions; a module still has to
@@ -102,7 +120,7 @@ def check_java():
 def check_ci():
     for workflow in [*(ROOT / ".github/workflows").glob("*.yml"), ROOT / "action.yml"]:
         text = workflow.read_text()
-        for ref in re.findall(r"^\s*- uses: ([^\s#]+)", text, re.MULTILINE):
+        for ref in re.findall(r"^\s*(?:- )?uses: ([^\s#]+)", text, re.MULTILINE):
             require(re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref), f"Unpinned action in {workflow.name}: {ref}")
     ci = (ROOT / ".github/workflows/ci.yml").read_text()
     for command in ("./mvnw -B -ntp verify -Pconformance",
@@ -113,14 +131,143 @@ def check_ci():
         require(command in ci, f"CI is missing: {command}")
 
 
+def pom_properties(model):
+    properties = model.find("m:properties", NS)
+    return {} if properties is None else {child.tag.split("}")[1]: (child.text or "") for child in properties}
+
+
+def check_release_poms():
+    """The release profile of java/pom.xml and the modules that must not be published (ADR 0022)."""
+    parent = ET.parse(ROOT / "java/pom.xml").getroot()
+    properties = pom_properties(parent)
+    for tag in ("name", "description", "url"):
+        require(parent.findtext(f"m:{tag}", namespaces=NS), f"java/pom.xml needs <{tag}> for Maven Central")
+    require(parent.findall("m:licenses/m:license", NS), "java/pom.xml needs a license")
+    for tag in ("url", "connection", "developerConnection"):
+        require(parent.findtext(f"m:scm/m:{tag}", namespaces=NS), f"java/pom.xml needs <scm><{tag}>")
+    # Every plugin that is configured anywhere has a version; the release plugins are the ones of ADR 0022.
+    pinned = {"version.source": "3.4.0", "version.javadoc": "3.12.0", "version.gpg": "3.2.8",
+              "version.sigstore": "2.3.0", "version.central-publishing": "0.11.0"}
+    for name, version in pinned.items():
+        require(properties.get(name) == version, f"java/pom.xml: {name} must be {version} (ADR 0022)")
+    managed = {coordinate_of(plugin): plugin.findtext("m:version", namespaces=NS)
+               for plugin in parent.findall("m:build/m:pluginManagement/m:plugins/m:plugin", NS)}
+    for coordinate, version in managed.items():
+        require(version, f"Plugin without a version in pluginManagement: {coordinate}")
+    for coordinate, prop in RELEASE_PLUGINS.items():
+        require(coordinate in managed, f"Release plugin missing from pluginManagement: {coordinate}")
+        if prop:
+            require(managed[coordinate] == "${" + prop + "}", f"{coordinate} must use ${{{prop}}}")
+    require(managed.get("org.springframework.boot:spring-boot-maven-plugin") == "${version.spring-boot}",
+            "spring-boot-maven-plugin must use the Spring Boot version")
+    # Only the release profile may bind publishing, signing or SBOM plugins for every module.
+    always = {coordinate_of(plugin) for plugin in parent.findall("m:build/m:plugins/m:plugin", NS)}
+    for coordinate in ("org.apache.maven.plugins:maven-gpg-plugin", "dev.sigstore:sigstore-maven-plugin",
+                       "org.sonatype.central:central-publishing-maven-plugin"):
+        require(coordinate not in always, f"{coordinate} may run only in the release profile")
+    profiles = {profile.findtext("m:id", namespaces=NS): profile for profile in parent.findall("m:profiles/m:profile", NS)}
+    require("release" in profiles, "java/pom.xml needs a release profile")
+    release = ET.tostring(profiles["release"], encoding="unicode")
+    require("<autoPublish>false</autoPublish>" in release, "The release profile must set autoPublish=false")
+    require("<extensions>true</extensions>" in release, "central-publishing-maven-plugin needs <extensions>true</extensions>")
+    for name in ("tierwise.gpg.skip", "tierwise.sigstore.skip"):
+        require(properties.get(name) == "true", f"{name} must default to true: signing needs an explicit key")
+    require(properties.get("maven.deploy.skip") == "false", "java/pom.xml must define maven.deploy.skip=false")
+    for coordinate in RELEASE_PLUGINS:
+        require(f"<artifactId>{coordinate.split(':')[1]}</artifactId>" in release,
+                f"The release profile does not use {coordinate}")
+    # Test-only modules publish nothing; published modules do not set the switch.
+    for name in MODULES:
+        model = ET.parse(ROOT / "java" / name / "pom.xml").getroot()
+        skip = pom_properties(model).get("maven.deploy.skip")
+        if name in PUBLISHED:
+            require(skip != "true", f"{name} is published and must not set maven.deploy.skip")
+            require(model.findtext("m:name", namespaces=NS) and model.findtext("m:description", namespaces=NS),
+                    f"{name} needs a <name> and a <description> for Maven Central")
+        else:
+            require(skip == "true", f"{name} is not published and must set maven.deploy.skip to true")
+    server = ET.parse(ROOT / "java/tierwise-server/pom.xml").getroot()
+    repackage = [goal.text for goal in server.findall(
+        "m:build/m:plugins/m:plugin/m:executions/m:execution/m:goals/m:goal", NS)]
+    require("repackage" in repackage, "tierwise-server must repackage with the spring-boot-maven-plugin")
+
+
+def split_jobs(text):
+    """Returns {job id: text of the job} for a workflow file, without a YAML parser."""
+    head, _, body = text.partition("\njobs:\n")
+    require(body, "Workflow has no jobs")
+    parts = re.split(r"^  ([a-z][a-z0-9-]*):\s*$", body, flags=re.MULTILINE)
+    return dict(zip(parts[1::2], parts[2::2]))
+
+
+def strip_comments(text):
+    return "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+
+
+def check_release_workflow():
+    """release.yml: a dry run by default, and every publishing step guarded (ADR 0022, requirements 1.2)."""
+    text = (ROOT / ".github/workflows/release.yml").read_text()
+    code = strip_comments(text)
+    require("workflow_dispatch:" in code and "\n  push:" not in code and "schedule:" not in code,
+            "release.yml must run only on workflow_dispatch")
+    require(re.search(r"^      version:\n(?:        .*\n)*?        required: true", code, re.MULTILINE),
+            "release.yml needs a required version input")
+    require(re.search(r"^      dry_run:\n(?:        .*\n)*?        default: true", code, re.MULTILINE),
+            "release.yml: the dry_run input must default to true")
+    require(re.search(r"^permissions:\n  contents: read$", code, re.MULTILINE),
+            "release.yml must default to read-only permissions")
+    publishing = re.compile(r"mvnw[^\n]*\sdeploy\s|npm publish|gh release create|docker push|central-publishing")
+    published_jobs = 0
+    for job, body in split_jobs(code).items():
+        steps = re.split(r"\n      - ", body)
+        has_publishing = any(publishing.search(step) for step in steps)
+        if has_publishing:
+            published_jobs += 1
+            require("if: needs.prepare.outputs.publish == 'true'" in body, f"release.yml: job {job} publishes without the publish guard")
+            require("environment: release" in body, f"release.yml: job {job} must run in the release environment")
+            for step in steps:
+                if publishing.search(step):
+                    require("env.DRY_RUN == 'false'" in step, f"release.yml: a publishing step of {job} lacks the DRY_RUN guard")
+                    if "npm publish" in step or "mvnw" in step:
+                        require("env.HAVE_" in step, f"release.yml: a publishing step of {job} does not check its secrets")
+        else:
+            require("secrets." not in body, f"release.yml: job {job} does not publish and must not use secrets")
+            require("id-token: write" not in body and "contents: write" not in body,
+                    f"release.yml: job {job} does not publish and must stay read-only")
+    require(published_jobs == 3, "release.yml: expected exactly three publishing jobs (Central, npm, GitHub release)")
+    require("npm publish" in code and "--provenance" in code, "release.yml must publish npm packages with --provenance")
+    require("-Dtierwise.gpg.skip=false" in code, "release.yml must turn signing on explicitly in the publishing job")
+
+
+def check_release_files():
+    for name in ("scripts/reproducibility-check.sh", "scripts/set-version.sh"):
+        path = ROOT / name
+        require(path.is_file() and path.stat().st_mode & 0o111, f"{name} must exist and be executable")
+    require((ROOT / "docs/release-process.md").is_file(), "Missing docs/release-process.md")
+    text = (ROOT / "docs/release-process.md").read_text()
+    for question in ("O2", "O3", "O4"):
+        require(question in text, f"docs/release-process.md must reference open question {question}")
+    # The server image uses the same base images, pinned by the same digests, as the CLI image, and a numeric non-root user.
+    cli = (ROOT / "docker/Dockerfile").read_text()
+    server = (ROOT / "docker/server.Dockerfile").read_text()
+    digests = lambda text: set(re.findall(r"^FROM (\S+@sha256:[0-9a-f]{64})", text, re.MULTILINE))
+    require(digests(server) and digests(server) == digests(cli),
+            "docker/server.Dockerfile must pin the same base images by digest as docker/Dockerfile")
+    require(re.search(r"^USER 10001:10001$", server, re.MULTILINE), "docker/server.Dockerfile must run as USER 10001:10001")
+
+
 def main():
     metadata = json.loads((ROOT / "project-metadata.json").read_text())
     require(metadata["phase"] >= 0, "Phase must be a number")
-    require(metadata["supportedSpecVersions"] == [], "Phase 0 cannot claim spec conformance")
+    if metadata["phase"] == 0:
+        require(metadata["supportedSpecVersions"] == [], "Phase 0 cannot claim spec conformance")
     check_documents()
     check_java()
+    check_release_poms()
     check_ci()
-    print("Foundation files, Maven reactor metadata and CI action pins verified.")
+    check_release_workflow()
+    check_release_files()
+    print("Foundation files, Maven reactor metadata, release profile, CI action pins and the release workflow verified.")
     print("This check does not compile anything; run ./mvnw verify and pnpm build/test for that.")
 
 

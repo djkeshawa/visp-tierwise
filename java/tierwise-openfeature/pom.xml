@@ -11,8 +11,8 @@
   </parent>
   <artifactId>tierwise-openfeature</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-openfeature</name>
-  <description>An OpenFeature provider over the Tierwise evaluator (docs/openfeature-mapping.md).</description>
+  <name>Tierwise OpenFeature</name>
+  <description>An OpenFeature provider over the Tierwise evaluator.</description>
 
   <dependencies>
     <dependency>

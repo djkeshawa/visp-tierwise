@@ -11,7 +11,8 @@
   </parent>
   <artifactId>tierwise-core</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-core</name>
+  <name>Tierwise Core</name>
+  <description>The Tierwise core library: loads, validates and compiles Tierwise projects into bundles, and evaluates bundles (resolve and decide) with no framework dependencies.</description>
 
   <dependencies>
     <!-- Runtime: the two dependencies of ADR 0012. -->

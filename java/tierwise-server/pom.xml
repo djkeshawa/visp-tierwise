@@ -11,8 +11,8 @@
   </parent>
   <artifactId>tierwise-server</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-server</name>
-  <description>Tierwise control plane: stores bundle versions and serves bundles, /resolve and /decide (requirements section 9)</description>
+  <name>Tierwise Server</name>
+  <description>Tierwise control plane: stores bundle versions and serves bundles, /resolve and /decide over HTTP. The runnable JAR has the classifier exec.</description>
 
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
@@ -103,7 +103,7 @@
         -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${version.spring-boot}</version>
+        <!-- The version is managed in java/pom.xml. -->
         <executions>
           <execution>
             <id>repackage-exec</id>

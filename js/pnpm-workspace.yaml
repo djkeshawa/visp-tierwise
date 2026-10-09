@@ -3,3 +3,6 @@ packages:
   - node
   - openfeature
   - spec-tools
+allowBuilds:
+  # Optional native XML validator of cyclonedx-npm. The JSON SBOM does not need it, so its build script never runs.
+  libxmljs2: false

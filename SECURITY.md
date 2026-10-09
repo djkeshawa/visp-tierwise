@@ -2,7 +2,13 @@
 
 ## Supported versions
 
-There are no released or supported versions. Phase 0 contains foundations, with no working evaluator, compiler, server or runtime integration. A supported-version policy must be approved before the first release.
+No version has been released, so no version is supported yet. Tierwise 0.1.0 is the first planned release, and the 0.1.x line is the one this policy will cover once 0.1.0 is published. The packages are private (`@tierwise/*`, `private: true`) and the Maven artifacts are not yet published, so there is no published artifact to patch.
+
+| Line | Specification | Bundle format | Status |
+| --- | --- | --- | --- |
+| 0.1.x | `specVersion` 0.1 | `bundleFormatVersion` 1 | Not released. Release steps are pending owner approval ([release checklist](docs/release-0.1.0-checklist.md)). |
+
+*(OPEN)* The support window, the fixes policy for older 0.1.x releases and the response targets are owner decisions that are not yet approved. This section will be updated when they are.
 
 ## Private vulnerability reporting
 

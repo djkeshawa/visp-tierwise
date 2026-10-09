@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.tierwise</groupId>
+    <artifactId>tierwise-parent</artifactId>
+    <version>0.1.0-dev.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>tierwise-e2e</artifactId>
+  <packaging>jar</packaging>
+  <name>tierwise-e2e</name>
+  <description>Test-only module: the end-to-end test of requirements section 12 (compile, publish, Java and Node services, promote). It publishes nothing.</description>
+
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <!-- Nothing here is published: the module has no main code and is never installed or deployed. -->
+    <maven.install.skip>true</maven.install.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <!-- The JUnit version of the Spring Boot BOM, as in tierwise-server. Keep it equal to the BOM's junit-jupiter.version. -->
+    <version.junit.server>6.0.3</version.junit.server>
+    <!-- Where the test writes its report (versions and timings). -->
+    <tierwise.e2e.report>${tierwise.buildDir}/e2e-report.json</tierwise.e2e.report>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Overrides the parent's junit-bom import for this module only, exactly as tierwise-server does. -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${version.junit.server}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- tierwise-core is built against this jackson-core; the Spring Boot BOM manages an older 2.x line of it. -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${version.jackson}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.spring-boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-server</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-spring-boot-starter</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- SpringBootTest with a random port, the JUnit API and the Jackson 3 mapper the server uses. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+          <systemPropertyVariables>
+            <tierwise.e2e.report>${tierwise.e2e.report}</tierwise.e2e.report>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- No main code: do not build an empty jar. -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <skipIfEmpty>true</skipIfEmpty>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

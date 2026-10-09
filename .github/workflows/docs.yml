@@ -1,0 +1,102 @@
+name: Docs
+
+# Builds the documentation site (MkDocs Material), the Javadoc of the Java modules and the TypeDoc reference of the
+# JavaScript packages, and uploads all three as one workflow artifact. It has no deploy step: nothing is published
+# anywhere. The workflow has read-only permissions and needs no secrets.
+# Tooling versions are fixed by ADR 0022: mkdocs-material 9.7.7 (docs/requirements-docs.txt), maven-javadoc-plugin
+# 3.12.0 (java/pom.xml), typedoc 0.28.20 and typescript 6.0.3 (docs/tools/typedoc, outside the js workspace).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Site, Javadoc and TypeDoc
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      # The same toolchain as ci.yml: JDK 21 for the reactor, Node 22 and the pinned pnpm for the JavaScript packages.
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.1.0
+        with:
+          version: '11.3.0'
+          run_install: false
+
+      # The site. --strict fails the build on a warning: a page missing from the navigation, a broken link between pages.
+      - name: Install MkDocs Material
+        run: |
+          python3 -m venv "$RUNNER_TEMP/docs-venv"
+          "$RUNNER_TEMP/docs-venv/bin/pip" install --no-cache-dir --requirement docs/requirements-docs.txt
+      - name: Build the site
+        run: |
+          "$RUNNER_TEMP/docs-venv/bin/mkdocs" build --strict --clean
+
+      # Javadoc, one set for each module, under site/api/java/<module>/. javadoc:aggregate is not used: it refuses a
+      # reactor in which tierwise-core has a module descriptor and the other modules have none.
+      - name: Build the Javadoc
+        working-directory: java
+        run: ./mvnw -B -ntp compile javadoc:javadoc
+      - name: Add the Javadoc to the site
+        run: |
+          set -euo pipefail
+          mkdir -p site/api/java
+          count=0
+          {
+            echo '<!doctype html>'
+            echo '<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+            echo '<title>Tierwise Javadoc</title></head><body><h1>Tierwise Javadoc</h1><ul>'
+            for dir in java/tierwise-*/target/reports/apidocs; do
+              [ -f "$dir/index.html" ] || continue
+              module=$(basename "${dir%/target/reports/apidocs}")
+              cp -R "$dir" "site/api/java/$module"
+              echo "<li><a href=\"$module/index.html\">$module</a></li>"
+              count=$((count + 1))
+            done
+            echo '</ul></body></html>'
+          } > site/api/java/index.html
+          echo "Javadoc for $count modules"
+          test "$count" -gt 0
+
+      # TypeDoc runs on TypeScript 6 in its own project. The packages are built first, because TypeDoc reads their
+      # package.json files and the declarations of @tierwise/evaluator.
+      - name: Build the JavaScript packages
+        run: |
+          pnpm --dir js install --frozen-lockfile
+          pnpm --dir js run build
+      - name: Build the TypeDoc reference
+        run: |
+          pnpm --dir docs/tools/typedoc install --frozen-lockfile
+          pnpm --dir docs/tools/typedoc run build
+      - name: Add the TypeDoc reference to the site
+        run: |
+          set -euo pipefail
+          mkdir -p site/api
+          cp -R docs/tools/typedoc/dist site/api/js
+          test -f site/api/js/index.html
+
+      - name: Upload the documentation
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-docs
+          path: site/
+          if-no-files-found: error
+          retention-days: 14

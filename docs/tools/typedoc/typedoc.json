@@ -1,0 +1,17 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Tierwise for JavaScript and TypeScript",
+  "entryPoints": ["../../../js/evaluator", "../../../js/node", "../../../js/openfeature"],
+  "entryPointStrategy": "packages",
+  "packageOptions": {
+    "disableSources": true,
+    "disableGit": true,
+    "excludePrivate": true,
+    "excludeInternal": true
+  },
+  "out": "dist",
+  "readme": "none",
+  "disableSources": true,
+  "disableGit": true,
+  "treatWarningsAsErrors": true
+}

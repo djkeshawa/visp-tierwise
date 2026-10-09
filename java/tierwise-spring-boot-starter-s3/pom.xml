@@ -11,8 +11,8 @@
   </parent>
   <artifactId>tierwise-spring-boot-starter-s3</artifactId>
   <packaging>jar</packaging>
-  <name>tierwise-spring-boot-starter-s3</name>
-  <description>Optional S3 bundle source for the Tierwise Spring Boot starter (ADR 0020)</description>
+  <name>Tierwise Spring Boot Starter S3</name>
+  <description>Optional S3 bundle source for the Tierwise Spring Boot starter.</description>
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>

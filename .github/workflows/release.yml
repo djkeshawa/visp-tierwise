@@ -1,0 +1,609 @@
+name: Release
+
+# Builds, tests and packages a Tierwise release, and publishes it only when the run asks for that.
+#
+# Inputs
+#   version   the release version, SemVer without a leading "v" (for example 0.1.0).
+#   dry_run   true (the default): build and test everything, produce every artifact, publish nothing.
+#             false: also deploy to Maven Central, publish to npm and create a draft GitHub release.
+#
+# A dry run needs no secrets and no environment. It applies the version to the workspace (scripts/set-version.sh)
+# so that it can run before the version bump is committed. Nothing is pushed: the Docker images are built and
+# smoke-tested locally on the runner, and no job has more than read access to the repository.
+#
+# A real release (dry_run false) runs from the tag v<version>, whose files already carry <version>
+# (scripts/set-version.sh --check). Its three publishing jobs have the "if: ... publish == 'true'" line, run in
+# the "release" environment (give it required reviewers) and have their secrets only there. Every publishing step
+# also checks DRY_RUN == 'false' and that its secrets exist, so a missing secret stops the release before anything
+# is sent.
+#
+# Owner prerequisites. docs/release-process.md is the step-by-step checklist; in short:
+#   O2  The "tierwise" GitHub organisation and the "@tierwise" npm scope are claimed. Until then the Maven
+#       groupId io.github.tierwise cannot be verified at Central and npm cannot publish "@tierwise/*".
+#   O3  A maintainer is named (MAINTAINERS.md) and listed in the <developers> element of java/pom.xml.
+#   O4  A private security contact exists (SECURITY.md), because Central and npm show it to every user.
+# Secrets of the "release" environment:
+#   CENTRAL_USERNAME, CENTRAL_PASSWORD   a Central Portal user token (not the account password)
+#   GPG_PRIVATE_KEY, GPG_PASSPHRASE      the ASCII-armoured release key; the public key must be on a key server
+#   NPM_TOKEN                            an npm automation token with publish rights on the @tierwise scope
+# Sigstore needs no secret: the publishing job signs with its own OIDC token (id-token: write).
+#
+# Not done by this workflow: pushing the Docker images (no registry is chosen yet) and pressing "Publish" in the
+# Central Portal (autoPublish is false on purpose). The npm packages are still marked "private": true, and
+# `npm publish` refuses them until the owner removes that line (docs/release-process.md, step 9).
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version, SemVer without a leading v (for example 0.1.0). A real release also needs the tag v<version>.'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run: build and test everything and publish nothing. Turn it off only after docs/release-process.md is complete.'
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  # Strings, so that every guard below can compare with 'false'. Inputs reach shell steps only through env.
+  VERSION: ${{ inputs.version }}
+  DRY_RUN: ${{ inputs.dry_run }}
+  # Projects the CLI validates and compiles in every build. saas-entitlements is a single-file project.
+  SAMPLES: "commerce retail-pos saas-entitlements"
+
+jobs:
+  prepare:
+    name: Check the inputs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      publish: ${{ steps.mode.outputs.publish }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Check the version
+        id: mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$DRY_RUN" = "false" ]; then
+            # A real release builds the tag and its committed files, so a mismatch is an error.
+            if [ "$GITHUB_REF" != "refs/tags/v$VERSION" ]; then
+              echo "::error::A real release runs from the tag v$VERSION, not from $GITHUB_REF."
+              exit 1
+            fi
+            bash scripts/set-version.sh --check "$VERSION"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            # A dry run applies the version to this checkout. This also rejects a version that is not SemVer.
+            bash scripts/set-version.sh "$VERSION" > /dev/null
+            bash scripts/set-version.sh --check "$VERSION"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Dry run for $VERSION: nothing will be published."
+          fi
+
+  build:
+    name: Build and test everything
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      # Two JDKs, as in ci.yml: JAVA_HOME_17_X64 for the Java 17 runtime run, and JDK 21, installed last, for Maven.
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.1.0
+        with:
+          version: '11.3.0'
+          run_install: false
+      - name: Apply the version
+        run: bash scripts/set-version.sh "$VERSION"
+
+      - name: Foundation check
+        run: python3 scripts/check-foundation.py
+      - run: pnpm --dir js install --frozen-lockfile
+      - name: Genericity check
+        run: pnpm --dir js run genericity
+      - run: pnpm --dir js run check
+      - run: pnpm --dir js run build
+      - name: JavaScript tests (Node 22)
+        run: pnpm --dir js test
+
+      # The release profile adds the sources and Javadoc JARs and the SBOMs. Signing is off (no key, no OIDC token
+      # in this job), so the artifacts are the unsigned ones that scripts/reproducibility-check.sh compares.
+      # The end-to-end module is tested by its own step below.
+      - name: Java build and tests, with the spec conformance suite
+        working-directory: java
+        run: ./mvnw -B -ntp verify -Pconformance,release -pl '!tierwise-e2e'
+      - name: Core and CLI tests on a JDK 17 runtime
+        working-directory: java
+        run: ./mvnw -B -ntp -pl tierwise-core,tierwise-cli -am verify -Pconformance -Djvm="$JAVA_HOME_17_X64/bin/java"
+      - name: End-to-end test
+        run: bash scripts/e2e.sh --skip-build
+      - name: Cross-language differential run
+        run: bash scripts/differential.sh --skip-build --cases 2000
+
+      - name: Run the fat JAR against the samples
+        shell: bash
+        run: |
+          set -euo pipefail
+          jar=$(ls java/tierwise-cli/target/tierwise-cli-*-all.jar)
+          for sample in $SAMPLES; do
+            java -jar "$jar" validate "samples/$sample"
+            java -jar "$jar" compile "samples/$sample" --output "$RUNNER_TEMP/$sample-bundle.json"
+          done
+      - name: Check that the executable server JAR starts
+        shell: bash
+        run: |
+          set -euo pipefail
+          jar=$(ls java/tierwise-server/target/tierwise-server-*-exec.jar)
+          java -jar "$jar" --server.port=18080 --tierwise.server.filesystem.root="$RUNNER_TEMP/server-data" &
+          pid=$!
+          for _ in $(seq 1 60); do
+            if curl -fs http://localhost:18080/openapi.yaml > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://localhost:18080/openapi.yaml --output "$RUNNER_TEMP/openapi.yaml"
+          head -3 "$RUNNER_TEMP/openapi.yaml"
+          kill "$pid"
+
+      - name: Collect the Maven artifacts and SBOMs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/maven dist/sbom/npm dist/npm
+          for module in java/tierwise-*/; do
+            name=$(basename "$module")
+            # tierwise-e2e publishes nothing and builds no JAR.
+            if [ "$name" = "tierwise-e2e" ]; then continue; fi
+            for file in "$module"target/*.jar; do cp "$file" dist/maven/; done
+            cp "$module"target/bom.json "dist/sbom/$name.cdx.json"
+          done
+      - name: Pack the npm packages and write their SBOMs
+        shell: bash
+        run: |
+          set -euo pipefail
+          SBOM_DIR="$PWD/dist/sbom/npm" pnpm --dir js run sbom
+          for package in evaluator node openfeature; do
+            # The tarball carries the license texts that package.json lists in "files".
+            cp LICENSE NOTICE "js/$package/"
+            pnpm --dir "js/$package" pack --pack-destination "$PWD/dist/npm"
+          done
+      - name: Upload the build
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-build
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  reproducibility:
+    name: Reproducibility check
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.1.0
+        with:
+          version: '11.3.0'
+          run_install: false
+      # Two clean clones of this commit, built in two different directories; every JAR, SBOM, npm tarball and sample
+      # bundle must have the same SHA-256 in both. The version is not applied here: reproducibility does not depend on it.
+      - name: Build twice and compare
+        run: bash scripts/reproducibility-check.sh
+
+  native:
+    name: Native binary (${{ matrix.os }})
+    needs: prepare
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            binary: tierwise
+            asset: tierwise-linux-x86_64
+          - os: macos-15
+            binary: tierwise
+            asset: tierwise-macos-arm64
+          - os: windows-2022
+            binary: tierwise.exe
+            asset: tierwise-windows-x86_64.exe
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Apply the version
+        shell: bash
+        run: bash scripts/set-version.sh "$VERSION"
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@0def53c0fd8534bc13416c9469f5be45265824fd # v1.6.3
+        with:
+          distribution: graalvm
+          java-version: '21'
+      - name: Check the native-image tool
+        shell: bash
+        run: native-image --version
+      # native-image on Windows needs the Visual Studio C++ build environment; the other runners already have it.
+      - name: Set up the MSVC build environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+      - name: Build the native binary
+        if: runner.os != 'Windows'
+        working-directory: java
+        shell: bash
+        run: ./mvnw -B -ntp -Pnative -DskipTests -pl tierwise-cli -am package
+      - name: Build the native binary (Windows)
+        if: runner.os == 'Windows'
+        working-directory: java
+        shell: cmd
+        run: mvnw.cmd -B -ntp -Pnative -DskipTests -pl tierwise-cli -am package
+      - name: Run the native binary against the samples
+        shell: bash
+        env:
+          TW_BIN: java/tierwise-cli/target/${{ matrix.binary }}
+        run: |
+          set -euo pipefail
+          for sample in $SAMPLES; do
+            "$TW_BIN" validate "samples/$sample"
+            "$TW_BIN" compile "samples/$sample" --output "$RUNNER_TEMP/$sample-bundle.json"
+          done
+      - name: Name the binary
+        shell: bash
+        env:
+          ASSET: ${{ matrix.asset }}
+          BINARY: ${{ matrix.binary }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist/native
+          cp "java/tierwise-cli/target/$BINARY" "dist/native/$ASSET"
+      - name: Upload the native binary
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-native-${{ matrix.os }}
+          path: dist/native/
+          if-no-files-found: error
+          retention-days: 14
+
+  docker:
+    name: Docker images (not pushed)
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Apply the version
+        run: bash scripts/set-version.sh "$VERSION"
+      # The images are built and tested on this runner and are never pushed: no registry is chosen yet.
+      - name: Build the CLI image
+        run: docker build --file docker/Dockerfile --tag "tierwise:$VERSION" .
+      - name: Build the server image
+        run: docker build --file docker/server.Dockerfile --tag "tierwise-server:$VERSION" .
+      - name: Run the CLI image against the samples
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/docker-out"
+          mkdir -p "$out"
+          for sample in $SAMPLES; do
+            docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/work:ro" \
+              "tierwise:$VERSION" validate "samples/$sample"
+            docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/work:ro" --volume "$out:/out" \
+              "tierwise:$VERSION" compile "samples/$sample" --output "/out/$sample-bundle.json"
+          done
+      - name: Check that both images run as a non-root user
+        shell: bash
+        run: |
+          set -euo pipefail
+          for image in "tierwise:$VERSION" "tierwise-server:$VERSION"; do
+            user=$(docker image inspect --format '{{.Config.User}}' "$image")
+            echo "$image runs as $user"
+            test "$user" = "10001:10001"
+          done
+      - name: Start the server image and read its API document
+        shell: bash
+        run: |
+          set -euo pipefail
+          id=$(docker run --detach --publish 18080:8080 "tierwise-server:$VERSION")
+          trap 'docker logs "$id" | tail -n 20; docker rm --force "$id" > /dev/null' EXIT
+          for _ in $(seq 1 60); do
+            if curl -fs http://localhost:18080/openapi.yaml > /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://localhost:18080/openapi.yaml --output "$RUNNER_TEMP/openapi.yaml"
+          head -3 "$RUNNER_TEMP/openapi.yaml"
+
+  collect:
+    name: Checksums and release assets
+    needs: [build, reproducibility, native, docker]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tierwise-build
+          path: dist
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: tierwise-native-*
+          path: dist/native
+          merge-multiple: true
+      - name: Write SHA256SUMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          find . -type f -not -name SHA256SUMS -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sed 's#  \./#  #' > SHA256SUMS
+          cat SHA256SUMS
+      - name: Upload the release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-release-assets
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------------------------------------------
+  # Publishing. Nothing below runs in a dry run: each job needs publish == 'true', and each step checks DRY_RUN.
+  # ---------------------------------------------------------------------------------------------------------------
+
+  publish-maven:
+    name: Deploy to Maven Central (validated, not published)
+    needs: [prepare, collect]
+    if: needs.prepare.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: release
+    permissions:
+      contents: read
+      # The Sigstore signing step exchanges this job's OIDC token for a short-lived certificate.
+      id-token: write
+    env:
+      HAVE_CENTRAL: ${{ secrets.CENTRAL_USERNAME != '' && secrets.CENTRAL_PASSWORD != '' }}
+      HAVE_GPG: ${{ secrets.GPG_PRIVATE_KEY != '' && secrets.GPG_PASSPHRASE != '' }}
+    steps:
+      - name: Check the secrets
+        if: env.DRY_RUN == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$HAVE_CENTRAL" != "true" ] || [ "$HAVE_GPG" != "true" ]; then
+            echo "::error::Missing secrets in the release environment: CENTRAL_USERNAME, CENTRAL_PASSWORD, GPG_PRIVATE_KEY and GPG_PASSPHRASE are all required (docs/release-process.md, step 6)."
+            exit 1
+          fi
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tierwise-release-assets
+          path: dist
+      # setup-java writes settings.xml with the server id "central" (read from the environment of the deploy step)
+      # and imports the PGP key into the runner's keyring.
+      - name: Set up Java, the Central credentials and the PGP key
+        if: env.DRY_RUN == 'false' && env.HAVE_CENTRAL == 'true' && env.HAVE_GPG == 'true'
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      # The release is built again here and compared with the build that was tested, so what is signed and uploaded
+      # is byte-for-byte what the tests ran against.
+      - name: Rebuild unsigned and compare with the tested build
+        if: env.DRY_RUN == 'false' && env.HAVE_CENTRAL == 'true' && env.HAVE_GPG == 'true'
+        working-directory: java
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./mvnw -B -ntp -DskipTests -Prelease package
+          for file in ../dist/maven/*.jar; do
+            name=$(basename "$file")
+            built=$(ls tierwise-*/target/"$name")
+            cmp "$file" "$built"
+          done
+          echo "All JARs match the tested build."
+      - name: Sign and deploy to Central
+        if: env.DRY_RUN == 'false' && env.HAVE_CENTRAL == 'true' && env.HAVE_GPG == 'true'
+        working-directory: java
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        # autoPublish is false: Central validates the bundle and waits for a person to press Publish in the portal.
+        run: >-
+          ./mvnw -B -ntp -DskipTests deploy -Prelease
+          -Dtierwise.gpg.skip=false -Dtierwise.sigstore.skip=false
+      - name: Collect the signatures
+        if: env.DRY_RUN == 'false' && env.HAVE_CENTRAL == 'true' && env.HAVE_GPG == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p signatures
+          # The signature of an SBOM is named after the file target/bom.json in every module, so the module name
+          # goes in front to keep the names apart.
+          for module in java/tierwise-*/; do
+            name=$(basename "$module")
+            for file in "$module"target/*.asc "$module"target/*.sigstore.json; do
+              if [ -e "$file" ]; then
+                case "$(basename "$file")" in
+                  bom.json.*) cp "$file" "signatures/$name-$(basename "$file")" ;;
+                  *) cp "$file" signatures/ ;;
+                esac
+              fi
+            done
+          done
+          ls signatures
+      - name: Upload the signatures
+        if: env.DRY_RUN == 'false' && env.HAVE_CENTRAL == 'true' && env.HAVE_GPG == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-maven-signatures
+          path: signatures/
+          if-no-files-found: error
+          retention-days: 30
+
+  # npm cannot replace a published version, so it goes after Central has validated the bundle. A failure in
+  # publish-maven therefore stops the release before anything irreversible happens.
+  publish-npm:
+    name: Publish to npm (with provenance)
+    needs: [prepare, collect, publish-maven]
+    if: needs.prepare.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: release
+    permissions:
+      contents: read
+      # npm --provenance signs the build attestation with this job's OIDC token.
+      id-token: write
+    env:
+      HAVE_NPM: ${{ secrets.NPM_TOKEN != '' }}
+    steps:
+      - name: Check the secrets
+        if: env.DRY_RUN == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$HAVE_NPM" != "true" ]; then
+            echo "::error::Missing secret NPM_TOKEN in the release environment (docs/release-process.md, step 6)."
+            exit 1
+          fi
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tierwise-release-assets
+          path: dist
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@tierwise'
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.1.0
+        with:
+          version: '11.3.0'
+          run_install: false
+      - name: Rebuild the tarballs and compare with the tested build
+        if: env.DRY_RUN == 'false' && env.HAVE_NPM == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm --dir js install --frozen-lockfile
+          pnpm --dir js run build
+          mkdir -p rebuilt
+          for package in evaluator node openfeature; do
+            cp LICENSE NOTICE "js/$package/"
+            pnpm --dir "js/$package" pack --pack-destination "$PWD/rebuilt"
+          done
+          for file in dist/npm/*.tgz; do
+            cmp "$file" "rebuilt/$(basename "$file")"
+          done
+          echo "All tarballs match the tested build."
+      # The packages are still "private": true. npm refuses to publish a private package, and this step stops with
+      # the reason instead of letting that error scroll by. Step 9 of docs/release-process.md removes the line.
+      - name: Check that the packages may be published
+        if: env.DRY_RUN == 'false' && env.HAVE_NPM == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for package in evaluator node openfeature; do
+            if [ "$(node -p "Boolean(require('./js/$package/package.json').private)")" = "true" ]; then
+              echo "::error::js/$package/package.json is still private. See docs/release-process.md, step 9."
+              exit 1
+            fi
+          done
+      # The evaluator goes first: the other two packages depend on it.
+      - name: Publish the packages
+        if: env.DRY_RUN == 'false' && env.HAVE_NPM == 'true'
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          for package in evaluator node openfeature; do
+            npm publish "rebuilt/tierwise-$package-$VERSION.tgz" --provenance --access public
+          done
+
+  github-release:
+    name: Create the GitHub release (draft)
+    needs: [prepare, collect, publish-maven, publish-npm]
+    if: needs.prepare.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: release
+    permissions:
+      # The only job that writes to the repository, and only to create a release.
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tierwise-release-assets
+          path: dist
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tierwise-maven-signatures
+          path: dist/signatures
+      - name: Create the draft release
+        if: env.DRY_RUN == 'false'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # The notes are the CHANGELOG section of this version (Keep a Changelog); GitHub generates them if it is empty.
+          awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" { found = 1; next } found && /^## \[/ { exit } found { print }' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if [ -s "$RUNNER_TEMP/notes.md" ]; then
+            notes=(--notes-file "$RUNNER_TEMP/notes.md")
+          else
+            notes=(--generate-notes)
+          fi
+          prerelease=()
+          case "$VERSION" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "v$VERSION" --repo "$GITHUB_REPOSITORY" --verify-tag --draft --title "Tierwise $VERSION" \
+            "${notes[@]}" "${prerelease[@]}" \
+            "dist/maven/tierwise-cli-$VERSION-all.jar" \
+            "dist/maven/tierwise-server-$VERSION-exec.jar" \
+            dist/native/* dist/npm/*.tgz dist/sbom/*.json dist/sbom/npm/*.json dist/signatures/* dist/SHA256SUMS

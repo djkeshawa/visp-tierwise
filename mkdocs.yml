@@ -1,21 +1,88 @@
 site_name: Tierwise
 site_description: Typed, layered configuration and entity-aware decisions with provenance, for Java and JavaScript
 docs_dir: docs
+
+# Built in CI only (.github/workflows/docs.yml): pip install -r docs/requirements-docs.txt, then mkdocs build --strict.
+# No site_url yet: the project owner has not decided where the site is hosted (open question O2).
+
 theme:
   name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: false
+  - pymdownx.superfences
+
+# These files are tooling, not pages. docs/tools holds the TypeDoc project, and its node_modules must not be copied
+# into the site.
+exclude_docs: |
+  requirements-docs.txt
+  tools/
+
+# Every file under docs/ is in the navigation below, and a page that is not listed fails the build. A link from a page
+# to a file outside docs/ (the changelog, a workflow, a source file) works in the repository and not on the site, so it
+# is reported at info level and not as a failure; every link between pages of the site is still checked.
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+    absolute_links: warn
+  links:
+    not_found: info
+    absolute_links: warn
+    unrecognized_links: info
+    anchors: info
+
 nav:
   - Overview: index.md
-  - Vision and strategy: vision.md
-  - Requirements: requirements.md
-  - Roadmap: roadmap.md
-  - Implementation plan: implementation-plan.md
-  - Open questions: open-questions.md
-  - OpenFeature mapping: openfeature-mapping.md
-  - Benchmarks: benchmarks.md
-  - Java core design: design/java-core.md
-  - Phase 1 review: phase-1-review.md
-  - Contributing: contributing.md
-  - RFC template: rfc-template.md
+  - Get started:
+      - "Quickstart: Java": quickstart-java.md
+      - "Quickstart: JavaScript": quickstart-js.md
+  - Guides:
+      - Guides: guides/index.md
+      - Modeling guide: guides/modeling.md
+      - CLI reference: guides/cli-reference.md
+      - Runtime and operations: guides/runtime-and-operations.md
+      - Server guide: guides/server.md
+      - OpenFeature guide: guides/openfeature.md
+      - Security model: guides/security-model.md
+      - API reference: guides/api-reference.md
+  - Reference:
+      - OpenFeature mapping: openfeature-mapping.md
+      - Benchmarks: benchmarks.md
+      - Java core design: design/java-core.md
+  - Project:
+      - Vision and strategy: vision.md
+      - Requirements: requirements.md
+      - Roadmap: roadmap.md
+      - Implementation plan: implementation-plan.md
+      - Release 0.1.0 checklist: release-0.1.0-checklist.md
+      - Release process: release-process.md
+      - Open questions: open-questions.md
+      - Phase 1 review: phase-1-review.md
+      - Contributing: contributing.md
+      - RFC template: rfc-template.md
   - Decisions:
       - 0001 Phase boundaries: adr/0001-phase-boundaries.md
       - 0002 Foundation tooling: adr/0002-foundation-tooling.md
@@ -29,10 +96,21 @@ nav:
       - 0010 Entities, facts and rules: adr/0010-entities-facts-and-rules.md
       - 0011 Types, sources and presets: adr/0011-source-format-and-types.md
       - 0012 Parsing and dependencies: adr/0012-parsing-and-dependency-baseline.md
+      - 0013 Spec open-point resolutions: adr/0013-spec-open-point-resolutions.md
+      - 0014 Final spec text points: adr/0014-final-spec-text-points.md
+      - 0015 Wave 2 spec gaps: adr/0015-wave2-spec-gaps.md
+      - 0016 Conformance suite scope: adr/0016-conformance-suite-scope.md
+      - 0017 Finding locations: adr/0017-finding-locations.md
+      - 0018 Java core implementation: adr/0018-java-core-implementation-choices.md
+      - 0019 JS evaluator choices: adr/0019-js-evaluator-choices.md
+      - 0020 Runtime integration dependencies: adr/0020-runtime-integration-dependencies.md
+      - 0021 CLI, codegen and distribution: adr/0021-cli-codegen-and-distribution.md
+      - 0022 Release tooling: adr/0022-release-tooling.md
   - History:
+      - Overview: history/README.md
       - Original brief (2026-10-07): history/build-brief-2026-10-07.md
       - Prompt review coverage: history/recommendations-review.md
       - Claude consultation: history/claude-consultation.md
       - Phase 0 review: history/phase-0-review.md
       - Original open questions: history/open-questions-2026-10-07.md
-# The documentation toolchain is pinned in the release phase (ADR 0012).
+      - Wave 1 final review: history/wave1-final-review.md

@@ -4,13 +4,33 @@
   "private": true,
   "description": "Tierwise evaluator: resolve and decide over canonical bundles, in Node and browsers, with zero runtime dependencies",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tierwise/tierwise.git",
+    "directory": "js/evaluator"
+  },
+  "homepage": "https://github.com/tierwise/tierwise/tree/main/js/evaluator#readme",
+  "bugs": {
+    "url": "https://github.com/tierwise/tierwise/issues"
+  },
+  "keywords": [
+    "tierwise",
+    "entitlements",
+    "feature-flags",
+    "tiers",
+    "configuration",
+    "evaluator",
+    "bundle"
+  ],
   "type": "module",
   "engines": {
     "node": ">=20"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "NOTICE"
   ],
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -30,6 +50,10 @@
     "supportedBundleFormatVersions": [
       "1"
     ]
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs",
