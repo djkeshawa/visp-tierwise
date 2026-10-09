@@ -1,4 +1,5 @@
 name: OpenSSF Scorecard
+# Weekly OpenSSF Scorecard analysis. The job is skipped while the repository is private.
 on:
   schedule:
     - cron: '25 3 * * 1'

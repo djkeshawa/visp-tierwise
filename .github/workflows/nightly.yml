@@ -1,4 +1,6 @@
 name: Nightly differential and benchmarks
+# Every night: the Java-to-JavaScript differential run (10,000 generated cases) and both in-process benchmarks.
+# Requirements section 15, criterion 3, needs a full night of these runs with zero disagreements.
 on:
   schedule:
     - cron: '17 3 * * *'

@@ -1,4 +1,5 @@
 name: Release
+# Start it from the Actions tab or with: gh workflow run release.yml -f version=0.1.0 -f dry_run=true
 
 # Builds, tests and packages a Tierwise release, and publishes it only when the run asks for that.
 #
