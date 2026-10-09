@@ -313,6 +313,17 @@ jobs:
       - name: Apply the version
         run: bash scripts/set-version.sh "$VERSION"
       # The images are built and tested on this runner and are never pushed: no registry is chosen yet.
+      # Docker Hub limits anonymous pulls per IP, and hosted runners share IPs (429 Too Many Requests). Pull through
+      # Google's public Docker Hub mirror instead; the base images are pinned by digest, so the bytes are the same,
+      # and the daemon falls back to Docker Hub when the mirror lacks an image.
+      - name: Use a Docker Hub mirror
+        run: |
+          set -euo pipefail
+          config=/etc/docker/daemon.json
+          current=$(sudo cat "$config" 2>/dev/null || echo '{}')
+          echo "$current" | jq '. + {"registry-mirrors": ["https://mirror.gcr.io"]}' | sudo tee "$config"
+          sudo systemctl restart docker
+          docker info --format '{{.RegistryConfig.Mirrors}}'
       - name: Build the CLI image
         run: docker build --file docker/Dockerfile --tag "tierwise:$VERSION" .
       - name: Build the server image
