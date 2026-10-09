@@ -68,7 +68,7 @@ public final class Compiler {
     Objects.requireNonNull(projectRoot, "projectRoot");
     Objects.requireNonNull(options, "options");
     ProjectLoad project = ProjectLoader.load(projectRoot, options);
-    CheckContext context = new CheckContext(project, options);
+    CheckContext context = new CheckContext(project, options, projectRoot);
     for (Stage stage : stages) {
       if (stage.enabled(context)) {
         stage.run(context);

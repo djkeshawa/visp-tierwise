@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.tierwise.core.internal.project.ManifestRulesTest
--------------------------------------------------------------------------------
-Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s -- in io.github.tierwise.core.internal.project.ManifestRulesTest

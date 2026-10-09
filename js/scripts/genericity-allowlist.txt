@@ -26,3 +26,24 @@ line
 # "org" is the first segment of Java package and module names (org.snakeyaml.engine);
 # it is also a level name in the saas sample.
 org
+
+# The words below are generic programming or spec vocabulary used by the Java compiler.
+# Each collides with a name some sample happens to declare; none is a domain identifier.
+# "item": a list item (SRC-21, VEC) and loop variables; sample entity name in commerce.
+item
+# "setting": the spec term for policy settings (POL-9); sample kind name in retail-pos.
+setting
+# "order": document order and code-point order (FIND-32, DET-6); sample entity in commerce.
+order
+# "category": the naming-pattern category (LINT-15); sample fact attribute in retail-pos.
+category
+# "allowed": prose and variables for allowed members ("allowed members", BUNDLE-53); key segment in commerce.
+allowed
+# "pos": a position index in parsers; first key segment in retail-pos.
+pos
+# "enabled": whether a pipeline stage is enabled; a key segment in a sample.
+enabled
+# "limit": a search bound in the did-you-mean suggester; a kind name in tierwise:entitlements.
+limit
+# "platform": "platform byte order" in a SHA-256 comment; the root level of retail-pos.
+platform

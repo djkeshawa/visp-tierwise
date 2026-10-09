@@ -206,11 +206,11 @@ class CompilerPipelineTest {
   }
 
   @Test
-  void theStubStagesBuildNothingAndReportNothing() throws IOException {
+  void SCOPE_48_aManifestWithoutAHierarchyReportsTheMissingHierarchy() throws IOException {
     manifest(MANIFEST);
     CompileResult result = Compiler.compile(dir, CompileOptions.defaults());
-    assertTrue(result.findings().isEmpty(), result.findings().toString());
-    assertTrue(result.bundle().isEmpty(), "the stubs leave the parts incomplete, so no bundle is written");
+    assertEquals(List.of(Code.E_SCOPE_DECLARATION), result.findings().stream().map(f -> f.code()).toList());
+    assertTrue(result.bundle().isEmpty(), "an error-severity finding leaves no bundle");
   }
 
   @Test

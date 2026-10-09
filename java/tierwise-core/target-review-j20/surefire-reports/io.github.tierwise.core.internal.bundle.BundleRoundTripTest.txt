@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.tierwise.core.internal.bundle.BundleRoundTripTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.049 s -- in io.github.tierwise.core.internal.bundle.BundleRoundTripTest

@@ -1,17 +1,21 @@
 package io.github.tierwise.core.internal.check;
 
+import io.github.tierwise.core.internal.model.Model;
+import io.github.tierwise.core.internal.project.SourceDocument;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
- * <strong>(STUB)</strong> The example stage (POL-41 to POL-49, FIND-2).
+ * The example stage (POL-41 to POL-49, FIND-2, FIND-34).
  *
- * <p>This stage builds nothing and reports nothing yet. The real stage runs every example of every
- * feature with the existing evaluator over the in-memory model, which it assembles from
- * {@link ModelParts}, and reports {@code E_EXAMPLE_FAILED} at the failing example's {@code expect} entry
- * (FIND-34). It adds nothing to the model, because examples are compile-time data and are not written to
- * the bundle.
+ * <p>The stage checks the examples of every rules document: their shape, their names, their context, their
+ * facts and their {@code expect} (POL-28 to POL-45). Each example that passes all checks is run through the
+ * evaluator over the in-memory model (POL-41) when the validation has no other engine finding, because an
+ * example runs only in that case (POL-47, ADR 0014). The stage publishes the valid examples for the lint stage.
  *
- * <p>Examples run only when validation has found no other engine finding (POL-47), so this stage is
- * disabled as soon as {@link Findings#hasEngineFindings()} holds. It also needs a complete model, which
- * only exists when every earlier stage built its part.
+ * <p>The stage runs only when no earlier stage has reported an engine finding. Examples are compile-time data
+ * and are not written to the bundle (BUNDLE-109).
  */
 public final class ExampleStage implements Stage {
 
@@ -27,6 +31,15 @@ public final class ExampleStage implements Stage {
 
   @Override
   public void run(CheckContext context) {
-    // STUB: intentionally empty. See the class comment for the contract of the real stage.
+    Optional<Model> model = ModelAssembler.assemble(context.parts());
+    ExampleChecker checker = new ExampleChecker(model.orElse(null), context.findings());
+    List<ExampleCase> cases = new ArrayList<>();
+    for (SourceDocument document : context.sources().rules()) {
+      cases.addAll(checker.check(document));
+    }
+    if (model.isPresent() && !context.findings().hasEngineFindings()) {
+      ExampleRunner.run(model.get(), cases, context.findings());
+    }
+    context.provide(ExampleSet.class, new ExampleSet(cases.stream().map(ExampleCase::lint).toList()));
   }
 }

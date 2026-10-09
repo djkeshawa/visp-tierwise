@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.tierwise.core.internal.project.SamplesLoadTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.076 s -- in io.github.tierwise.core.internal.project.SamplesLoadTest

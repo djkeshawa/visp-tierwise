@@ -1,17 +1,22 @@
 package io.github.tierwise.core.internal.check;
 
 /**
- * <strong>(STUB)</strong> The kind declaration stage.
+ * The kind and naming declaration stage (KIND-1 to KIND-12, LINT-14 to LINT-18, SVC-4).
  *
- * <p>This stage builds nothing and reports nothing yet. It keeps its place in the fixed order of
- * {@link Compiler#standardStages()} and the {@link Stage} interface that the work item for section 5 (KIND area)
- * implements. Until then {@link ModelParts} stays incomplete and the compiler writes no bundle.
+ * <p>The stage reads the {@code naming} and {@code kinds} members of the schema documents, presets
+ * included, in layer order, reports every fault of a declaration, and publishes two tables of
+ * compile-time data with {@link CheckContext#provide(Class, Object)}: a {@link NamingTable} and a
+ * {@link KindTable}. A later layer replaces an earlier definition of the same name entirely
+ * (MANIFEST-32, MANIFEST-33). The tables are always published: a faulty member is left out of a
+ * definition, so that it imposes no constraint and one fault gives one finding (FIND-35).
  *
- * <p>Owns: the KIND clauses for {@code kinds}: E_KIND_DEFINITION and the layer replacement of MANIFEST-32 and MANIFEST-33. A kind table is compile-time data and is not part of the model.
- *
- * <p>Produces: a kind table for {@link KeyStage}, with {@link CheckContext#provide(Class, Object)}.
- *
- * <p>Reads: the {@code kinds} and {@code naming} members of the schema documents, presets included, in layer order.
+ * <p>The naming declarations are checked whatever other findings exist. A naming pattern is
+ * {@code E_PRESET} when a preset declares it badly and {@code E_INVALID_DECLARATION} when a shared
+ * schema file does (LINT-14, LINT-17). A kind definition is {@code E_KIND_DEFINITION}: an unknown
+ * member, an empty or invalid {@code strategies} list, a {@code narrowing_only} definition that allows a
+ * strategy that is not narrowing, a {@code require_default} definition that allows a commutative strategy,
+ * an {@code on_source_failure} other than {@code skip} or {@code deny}, and a {@code naming} member that
+ * does not name a declared pattern of category {@code key}.
  */
 public final class KindStage implements Stage {
 
@@ -22,6 +27,8 @@ public final class KindStage implements Stage {
 
   @Override
   public void run(CheckContext context) {
-    // STUB: intentionally empty. See the class comment for the contract of the real stage.
+    NamingTable naming = NamingDeclarations.read(context);
+    context.provide(NamingTable.class, naming);
+    context.provide(KindTable.class, KindDeclarations.read(context, naming));
   }
 }

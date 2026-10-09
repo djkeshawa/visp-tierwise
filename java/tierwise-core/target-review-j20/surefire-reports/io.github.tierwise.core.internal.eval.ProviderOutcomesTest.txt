@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.tierwise.core.internal.eval.ProviderOutcomesTest
--------------------------------------------------------------------------------
-Tests run: 33, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.583 s -- in io.github.tierwise.core.internal.eval.ProviderOutcomesTest

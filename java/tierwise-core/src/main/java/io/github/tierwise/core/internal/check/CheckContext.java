@@ -3,6 +3,7 @@ package io.github.tierwise.core.internal.check;
 import io.github.tierwise.core.CompileOptions;
 import io.github.tierwise.core.internal.project.ProjectLoad;
 import io.github.tierwise.core.internal.project.SourceSet;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,19 +22,70 @@ public final class CheckContext {
 
   private final ProjectLoad project;
   private final CompileOptions options;
+  private final Path projectRoot;
   private final Findings findings = new Findings();
   private final ModelParts parts = new ModelParts();
   private final Map<Class<?>, Object> provided = new HashMap<>();
+
+  /**
+   * Creates the context of a compilation whose project directory is not known. Stages that must read a file
+   * of the project directory, such as a generated catalog (SCOPE-31), then leave their part unbuilt.
+   *
+   * @param project the outcome of loading the project
+   * @param options the compile options
+   */
+  public CheckContext(ProjectLoad project, CompileOptions options) {
+    this(project, options, null);
+  }
 
   /**
    * Creates the context of a compilation.
    *
    * @param project the outcome of loading the project
    * @param options the compile options
+   * @param projectRoot the directory that contains {@code tierwise.yaml}, or {@code null} when unknown
    */
-  public CheckContext(ProjectLoad project, CompileOptions options) {
+  public CheckContext(ProjectLoad project, CompileOptions options, Path projectRoot) {
     this.project = Objects.requireNonNull(project, "project");
     this.options = Objects.requireNonNull(options, "options");
+    this.projectRoot = projectRoot;
+  }
+
+  /**
+   * Returns the project directory, which a stage needs to read a file that a source names relative to it
+   * (SCOPE-27).
+   *
+   * @return the directory, or empty when the compilation does not know it
+   */
+  public Optional<Path> projectRoot() {
+    return Optional.ofNullable(projectRoot);
+  }
+
+  /**
+   * Returns the scope and node lookup that the hierarchy stage publishes (SCOPE-43 to SCOPE-46).
+   *
+   * @return the lookup, or empty when the hierarchy was not built
+   */
+  public Optional<ScopeIndex> scopes() {
+    return find(ScopeIndex.class);
+  }
+
+  /**
+   * Returns the entity lookup that the entity stage publishes (ENTITY-6).
+   *
+   * @return the lookup, or empty when the entities were not built
+   */
+  public Optional<EntityIndex> entities() {
+    return find(EntityIndex.class);
+  }
+
+  /**
+   * Returns the fact eligibility that the entity stage publishes (FACT-13 to FACT-15).
+   *
+   * @return the lookup, or empty when the facts or the entities were not built
+   */
+  public Optional<FactIndex> facts() {
+    return find(FactIndex.class);
   }
 
   /**

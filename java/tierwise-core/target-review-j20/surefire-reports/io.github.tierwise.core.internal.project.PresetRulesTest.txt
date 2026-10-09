@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: io.github.tierwise.core.internal.project.PresetRulesTest
--------------------------------------------------------------------------------
-Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.065 s -- in io.github.tierwise.core.internal.project.PresetRulesTest
