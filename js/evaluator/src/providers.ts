@@ -151,7 +151,9 @@ const FAILURE = Symbol('failed');
 
 /**
  * Calls one provider and settles with its result, or with FAILURE when it throws, rejects or does not return in
- * time (SVC-23, SVC-39). A result that arrives after the timeout is not used (SVC-40).
+ * time (SVC-23, SVC-39). The timeout is measured from the start of the call until the result is available (SVC-41),
+ * so a result that arrives after the timeout is not used (SVC-40), even when the timer has not fired yet because
+ * the provider blocked the thread.
  */
 function invoke(registration: Registration, node: string): Promise<unknown> {
   return new Promise((resolve) => {
@@ -164,8 +166,10 @@ function invoke(registration: Registration, node: string): Promise<unknown> {
       }
     };
     const timer = setTimeout(() => finish(FAILURE), Math.min(registration.timeoutMs, MAX_TIMER_MS));
+    const started = Date.now();
+    const arrive = (result: unknown): void => finish(Date.now() - started > registration.timeoutMs ? FAILURE : result);
     try {
-      Promise.resolve(registration.fn(node)).then(finish, () => finish(FAILURE));
+      Promise.resolve(registration.fn(node)).then(arrive, () => finish(FAILURE));
     } catch {
       finish(FAILURE);
     }

@@ -45,11 +45,16 @@ export class Resolver {
   /** Steps 1 and 2 of EVAL-16: context validation, then the key lookup. */
   private prepare(context: unknown, key: unknown): { admitted: AdmittedContext; name: string } {
     const admitted = this.validator.validate(context);
+    return { admitted, name: this.prepareKey(key) };
+  }
+
+  /** Step 2 of EVAL-16: the key lookup. */
+  private prepareKey(key: unknown): string {
     // A key that is omitted, is not a string or is empty matches no declared name (EVAL-37).
     if (typeof key !== 'string' || !has(this.model.keys, key)) {
       throw new TierwiseError('E_UNKNOWN_KEY', `no such key: ${String(key)}`);
     }
-    return { admitted, name: key };
+    return key;
   }
 
   /** The synchronous variant of resolve: steps 1 to 3, then step 5 (EVAL-11, EVAL-16). */
@@ -66,6 +71,20 @@ export class Resolver {
     const { admitted, name } = this.prepare(context, key);
     const outcomes = await this.providers.call(admitted, [name]);
     return this.build(name, admitted, outcomes);
+  }
+
+  /**
+   * Resolves several keys as one evaluation call (SVC-20): every requested key is a key being resolved, so each
+   * service-sourced level is called at most once for the whole request. This is the contract that a multi-key
+   * request relies on. The public evaluator resolves one key at a time and does not expose this method.
+   *
+   * @returns one result for each requested key, in request order
+   */
+  async resolveMany(context: unknown, keys: readonly unknown[]): Promise<Resolved[]> {
+    const admitted = this.validator.validate(context);
+    const names = keys.map((key) => this.prepareKey(key));
+    const outcomes = await this.providers.call(admitted, [...new Set(names)]);
+    return names.map((name) => this.build(name, admitted, outcomes));
   }
 
   /** Step 5 of EVAL-16: combination and provenance. It raises no error. */
