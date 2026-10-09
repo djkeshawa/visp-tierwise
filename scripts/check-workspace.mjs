@@ -18,7 +18,9 @@ for (const name of ['evaluator', 'node', 'openfeature']) {
   assert.equal(manifest.version, workspace.version);
   assert.equal(manifest.private, true, 'Phase 0 packages must not be publishable.');
   assert.equal(manifest.license, 'Apache-2.0');
-  assert.deepEqual(manifest.dependencies ?? {}, {}, 'Phase 0 adds no runtime dependencies.');
+  // The evaluator has zero runtime dependencies; the other packages depend only on it (requirements §3.2).
+  const allowed = name === 'evaluator' ? {} : { '@tierwise/evaluator': 'workspace:*' };
+  assert.deepEqual(manifest.dependencies ?? {}, allowed, `${manifest.name} has unapproved runtime dependencies.`);
   // Packages declare the spec and bundle-format versions they implement; placeholders declare none.
   for (const list of [manifest.tierwise.supportedSpecVersions, manifest.tierwise.supportedBundleFormatVersions]) {
     assert.ok(Array.isArray(list) && list.every((v) => typeof v === 'string'), 'Supported versions must be string arrays.');

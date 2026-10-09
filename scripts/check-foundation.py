@@ -13,16 +13,23 @@ MODULES = {
     "tierwise-core": 17,
     "tierwise-cli": 17,
     "tierwise-spring-boot-starter": 21,
+    "tierwise-spring-boot-starter-s3": 21,
     "tierwise-server": 21,
+    "tierwise-server-s3": 21,
     "tierwise-openfeature": 17,
 }
 # ADR 0012. Later phases extend these sets when their dependencies are approved.
 APPROVED_DEPENDENCIES = {
     "tierwise-core": {"org.snakeyaml:snakeyaml-engine", "com.fasterxml.jackson.core:jackson-core"},
     # The CLI reads rules files for `tierwise test` with snakeyaml-engine, which core already brings in.
+    "tierwise-spring-boot-starter": {"io.github.tierwise:tierwise-core", "org.springframework.boot:*", "io.micrometer:*"},
+    "tierwise-spring-boot-starter-s3": {"io.github.tierwise:tierwise-spring-boot-starter", "software.amazon.awssdk:*", "org.springframework.boot:*"},
+    "tierwise-server": {"io.github.tierwise:tierwise-core", "org.springframework.boot:*"},
+    "tierwise-server-s3": {"io.github.tierwise:tierwise-server", "software.amazon.awssdk:*", "org.springframework.boot:*"},
+    "tierwise-openfeature": {"io.github.tierwise:tierwise-core", "dev.openfeature:sdk"},
     "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli", "org.snakeyaml:snakeyaml-engine"},
 }
-APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik"}
+APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik", "org.springframework.security:spring-security-test"}
 # BOMs the parent may import in dependencyManagement. They only pin versions; a module still has to
 # declare (and have approved) every dependency it uses.
 APPROVED_IMPORTS = {"org.junit:junit-bom"}
@@ -47,6 +54,12 @@ def check_documents():
     require("Apache License" in (ROOT / "LICENSE").read_text(), "Missing Apache license text")
 
 
+def approved_in(coordinate, patterns):
+    """True when a coordinate matches an approved entry; "group:*" approves a whole group."""
+    group = coordinate.split(":")[0]
+    return coordinate in patterns or f"{group}:*" in patterns
+
+
 def coordinate_of(dependency):
     return ":".join(dependency.findtext(f"m:{part}", namespaces=NS) for part in ("groupId", "artifactId"))
 
@@ -61,13 +74,13 @@ def check_managed_dependencies(parent):
             require(dependency.findtext("m:type", namespaces=NS) == "pom" and coordinate in APPROVED_IMPORTS,
                     f"Import not approved in ADR 0012: {coordinate}")
         else:
-            require(coordinate in approved, f"Managed dependency not approved in ADR 0012: {coordinate}")
+            require(approved_in(coordinate, approved), f"Managed dependency not approved in ADR 0012: {coordinate}")
 
 
 def check_java():
     parent = ET.parse(ROOT / "java/pom.xml").getroot()
     actual = [item.text for item in parent.findall("m:modules/m:module", NS)]
-    require(actual == list(MODULES), "Maven reactor must contain the five declared modules")
+    require(actual == list(MODULES), "Maven reactor modules must match MODULES in this script")
     version = parent.findtext("m:version", namespaces=NS)
     for name, baseline in MODULES.items():
         model = ET.parse(ROOT / "java" / name / "pom.xml").getroot()
@@ -77,7 +90,7 @@ def check_java():
         require(int(release or "17") == baseline, f"Wrong Java baseline: {name}")
         for dependency in model.findall("m:dependencies/m:dependency", NS):
             coordinate = coordinate_of(dependency)
-            require(coordinate in APPROVED_DEPENDENCIES.get(name, set()) | APPROVED_TEST_DEPENDENCIES,
+            require(approved_in(coordinate, APPROVED_DEPENDENCIES.get(name, set()) | APPROVED_TEST_DEPENDENCIES),
                     f"Dependency not approved in ADR 0012 for {name}: {coordinate}")
     require(not parent.findall("m:dependencies/m:dependency", NS), "Declare dependencies in modules, not the parent")
     check_managed_dependencies(parent)

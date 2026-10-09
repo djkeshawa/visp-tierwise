@@ -20,7 +20,9 @@
     <module>tierwise-core</module>
     <module>tierwise-cli</module>
     <module>tierwise-spring-boot-starter</module>
+    <module>tierwise-spring-boot-starter-s3</module>
     <module>tierwise-server</module>
+    <module>tierwise-server-s3</module>
     <module>tierwise-openfeature</module>
   </modules>
   <properties>
@@ -60,6 +62,10 @@
     <version.site>3.22.0</version.site>
     <version.enforcer>3.6.3</version.enforcer>
     <version.shade>3.6.2</version.shade>
+    <!-- Runtime integration dependencies (ADR 0020). Spring and AWS BOMs are imported by the modules that use them. -->
+    <version.spring-boot>4.1.1</version.spring-boot>
+    <version.awssdk>2.55.0</version.awssdk>
+    <version.openfeature>1.22.1</version.openfeature>
   </properties>
 
   <dependencyManagement>
@@ -85,6 +91,11 @@
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
         <version>${version.jqwik}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.openfeature</groupId>
+        <artifactId>sdk</artifactId>
+        <version>${version.openfeature}</version>
       </dependency>
       <dependency>
         <groupId>info.picocli</groupId>

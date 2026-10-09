@@ -16,6 +16,9 @@
     "spec:check": "node spec-tools/check.mjs"
   },
   "devDependencies": {
+    "@openfeature/core": "1.12.0",
+    "@openfeature/server-sdk": "1.23.0",
+    "@openfeature/web-sdk": "1.10.0",
     "ajv": "8.20.0",
     "fast-check": "4.10.2",
     "typescript": "7.0.2",

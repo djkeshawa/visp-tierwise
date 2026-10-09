@@ -29,5 +29,21 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs"
+  },
+  "dependencies": {
+    "@tierwise/evaluator": "workspace:*"
+  },
+  "peerDependencies": {
+    "@openfeature/server-sdk": "^1.23.0",
+    "@openfeature/web-sdk": "^1.10.0",
+    "@openfeature/core": "^1.12.0"
+  },
+  "peerDependenciesMeta": {
+    "@openfeature/server-sdk": {
+      "optional": true
+    },
+    "@openfeature/web-sdk": {
+      "optional": true
+    }
   }
 }
