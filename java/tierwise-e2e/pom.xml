@@ -20,7 +20,7 @@
     <maven.install.skip>true</maven.install.skip>
     <maven.deploy.skip>true</maven.deploy.skip>
     <!-- The JUnit version of the Spring Boot BOM, as in tierwise-server. Keep it equal to the BOM's junit-jupiter.version. -->
-    <version.junit.server>6.0.3</version.junit.server>
+    <version.junit.server>6.1.3</version.junit.server>
     <!-- Where the test writes its report (versions and timings). -->
     <tierwise.e2e.report>${tierwise.buildDir}/e2e-report.json</tierwise.e2e.report>
   </properties>
