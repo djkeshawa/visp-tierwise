@@ -1,6 +1,6 @@
 # @tierwise/spec-tools
 
-Private tools that check the Phase 1 spec suite under `spec/`, and that canonicalise content into a
+Private tools that check the spec suite under `spec/`, and that canonicalise content into a
 bundle. The package has no dependencies of its own. It uses the `yaml` and `ajv` packages pinned in the
 workspace root (`js/package.json`), so run `pnpm --dir js install --frozen-lockfile` first. It targets
 Node 22 or later, and uses only Node built-ins plus those two packages.
@@ -19,9 +19,8 @@ pnpm test                    # packaging tests, then the spec-tools tests
 `pnpm spec:check` runs `node spec-tools/check.mjs`. It prints one line per stage, the problems (each
 prefixed `FAIL`), the suite gaps, and the coverage gaps, and writes `spec/conformance/COVERAGE.md`. Pass `--strict`
 to make coverage and suite gaps fatal. The suite gaps are the missing directories of VEC-1 and the empty
-families (no bundle, invalid bundle, evaluate vector, canonical vector, compile case or provenance case). At the time of writing
-the repository has no bundle files, no evaluate vectors, no compile cases and no provenance cases, so stages (c) and (d) check
-only the canonical vectors; the stage lines print the counts. A bare `--` is ignored, so `pnpm spec:check -- --strict` also works.
+families (no bundle, invalid bundle, evaluate vector, canonical vector, compile case or provenance case). The stage
+lines print the counts of each family. A bare `--` is ignored, so `pnpm spec:check -- --strict` also works.
 
 Exit codes: `0` no problem; `1` a problem, or with `--strict` a coverage gap; `2` bad arguments.
 

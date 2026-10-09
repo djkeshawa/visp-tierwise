@@ -42,7 +42,7 @@ The three publishing jobs have `if: needs.prepare.outputs.publish == 'true'` and
 ### 1. Claim the GitHub organisation (O2)
 
 1. Sign in to GitHub with the account that will own the project and create the organisation `tierwise` (github.com/account/organizations/new, the free plan is enough). On 2026-10-09 neither an organisation nor a user named `tierwise` existed: `https://api.github.com/orgs/tierwise` and `https://api.github.com/users/tierwise` both answered 404. Check again before you start.
-2. Create the repository `tierwise/tierwise` and push this repository to it. Decide in this step whether it is public from now on (open question O6).
+2. Move the existing repository there instead of pushing a new one, so its history, issues and Dependabot PRs come along: in `djkeshawa/visp-tierwise`, open Settings, then Transfer ownership, choose `tierwise`, and then rename the repository to `tierwise` (or run `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=tierwise -f new_name=tierwise`). GitHub redirects the old URL. Update your clone with `git remote set-url origin https://github.com/tierwise/tierwise.git`. Decide in this step whether it is public from now on (open question O6).
 3. If you choose another organisation or repository name, change the URLs before anything else. These files carry the URL today:
 
    ```sh
@@ -82,29 +82,13 @@ The Maven group id `io.github.tierwise` is verified against this organisation in
 
 ### 3. Name the maintainers (O3)
 
-1. Decide who the initial maintainers are (the proposal is the owner as sole maintainer) and get their agreement.
-2. Fill in `MAINTAINERS.md`, including who holds "Release signing and publishing".
-3. Add the maintainers to `java/pom.xml`. Maven Central rejects a bundle without a `<developers>` element, and the POM has only a comment where it goes today:
-
-   ```xml
-   <developers>
-     <developer>
-       <id>github-user-name</id>
-       <name>Full name</name>
-       <url>https://github.com/github-user-name</url>
-     </developer>
-   </developers>
-   ```
-
-   Leave out the email address unless the person asks for it: it appears in the public POM.
-4. Strike O3 through in `open-questions.md`.
+**Done on 2026-10-10.** The owner, [@djkeshawa](https://github.com/djkeshawa), is the sole maintainer and holds release signing and publishing. `MAINTAINERS.md` lists the roles, and `java/pom.xml` has the `<developers>` entry Maven Central requires (no email address). Add a maintainer to both places, with their agreement, when one joins.
 
 ### 4. Set up the security and conduct contacts (O4)
 
-1. Enable private vulnerability reporting for the repository (Settings, Code security) and check that a maintainer is notified.
-2. Create the dedicated address for security and conduct reports that O4 proposes, if you want one.
-3. Update `SECURITY.md` (the "Private vulnerability reporting" and "Supported versions" sections say "not configured yet") and `CODE_OF_CONDUCT.md`.
-4. Strike O4 through in `open-questions.md`.
+`SECURITY.md` routes reports through GitHub private vulnerability reporting, and `CODE_OF_CONDUCT.md` routes conduct reports to the maintainer through GitHub. No email address is published. What remains:
+
+1. Enable private vulnerability reporting once the repository is in its final home (Settings, Code security, or `gh api -X PUT repos/tierwise/tierwise/private-vulnerability-reporting`), and check that the maintainer is notified.
 
 ### 5. Register the Maven Central namespace and create a token
 
