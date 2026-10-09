@@ -13,6 +13,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +34,7 @@ import tools.jackson.databind.json.JsonMapper;
  *
  * <pre>
  * bundles/&lt;64 hex digits&gt;.json                           the exact bundle bytes
- * records/&lt;64 hex digits&gt;/&lt;millis&gt;-&lt;uuid&gt;.json    one publication record per file
+ * records/&lt;64 hex digits&gt;/&lt;millis&gt;-&lt;seq&gt;-&lt;uuid&gt;.json  one publication record per file
  * latest                                                 "sha256:..." and a newline
  * tmp/                                                   files being written
  * </pre>
@@ -54,7 +55,10 @@ public final class FilesystemBundleStore implements BundleStore {
   private final Path records;
   private final Path latest;
   private final Path tmp;
+  private final Clock clock;
   private final JsonMapper json = JsonMapper.builder().enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION).build();
+  private long lastMillis = -1;
+  private long sequence;
 
   /**
    * Opens a store, creating the directories it needs.
@@ -63,7 +67,12 @@ public final class FilesystemBundleStore implements BundleStore {
    * @throws BundleStoreException when the directories cannot be created
    */
   public FilesystemBundleStore(Path root) {
+    this(root, Clock.systemUTC());
+  }
+
+  FilesystemBundleStore(Path root, Clock clock) {
     Objects.requireNonNull(root, "root");
+    this.clock = Objects.requireNonNull(clock, "clock");
     Path absolute = root.toAbsolutePath().normalize();
     this.bundles = absolute.resolve("bundles");
     this.records = absolute.resolve("records");
@@ -115,7 +124,7 @@ public final class FilesystemBundleStore implements BundleStore {
     byte[] bytes = json.writeValueAsBytes(record.toJson());
     try {
       Files.createDirectories(directory);
-      String name = String.format("%013d-%s%s", System.currentTimeMillis(), UUID.randomUUID(), EXTENSION);
+      String name = String.format("%s-%s%s", nextStamp(), UUID.randomUUID(), EXTENSION);
       if (!createExclusively(directory.resolve(name), bytes)) {
         throw new BundleStoreException("a record file exists already: " + name);
       }
@@ -181,6 +190,22 @@ public final class FilesystemBundleStore implements BundleStore {
     } finally {
       deleteQuietly(temporary);
     }
+  }
+
+  /**
+   * Returns a stamp that sorts after every stamp this instance returned before: the time in milliseconds and a
+   * sequence number within that millisecond. A clock that steps back keeps the last millisecond, so the order
+   * of the records this instance adds is the order of their file names.
+   */
+  private synchronized String nextStamp() {
+    long now = clock.millis();
+    if (now > lastMillis) {
+      lastMillis = now;
+      sequence = 0;
+    } else {
+      sequence++;
+    }
+    return String.format("%013d-%06d", lastMillis, sequence);
   }
 
   private List<PublicationRecord> readRecords(Path directory) throws IOException {

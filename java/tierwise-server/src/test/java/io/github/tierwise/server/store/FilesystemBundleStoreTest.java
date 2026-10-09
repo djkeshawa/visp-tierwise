@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -155,6 +158,20 @@ class FilesystemBundleStoreTest {
     store.addRecord(same);
     assertEquals(List.of(first, second, same), store.records(V1));
     assertEquals(List.of(), store.records(V2));
+  }
+
+  @Test
+  void recordsAddedWithinOneMillisecondKeepTheirOrder() {
+    FilesystemBundleStore frozen = new FilesystemBundleStore(root.resolve("frozen"),
+        Clock.fixed(Instant.parse("2026-10-09T08:00:00Z"), ZoneOffset.UTC));
+    List<PublicationRecord> added = new ArrayList<>();
+    for (int i = 0; i < 50; i++) {
+      PublicationRecord record = new PublicationRecord(V1, "2026-10-09T08:00:00Z", Optional.empty(),
+          Optional.of("ci-" + i));
+      frozen.addRecord(record);
+      added.add(record);
+    }
+    assertEquals(added, frozen.records(V1));
   }
 
   @Test
