@@ -119,12 +119,21 @@ No change to the server module is needed. The server's properties now take `tier
 
 ## Tests
 
-`cd java && ./mvnw -B -ntp -pl tierwise-server-s3 -am verify` runs 79 tests in this module. The tests use an in-memory `S3Client` fake that
+`cd java && ./mvnw -B -ntp -pl tierwise-server-s3 -am verify` runs 91 tests in this module, 12 of them skipped (the opt-in integration test below). The other tests use an in-memory `S3Client` fake that
 models conditional PutObject, ETags, paged listings and injected failures. No network is used. The concurrency tests
 race 8 threads against the fake and check the outcomes that conditional writes guarantee. The auto-configuration tests
 run `ApplicationContextRunner`, and web contexts with the real `TierwiseServerAutoConfiguration` check that `store=s3` replaces
 the filesystem default and that the filesystem default is kept when `store` is unset. The JSON round trip, damaged records (including a record whose
 `bundleVersion` disagrees with its key prefix), and the ordering of `records()` are covered in `S3BundleStoreTest`.
+
+`S3BundleStoreIntegrationTest` is opt-in: it runs only when `TIERWISE_S3_IT_ENDPOINT` is set, and is skipped otherwise.
+Against a real S3-compatible endpoint it checks `If-None-Match: *` on bundles (new, identical and conflicting bytes),
+the pointer's create and `If-Match` update (body `<version>\n`), a pointer rewritten, created or deleted between the
+store's read and its conditional write (through a delegating client that interferes once), two stores racing
+`setLatest`, and the record round trip including a listing of more than one page. It builds its client with
+`S3BundleStoreAutoConfiguration` (endpoint override, path-style addressing) and reads `TIERWISE_S3_IT_BUCKET`,
+`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_REGION`. `scripts/s3-it.sh` starts a local MinIO, sets those
+variables and runs it. Every run writes under a random prefix and deletes it afterwards.
 
 ## Decisions
 
@@ -134,5 +143,7 @@ for stores that can't observe the order of addition. The pointer is the version 
 filesystem store's. 404 and 412 on `If-Match` are both treated as a lost race. The limits (5 attempts, 1000 slots) are
 chosen defaults.
 
-Still to do before release: run the 304 and conditional-write paths against a real S3-compatible endpoint (release checklist).
+The conditional writes have been run against MinIO RELEASE.2025-09-07T16-13-09Z with `scripts/s3-it.sh`. MinIO
+answers a failed `If-None-Match: *` and a stale `If-Match` with 412, and `If-Match` on a deleted key with 404, as S3
+documents. Still to do before release: run the same tests against AWS S3 itself (release checklist).
 

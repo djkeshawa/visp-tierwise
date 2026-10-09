@@ -102,8 +102,15 @@ JAVA_HOME=<jdk 21> ./mvnw -B -ntp -q -Dtierwise.buildDir=target-P6B -pl tierwise
 - `S3BundleSourceAutoConfigurationTest` covers the activation rules, the bean wiring (region, endpoint and
   timeout read back from the client), user overrides, startup failure on a bad value, and the registration file.
 
-Nothing here contacts S3. The 304 behaviour and the SDK exception it produces are verified only against the
-fake. See the open points.
+- `S3BundleSourceIntegrationTest` is opt-in: it runs only when `TIERWISE_S3_IT_ENDPOINT` is set, and is skipped
+  otherwise. Against a real S3-compatible endpoint it fetches an object, fetches again with the ETag and gets
+  `304` (`BundleFetch.notModified()`), then overwrites the object and gets the new bytes. It builds its client
+  with `S3BundleSourceAutoConfiguration` (endpoint override, path-style addressing) and reads
+  `TIERWISE_S3_IT_BUCKET`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_REGION`.
+  `scripts/s3-it.sh` starts a local MinIO, sets those variables and runs it.
+
+Without `TIERWISE_S3_IT_ENDPOINT` nothing here contacts S3. The 304 path has been run against MinIO
+(RELEASE.2025-09-07T16-13-09Z) with `scripts/s3-it.sh`; it has not been run against AWS S3 itself.
 
 ## Open points
 
