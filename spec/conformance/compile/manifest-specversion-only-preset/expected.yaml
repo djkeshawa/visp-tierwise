@@ -1,0 +1,6 @@
+id: "manifest-specversion-only-preset"
+specVersion: "0.1"
+clauses: ["MANIFEST-18","MANIFEST-23"]
+description: "A manifest with no inline content and no sources entries is valid. Its path preset declares the hierarchy, and the project compiles to the root-only bundle."
+expect:
+  bundle: "../../bundles/edge-hierarchy-root.json"

@@ -1,0 +1,10 @@
+id: "manifest-specversion-only"
+specVersion: "0.1"
+clauses: ["MANIFEST-18","SCOPE-48"]
+description: "A manifest with specVersion alone is a valid manifest, so no E_MANIFEST is reported; the project declares no decision_hierarchy, which is E_SCOPE_DECLARATION at the manifest root."
+expect:
+  findings:
+    - code: "E_SCOPE_DECLARATION"
+      file: "tierwise.yaml"
+      path: []
+      line: 1

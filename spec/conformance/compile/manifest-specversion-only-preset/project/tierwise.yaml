@@ -1,0 +1,3 @@
+specVersion: "0.1"
+extends:
+  - "presets/root.yaml"
