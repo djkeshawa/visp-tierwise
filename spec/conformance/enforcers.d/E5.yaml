@@ -1,24 +1,26 @@
 # Enforcers for the decide clauses that no evaluate vector or compile case can observe (VEC-125).
 # Owner: work item E5 (evaluate vectors: decisions and rules). Each value is one line that names the enforcer.
-# A clause listed here is a promise to test it in the implementation, not evidence that it is tested.
+# An entry that names Java and JS tests points at tests that exist. An entry that says "Planned" names a test that
+# is not written yet, so it is a promise to test that clause, not evidence that the clause is tested.
 # Clauses that a compile case observes (the compiler-side checks of RULE and BIND) are not listed here;
 # they are covered by the compile cases under spec/conformance/compile/ (bind-*, bnd-reference-clean, the rules family),
 # and README-edge-decide.md section 4 names them.
 
 # A context cannot name the root level (CTX-3), so the root level never reaches skippedScopes.
-PROV-57: 'Planned evaluator unit test: skippedScopes never names the root level, because a context that names it raises E_CONTEXT_INVALID (CTX-3).'
+PROV-57: 'Java: tierwise-core SkippedScopesTest#PROV_57_aContextThatNamesTheRootLevelRaisesContextInvalid, SkippedScopesTest#PROV_57_skippedScopesNeverNamesTheRootLevel (jqwik). JS: js/evaluator/test/skipped-scopes.test.mjs "PROV-57: a context that names the root level raises E_CONTEXT_INVALID, so skippedScopes never names it".'
 
 # A context gives each scope at most one node, so a scope is skipped at most once.
-PROV-59: 'Planned evaluator unit test: skippedScopes holds at most one entry for each scope, because a context gives each scope at most one node (PROV-59).'
+PROV-59: 'Java: tierwise-core SkippedScopesTest#PROV_59_skippedScopesHoldsAtMostOneEntryForEachScope (jqwik), SkippedScopesTest#PROV_59_twoSkippedScopesGiveOneEntryEach. JS: js/evaluator/test/skipped-scopes.test.mjs "PROV-59: skippedScopes holds at most one entry for each scope".'
 
 # skippedScopes is a property of the context, so every result from one context carries the same list.
-PROV-60: 'Planned evaluator unit test: resolve and decide over one context report the same skippedScopes, for every key and feature (PROV-60).'
+PROV-60: 'Java: tierwise-core SkippedScopesTest#PROV_60_everyResultFromOneContextReportsTheSameSkippedScopes (jqwik). JS: js/evaluator/test/skipped-scopes.test.mjs "PROV-60: every result computed from one context reports the same skippedScopes".'
 
-# Evaluator options, presets and project settings must not change the Decision result shape.
-PROV-2: 'Planned evaluator unit test: a preset, a project setting or an evaluator option leaves the member set of a Decision result unchanged (PROV-2).'
+# Evaluator options, presets and project settings must not change the Decision result shape. Presets and project
+# settings act at compile time; the bundle has no member that could carry them to an evaluator.
+PROV-2: 'Java: tierwise-core ResultShapeTest#PROV_2_anEvaluatorOptionLeavesTheMemberSetOfADecisionUnchanged, ResultShapeTest#PROV_2_anEvaluatorOptionLeavesTheMemberSetOfAResolvedResultUnchanged, BundleShapeGuardsTest#PROV_2_aBundleCannotCarryAPresetOrAProjectSetting. JS: js/evaluator/test/result-shape.test.mjs "PROV-2: an evaluator option leaves the member set of a Decision unchanged", "PROV-2: an evaluator option leaves the member set of a Resolved result unchanged", "PROV-2: a bundle cannot carry a preset or a project setting, so neither can reach a result".'
 
 # Serialised results are unordered JSON objects, so member order is not significant to a reader.
-PROV-85: 'Planned unit test: a serialised Decision result compares equal when only the order of its object members differs (PROV-85).'
+PROV-85: 'Java: tierwise-core ResultShapeTest#PROV_85_aSerialisedResultComparesEqualWhateverTheOrderOfItsObjectMembers, ResultShapeTest#PROV_85_theOrderOfArrayElementsStaysSignificant. JS: js/evaluator/test/result-shape.test.mjs "PROV-85: a serialised result compares equal when only the order of its object members differs".'
 
 # Comparisons are by declared type and never coerce, so operands and fact values of different types are never equal.
-RULE-38: 'Planned evaluator unit test: a boolean fact never equals the string "true", no decimal equals a number, and no operand is coerced before a comparison (RULE-38, NORM-17).'
+RULE-38: 'Java: tierwise-core NoCoercionTest#RULE_38_valuesOfDifferentTypesAreNeverEqual, NoCoercionTest#RULE_38_aConditionOperandOfAnotherTypeNeverMatchesAndIsNotCoerced, NoCoercionTest#RULE_38_aFactValueOfAnotherTypeIsInvalidNotCoerced, NoCoercionTest#RULE_37_decimalsCompareAsCanonicalStrings, BundleShapeGuardsTest#RULE_38_aConditionLiteralOfAnotherTypeThanItsFactIsNotLoaded. JS: js/evaluator/test/no-coercion.test.mjs "RULE-38: values of different types are never equal", "RULE-38: a fact value of another type is invalid, never coerced to the declared type", "RULE-38: decimals compare as canonical strings, and no number is a decimal (RULE-37, TYPE-25)", "RULE-38: a bundle whose condition literal has another type than its fact is not loaded".'
