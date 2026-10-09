@@ -50,6 +50,7 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [0020](adr/0020-runtime-integration-dependencies.md) | Runtime integration, server and OpenFeature dependencies (Spring Boot 4.1.1, AWS SDK for the S3 modules) |
 | [0021](adr/0021-cli-codegen-and-distribution.md) | CLI output, codegen, benchmarks, native image and Docker choices |
 | [0022](adr/0022-release-tooling.md) | Release and documentation tooling (Javadoc, signing, SBOM, MkDocs, TypeDoc) |
+| [0023](adr/0023-s3-module-choices.md) | S3 module choices: location property, region key, HTTP client, conditional requests |
 
 ## Browser use
 
