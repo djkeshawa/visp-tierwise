@@ -19,8 +19,10 @@ for (const name of ['evaluator', 'node', 'openfeature']) {
   assert.equal(manifest.private, true, 'Phase 0 packages must not be publishable.');
   assert.equal(manifest.license, 'Apache-2.0');
   assert.deepEqual(manifest.dependencies ?? {}, {}, 'Phase 0 adds no runtime dependencies.');
-  assert.deepEqual(manifest.tierwise.supportedSpecVersions, []);
-  assert.deepEqual(manifest.tierwise.supportedBundleFormatVersions, []);
+  // Packages declare the spec and bundle-format versions they implement; placeholders declare none.
+  for (const list of [manifest.tierwise.supportedSpecVersions, manifest.tierwise.supportedBundleFormatVersions]) {
+    assert.ok(Array.isArray(list) && list.every((v) => typeof v === 'string'), 'Supported versions must be string arrays.');
+  }
   assert.equal(readJson(`${name}/tsconfig.json`).extends, '../tsconfig.base.json');
   assert.equal(readJson(`${name}/tsconfig.cjs.json`).extends, './tsconfig.json');
   assert.deepEqual(manifest.devDependencies ?? {}, {}, 'Declare development tools once, at the workspace root.');

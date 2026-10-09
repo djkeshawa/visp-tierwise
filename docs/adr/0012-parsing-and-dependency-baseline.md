@@ -36,8 +36,8 @@ toolchain.
   therefore reduces to integer formatting. Canonical JSON is a few dozen lines in
   each language, and the shared conformance vectors check it byte for byte.
 - JSON parsing: Java uses **jackson-core** (streaming only, with
-  `STRICT_DUPLICATE_DETECTION`). JS uses `JSON.parse` with a pre-scan to reject
-  duplicate properties, because `JSON.parse` silently keeps the last one.
+  `STRICT_DUPLICATE_DETECTION`). JS uses an in-house recursive-descent parser over the
+  UTF-8 bytes (`JSON.parse` silently keeps duplicate properties), as implemented in Phase 4.
 - JCS sorts properties by UTF-16 code units. That is JS's default string order and
   Java's `String.compareTo`, so both sides sort correctly without extra code.
 

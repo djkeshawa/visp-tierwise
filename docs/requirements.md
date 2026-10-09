@@ -758,7 +758,7 @@ import { loadBundle, createEvaluator } from "@tierwise/evaluator";
 
 const bundle = loadBundle(bytesOrString);          // sync; verifies digest and versions
 const tw = createEvaluator(bundle, {
-  providers: { account: async (nodeId) => fetchAccountValues(nodeId) },
+  providers: { account: { fn: async (nodeId) => fetchAccountValues(nodeId), timeoutMs: 200 } },
   listener: (event) => metrics.record(event),
 });
 

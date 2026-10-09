@@ -12,7 +12,7 @@
     "check": "node ../scripts/check-workspace.mjs",
     "genericity": "node scripts/check-genericity.mjs",
     "build": "pnpm -r run build",
-    "test": "node --test test/packaging.test.mjs spec-tools/test/*.test.mjs",
+    "test": "node --test test/packaging.test.mjs spec-tools/test/*.test.mjs evaluator/test/*.test.mjs",
     "spec:check": "node spec-tools/check.mjs"
   },
   "devDependencies": {

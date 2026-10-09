@@ -2,7 +2,7 @@
   "name": "@tierwise/evaluator",
   "version": "0.1.0-dev.0",
   "private": true,
-  "description": "Phase 0 evaluator placeholder; no public API yet",
+  "description": "Tierwise evaluator: resolve and decide over canonical bundles, in Node and browsers, with zero runtime dependencies",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
@@ -24,10 +24,15 @@
   },
   "sideEffects": false,
   "tierwise": {
-    "supportedSpecVersions": [],
-    "supportedBundleFormatVersions": []
+    "supportedSpecVersions": [
+      "0.1"
+    ],
+    "supportedBundleFormatVersions": [
+      "1"
+    ]
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs"
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs",
+    "test": "node --test test/*.test.mjs"
   }
 }
