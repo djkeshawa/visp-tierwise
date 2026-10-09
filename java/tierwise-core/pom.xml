@@ -13,8 +13,43 @@
   <packaging>jar</packaging>
   <name>tierwise-core</name>
 
+  <dependencies>
+    <!-- Runtime: the two dependencies of ADR 0012. -->
+    <dependency>
+      <groupId>org.snakeyaml</groupId>
+      <artifactId>snakeyaml-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <!-- Test: JUnit Jupiter (versions from the junit-bom import) and jqwik. -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.jqwik</groupId>
+      <artifactId>jqwik</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- The spec conformance suite runs only with -Pconformance (see the parent POM). -->
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+          <!-- Keep the jqwik database in the build directory, not as an untracked file in the module. -->
+          <properties>
+            <configurationParameters>jqwik.database=${project.build.directory}/jqwik-database</configurationParameters>
+          </properties>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>

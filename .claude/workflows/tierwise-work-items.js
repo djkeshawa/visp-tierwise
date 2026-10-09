@@ -1,7 +1,7 @@
 export const meta = {
   name: 'tierwise-work-items',
   description: 'Haiku 5.5 (high) drafts and cross-verifies Tierwise work items; Sonnet 5.5 (high) reviews each item; the main chat model does the final review',
-  whenToUse: 'Run one wave of Tierwise roadmap work items, where each item owns distinct files. Pass { root, wave, context, items: [{ id, title, files, sources, brief }], verifiers? (0-2, default 2), consistency? } as args. Items may set reviewOnly: true, verifiers, and drafter: 'haiku' | 'sonnet'.',
+  whenToUse: 'Run one wave of Tierwise roadmap work items, where each item owns distinct files. Pass { root, wave, context, items: [{ id, title, files, sources, brief }], verifiers? (0-2, default 2), consistency? } as args. Items may set reviewOnly: true, verifiers, and drafter (haiku or sonnet).',
   phases: [
     { title: 'Draft', detail: 'one Haiku 5.5 agent per work item', model: 'haiku' },
     { title: 'Verify', detail: 'two Haiku 5.5 verifiers per draft: faithfulness and precision', model: 'haiku' },

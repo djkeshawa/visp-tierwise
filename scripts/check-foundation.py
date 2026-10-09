@@ -22,6 +22,9 @@ APPROVED_DEPENDENCIES = {
     "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli"},
 }
 APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik"}
+# BOMs the parent may import in dependencyManagement. They only pin versions; a module still has to
+# declare (and have approved) every dependency it uses.
+APPROVED_IMPORTS = {"org.junit:junit-bom"}
 
 
 def require(condition, message):
@@ -43,6 +46,23 @@ def check_documents():
     require("Apache License" in (ROOT / "LICENSE").read_text(), "Missing Apache license text")
 
 
+def coordinate_of(dependency):
+    return ":".join(dependency.findtext(f"m:{part}", namespaces=NS) for part in ("groupId", "artifactId"))
+
+
+def check_managed_dependencies(parent):
+    """The parent may pin approved versions and import approved BOMs, and nothing else."""
+    approved = set().union(*APPROVED_DEPENDENCIES.values()) | APPROVED_TEST_DEPENDENCIES
+    for dependency in parent.findall("m:dependencyManagement/m:dependencies/m:dependency", NS):
+        coordinate = coordinate_of(dependency)
+        require(dependency.findtext("m:version", namespaces=NS), f"Managed dependency has no version: {coordinate}")
+        if dependency.findtext("m:scope", namespaces=NS) == "import":
+            require(dependency.findtext("m:type", namespaces=NS) == "pom" and coordinate in APPROVED_IMPORTS,
+                    f"Import not approved in ADR 0012: {coordinate}")
+        else:
+            require(coordinate in approved, f"Managed dependency not approved in ADR 0012: {coordinate}")
+
+
 def check_java():
     parent = ET.parse(ROOT / "java/pom.xml").getroot()
     actual = [item.text for item in parent.findall("m:modules/m:module", NS)]
@@ -55,10 +75,11 @@ def check_java():
         release = model.findtext("m:properties/m:maven.compiler.release", namespaces=NS)
         require(int(release or "17") == baseline, f"Wrong Java baseline: {name}")
         for dependency in model.findall("m:dependencies/m:dependency", NS):
-            coordinate = ":".join(dependency.findtext(f"m:{part}", namespaces=NS) for part in ("groupId", "artifactId"))
+            coordinate = coordinate_of(dependency)
             require(coordinate in APPROVED_DEPENDENCIES.get(name, set()) | APPROVED_TEST_DEPENDENCIES,
                     f"Dependency not approved in ADR 0012 for {name}: {coordinate}")
     require(not parent.findall("m:dependencies/m:dependency", NS), "Declare dependencies in modules, not the parent")
+    check_managed_dependencies(parent)
     wrapper = (ROOT / "java/.mvn/wrapper/maven-wrapper.properties").read_text()
     require("distributionSha256Sum=" in wrapper, "The Maven Wrapper must verify its distribution checksum")
     require((ROOT / "java/mvnw").stat().st_mode & 0o111, "java/mvnw must be executable")

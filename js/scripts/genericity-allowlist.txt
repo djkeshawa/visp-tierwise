@@ -14,3 +14,15 @@
 # sample key export.granted_formats (samples/saas-entitlements). The keyword is not a
 # domain identifier, so the engine cannot avoid it.
 export
+
+# "feature" is a spec term (spec.md Terminology: Feature) used by the public API
+# (Decision.feature, Evaluator.decide); it is also a kind name in the saas sample.
+feature
+
+# "line" is the 1-based line number every finding carries (FIND-10) and every parsed
+# node records; it is also the child entity name in the retail-pos sample.
+line
+
+# "org" is the first segment of Java package and module names (org.snakeyaml.engine);
+# it is also a level name in the saas sample.
+org
