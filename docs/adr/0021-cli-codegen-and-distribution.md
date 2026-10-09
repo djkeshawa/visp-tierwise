@@ -14,5 +14,5 @@
 | Codegen types | Typed keys and features. FactSets stay untyped, and object values are `Map<String, Object>` or `Record<string, unknown>`. Typed facts are post-0.1. |
 | Benchmarks | A hand-written nanoTime harness, because JMH is not an approved dependency. Results are in `docs/benchmarks.md`: p99 ≈ 5–7 µs in both languages. |
 | Native image | Hand-maintained reachability metadata, built only in CI (`release-dry-run.yml`) for linux-x64, macOS-arm64 and windows-x64. It has not been verified locally because there is no GraalVM here. |
-| Docker | Multi-stage build on Temurin 21 JDK and JRE images pinned by digest, running as a non-root user. The registry name waits for open question O2. |
+| Docker | Multi-stage build on Temurin JDK and JRE images pinned by digest, running as a non-root user. The registry name waits for open question O2. Amended 2026-10-10: the images moved from Temurin 21 to Temurin 25, the current LTS (Dependabot #3). The JARs inside still target Java 17, and the CI job `github-action` and the release dry run run the images against the samples. |
 | GitHub Action | A composite `action.yml` with `docker` and `jar` methods. A native method is added at release. |

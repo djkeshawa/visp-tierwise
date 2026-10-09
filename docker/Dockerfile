@@ -1,4 +1,4 @@
-# Tierwise CLI image: the fat JAR on a JRE 21 base, running as a non-root user.
+# Tierwise CLI image: the fat JAR on a JRE 25 base, running as a non-root user.
 #
 # Build from the repository root, because the build context needs java/, presets/ and spec/data/:
 #   docker build --file docker/Dockerfile --tag tierwise:local .
@@ -6,7 +6,7 @@
 # Base images are pinned by digest (the digest decides; the tag is for humans). Docker/README.md explains
 # how to read and update them.
 
-# Build stage: the Maven Wrapper builds the fat JAR of the CLI on JDK 21 (ADR 0012).
+# Build stage: the Maven Wrapper builds the fat JAR of the CLI on JDK 25 (ADR 0021, amended); the JARs target Java 17.
 FROM eclipse-temurin:25-jdk-noble@sha256:589ff4cc3f71aab462e7048a47a0d10edf57fbccde3fceea2281e610bf5880b4 AS build
 
 # tierwise-core reads the built-in presets and the IANA zone names from ../../presets and ../../spec/data

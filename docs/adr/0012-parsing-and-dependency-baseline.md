@@ -84,7 +84,7 @@ possible if consumers ask for a smaller evaluation-only JAR.
 
 | Tool | Version | Notes |
 | --- | --- | --- |
-| Maven | 3.9.16 | Through Maven Wrapper 3.3.4 (`only-script`), with `distributionSha256Sum` |
+| Maven | 3.9.16 (3.10.0 since 2026-10-10, Dependabot #6) | Through Maven Wrapper 3.3.4 (`only-script`), with `distributionSha256Sum` |
 | maven-clean / resources / compiler / surefire / jar | 3.5.0 / 3.5.0 / 3.16.0 / 3.6.0 / 3.5.1 | |
 | maven-install / deploy / site / enforcer | 3.2.0 / 3.2.0 / 3.22.0 / 3.6.3 | Enforcer requires every plugin version to be pinned |
 | TypeScript | 7.0.2 | The native compiler. `moduleResolution: node10` has been removed, so the CJS build uses `Bundler` and the ESM build uses `NodeNext`. |

@@ -1,4 +1,4 @@
-# Tierwise server image: the executable Spring Boot JAR of tierwise-server on a JRE 21 base, running as a non-root user.
+# Tierwise server image: the executable Spring Boot JAR of tierwise-server on a JRE 25 base, running as a non-root user.
 #
 # Build from the repository root, because the build context needs java/, presets/ and spec/data/:
 #   docker build --file docker/server.Dockerfile --tag tierwise-server:local .
@@ -6,7 +6,7 @@
 # Base images are the same ones, pinned by the same digests, as in docker/Dockerfile (the digest decides; the tag is
 # for humans). Update the digests in both files together. docker/README.md explains how.
 
-# Build stage: the Maven Wrapper builds the executable JAR of the server on JDK 21 (ADR 0012, ADR 0022).
+# Build stage: the Maven Wrapper builds the executable JAR of the server on JDK 25 (ADR 0021, amended; ADR 0022).
 FROM eclipse-temurin:25-jdk-noble@sha256:589ff4cc3f71aab462e7048a47a0d10edf57fbccde3fceea2281e610bf5880b4 AS build
 
 # tierwise-core reads the built-in presets and the IANA zone names from ../../presets and ../../spec/data

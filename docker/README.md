@@ -1,6 +1,6 @@
 # Tierwise CLI Docker image
 
-The image runs the Tierwise command line (`tierwise`) from the fat JAR of `java/tierwise-cli`. It has a JRE 21
+The image runs the Tierwise command line (`tierwise`) from the fat JAR of `java/tierwise-cli`. It has a JRE 25
 base, a fixed non-root user (UID 10001) and `tierwise` as its entrypoint, so the arguments you pass are the
 CLI's arguments:
 
@@ -19,9 +19,9 @@ Run from the repository root. The build needs `java/`, `presets/` and `spec/data
 docker build --file docker/Dockerfile --tag tierwise:local .
 ```
 
-The first stage runs the Maven Wrapper (`java/mvnw`) on a JDK 21 image. It builds `tierwise-cli` and its
+The first stage runs the Maven Wrapper (`java/mvnw`) on a JDK 25 image. It builds `tierwise-cli` and its
 dependencies with `clean package -DskipTests`; tests run in CI. The second stage copies only the fat JAR
-(`tierwise-cli-<version>-all.jar`) onto the JRE 21 image.
+(`tierwise-cli-<version>-all.jar`) onto the JRE 25 image.
 
 ## Use
 
@@ -45,16 +45,16 @@ directory allows that UID. The GitHub Action in the repository root passes the s
 
 Both `FROM` lines name a tag and a digest. Docker uses the digest, so the build cannot pick up a moved tag.
 
-| Stage | Image reference | Digest (manifest list, read from the registry on 2026-10-09) |
+| Stage | Image reference | Digest (manifest list; updated to Temurin 25 on 2026-10-10, Dependabot #3) |
 | --- | --- | --- |
-| build | `eclipse-temurin:21-jdk-noble` | `sha256:b468c3fc688b14450571494f588bd939378e7fd542ed5a73f8efc13f17872a87` |
-| runtime | `eclipse-temurin:21-jre-noble` | `sha256:000fd431958bc81a24abe1e8e5f0f0fd3ae365a594bd50aadb20696805f9408c` |
+| build | `eclipse-temurin:25-jdk-noble` | `sha256:589ff4cc3f71aab462e7048a47a0d10edf57fbccde3fceea2281e610bf5880b4` |
+| runtime | `eclipse-temurin:25-jre-noble` | `sha256:d9a39a23634650173f1e2bbc176227af9728587ecf0f4b62d53e9355cd7a19ab` |
 
 To update a digest, read the new one from the registry, check the release notes, and edit both `FROM` lines
 together:
 
 ```sh
-docker buildx imagetools inspect eclipse-temurin:21-jre-noble
+docker buildx imagetools inspect eclipse-temurin:25-jre-noble
 ```
 
 The Ubuntu `noble` variant is used because it provides `groupadd` and `useradd` for the fixed user.

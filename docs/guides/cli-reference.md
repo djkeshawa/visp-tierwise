@@ -14,7 +14,7 @@ on that build. The projects in the examples are the samples of the repository (`
 | How | Command | Needs |
 | --- | --- | --- |
 | Fat JAR | `java -jar tierwise.jar <command>` | Java 17 or later. One file with its dependencies inside, `tierwise-cli-<version>-all.jar` |
-| Docker image | `docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/work" tierwise:local <command>` | Docker. The image has a JRE 21 and runs as a non-root user; the project path is relative to `/work` |
+| Docker image | `docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/work" tierwise:local <command>` | Docker. The image has a JRE 25 and runs as a non-root user; the project path is relative to `/work` |
 | GitHub Action | `uses: <owner>/tierwise@<sha>` with `command: validate` or `compile` | A GitHub Actions runner. Runs the Docker image, or a released JAR checked against a SHA-256 you give it |
 | Native binary | `tierwise <command>` | Nothing. Built in the release dry run for Linux, macOS and Windows |
 
