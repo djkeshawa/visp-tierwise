@@ -13,7 +13,7 @@ BUNDLE-116: "Check tool: spec-tools checkBundle enforces canonical bytes (BUNDLE
 BUNDLE-117: "Planned evaluator unit test: a bundle that fails several checks raises the code of the first failing check in the order of EVAL-14."
 
 # Structural loader faults (ADR 0016). No invalid-bundle file holds these faults in v0.1, so evaluator unit tests cover them.
-BUNDLE-118: "Planned evaluator unit test: load bundle raises E_BUNDLE_INTEGRITY for a content member or value that breaks the forms of BUNDLE-14 to BUNDLE-108, excluding BUNDLE-16, BUNDLE-17 and BUNDLE-18, which BUNDLE-115, BUNDLE-137 and EVAL-56 govern."
+BUNDLE-118: "The deny faults of SVC-11 and SVC-12 are observed by the load vectors deny-non-narrowing and deny-min-without-bound. Planned evaluator unit test for the rest: load bundle raises E_BUNDLE_INTEGRITY for a content member or value that breaks the forms of BUNDLE-14 to BUNDLE-108, excluding BUNDLE-16, BUNDLE-17 and BUNDLE-18, which BUNDLE-115, BUNDLE-137 and EVAL-56 govern."
 BUNDLE-119: "Planned evaluator unit test: load bundle raises E_BUNDLE_INTEGRITY for a nodes, requiredFacts or when array that is not in code point order (DET-6)."
 BUNDLE-120: "Planned evaluator unit test: load bundle raises E_BUNDLE_INTEGRITY for a fact name in a condition, a setting or requiredFacts that the bundle does not declare."
 BUNDLE-121: "Planned evaluator unit test: load bundle raises E_BUNDLE_INTEGRITY for an entity name in decidedPer, a fact entity, belongsTo or hasMany that the bundle does not declare."

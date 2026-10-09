@@ -1,0 +1,9 @@
+id: load/invalid/deny-non-narrowing
+specVersion: "0.1"
+clauses: [VEC-69, VEC-70, VEC-71, EVAL-2, EVAL-14, EVAL-22, EVAL-24, SVC-11, BUNDLE-118, BUNDLE-114]
+description: "A bundle whose key sets onSourceFailure deny on a strategy that is not narrowing is rejected at load with E_BUNDLE_INTEGRITY (SVC-11, BUNDLE-118)."
+call: resolve
+bundle: ../../../bundles/invalid/deny-non-narrowing.json
+key: example.lead_hours
+expect:
+  error: E_BUNDLE_INTEGRITY

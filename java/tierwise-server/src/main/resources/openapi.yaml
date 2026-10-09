@@ -1,0 +1,864 @@
+openapi: 3.1.0
+info:
+  title: Tierwise server API
+  version: 0.1.0-dev.0
+  summary: The control plane of Tierwise (requirements section 9).
+  description: |
+    The server stores every published bundle version, serves the latest bundle with an ETag, promotes a
+    stored version to latest, and answers `/v1/resolve` and `/v1/decide` with `tierwise-core`.
+
+    The server is stateless and horizontally scalable, and it is never the source of truth. The config
+    repository is. Applications evaluate in-process and keep working when the server is down.
+
+    **Authentication.** Requests carry a JWT as a bearer token. Publishing and promoting need the roles
+    that the server is configured with (`tierwise.server.security.publish-role`, `promote-role`). Reads
+    (the endpoints tagged `read`) are open or need a valid token, by setting
+    (`tierwise.server.security.reads`). The server has no default credentials. `GET /openapi.yaml` is
+    always open.
+
+    **Errors.** Every error response is JSON `{ "code": string, "message": string }`. Errors of the core keep
+    the code of `docs/requirements.md` section 6 (for example `E_UNKNOWN_KEY`). The codes `E_REQUEST_INVALID`,
+    `E_REQUEST_TOO_LARGE`, `E_UNSUPPORTED_MEDIA_TYPE`, `E_NOT_ACCEPTABLE`, `E_NOT_FOUND`,
+    `E_METHOD_NOT_ALLOWED`, `E_BUNDLE_NOT_FOUND`, `E_BUNDLE_CONFLICT`, `E_UNAUTHENTICATED`, `E_FORBIDDEN`,
+    `E_STORE_UNAVAILABLE` and `E_INTERNAL` are not defined by that section and are marked (OPEN).
+  license:
+    name: Apache License 2.0
+    identifier: Apache-2.0
+servers:
+  - url: /
+    description: The server that serves this document.
+tags:
+  - name: publish
+    description: Endpoints that change what the server stores. CI identity only.
+  - name: read
+    description: Endpoints that read. Open or authenticated by setting.
+  - name: docs
+    description: This document.
+paths:
+  /v1/bundles:
+    post:
+      operationId: publishBundle
+      tags: [publish]
+      summary: Publish a bundle and its publication record.
+      description: |
+        Verifies the bundle with the core (digest, `bundleFormatVersion`, `specVersion`, structure), stores the
+        exact bytes under their `bundleVersion`, and stores the publication record. Examples run when the
+        project is validated, not here: a bundle holds no examples.
+
+        The first publication of a version makes it the latest. Publishing a version again with identical
+        bytes adds the record (unless an identical one exists) and leaves the latest pointer alone, so a
+        repeated CI run cannot undo a promote. Different bytes for an existing version are rejected with
+        409, and the stored bytes never change. (OPEN: requirements section 9 does not say whether a publish
+        moves the latest pointer.)
+
+        The request is `multipart/form-data` with two parts. (OPEN: the encoding of "bundle bytes plus a
+        publication record" is not fixed by the sources.)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [bundle, record]
+              properties:
+                bundle:
+                  type: string
+                  contentMediaType: application/json
+                  description: The exact canonical bytes of the bundle (BUNDLE-2). Not re-encoded by the server.
+                record:
+                  $ref: '#/components/schemas/PublicationRecordInput'
+            encoding:
+              bundle:
+                contentType: application/json
+              record:
+                contentType: application/json
+      responses:
+        '201':
+          description: The bundle was stored for the first time.
+          headers:
+            Location:
+              description: The path of the stored version.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishResult'
+        '200':
+          description: The same bytes were stored before. The record was added unless an identical one existed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishResult'
+        '400':
+          description: >-
+            The bundle fails the core's checks (`E_BUNDLE_INTEGRITY`, `E_BUNDLE_UNSUPPORTED`), the record breaks
+            BUNDLE-141 to BUNDLE-150 (`E_PROVENANCE_INVALID`), or the request is malformed (`E_REQUEST_INVALID`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: A different body is already stored for this version (`E_BUNDLE_CONFLICT`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '413':
+          description: The bundle is larger than `tierwise.server.max-bundle-size` (`E_REQUEST_TOO_LARGE`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+    get:
+      operationId: listBundles
+      tags: [read]
+      summary: The history, from the publication records.
+      description: >-
+        Every publication record, newest `createdAt` first. A version that was published more than once has one
+        entry for each record. The order is by `createdAt` descending, then by `bundleVersion`.
+      security:
+        - bearerAuth: []
+        - {}
+      responses:
+        '200':
+          description: The history.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/History'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /v1/bundles/latest:
+    get:
+      operationId: getLatestBundle
+      tags: [read]
+      summary: The latest bundle, as stored.
+      description: |
+        The stored bytes, unchanged. The `ETag` is the `bundleVersion` in quotes. A request with
+        `If-None-Match` that names the latest version gets 304 without a body. Clients poll this endpoint.
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          $ref: '#/components/responses/Bundle'
+        '304':
+          $ref: '#/components/responses/NotModified'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: No bundle has been published (`E_BUNDLE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /v1/bundles/{version}:
+    get:
+      operationId: getBundle
+      tags: [read]
+      summary: One stored bundle version, as stored.
+      description: >-
+        The stored bytes of a version, unchanged. A version never changes, so the response may be cached
+        for as long as the client wants.
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - $ref: '#/components/parameters/Version'
+        - $ref: '#/components/parameters/IfNoneMatch'
+      responses:
+        '200':
+          $ref: '#/components/responses/Bundle'
+        '304':
+          $ref: '#/components/responses/NotModified'
+        '400':
+          description: '`version` is not a `bundleVersion` (`E_REQUEST_INVALID`).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: The version is not stored (`E_BUNDLE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /v1/bundles/{version}/promote:
+    post:
+      operationId: promoteBundle
+      tags: [publish]
+      summary: Make a stored version the latest.
+      description: >-
+        Rolls back or forward: the pointer to the latest version moves to a version that is already stored.
+        Nothing is stored or changed besides the pointer. Restricted to the promote role.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Version'
+      responses:
+        '200':
+          description: The latest version after the call, and the one before it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromoteResult'
+        '400':
+          description: '`version` is not a `bundleVersion` (`E_REQUEST_INVALID`).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: The version is not stored (`E_BUNDLE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /v1/resolve:
+    post:
+      operationId: resolve
+      tags: [read]
+      summary: Resolve keys for a context.
+      description: |
+        Runs the core's `resolve` over the latest bundle for each requested key. Each result equals the
+        in-process result for the same bundle, context and key. The request is one evaluation call, so each
+        service-sourced level is called at most once for a node (SVC-20).
+
+        The server calls the `LevelValueProvider` beans it is configured with, one per service-sourced level.
+        A service-sourced level without a provider yields `UNAVAILABLE` contributions, with the
+        `onSourceFailure` behaviour of the key.
+      security:
+        - bearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveRequest'
+      responses:
+        '200':
+          description: One result for each requested key, in request order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResolveResponse'
+        '400':
+          description: >-
+            The request is malformed (`E_REQUEST_INVALID`), or the core rejects the context
+            (`E_CONTEXT_INVALID`, `E_UNKNOWN_SCOPE`, `E_UNKNOWN_NODE`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: A key is not declared (`E_UNKNOWN_KEY`), or no bundle has been published (`E_BUNDLE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /v1/decide:
+    post:
+      operationId: decide
+      tags: [read]
+      summary: Decide a feature for a context and a FactSet.
+      description: >-
+        Runs the core's `decide` over the latest bundle. The result equals the in-process result for the same
+        bundle, context and facts. `decide` calls no provider.
+      security:
+        - bearerAuth: []
+        - {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecideRequest'
+      responses:
+        '200':
+          description: The decision with its trace.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Decision'
+        '400':
+          description: >-
+            The request is malformed (`E_REQUEST_INVALID`), or the core rejects the context or the facts
+            (`E_CONTEXT_INVALID`, `E_UNKNOWN_SCOPE`, `E_UNKNOWN_NODE`, `E_FACTS_INVALID`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: The feature is not declared (`E_UNKNOWN_FEATURE`), or no bundle has been published (`E_BUNDLE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /v1/schema:
+    get:
+      operationId: getSchema
+      tags: [read]
+      summary: Browse the keys, features, facts and policies of the latest bundle.
+      description: >-
+        A view of the latest bundle for tools and people. It has no values and no bindings: those are
+        evaluation inputs, reached only through resolve and decide. (OPEN: the shape of this view is not fixed
+        by the sources.)
+      security:
+        - bearerAuth: []
+        - {}
+      responses:
+        '200':
+          description: The schema view.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaView'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: No bundle has been published (`E_BUNDLE_NOT_FOUND`).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          $ref: '#/components/responses/StoreUnavailable'
+  /openapi.yaml:
+    get:
+      operationId: getOpenApi
+      tags: [docs]
+      summary: This document.
+      security: []
+      responses:
+        '200':
+          description: The OpenAPI 3.1 document of the server.
+          content:
+            application/yaml:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >-
+        A JWT that the configured issuer signed. Roles come from the claim named by
+        `tierwise.server.security.roles-claim` (default `roles`, a list of strings or one space-separated string).
+  parameters:
+    Version:
+      name: version
+      in: path
+      required: true
+      description: A `bundleVersion`.
+      schema:
+        $ref: '#/components/schemas/BundleVersion'
+    IfNoneMatch:
+      name: If-None-Match
+      in: header
+      required: false
+      description: >-
+        An ETag that the client holds, for example the `ETag` of an earlier response. A match gives 304.
+      schema:
+        type: string
+  responses:
+    Bundle:
+      description: The stored bundle bytes, unchanged.
+      headers:
+        ETag:
+          description: The `bundleVersion` in quotes.
+          schema:
+            type: string
+        Cache-Control:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Bundle'
+    NotModified:
+      description: The client already holds this version. No body.
+      headers:
+        ETag:
+          description: The `bundleVersion` in quotes.
+          schema:
+            type: string
+    Unauthenticated:
+      description: The request has no valid bearer token (`E_UNAUTHENTICATED`).
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: The token does not carry the role that the endpoint needs (`E_FORBIDDEN`).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    StoreUnavailable:
+      description: The bundle store cannot be reached or written (`E_STORE_UNAVAILABLE`).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      description: The body of every error response.
+      required: [code, message]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          description: A stable code. A code of the core (`E_...`) or one of the server's HTTP codes.
+          examples: [E_UNKNOWN_KEY]
+        message:
+          type: string
+          description: A human-readable message. It is not stable.
+    BundleVersion:
+      type: string
+      description: '`sha256:` followed by 64 lower-case hexadecimal digits (BUNDLE-5).'
+      pattern: '^sha256:[0-9a-f]{64}$'
+    Bundle:
+      type: object
+      description: >-
+        A bundle (specification section 10): the JSON object with exactly two members, in canonical form
+        (RFC 8785, no whitespace, no trailing newline). The server serves the stored bytes without
+        re-encoding them.
+      required: [bundleVersion, content]
+      additionalProperties: false
+      properties:
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        content:
+          type: object
+          description: >-
+            The compiled project: `bundleFormatVersion`, `specVersion`, `hierarchy`, `entities`, `facts`, `keys`,
+            `values` and `features` (BUNDLE-14). See `spec/schemas/bundle.schema.json`.
+    PublicationRecordInput:
+      type: object
+      description: >-
+        The record posted with a bundle. It has the members of a provenance sidecar (BUNDLE-141 to
+        BUNDLE-150) except `bundleVersion`, which the server takes from the bundle. `bundleVersion` is accepted
+        only when it equals the bundle's.
+      required: [createdAt]
+      additionalProperties: false
+      properties:
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        createdAt:
+          $ref: '#/components/schemas/CreatedAt'
+        gitCommit:
+          $ref: '#/components/schemas/GitCommit'
+        publisher:
+          $ref: '#/components/schemas/Publisher'
+    PublicationRecord:
+      type: object
+      description: A stored publication record (`spec/schemas/provenance.schema.json`).
+      required: [bundleVersion, createdAt]
+      additionalProperties: false
+      properties:
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        createdAt:
+          $ref: '#/components/schemas/CreatedAt'
+        gitCommit:
+          $ref: '#/components/schemas/GitCommit'
+        publisher:
+          $ref: '#/components/schemas/Publisher'
+    CreatedAt:
+      type: string
+      description: >-
+        An RFC 3339 time in UTC with an uppercase `T`, a `Z` offset, seconds and no fraction (BUNDLE-150 (b)).
+      pattern: '^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:(60|[0-5][0-9])Z$'
+      examples: ['2026-10-09T08:30:00Z']
+    GitCommit:
+      type: string
+      description: The full commit identifier of the source, 40 or 64 lower-case hexadecimal digits (BUNDLE-150 (a)).
+      pattern: '^([0-9a-f]{40}|[0-9a-f]{64})$'
+    Publisher:
+      type: string
+      description: An opaque label. The server does not authenticate it (BUNDLE-150 (c)).
+    PublishResult:
+      type: object
+      required: [bundleVersion, newVersion, recordAdded, madeLatest, latest, record]
+      additionalProperties: false
+      properties:
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        newVersion:
+          type: boolean
+          description: True when this call stored the bundle, false when the same bytes were stored before.
+        recordAdded:
+          type: boolean
+          description: False when an identical record was stored before.
+        madeLatest:
+          type: boolean
+          description: True when this call moved the latest pointer to this version.
+        latest:
+          $ref: '#/components/schemas/BundleVersion'
+        record:
+          $ref: '#/components/schemas/PublicationRecord'
+    History:
+      type: object
+      required: [bundles]
+      additionalProperties: false
+      properties:
+        latest:
+          $ref: '#/components/schemas/BundleVersion'
+        bundles:
+          type: array
+          description: The publication records, newest first.
+          items:
+            $ref: '#/components/schemas/PublicationRecord'
+    PromoteResult:
+      type: object
+      required: [latest]
+      additionalProperties: false
+      properties:
+        latest:
+          $ref: '#/components/schemas/BundleVersion'
+        previous:
+          $ref: '#/components/schemas/BundleVersion'
+    Context:
+      type: object
+      description: >-
+        The evaluation context (specification section 2, CTX clauses): node IDs by level name (non-root levels)
+        and by axis name. A missing member is an empty object.
+      additionalProperties: false
+      properties:
+        levels:
+          type: object
+          additionalProperties:
+            type: string
+        axes:
+          type: object
+          additionalProperties:
+            type: string
+    FactSet:
+      type: object
+      description: >-
+        The facts of the decided entity and of its children (specification section 3, FACT clauses). A fact
+        whose value is null is missing.
+      additionalProperties: false
+      properties:
+        facts:
+          type: object
+          description: Fact names (`<entity>.<attribute>`) mapped to values.
+        children:
+          type: object
+          description: Child entity names mapped to arrays of child fact objects.
+          additionalProperties:
+            type: array
+            items:
+              type: object
+    ResolveRequest:
+      type: object
+      required: [keys]
+      additionalProperties: false
+      properties:
+        context:
+          $ref: '#/components/schemas/Context'
+        keys:
+          type: array
+          description: Declared key names. At most `tierwise.server.max-keys-per-request` (default 100).
+          items:
+            type: string
+    ResolveResponse:
+      type: object
+      required: [bundleVersion, results]
+      additionalProperties: false
+      properties:
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        results:
+          type: array
+          description: One result for each requested key, in request order.
+          items:
+            $ref: '#/components/schemas/Resolved'
+    DecideRequest:
+      type: object
+      required: [feature]
+      additionalProperties: false
+      properties:
+        context:
+          $ref: '#/components/schemas/Context'
+        feature:
+          type: string
+          description: A declared feature name.
+        input:
+          $ref: '#/components/schemas/FactSet'
+    ScopeKind:
+      type: string
+      enum: [level, axis]
+    SkippedScope:
+      type: object
+      required: [scope, name, node, reason]
+      additionalProperties: false
+      properties:
+        scope:
+          $ref: '#/components/schemas/ScopeKind'
+        name:
+          type: string
+        node:
+          type: string
+        reason:
+          type: string
+          const: UNKNOWN_NODE
+    Contribution:
+      type: object
+      description: One contribution entry (specification section 9.3), a value entry or a failure entry.
+      required: [scope, name, effect]
+      additionalProperties: false
+      properties:
+        scope:
+          $ref: '#/components/schemas/ScopeKind'
+        name:
+          type: string
+        node:
+          type: string
+          description: Present if and only if the scope is not the root level.
+        value:
+          description: The contributed value, or the deny value of a failure entry under `deny`. Never null.
+        effect:
+          type: string
+          enum: [VETO, IGNORED, WIDENED, NARROWED, SET, UNAVAILABLE, INVALID]
+        onSourceFailure:
+          type: string
+          enum: [skip, deny]
+          description: Present if and only if the entry is a failure entry.
+    Resolved:
+      type: object
+      description: The `Resolved` result (specification section 9.2), exactly as the core returns it.
+      required: [key, strategy, value, bundleVersion, skippedScopes, contributions]
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+        strategy:
+          type: string
+          enum: [all, any, intersect, union, min, max, override, deep_merge]
+        kind:
+          type: string
+          description: Present if and only if the key opts into a kind.
+        value:
+          description: The result in the JSON encoding of the key's type, or null when the result is absent.
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        skippedScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkippedScope'
+        contributions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contribution'
+        source:
+          description: >-
+            Present for `override` and `deep_merge`: the string `DEFAULT`, or the winning scope.
+          oneOf:
+            - type: string
+              const: DEFAULT
+            - type: object
+              required: [scope, name]
+              additionalProperties: false
+              properties:
+                scope:
+                  $ref: '#/components/schemas/ScopeKind'
+                name:
+                  type: string
+                node:
+                  type: string
+    Decision:
+      type: object
+      description: The `Decision` result (specification section 9.6), exactly as the core returns it.
+      required: [feature, effect, bundleVersion, skippedScopes, binding, policy, reason, trace]
+      additionalProperties: false
+      properties:
+        feature:
+          type: string
+        effect:
+          description: >-
+            A value of the feature's `returns`: a string of its enum, an object, or null when the feature is
+            nullable.
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        skippedScopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkippedScope'
+        binding:
+          type: object
+          required: [level]
+          additionalProperties: false
+          properties:
+            level:
+              type: string
+            node:
+              type: string
+              description: Present if and only if the level is not the root level.
+        policy:
+          type: string
+        reason:
+          oneOf:
+            - type: object
+              required: [type, id, name]
+              additionalProperties: false
+              properties:
+                type:
+                  const: RULE
+                id:
+                  type: string
+                name:
+                  type: string
+            - type: object
+              required: [type]
+              additionalProperties: false
+              properties:
+                type:
+                  const: DEFAULT
+            - type: object
+              required: [type, facts]
+              additionalProperties: false
+              properties:
+                type:
+                  const: MISSING_FACT
+                facts:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+        trace:
+          type: array
+          description: The rules checked, up to and including the winner. Empty for `MISSING_FACT`.
+          items:
+            type: object
+            required: [id, matched]
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+              matched:
+                type: boolean
+              failed:
+                type: object
+                description: Present if and only if `matched` is false.
+                required: [fact, op]
+                additionalProperties: false
+                properties:
+                  fact:
+                    type: string
+                  op:
+                    type: string
+    SchemaView:
+      type: object
+      description: >-
+        The declarations of the latest bundle. Every member except `features` and `policies` is the bundle's
+        own member (specification section 10.3), so the same names and shapes apply.
+      required: [bundleVersion, bundleFormatVersion, specVersion, hierarchy, entities, facts, keys, features, policies]
+      additionalProperties: false
+      properties:
+        bundleVersion:
+          $ref: '#/components/schemas/BundleVersion'
+        bundleFormatVersion:
+          type: string
+        specVersion:
+          type: string
+        hierarchy:
+          type: object
+          description: '`levels`, `axes` and `scopes`, as in the bundle.'
+        entities:
+          type: object
+          description: Entity names mapped to `belongsTo` and `hasMany`.
+        facts:
+          type: object
+          description: Fact names mapped to `entity` and `type`.
+        keys:
+          type: object
+          description: >-
+            Key names mapped to `type`, `combine`, `settableAt` and, when present, `default`, `combineAcrossAxes`,
+            `onSourceFailure` and `kind`.
+        features:
+          type: object
+          description: >-
+            Feature names mapped to `decidedPer`, `returns`, `hitPolicy`, `ifFactMissing`, `bindingSettableAt`
+            and `policies`, the names of the feature's policies. Bindings are not listed.
+          additionalProperties:
+            type: object
+            properties:
+              policies:
+                type: array
+                items:
+                  type: string
+        policies:
+          type: array
+          items:
+            type: object
+            required: [feature, policy, settings, default, requiredFacts, rules]
+            properties:
+              feature:
+                type: string
+              policy:
+                type: string
+              settings:
+                type: object
+              default: {}
+              requiredFacts:
+                type: array
+                items:
+                  type: string
+              rules:
+                type: array
+                items:
+                  type: object
+                  required: [id, name, when, then]

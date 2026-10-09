@@ -573,6 +573,30 @@ function readSettableAt(value: unknown, at: string, hierarchy: Hierarchy): strin
   return names;
 }
 
+/** The narrowing strategies (MERGE-2), the only ones that may carry a deny value (SVC-11). */
+const NARROWING: readonly Strategy[] = ['all', 'intersect', 'min'];
+
+/**
+ * Requires that a key whose failure policy is deny has a deny value that narrows (SVC-11, SVC-12, BUNDLE-118). The
+ * bundle holds onSourceFailure exactly for a key settable at a service-sourced level (BUNDLE-59), so the policy is
+ * the one in effect (BUNDLE-61). A min key needs a min member in its integer type, because its deny value is that
+ * member (SVC-9). The same checks are made by the Java KeyReader.
+ */
+function requireDenyIsDefined(
+  combine: Strategy,
+  type: TypeDecl,
+  onSourceFailure: KeyDef['onSourceFailure'],
+  at: string,
+): void {
+  if (onSourceFailure !== 'deny') return;
+  if (!NARROWING.includes(combine)) {
+    fail(`${at}: deny needs a narrowing strategy, and ${combine} is not narrowing (SVC-11, MERGE-2)`);
+  }
+  if (combine === 'min' && type.min === null) {
+    fail(`${at}: deny under min needs a min member in the integer type (SVC-12)`);
+  }
+}
+
 function readKey(name: string, value: unknown, hierarchy: Hierarchy): KeyDef {
   const at = `content.keys.${name}`;
   const map = object(value, at);
@@ -618,6 +642,7 @@ function readKey(name: string, value: unknown, hierarchy: Hierarchy): KeyDef {
   if (settableAtService) {
     onSourceFailure = oneOf(map.onSourceFailure, ['skip', 'deny'] as const, `${at}.onSourceFailure`);
   }
+  requireDenyIsDefined(combine, type, onSourceFailure, at);
 
   const kind = has(map, 'kind') ? string(map.kind, `${at}.kind`) : null;
   return { type, combine, defaultValue, settableAt, combineAcrossAxes, onSourceFailure, kind };

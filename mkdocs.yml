@@ -10,6 +10,10 @@ nav:
   - Roadmap: roadmap.md
   - Implementation plan: implementation-plan.md
   - Open questions: open-questions.md
+  - OpenFeature mapping: openfeature-mapping.md
+  - Benchmarks: benchmarks.md
+  - Java core design: design/java-core.md
+  - Phase 1 review: phase-1-review.md
   - Contributing: contributing.md
   - RFC template: rfc-template.md
   - Decisions:

@@ -16,4 +16,73 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--
+        ADR 0020: this module imports the Spring Boot BOM and the AWS SDK v2 BOM itself. The parent does
+        not import them, so only the optional S3 modules carry the AWS SDK.
+      -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.spring-boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>bom</artifactId>
+        <version>${version.awssdk}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- The starter supplies tierwise-core (and the bundle loading this source feeds). -->
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-spring-boot-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+    </dependency>
+    <!-- The synchronous HTTP client, chosen explicitly so that no second client on the classpath is picked up. -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>url-connection-client</artifactId>
+    </dependency>
+    <!-- Test: JUnit Jupiter (version from the Spring Boot BOM, see the README) and Spring Boot's test support. -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- The spec conformance suite runs only with -Pconformance (see the parent POM). -->
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

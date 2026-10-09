@@ -1,0 +1,13 @@
+# The test profile. Tests authenticate with spring-security-test JWT mocks (SecurityMockMvcRequestPostProcessors.jwt()),
+# so no issuer or key set is configured: the server's fail-closed decoder stands in for the real one.
+spring:
+  main:
+    banner-mode: "off"
+logging:
+  level:
+    root: warn
+    io.github.tierwise: warn
+    # Expected: tests that make the store fail, and the fail-closed decoder that the test profile runs on.
+    io.github.tierwise.server.web.ApiExceptionHandler: "off"
+    io.github.tierwise.server.security.TierwiseSecurityAutoConfiguration: error
+    io.github.tierwise.server.service.ProviderWiring: error

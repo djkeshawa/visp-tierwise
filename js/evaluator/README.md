@@ -163,3 +163,9 @@ two more, because spec [BUNDLE-118] asks a loader to reject any bundle that the 
 - an empty level or axis name (SCOPE-8).
 
 Neither can occur in a bundle that the compiler wrote.
+
+The deny checks of [SVC-11] and [SVC-12] are not in this list, because both loaders make them. A key with
+`onSourceFailure` `deny` must have a narrowing strategy (`all`, `intersect` or `min`), and a `min` key with `deny`
+must have a `min` member in its integer type. Both loaders reject a bundle that breaks either rule with
+`E_BUNDLE_INTEGRITY`, and the vectors `load/invalid/deny-non-narrowing` and `load/invalid/deny-min-without-bound`
+check the rules for both.

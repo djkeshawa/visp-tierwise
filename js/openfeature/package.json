@@ -28,7 +28,9 @@
     "supportedBundleFormatVersions": []
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs"
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node ../scripts/mark-cjs.mjs dist/cjs",
+    "typecheck": "tsc -p test/tsconfig.json",
+    "test": "pnpm run typecheck && node --test test/*.test.mjs"
   },
   "dependencies": {
     "@tierwise/evaluator": "workspace:*"

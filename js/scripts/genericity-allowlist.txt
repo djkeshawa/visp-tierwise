@@ -47,3 +47,19 @@ enabled
 limit
 # "platform": "platform byte order" in a SHA-256 comment; the root level of retail-pos.
 platform
+# Spring, AWS and HTTP vocabulary in the runtime modules (ADR 0020).
+# "region": the AWS region setting of the S3 modules; a level name in retail-pos.
+region
+# "store": the server's BundleStore SPI and tierwise.server.store; a level name in retail-pos.
+store
+# "web": Spring's web packages (org.springframework.web); a channel node in commerce.
+web
+# "configuration": Spring's @Configuration and auto-configuration; a kind name in tierwise:recommended.
+configuration
+# "header": HTTP headers (ETag, If-None-Match); a key segment in retail-pos.
+header
+# "active": whether an evaluator or listener is active; the attribute of a commerce fact.
+active
+# "GENERAL" and "FAILED": OpenFeature SDK error-code and state constants; enum values in a sample.
+GENERAL
+FAILED

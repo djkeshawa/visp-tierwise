@@ -12,7 +12,89 @@
   <artifactId>tierwise-spring-boot-starter</artifactId>
   <packaging>jar</packaging>
   <name>tierwise-spring-boot-starter</name>
+  <description>Spring Boot auto-configuration for Tierwise: bundle loading and refresh, Resolver and DecisionEngine beans, provider wiring and Micrometer metrics</description>
+
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--
+        The Spring Boot BOM (ADR 0020). It is imported here, not in the parent, so the other modules
+        keep their own versions. It comes first in this module so that its own junit-bom import (JUnit 6,
+        which Spring Framework 7 and Spring Boot 4 test support are built against) takes precedence over
+        the parent's junit-bom 5.x import. A child's dependencyManagement is processed before the
+        parent's, and the first import of an artifact wins, so the whole module test classpath uses one
+        JUnit version and the enforcer's dependencyConvergence rule holds.
+      -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.spring-boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Auto-configuration, configuration properties and logging (through spring-core). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <!-- Metrics are optional: the auto-configuration checks for the class before it touches Micrometer. -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <!-- Generates META-INF/spring-configuration-metadata.json from the Javadoc of TierwiseProperties, so
+         IDEs complete and document the tierwise.* properties. It is an annotation processor only. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <!-- Test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs combine.children="append">
+            <!-- The configuration processor claims only @ConfigurationProperties; javac's lint would warn about
+                 the other annotations it sees, and the parent turns warnings into errors. -->
+            <arg>-Xlint:-processing</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

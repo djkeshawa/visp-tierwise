@@ -12,4 +12,53 @@
   <artifactId>tierwise-openfeature</artifactId>
   <packaging>jar</packaging>
   <name>tierwise-openfeature</name>
+  <description>An OpenFeature provider over the Tierwise evaluator (docs/openfeature-mapping.md).</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- The OpenFeature Java SDK (ADR 0020). Its version is managed by the parent. It is part of the
+         provider's public API, so it is a compile dependency that consumers receive. -->
+    <dependency>
+      <groupId>dev.openfeature</groupId>
+      <artifactId>sdk</artifactId>
+    </dependency>
+    <!-- Test: JUnit Jupiter (the version comes from the parent's junit-bom import). -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!--
+            The parent compiles with -Xlint:all -Werror. The OpenFeature SDK classes carry SpotBugs
+            annotations whose class files (an optional dependency of the SDK) are not on the classpath, and
+            javac reports that as a "classfile" lint warning for every annotated SDK member. Only that
+            category is switched off; every other lint stays an error.
+          -->
+          <compilerArgs combine.self="override">
+            <arg>-Xlint:all,-classfile</arg>
+            <arg>-Werror</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

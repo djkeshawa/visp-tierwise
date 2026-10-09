@@ -12,7 +12,111 @@
   <artifactId>tierwise-server</artifactId>
   <packaging>jar</packaging>
   <name>tierwise-server</name>
+  <description>Tierwise control plane: stores bundle versions and serves bundles, /resolve and /decide (requirements section 9)</description>
+
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
+    <!--
+      The JUnit version of the Spring Boot BOM (junit-jupiter.version in spring-boot-dependencies). The parent
+      imports junit-bom ${version.junit} (JUnit 5), which Spring Boot 4 test support does not run on. The
+      import below, listed before the Spring Boot BOM, makes this module use the JUnit line of Spring Boot.
+      Keep it equal to the BOM's value when the Spring Boot version changes.
+    -->
+    <version.junit.server>6.0.3</version.junit.server>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Overrides the parent's junit-bom import for this module only (see version.junit.server). -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${version.junit.server}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!--
+        tierwise-core is built against jackson-core ${version.jackson}. The Spring Boot BOM manages an older
+        2.x line of it for the Jackson 2 compatibility modules. Pinning here keeps one version in the tree
+        (dependencyConvergence) and leaves the core on the version it was written for.
+      -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${version.jackson}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.spring-boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!--
+          The runnable application is attached with the classifier "exec", so the plain jar stays a library
+          for tierwise-server-s3 and for applications that embed the server.
+        -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${version.spring-boot}</version>
+        <executions>
+          <execution>
+            <id>repackage-exec</id>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <classifier>exec</classifier>
+              <mainClass>io.github.tierwise.server.TierwiseServerApplication</mainClass>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

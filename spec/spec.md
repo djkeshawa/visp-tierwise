@@ -210,4 +210,4 @@ Conformance vectors cite these IDs.
 | 12 | [Conformance vectors](sections/12-conformance-vectors.md) | `VEC` |
 | 13 | [Findings and lint](sections/13-findings-and-lint.md) | `FIND`, `LINT` |
 
-Error codes are catalogued in [error-codes.md](error-codes.md).
+Error codes are catalogued in [error-codes.md](error-codes.md). The OpenFeature mapping appendix is [docs/openfeature-mapping.md](../docs/openfeature-mapping.md).

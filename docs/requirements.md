@@ -911,7 +911,7 @@ See [the roadmap](roadmap.md).
 ## 13. Non-functional requirements
 
 - **Java.** Core, CLI and OpenFeature target Java 17+. The starter and server target
-  Spring Boot 3.x on Java 21. Maven via the Maven Wrapper.
+  Spring Boot 4.1 on Java 21 (ADR 0020). Maven via the Maven Wrapper.
 - **JavaScript.** Strict TypeScript; ESM + CJS + types; Node 20+; ES2020 browsers;
   `@tierwise/evaluator` has zero runtime dependencies.
 - **Immutability.** Compiled models are immutable and thread-safe (Java) and frozen

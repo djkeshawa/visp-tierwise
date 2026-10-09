@@ -16,4 +16,77 @@
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--
+        Import order matters: the first BOM that manages a JUnit artifact wins, so the JUnit version of the
+        parent (junit-bom, ADR 0012) is imported before the Spring Boot BOM, which otherwise would pin its own.
+      -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${version.junit}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.spring-boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>bom</artifactId>
+        <version>${version.awssdk}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- The server SPI this adapter implements (ADR 0020: the server is SDK-free). -->
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Auto-configuration and typed properties (Spring Boot 4.1.1, ADR 0020). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <!-- AWS SDK v2 S3 client (ADR 0020, optional module only). -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+    </dependency>
+    <!-- Test: spring-boot-starter-test (ADR 0020) for ApplicationContextRunner and AssertJ, with JUnit Jupiter. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- The spec conformance suite runs only with -Pconformance (see the parent POM). -->
+          <excludedGroups>${tierwise.excludedGroups}</excludedGroups>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
