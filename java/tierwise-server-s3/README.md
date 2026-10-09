@@ -126,23 +126,13 @@ run `ApplicationContextRunner`, and web contexts with the real `TierwiseServerAu
 the filesystem default and that the filesystem default is kept when `store` is unset. The JSON round trip, damaged records (including a record whose
 `bundleVersion` disagrees with its key prefix), and the ordering of `records()` are covered in `S3BundleStoreTest`.
 
-## Open points
+## Decisions
 
-- **(OPEN, SPI owner) `BundleStore.records()` wording.** The SPI promises "the order they were added, oldest first",
-  which S3 cannot guarantee (see Limits). Recommended: weaken the SPI wording to "ordered by `createdAt`, then by
-  insertion where known", since the server only uses emptiness and `contains`.
-- **(OPEN) Backend answer to `If-Match` on a deleted object.** The code treats both 404 and 412 as a lost race. Which
-  one a given backend returns has not been verified against a real service.
-- **(OPEN) Pointer format.** The filesystem store writes the version plus a newline, while this store writes no
-  newline. Both are read the same way, but it is not decided whether the writer should match the filesystem store. Until
-  it is, the S3 pointer and the filesystem pointer differ in their last byte.
-- **(OPEN) Limits.** The 5 attempts and 1000 slots are chosen values, not measured ones.
+[ADR 0023](../../docs/adr/0023-s3-module-choices.md) and [ADR 0024](../../docs/adr/0024-server-api-and-store-choices.md)
+settle this module's choices. `records()` is ordered by `createdAt`, then by insertion where known, as the SPI allows
+for stores that can't observe the order of addition. The pointer is the version followed by one newline, like the
+filesystem store's. 404 and 412 on `If-Match` are both treated as a lost race. The limits (5 attempts, 1000 slots) are
+chosen defaults.
 
-Answered by the server, and no longer open:
+Still to do before release: run the 304 and conditional-write paths against a real S3-compatible endpoint (release checklist).
 
-- **Does publishing move `latest`?** Answered by `BundleService.publish`. It calls `setLatest` when the version has no
-  records yet or when no latest exists. The store needs no decision of its own.
-- **Must a publication name an existing bundle?** Answered by `BundleService.publish`. It calls `putBundle` before
-  `addRecord`. The store does not check.
-- **Fractional seconds in `createdAt`.** Answered by `PublicationRecord`, which allows whole seconds only (BUNDLE-150 (b)).
-  Keys therefore sort in time order, and the restriction stays.

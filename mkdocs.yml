@@ -105,3 +105,4 @@ nav:
       - 0021 CLI, codegen and distribution: adr/0021-cli-codegen-and-distribution.md
       - 0022 Release tooling: adr/0022-release-tooling.md
       - 0023 S3 module choices: adr/0023-s3-module-choices.md
+      - 0024 Server API and store choices: adr/0024-server-api-and-store-choices.md

@@ -246,49 +246,12 @@ that exist), and the server on a real Tomcat with real multipart parsing. Tests 
   for the Jackson 2 compatibility modules and the core is built against the newer one.
 - The server uses Jackson 3 (`tools.jackson`), which Spring Boot 4 uses. `tierwise-core` keeps Jackson 2's `jackson-core`.
 
-## Open points
+## Decisions
 
-Everything here is a choice that `docs/requirements.md` section 9, the specification and the ADRs do not decide. A reviewer
-settles each one with an ADR.
+[ADR 0024](../../docs/adr/0024-server-api-and-store-choices.md) settles the choices that requirements section 9 and the
+specification leave open: the multipart publish encoding, when a publish moves `latest`, identical records, the response
+bodies, no history pagination in 0.1, the server-only error codes and their HTTP statuses, multi-key resolve through the
+public API, provider beans matched by bean name, the role defaults, the security starter name, the pointer bytes and the
+promotion log. The genericity allow-list (`js/scripts/genericity-allowlist.txt`) has entries for `store`, `web`,
+`configuration` and `header`, which the server's package names and SPI use.
 
-- **(OPEN) Encoding of `POST /v1/bundles`.** Section 9 says "canonical bundle bytes plus a publication record" without an
-  encoding. This server takes `multipart/form-data` with the parts `bundle` and `record`, because that keeps the bundle
-  bytes exact and works with plain `curl -F`.
-- **(OPEN) Does a publish move `latest`?** Section 9 does not say. Here the first publication of a version makes it the
-  latest; publishing it again adds a record and leaves the pointer alone, so a repeated CI run cannot undo a promote.
-- **(OPEN) Identical records.** A record that equals an existing record of the same version is stored once. BUNDLE-148
-  allows several records but does not say whether a duplicate is one.
-- **(OPEN) Response bodies.** Section 9 fixes no response shapes except the bytes and ETag of the bundle, `Resolved` and
-  `Decision`. The server answers: publish `{bundleVersion, newVersion, recordAdded, madeLatest, latest, record}`; history
-  `{latest, bundles[]}` (one entry per record, newest `createdAt` first); promote `{latest, previous}`; resolve
-  `{bundleVersion, results[]}`; schema as in `openapi.yaml` (the declarations without values and bindings).
-- **(OPEN) No pagination for the history.** `GET /v1/bundles` returns every record. A limit and a cursor would be added
-  when a deployment needs them.
-- **(OPEN) Error codes outside section 6.** `E_REQUEST_INVALID`, `E_REQUEST_TOO_LARGE`, `E_UNSUPPORTED_MEDIA_TYPE`,
-  `E_NOT_ACCEPTABLE`, `E_NOT_FOUND`, `E_METHOD_NOT_ALLOWED`, `E_BUNDLE_NOT_FOUND`, `E_BUNDLE_CONFLICT`,
-  `E_UNAUTHENTICATED`, `E_FORBIDDEN`, `E_STORE_UNAVAILABLE` and `E_INTERNAL` are server-only codes. `E_PROVENANCE_INVALID`
-  is reused for a bad publication record although the spec lists it for spec tools and the CLI only.
-- **(OPEN) HTTP status of core errors.** `E_UNKNOWN_KEY` and `E_UNKNOWN_FEATURE` give 404, the caller errors of
-  EVAL-30 to EVAL-36 give 400, and a core error that cannot come from a caller (`E_PROVIDER_MISSING`,
-  `E_EVALUATOR_OPTIONS`, a stored bundle that no longer loads) gives 500.
-- **(OPEN) Multi-key resolve.** SVC-20 makes `keys[]` one evaluation call, and the core implements that in an internal
-  class that the public `Evaluator` does not expose (`resolve` takes one key). The server keeps to the public API and
-  gets the same call count by remembering provider results for the duration of a request. The timeout counts from the
-  first call for a node, and a late answer is used for no key of the request (SVC-40, SVC-41). If a provider returns an
-  entry for another requested key, the effect on events can differ from a true multi-key call. Exposing a public
-  multi-key `resolve` in the core would remove the workaround.
-- **(OPEN) Provider beans are matched by bean name.** The public `LevelValueProvider` has no `level()` method (the sketch in
-  requirements section 7.1 has one), so the level is the bean name.
-- **(OPEN) Role names and claim.** Defaults `tierwise-publisher`, `tierwise-promoter` and the claim `roles` are choices. The
-  requirement says only "configured roles".
-- **(OPEN) Starter name.** ADR 0020 names `spring-boot-starter-oauth2-resource-server`, which Spring Boot 4.1.1 marks
-  deprecated in favour of `spring-boot-starter-security-oauth2-resource-server`. The module uses the new name (same group,
-  same content).
-- **(OPEN) Pointer file.** The filesystem store writes `sha256:...` and a newline into `latest`. `tierwise-server-s3` writes no
-  newline. Both read either form.
-- **(OPEN) No audit trail of promotions.** Promotions are not recorded beyond the log. Requirements section 9 derives
-  the history from publication records only.
-- **(OPEN) Genericity check.** The scan of `pnpm --dir js run genericity` reads `java/**/src/main`. The server's code uses
-  the words `store`, `web`, `configuration` and `header` (Spring package names, the `BundleStore` SPI and the property
-  `tierwise.server.store`, and the OpenAPI keyword `in: header`), which the sample domains declare as names. They need
-  allow-list entries in `js/scripts/genericity-allowlist.txt`.

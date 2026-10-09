@@ -445,7 +445,7 @@ class S3BundleStoreTest {
     store.setLatest(A);
 
     assertEquals(Optional.of(A), store.latest());
-    assertEquals(A, new String(s3.bytesOf("tw/latest").orElseThrow(), UTF_8));
+    assertEquals(A + "\n", new String(s3.bytesOf("tw/latest").orElseThrow(), UTF_8), "the pointer bytes match the filesystem store");
     PutObjectRequest pointerWrite = s3.putRequests().get(1);
     assertEquals("*", pointerWrite.ifNoneMatch());
     assertNull(pointerWrite.ifMatch());

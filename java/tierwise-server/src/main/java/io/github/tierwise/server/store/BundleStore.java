@@ -64,7 +64,8 @@ public interface BundleStore {
    * Lists the records of one version.
    *
    * @param version the {@code bundleVersion}
-   * @return the records in the order they were added, oldest first; empty when there are none
+   * @return the records oldest first: in the order they were added where the store can observe it, otherwise by
+   *     {@code createdAt} and then by insertion where known (ADR 0024); empty when there are none
    * @throws BundleStoreException when the storage fails
    */
   List<PublicationRecord> records(String version);

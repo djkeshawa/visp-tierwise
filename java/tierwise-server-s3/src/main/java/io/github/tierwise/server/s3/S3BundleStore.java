@@ -281,7 +281,7 @@ public final class S3BundleStore implements BundleStore {
     } else {
       request.ifNoneMatch("*");
     }
-    return put(key, request.build(), version.getBytes(StandardCharsets.UTF_8));
+    return put(key, request.build(), (version + "\n").getBytes(StandardCharsets.UTF_8));
   }
 
   /**
