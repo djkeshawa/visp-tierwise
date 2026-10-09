@@ -1,0 +1,14 @@
+feature: checkout.total_probe
+
+policies:
+  probe:
+    default: DENY
+    rules:
+      - id: total-in-probe-set
+        name: The total is in the probe set
+        when:
+          order.total: { in: ["0", "1.5", "7.1"] }
+        then: ALLOW
+
+bindings:
+  global: { policy: probe }

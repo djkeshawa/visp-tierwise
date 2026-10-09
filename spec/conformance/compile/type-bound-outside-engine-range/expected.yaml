@@ -1,6 +1,6 @@
 id: type-bound-outside-engine-range
 specVersion: "0.1"
-clauses: [TYPE-13, TYPE-22, TYPE-20]
+clauses: [TYPE-13, TYPE-22]
 description: "A declared max outside plus or minus (2^53 - 1) is reported as E_INTEGER_RANGE at the max member."
 expect:
   findings:

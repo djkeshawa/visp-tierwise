@@ -1,6 +1,7 @@
 # Enforcers for work item C5 (compile cases: facts and conditions), VEC-125.
 # Every compile-time clause of FACT (sections 3.1 to 3.3, with FACT-45) and of RULE (section 8.1 to 8.5, with RULE-28)
-# is cited by a compile case under compile/rules/, so this file lists no clause.
+# is cited by a compile case directly under compile/ (the fact-*, quantifier-*, illegal-*, operator-*, operand-*, when-*,
+# depth-*, legal-*, dollar-*, setting-*, and unknown-* cases), so this file lists no clause.
 # The clauses that remain in those areas are runtime or evaluator clauses (FACT-16 to FACT-44, RULE-7, RULE-8, RULE-27,
 # RULE-29 to RULE-55). They belong to the evaluation items and are not listed here.
 {}

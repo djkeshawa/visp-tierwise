@@ -1,0 +1,6 @@
+id: gap-scope-root-in-axes-ok
+specVersion: "0.1"
+clauses: [SCOPE-11, SCOPE-4]
+description: "Negative control of gap-scope-root-in-axes: the same project without the axes entry compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-gaps.json"

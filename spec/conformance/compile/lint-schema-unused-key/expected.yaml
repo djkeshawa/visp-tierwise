@@ -1,0 +1,10 @@
+id: lint-schema-unused-key
+specVersion: "0.1"
+clauses: [LINT-37, LINT-38, LINT-43]
+description: "A declared key that no values source writes and that is settable at no service-sourced level is reported by schema/unused at the key entry."
+expect:
+  findings:
+    - code: schema/unused
+      file: "schema/core.yaml"
+      path: [keys, access.spare]
+      line: 139

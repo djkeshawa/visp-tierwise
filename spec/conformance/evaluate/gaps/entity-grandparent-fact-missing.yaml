@@ -1,0 +1,12 @@
+id: gaps/entity-grandparent-fact-missing
+specVersion: "0.1"
+clauses: [ENTITY-10, FACT-13, FACT-16, RULE-40, RULE-42, RULE-43, RULE-44]
+description: The grandparent fact is in the missing-fact precheck of the decision, so its absence gives if_fact_missing with MISSING_FACT.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.order_gate
+input:
+  facts: { order.total: "1.5" }
+expect:
+  effect: DENY
+  reason: { type: MISSING_FACT, facts: [company.active] }

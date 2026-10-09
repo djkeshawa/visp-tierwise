@@ -1,6 +1,6 @@
 id: key-invalid-on-source-failure
 specVersion: "0.1"
-clauses: [KEY-5, SVC-4, SVC-3]
+clauses: [KEY-5, SVC-4, SVC-3, FIND-31]
 description: "A key whose on_source_failure is neither skip nor deny is E_INVALID_DECLARATION at that member."
 expect:
   findings:

@@ -1,0 +1,6 @@
+id: hierarchy-entity-graph-belongs-to-self-ok
+specVersion: "0.1"
+clauses: ["ENTITY-14"]
+description: "Replacing the self-reference in belongs_to with an empty list removes the cycle and the project compiles."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

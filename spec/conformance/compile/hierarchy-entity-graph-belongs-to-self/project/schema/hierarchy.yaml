@@ -1,0 +1,9 @@
+decision_hierarchy:
+  levels: [global]
+entity_hierarchy:
+  alpha:
+    belongs_to: gamma
+    has_many: beta
+  beta: {}
+  gamma:
+    belongs_to: gamma

@@ -1,0 +1,12 @@
+id: gaps/decimal-in-canonical-equal
+specVersion: "0.1"
+clauses: [TYPE-26, TYPE-27, NORM-15, RULE-30, RULE-37, RULE-48, RULE-49]
+description: A decimal fact given as "1.50" canonicalises to "1.5", which is an element of the in list, so the membership condition holds.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.total_probe
+input:
+  facts: { order.total: "1.50" }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: total-in-probe-set }

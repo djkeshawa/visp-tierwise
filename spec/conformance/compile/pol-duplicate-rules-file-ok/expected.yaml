@@ -1,0 +1,6 @@
+id: pol-duplicate-rules-file-ok
+specVersion: "0.1"
+clauses: [POL-5, SRC-44, SRC-37]
+description: "Negative control of pol-duplicate-rules-file: the same project with each feature configured by one rules file compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

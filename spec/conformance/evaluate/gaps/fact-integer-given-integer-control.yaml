@@ -1,0 +1,12 @@
+id: gaps/fact-integer-given-integer-control
+specVersion: "0.1"
+clauses: [FACT-35, TYPE-17, RULE-48, RULE-49]
+description: The same FactSet with the integer given as the number 3 is valid, so decide returns the rule effect.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.order_gate
+input:
+  facts: { company.active: true, order.total: "1.5", order.units: 3 }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: total-one-and-a-half }

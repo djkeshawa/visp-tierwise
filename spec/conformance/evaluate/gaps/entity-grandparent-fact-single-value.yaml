@@ -1,0 +1,12 @@
+id: gaps/entity-grandparent-fact-single-value
+specVersion: "0.1"
+clauses: [ENTITY-10, FACT-13, FACT-15, RULE-40, RULE-47, RULE-48, RULE-49]
+description: A fact of the grandparent of the decided entity, reached through two belongs_to edges, is a single-value fact that the decision reads.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.order_gate
+input:
+  facts: { company.active: false, order.total: "2" }
+expect:
+  effect: DENY
+  reason: { type: RULE, id: company-inactive }

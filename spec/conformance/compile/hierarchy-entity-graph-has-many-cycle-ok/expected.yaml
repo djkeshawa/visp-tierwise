@@ -1,0 +1,6 @@
+id: hierarchy-entity-graph-has-many-cycle-ok
+specVersion: "0.1"
+clauses: ["ENTITY-15", "ENTITY-17"]
+description: "Replacing the has_many name that closes the cycle with an empty list removes the cycle and the project compiles."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

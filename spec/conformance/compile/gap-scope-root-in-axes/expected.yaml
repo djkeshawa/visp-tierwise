@@ -1,0 +1,10 @@
+id: gap-scope-root-in-axes
+specVersion: "0.1"
+clauses: [SCOPE-11, SCOPE-3, SCOPE-4, SCOPE-48]
+description: "The root level listed in axes is a repeated name and is E_SCOPE_DECLARATION at the axes entry."
+expect:
+  findings:
+    - code: E_SCOPE_DECLARATION
+      file: "schema/core.yaml"
+      path: ["decision_hierarchy", "axes", 0]
+      line: 3

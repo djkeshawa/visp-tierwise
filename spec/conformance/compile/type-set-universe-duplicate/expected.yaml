@@ -1,6 +1,6 @@
 id: type-set-universe-duplicate
 specVersion: "0.1"
-clauses: [TYPE-43, TYPE-52, TYPE-41]
+clauses: [TYPE-43, TYPE-52]
 description: "A repeated string in the universe of a set declaration is E_DUPLICATE_VALUE at the repeated (later) entry (TYPE-43, TYPE-52)."
 expect:
   findings:

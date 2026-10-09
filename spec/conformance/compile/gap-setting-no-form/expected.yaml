@@ -1,0 +1,10 @@
+id: gap-setting-no-form
+specVersion: "0.1"
+clauses: [POL-12, POL-11]
+description: "A setting that declares neither value_of nor list_of is E_INVALID_SETTING at the setting."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_gate.yaml"
+      path: ["policies", "gate", "settings", "limit"]
+      line: 7

@@ -1,7 +1,7 @@
 id: "src-service-level-values"
 specVersion: "0.1"
-clauses: ["SRC-33","SCOPE-47","KEY-11","FIND-12"]
-description: "A values file that gives values for a service-sourced level is reported as E_SOURCE_MAPPING at that level."
+clauses: ["SRC-33","SCOPE-47","KEY-11","FIND-12", FIND-35]
+description: "A values file that gives values for a service-sourced level is reported as E_SOURCE_MAPPING at that level. OPEN: SRC-33 and SCOPE-47 do not say whether the finding sits at the level or at the value."
 expect:
   findings:
     - code: "E_SOURCE_MAPPING"

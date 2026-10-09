@@ -1,0 +1,10 @@
+id: gap-norm-nfd-universe-member-control
+specVersion: "0.1"
+clauses: [NORM-2, NORM-1, TYPE-47, TYPE-48]
+description: "Control of gap-norm-nfd-universe-member. The decomposed value is a member only because NFC normalisation comes first (NORM-2), so this control removes the universe entry and the value is E_NOT_IN_UNIVERSE (TYPE-48). The control exercises TYPE-48, and NORM-2 is observed by the positive case."
+expect:
+  findings:
+    - code: E_NOT_IN_UNIVERSE
+      file: "values/root.yaml"
+      path: ["catalog.tags", 0]
+      line: 1

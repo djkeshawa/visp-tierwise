@@ -1,0 +1,10 @@
+id: gap-returns-enum-repeated
+specVersion: "0.1"
+clauses: [TYPE-6, FEAT-7, FEAT-8, TYPE-43, TYPE-52]
+description: "An enum-form returns list that repeats an effect is E_DUPLICATE_VALUE at the repeated entry."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_gate", "returns", "enum", 2]
+      line: 46

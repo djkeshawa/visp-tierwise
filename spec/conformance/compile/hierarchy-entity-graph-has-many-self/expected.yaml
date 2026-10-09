@@ -1,0 +1,10 @@
+id: hierarchy-entity-graph-has-many-self
+specVersion: "0.1"
+clauses: ["ENTITY-15"]
+description: "An entity that names itself in has_many is E_ENTITY_GRAPH at that entity."
+expect:
+  findings:
+    - code: E_ENTITY_GRAPH
+      file: "schema/hierarchy.yaml"
+      path: ["entity_hierarchy", "beta"]
+      line: 7

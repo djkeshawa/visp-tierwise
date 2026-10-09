@@ -1,0 +1,10 @@
+id: key-settable-not-list
+specVersion: "0.1"
+clauses: [KEY-5, KEY-6]
+description: "A settable_at member that is a scalar and not a list of scope names is an invalid declaration, reported at the member."
+expect:
+  findings:
+    - code: E_INVALID_DECLARATION
+      file: "schema/keys.yaml"
+      path: ["keys", "spare_slots", "settable_at"]
+      line: 28

@@ -157,7 +157,7 @@ examples:
 
 **[BIND-6]** A binding whose `policy` entry names no policy declared in the same rules file MUST be reported as `E_UNKNOWN_POLICY`.
 
-**[BIND-7]** When the `policy` entry of a binding names no declared policy ([BIND-6]), the other entries of that binding are not checked against settings: [BIND-8] and [BIND-9] do not apply to it. The binding is still reported under [BIND-6].
+**[BIND-7]** When the `policy` entry of a binding names no declared policy ([BIND-6]), the other entries of that binding are not checked against settings: [BIND-8] and [BIND-9] do not apply to it. The binding is still reported under [BIND-6]. The same applies to a binding with no `policy` member: its other entries are not checked against settings (ADR 0017).
 
 **[BIND-8]** Every entry of a binding other than `policy` MUST name a setting declared by the policy that the binding names. The entry name and the setting names are compared after NFC normalisation ([POL-20]). An entry that names no such setting MUST be reported as `E_UNKNOWN_SETTING`.
 

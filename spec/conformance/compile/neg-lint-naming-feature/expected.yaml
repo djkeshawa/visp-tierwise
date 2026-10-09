@@ -1,6 +1,6 @@
 id: neg-lint-naming-feature
 specVersion: "0.1"
 clauses: [LINT-22, LINT-19]
-description: "Fact names carry no naming pattern, so the upper-case attribute of order.Paid is not reported."
+description: "The baseline feature name matches the feature pattern, and fact names carry no naming pattern, so naming/feature reports nothing for the upper-case attribute of order.Paid."
 expect:
   bundle: ../../bundles/edge-kinds.json

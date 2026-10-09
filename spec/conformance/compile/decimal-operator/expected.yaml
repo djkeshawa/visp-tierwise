@@ -1,6 +1,6 @@
 id: decimal-operator
 specVersion: "0.1"
-clauses: [RULE-15, RULE-6]
+clauses: [RULE-15, RULE-6, TYPE-27]
 description: "An ordering operator on a decimal fact is outside the forms of its type and is reported as E_INVALID_DECLARATION."
 expect:
   findings:

@@ -12,7 +12,7 @@ entity_hierarchy:
   line: {}
 
 facts:
-  customer.active: { type: boolean, owner: crm }
+  customer.active: { type: boolean, source: customer-service, owner: crm }
   customer.credit_hold: { type: boolean }
   customer.rate: { type: decimal }
   warehouse.open: { type: boolean }

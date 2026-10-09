@@ -1,0 +1,15 @@
+id: gaps/quota-seats-valid-accepted
+specVersion: "0.1"
+clauses: [TYPE-19, SVC-31, MERGE-17, EVAL-7]
+description: A valid integer given for the deny-keyed integer key is accepted, so the result is that value and no deny value applies.
+call: resolve
+bundle: ../../bundles/edge-gaps.json
+context: { levels: { account: acct-1 } }
+key: quota.seats
+providers:
+  account:
+    acct-1:
+      values: { quota.seats: 10 }
+expect:
+  value: 10
+  providerCalls: { account: { acct-1: 1 } }

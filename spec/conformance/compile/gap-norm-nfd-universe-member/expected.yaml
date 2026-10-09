@@ -1,0 +1,6 @@
+id: gap-norm-nfd-universe-member
+specVersion: "0.1"
+clauses: [NORM-2, NORM-1, TYPE-47]
+description: "A decomposed string in a set value is a universe member after NFC normalisation, so the compile gives the bundle."
+expect:
+  bundle: "../../bundles/edge-gaps.json"

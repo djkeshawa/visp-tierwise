@@ -65,3 +65,29 @@ Values: root `SILVER`, `max_items` 50, `min_qty` 10. `division south`: `enabled`
 Bindings: root `paid_only`; `division south` `manual`; `site site_001` `ship_all`. Neither `partner`
 nor `account` can carry a binding (`FEAT-19`), and an axis never can (`BIND-15`).
 
+## Vectors
+
+The evaluate vectors in `../evaluate/admission/` are grouped by the rule they observe. Almost every vector has a
+`-control` partner that differs by the one edit that removes the trigger ([VEC-120]), and the fail-outcome vectors come in
+`timeout` and `unavailable` pairs ([VEC-44]).
+
+| Directory | Observes |
+| --- | --- |
+| `context-shape/` | Step 1 to 3 of [CTX-9]: non-map members, extra members, the root name, integer, list, empty, over-long and control-character node IDs, each also under `on_unknown_node: ignore` ([CTX-18]) |
+| `unknown-scope/` | `E_UNKNOWN_SCOPE` for undeclared names and for a declared name in the wrong map ([CTX-4], [CTX-5]); a context name is not NFC-normalised |
+| `unknown-node/` | `E_UNKNOWN_NODE` under `error`: unlisted ID, empty closed catalog, case sensitivity, decomposed spelling |
+| `generated/` | The generated catalogs of `division`: the NFC member is admitted, its NFD spelling is not |
+| `open/` | Open catalog: new, 128 code point and non-NFC IDs are admitted and the provider is called once |
+| `skip/` | `skippedScopes`: ignored equals omitted, level-then-axis order, zero provider calls, no failure entry, independent later scopes, root binding |
+| `order/` | Precedence between the steps of [CTX-9] and [CTX-11], and between context validation and any provider call ([CTX-10]) |
+
+## Unpaired surrogates
+
+[VEC-6] requires UTF-8, so a vector cannot hold an unpaired surrogate as text. The two vectors
+`context-shape/decide-unpaired-surrogate-open-node` and `resolve-unpaired-surrogate-open-node` write `"x\uD83D"` as a YAML double-quoted escape and expect
+`E_CONTEXT_INVALID` ([SCOPE-37], [CTX-6]). Their two `-control` partners add the low surrogate (`"x\U0001F600"`). The
+check tool's loader accepts the escape, but section 12 does not yet say that a vector may use it (OPEN-E6-1, in
+`README-edge-facts.md`). Recommended resolution: state in [VEC-7] that a `\u` escape is well-formed YAML 1.2 and that a
+runner passes the resulting string to the operation unchanged. If the Java runner's parser rejects it, delete these four
+files and give [SCOPE-37] a unit-test enforcer in `enforcers.d/E4.yaml`.
+

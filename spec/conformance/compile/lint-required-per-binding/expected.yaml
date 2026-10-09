@@ -6,5 +6,5 @@ expect:
   findings:
     - code: examples/required-per-binding
       file: "rules/order.yaml"
-      path: [features, order.submission, bindings, region, north]
+      path: [bindings, region, north]
       line: 35

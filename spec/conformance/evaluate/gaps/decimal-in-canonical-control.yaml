@@ -1,0 +1,12 @@
+id: gaps/decimal-in-canonical-control
+specVersion: "0.1"
+clauses: [TYPE-27, RULE-30, RULE-37, RULE-50, RULE-51]
+description: A decimal fact given as "1.51" is not an element of the in list, so the membership condition fails and the default applies.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.total_probe
+input:
+  facts: { order.total: "1.51" }
+expect:
+  effect: DENY
+  reason: { type: DEFAULT }

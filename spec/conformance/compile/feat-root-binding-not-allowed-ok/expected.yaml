@@ -1,0 +1,6 @@
+id: feat-root-binding-not-allowed-ok
+specVersion: "0.1"
+clauses: [FEAT-18, SCOPE-10, BIND-12, BIND-2]
+description: "Negative control of feat-root-binding-not-allowed: the same project with the root level listed in binding_settable_at compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-features.json"

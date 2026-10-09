@@ -1,6 +1,6 @@
 id: key-settable-repeated-scope
 specVersion: "0.1"
-clauses: [KEY-7, TYPE-52]
+clauses: [KEY-7]
 description: "A scope name repeated in settable_at is E_DUPLICATE_VALUE at the repeated (later) item (KEY-7)."
 expect:
   findings:

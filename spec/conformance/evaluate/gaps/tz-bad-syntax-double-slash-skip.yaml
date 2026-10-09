@@ -1,0 +1,17 @@
+id: gaps/tz-bad-syntax-double-slash-skip
+specVersion: "0.1"
+clauses: [TYPE-37, TYPE-39, TYPE-70, TYPE-75, SVC-31, SVC-34, SVC-8, PROV-30, PROV-40, EVAL-7]
+description: An iana_tz value with an empty path segment fails the runtime syntax check, is INVALID, and under skip leaves the default in place.
+call: resolve
+bundle: ../../bundles/edge-gaps.json
+context: { levels: { account: acct-1 } }
+key: profile.timezone
+providers:
+  account:
+    acct-1:
+      values: { profile.timezone: "Europe//London" }
+expect:
+  value: Europe/London
+  contributions:
+    - { scope: level, name: account, node: acct-1, effect: INVALID, onSourceFailure: skip }
+  providerCalls: { account: { acct-1: 1 } }

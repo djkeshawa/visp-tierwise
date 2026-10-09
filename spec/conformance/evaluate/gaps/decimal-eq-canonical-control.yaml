@@ -1,0 +1,12 @@
+id: gaps/decimal-eq-canonical-control
+specVersion: "0.1"
+clauses: [TYPE-27, RULE-29, RULE-37, RULE-50, RULE-51]
+description: A decimal fact given as "1.51" is not equal to "1.5", so the eq condition fails and the policy default applies.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.order_gate
+input:
+  facts: { company.active: true, order.total: "1.51" }
+expect:
+  effect: DENY
+  reason: { type: DEFAULT }

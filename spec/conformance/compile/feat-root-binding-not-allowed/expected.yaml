@@ -1,0 +1,14 @@
+id: feat-root-binding-not-allowed
+specVersion: "0.1"
+clauses: [FEAT-18, SCOPE-10, BIND-12, BIND-2]
+description: "A binding_settable_at that omits the root level is reported at the list; the root binding then sits at a level that is not listed, so it is also a binding that is not allowed."
+expect:
+  findings:
+    - code: E_BINDING_NOT_ALLOWED
+      file: "rules/checkout.order_submission.yaml"
+      path: ["bindings", "global"]
+      line: 31
+    - code: E_ROOT_BINDING_NOT_ALLOWED
+      file: "schema/core.yaml"
+      path: ["features", "checkout.order_submission", "binding_settable_at"]
+      line: 22

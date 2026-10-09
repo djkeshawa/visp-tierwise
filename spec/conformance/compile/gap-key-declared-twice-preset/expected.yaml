@@ -1,0 +1,10 @@
+id: gap-key-declared-twice-preset
+specVersion: "0.1"
+clauses: [KEY-1, SRC-40, SRC-41, MANIFEST-31, FIND-12]
+description: "A key name declared in a preset and again in the project is a second declaration of the key. The preset is an earlier layer than the project (MANIFEST-31), so the second declaration is the project's, and it is E_DUPLICATE_DEFINITION even though it is identical to the first (SRC-41)."
+expect:
+  findings:
+    - code: E_DUPLICATE_DEFINITION
+      file: "schema/core.yaml"
+      path: ["keys", "checkout.allowed"]
+      line: 8

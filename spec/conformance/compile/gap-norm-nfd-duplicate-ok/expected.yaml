@@ -1,0 +1,6 @@
+id: gap-norm-nfd-duplicate-ok
+specVersion: "0.1"
+clauses: [NORM-2, NORM-1]
+description: "Negative control of gap-norm-nfd-duplicate: the same project without the decomposed entry compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-gaps.json"

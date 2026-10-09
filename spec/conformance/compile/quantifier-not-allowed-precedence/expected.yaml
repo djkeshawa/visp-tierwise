@@ -1,7 +1,7 @@
 id: quantifier-not-allowed-precedence
 specVersion: "0.1"
 clauses: [RULE-28, RULE-12, RULE-14]
-description: "A fact that is not in scope takes precedence over an any_in quantifier on a single-value form of the same condition."
+description: "A condition on a fact that is not in scope is reported once, as E_FACT_NOT_IN_SCOPE, whatever its all_in form."
 expect:
   findings:
     - code: E_FACT_NOT_IN_SCOPE

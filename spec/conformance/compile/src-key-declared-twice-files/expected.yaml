@@ -1,6 +1,6 @@
 id: "src-key-declared-twice-files"
 specVersion: "0.1"
-clauses: ["SRC-40","SRC-41","SRC-37","FIND-12"]
+clauses: ["SRC-40","SRC-41","SRC-37","FIND-12", FIND-32]
 description: "A key declared identically in two schema files is reported as E_DUPLICATE_DEFINITION at the later file in path order. OPEN: which declaration is the second."
 expect:
   findings:

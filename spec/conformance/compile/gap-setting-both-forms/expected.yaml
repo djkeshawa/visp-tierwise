@@ -1,0 +1,10 @@
+id: gap-setting-both-forms
+specVersion: "0.1"
+clauses: [POL-12, POL-11]
+description: "A setting that declares both value_of and list_of has no single form, so it is E_INVALID_SETTING at the setting (POL-12). Its default is also missing (POL-11) at the same node, so the two checks give one finding (FIND-25). POL-13 is read as covering only entries other than default, value_of and list_of, so it adds no finding."
+expect:
+  findings:
+    - code: E_INVALID_SETTING
+      file: "rules/checkout.order_gate.yaml"
+      path: ["policies", "gate", "settings", "limit"]
+      line: 7

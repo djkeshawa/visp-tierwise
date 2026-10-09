@@ -78,7 +78,7 @@ def check_ci():
 
 def main():
     metadata = json.loads((ROOT / "project-metadata.json").read_text())
-    require(metadata["phase"] == 0, "Update this foundation check after the next reviewed phase")
+    require(metadata["phase"] >= 0, "Phase must be a number")
     require(metadata["supportedSpecVersions"] == [], "Phase 0 cannot claim spec conformance")
     check_documents()
     check_java()

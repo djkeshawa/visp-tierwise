@@ -1,0 +1,23 @@
+feature: checkout.order_gate
+
+policies:
+  gate:
+    default: DENY
+    settings:
+      limit:
+        value_of: order.units
+        list_of: order.units
+    rules:
+      - id: company-inactive
+        name: The company is inactive
+        when:
+          company.active: false
+        then: DENY
+      - id: total-one-and-a-half
+        name: The total is one and a half
+        when:
+          order.total: "1.5"
+        then: ALLOW
+
+bindings:
+  global: { policy: gate }

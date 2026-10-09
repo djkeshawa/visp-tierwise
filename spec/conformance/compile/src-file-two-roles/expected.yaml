@@ -1,7 +1,7 @@
 id: "src-file-two-roles"
 specVersion: "0.1"
 clauses: ["SRC-20","SRC-12","FIND-22","FIND-12"]
-description: "A file that a schema pattern and a values entry both select is reported as E_SOURCE_MAPPING at the values entry."
+description: "A file that a schema pattern and a values entry both select is reported as E_SOURCE_MAPPING at the values entry. OPEN: which of the two selecting entries carries the finding, which SRC-20 does not give."
 expect:
   findings:
     - code: "E_SOURCE_MAPPING"

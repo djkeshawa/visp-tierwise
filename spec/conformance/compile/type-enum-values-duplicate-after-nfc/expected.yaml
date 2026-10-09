@@ -1,0 +1,10 @@
+id: type-enum-values-duplicate-after-nfc
+specVersion: "0.1"
+clauses: [NORM-1, NORM-2, TYPE-43, TYPE-52]
+description: "Two enum values that differ only by Unicode normalisation are equal after NFC, so the repetition check reports the later entry as E_DUPLICATE_VALUE (NORM-2)."
+expect:
+  findings:
+    - code: E_DUPLICATE_VALUE
+      file: "schema/keys.yaml"
+      path: ["keys", "blocked_codes", "items", "values", 1]
+      line: 65

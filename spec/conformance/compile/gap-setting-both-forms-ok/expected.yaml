@@ -1,0 +1,6 @@
+id: gap-setting-both-forms-ok
+specVersion: "0.1"
+clauses: [POL-12, POL-11]
+description: "Negative control of gap-setting-both-forms: the same project without the settings block compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-gaps.json"

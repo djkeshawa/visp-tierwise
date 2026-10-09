@@ -1,0 +1,5 @@
+# Enforcers for work item G1 (the last coverage gaps), VEC-125.
+# Every clause in the G1 brief can be observed by a vector or a compile case, so none is listed here
+# as unobservable. KEY-12 and POL-5 are not enforced either: a case for them needs a finding location
+# that the spec does not fix. See spec/conformance/bundles/README-edge-gaps.md, "Withheld clauses".
+{}

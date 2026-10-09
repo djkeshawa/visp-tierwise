@@ -1,5 +1,9 @@
 # Enforcers for work item C2 (compile cases: hierarchy, scopes and entities), VEC-125.
-# No entry is needed. Every SCOPE and ENTITY clause that a compile case can observe is cited
-# by one, and SCOPE-37 is already listed by E4. SCOPE-11 and ENTITY-10 are open for the
-# reviewer (see README-edge-hierarchy.md), because a vector can observe them.
-{}
+# Every SCOPE and ENTITY clause that a compile case can observe is cited by one, and SCOPE-37 is
+# already listed by E4. ENTITY-10 (the ancestor closure) is cited by hierarchy-entity-graph-ancestor-and-child.
+
+# A root level that is listed in axes is a repeated name under SCOPE-3 and SCOPE-4, so SCOPE-11 gives E_SCOPE_DECLARATION.
+# The same declaration also breaks SCOPE-14 (an axis without a scopes entry) or SCOPE-12 (a scopes entry for the root
+# level), and no clause says whether a compiler reports those findings in addition. The set comparison of VEC-98
+# cannot tell the outcomes apart, so no compile case is written (VEC-114 spirit) until the spec settles the finding set.
+SCOPE-11: "Planned compiler unit test: a hierarchy whose axes list the root level is reported as E_SCOPE_DECLARATION (SCOPE-11, SCOPE-3, SCOPE-4), and never as E_DUPLICATE_DEFINITION. The finding set is not compared by a compile case, because SCOPE-14 and SCOPE-12 may add findings."

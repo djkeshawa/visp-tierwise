@@ -1,0 +1,6 @@
+id: gap-key-declared-twice-preset-control
+specVersion: "0.1"
+clauses: [KEY-1, SRC-40, MANIFEST-31]
+description: "Negative control of gap-key-declared-twice-preset: the preset no longer declares the key, so the key is declared once and the project compiles to the bundle."
+expect:
+  bundle: "../../bundles/edge-manifest.json"

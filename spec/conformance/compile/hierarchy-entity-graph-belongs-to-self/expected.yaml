@@ -1,0 +1,10 @@
+id: hierarchy-entity-graph-belongs-to-self
+specVersion: "0.1"
+clauses: ["ENTITY-14"]
+description: "An entity that names itself in belongs_to is E_ENTITY_GRAPH at that entity."
+expect:
+  findings:
+    - code: E_ENTITY_GRAPH
+      file: "schema/hierarchy.yaml"
+      path: ["entity_hierarchy", "gamma"]
+      line: 8

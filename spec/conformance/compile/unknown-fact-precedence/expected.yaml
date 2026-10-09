@@ -1,7 +1,7 @@
 id: unknown-fact-precedence
 specVersion: "0.1"
 clauses: [RULE-28, RULE-10, RULE-14]
-description: "An undeclared entity part takes precedence over an any_in quantifier on a single-value form of the same condition."
+description: "A condition on an undeclared entity is reported once, as E_UNKNOWN_FACT, whatever its any_in form."
 expect:
   findings:
     - code: E_UNKNOWN_FACT

@@ -1,0 +1,6 @@
+id: hierarchy-entity-graph-has-many-self-ok
+specVersion: "0.1"
+clauses: ["ENTITY-15"]
+description: "Replacing the self-reference in has_many with an empty list removes the cycle and the project compiles."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

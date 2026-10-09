@@ -1,7 +1,7 @@
 id: "manifest-preset-duplicate"
 specVersion: "0.1"
 clauses: ["MANIFEST-30","FIND-23","FIND-12"]
-description: "The same preset named twice in extends is reported as E_PRESET at the second reference."
+description: "The same preset named twice in extends is reported as E_PRESET at the second reference. OPEN: the location of this finding, which MANIFEST-30 does not give."
 expect:
   findings:
     - code: "E_PRESET"

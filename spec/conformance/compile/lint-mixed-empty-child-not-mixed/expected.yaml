@@ -6,5 +6,5 @@ expect:
   findings:
     - code: examples/mixed-collection
       file: "rules/order.yaml"
-      path: [features, order.submission, policies, review]
+      path: [policies, review]
       line: 3

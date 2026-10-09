@@ -1,0 +1,6 @@
+id: hierarchy-entity-graph-ancestor-and-child-ok
+specVersion: "0.1"
+clauses: ["ENTITY-10", "ENTITY-11", "ENTITY-16", "ENTITY-17"]
+description: "Removing the ancestor from the has_many list of the entity leaves it an ancestor only, and the project compiles."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

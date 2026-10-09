@@ -1,7 +1,7 @@
 export const meta = {
   name: 'tierwise-work-items',
   description: 'Haiku 5.5 (high) drafts and cross-verifies Tierwise work items; Sonnet 5.5 (high) reviews each item; the main chat model does the final review',
-  whenToUse: 'Run one wave of Tierwise roadmap work items, where each item owns distinct files. Pass { root, wave, context, items: [{ id, title, files, sources, brief }], verifiers? (0-2, default 2), consistency? } as args. Items may set reviewOnly: true and verifiers.',
+  whenToUse: 'Run one wave of Tierwise roadmap work items, where each item owns distinct files. Pass { root, wave, context, items: [{ id, title, files, sources, brief }], verifiers? (0-2, default 2), consistency? } as args. Items may set reviewOnly: true, verifiers, and drafter: 'haiku' | 'sonnet'.',
   phases: [
     { title: 'Draft', detail: 'one Haiku 5.5 agent per work item', model: 'haiku' },
     { title: 'Verify', detail: 'two Haiku 5.5 verifiers per draft: faithfulness and precision', model: 'haiku' },
@@ -13,6 +13,7 @@ export const meta = {
 
 const HAIKU = { model: 'haiku', effort: 'high' }
 const SONNET = { model: 'sonnet', effort: 'high' }
+const DRAFTERS = { haiku: HAIKU, sonnet: SONNET }
 const MAX_REVISIONS = 2
 
 const DRAFT = {
@@ -170,7 +171,7 @@ async function verifyAndReview(draft, item) {
     review = await agent(reviewPrompt(item, current, pending, round), { ...SONNET, phase: 'Item review', label: `review:${item.id}#${round}`, schema: REVIEW })
     if (!review || review.verdict === 'approve' || round >= MAX_REVISIONS) break
     round += 1
-    const revised = await agent(revisePrompt(item, review), { ...HAIKU, phase: 'Revise', label: `revise:${item.id}#${round}`, schema: DRAFT })
+    const revised = await agent(revisePrompt(item, review), { ...(DRAFTERS[item.drafter] || HAIKU), phase: 'Revise', label: `revise:${item.id}#${round}`, schema: DRAFT })
     if (revised) current = revised
     pending = []
   }
@@ -197,7 +198,7 @@ const results = await pipeline(
   // reviewOnly items treat the files already on disk as the draft (e.g. after an interrupted wave).
   (item) => item.reviewOnly
     ? { files: item.files, summary: `Existing files, not yet reviewed: ${item.brief}`, openPoints: [] }
-    : agent(draftPrompt(item), { ...HAIKU, phase: 'Draft', label: `draft:${item.id}`, schema: DRAFT }),
+    : agent(draftPrompt(item), { ...(DRAFTERS[item.drafter] || HAIKU), phase: 'Draft', label: `draft:${item.id}`, schema: DRAFT }),
   (draft, item) => verifyAndReview(draft, item),
 )
 

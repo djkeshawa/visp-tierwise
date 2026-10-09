@@ -1,0 +1,11 @@
+id: gaps/fact-integer-given-string-raises
+specVersion: "0.1"
+clauses: [TYPE-74, FACT-35, EVAL-36, EVAL-22]
+description: An integer fact given as the string "3" fails validation at runtime, so decide raises E_FACTS_INVALID.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.order_gate
+input:
+  facts: { company.active: true, order.total: "1.5", order.units: "3" }
+expect:
+  error: E_FACTS_INVALID

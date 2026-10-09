@@ -1,0 +1,12 @@
+id: gaps/decimal-eq-canonical-equal
+specVersion: "0.1"
+clauses: [TYPE-26, TYPE-27, NORM-15, RULE-29, RULE-37, RULE-48, RULE-49]
+description: A decimal fact given as "1.50" canonicalises to "1.5", so an eq condition on "1.5" holds.
+call: decide
+bundle: ../../bundles/edge-gaps.json
+feature: checkout.order_gate
+input:
+  facts: { company.active: true, order.total: "1.50" }
+expect:
+  effect: ALLOW
+  reason: { type: RULE, id: total-one-and-a-half }

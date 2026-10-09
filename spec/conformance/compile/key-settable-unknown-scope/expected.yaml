@@ -1,6 +1,6 @@
 id: key-settable-unknown-scope
 specVersion: "0.1"
-clauses: [KEY-6, SCOPE-46]
+clauses: [KEY-6]
 description: "A settable_at name that is not a declared scope gives E_UNKNOWN_SCOPE at that item of the list (the FIND-21 and FIND-22 line of a flow item)."
 expect:
   findings:

@@ -22,6 +22,8 @@ This section defines the decision hierarchy: its levels and axes, the singleton 
 
 **[SCOPE-9]** The compiler MUST report `E_SCOPE_DECLARATION` for a malformed hierarchy declaration: a `levels` value that is not a list, an empty `levels` list ([SCOPE-1]), an `axes` value that is not a list, an entry of `levels` or `axes` that is not a string ([SCOPE-2]), an empty name ([SCOPE-8]), an absent `levels` member, or a member of `decision_hierarchy` other than `levels`, `axes` and `scopes` (ADR 0015).
 
+**[SCOPE-48]** A project whose sources declare no `decision_hierarchy` MUST be reported as `E_SCOPE_DECLARATION`, located at the manifest root (path `[]`, line 1), unless the compilation already reports `E_MANIFEST`, `E_PARSE` or `E_SOURCE_MAPPING`. A root level listed in `axes` MUST be reported once, at that `axes` entry ([SCOPE-11]) (ADR 0017).
+
 ## 2.2 The root level
 
 **[SCOPE-10]** The first entry of `levels` is the root level. The root level is a singleton. It has no node catalog and exactly one implicit node, and that node has no node ID.

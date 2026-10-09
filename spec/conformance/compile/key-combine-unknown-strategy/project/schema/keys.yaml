@@ -24,7 +24,7 @@ keys:
     type: integer
     min: 5
     max: 10
-    combine: sum
+    combine: max
     settable_at: [global]
   fee_rate:
     type: decimal
@@ -45,7 +45,7 @@ keys:
     settable_at: [global]
   greeting:
     type: string
-    combine: override
+    combine: sum
     settable_at: [global]
     description: Shown on the start page.
     owner: commerce

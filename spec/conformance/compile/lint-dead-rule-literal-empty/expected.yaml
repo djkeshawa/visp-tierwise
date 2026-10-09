@@ -6,5 +6,5 @@ expect:
   findings:
     - code: rules/dead-rule
       file: "rules/order.yaml"
-      path: [features, order.submission, policies, review, rules, 4]
+      path: [policies, review, rules, 4]
       line: 29

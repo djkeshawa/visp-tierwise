@@ -60,6 +60,16 @@ The terms *validation*, *engine check*, *engine error*, *lint rule*, *severity*,
 
 **[FIND-23]** A finding that no node of a parsed source names MUST be located as follows. A missing required entry is located at the enclosing mapping, with that mapping's path and line. A source that cannot be parsed is located at the empty path and line 1 of that source. An absent manifest is located at `file` `tierwise.yaml`, the empty path and line 1. A preset reference that cannot be resolved ([MANIFEST-22], [MANIFEST-24], [MANIFEST-27], [MANIFEST-28]) is located at its `extends` item in the manifest.
 
+**[FIND-31]** A finding about the value of a member MUST be located at that member's entry. A finding about the shape of a whole list item MUST be located at that item (ADR 0017).
+
+**[FIND-32]** A finding about a repeated entry, a repeated list element or a conflicting second declaration MUST be located at the later occurrence in document order. Across files, document order is the manifest's inline content first, then source files in code-point order of their paths relative to the project root; every occurrence after the first gets one finding (ADR 0017).
+
+**[FIND-33]** `E_ENTITY_GRAPH` MUST be reported once per cycle, at the declaration entry of the cycle's entity that comes first in document order ([FIND-32]) (ADR 0017).
+
+**[FIND-34]** `E_EXAMPLE_FAILED` MUST be located at the failing example's `expect` entry. `E_DUPLICATE_DEFINITION` for a feature named by two rules documents MUST be located at the `feature` entry of every rules document after the first (ADR 0017).
+
+**[FIND-35]** A key whose `type` or `combine` is missing or invalid MUST receive no strategy, default, kind or value checks beyond that finding. A setting with both or neither of `value_of` and `list_of` MUST receive no check of its `default`. A values file that targets a service-sourced level MUST be reported once, at its level entry (ADR 0017).
+
 ## 13.4 Finding keys and order
 
 **[FIND-24]** The **finding key** of a finding is the tuple (`code`, `file`, `path`, `line`). The `severity`, `message` and `suggestion` are not part of it. Conformance vectors compare finding keys ([VEC-98]).

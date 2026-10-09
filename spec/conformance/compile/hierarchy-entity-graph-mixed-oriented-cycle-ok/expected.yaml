@@ -1,0 +1,6 @@
+id: hierarchy-entity-graph-mixed-oriented-cycle-ok
+specVersion: "0.1"
+clauses: ["ENTITY-17"]
+description: "Removing the has_many edge that closes the mixed cycle leaves an acyclic graph, and the project compiles."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

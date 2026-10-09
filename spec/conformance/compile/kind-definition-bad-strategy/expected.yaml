@@ -1,0 +1,10 @@
+id: kind-definition-bad-strategy
+specVersion: "0.1"
+clauses: [KEY-5, KIND-3, MERGE-1]
+description: "A kind whose strategies list holds a name that is not a merge strategy is E_KIND_DEFINITION at that list item."
+expect:
+  findings:
+    - code: E_KIND_DEFINITION
+      file: "schema/core.yaml"
+      path: [kinds, unused_empty, strategies, 1]
+      line: 30

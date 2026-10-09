@@ -1,6 +1,6 @@
 id: ex-expect-mismatch
 specVersion: "0.1"
-clauses: [POL-41, POL-42, POL-47]
+clauses: [POL-41, POL-42, POL-47, FIND-34]
 description: "An example whose expect differs from the decision is an example failure."
 expect:
   findings:

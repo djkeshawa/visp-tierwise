@@ -1,0 +1,10 @@
+id: hierarchy-entity-graph-mixed-oriented-cycle
+specVersion: "0.1"
+clauses: ["ENTITY-17", FIND-33]
+description: "A cycle in the parent-to-child graph that mixes belongs_to and has_many edges is E_ENTITY_GRAPH, reported at the entity declared first on the cycle."
+expect:
+  findings:
+    - code: E_ENTITY_GRAPH
+      file: "schema/hierarchy.yaml"
+      path: ["entity_hierarchy", "alpha"]
+      line: 4

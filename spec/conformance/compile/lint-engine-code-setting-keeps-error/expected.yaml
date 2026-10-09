@@ -1,0 +1,14 @@
+id: lint-engine-code-setting-keeps-error
+specVersion: "0.1"
+clauses: [LINT-9, LINT-8, FIND-15]
+description: "A manifest lint setting that names E_KIND_VIOLATION is E_PRESET and has no effect, so the engine check still reports E_KIND_VIOLATION."
+expect:
+  findings:
+    - code: E_PRESET
+      file: "tierwise.yaml"
+      path: [lint, rules, E_KIND_VIOLATION]
+      line: 26
+    - code: E_KIND_VIOLATION
+      file: "schema/core.yaml"
+      path: [keys, access.enabled, combine]
+      line: 59

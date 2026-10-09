@@ -6,5 +6,5 @@ expect:
   findings:
     - code: schema/unused
       file: "rules/order.yaml"
-      path: [features, order.submission, policies, spare]
+      path: [policies, spare]
       line: 29

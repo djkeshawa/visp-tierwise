@@ -9,3 +9,6 @@ values:
       checkout.allowed: true
     yes:
       checkout.allowed: true
+sources:
+  schema:
+    - "schema/core.yaml"

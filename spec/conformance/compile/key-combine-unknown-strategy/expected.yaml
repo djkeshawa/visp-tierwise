@@ -6,5 +6,5 @@ expect:
   findings:
     - code: E_INVALID_DECLARATION
       file: "schema/keys.yaml"
-      path: ["keys", "spare_slots", "combine"]
-      line: 27
+      path: ["keys", "greeting", "combine"]
+      line: 48

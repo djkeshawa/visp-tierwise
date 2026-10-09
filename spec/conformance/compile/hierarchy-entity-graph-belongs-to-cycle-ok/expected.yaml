@@ -1,0 +1,6 @@
+id: hierarchy-entity-graph-belongs-to-cycle-ok
+specVersion: "0.1"
+clauses: ["ENTITY-14", "ENTITY-17"]
+description: "Replacing the belongs_to name that closes the cycle with an empty list removes the cycle and the project compiles."
+expect:
+  bundle: "../../bundles/edge-hierarchy-entity-graph.json"

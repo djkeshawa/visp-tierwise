@@ -1,0 +1,15 @@
+id: gaps/tz-valid-syntax-unknown-zone-accepted
+specVersion: "0.1"
+clauses: [TYPE-37, TYPE-38, TYPE-39, SVC-31, EVAL-7]
+description: An iana_tz value that matches the runtime syntax but names no zone in the tz release is accepted, because the evaluator checks syntax only.
+call: resolve
+bundle: ../../bundles/edge-gaps.json
+context: { levels: { account: acct-1 } }
+key: profile.timezone
+providers:
+  account:
+    acct-1:
+      values: { profile.timezone: "Mars/Olympus_Mons" }
+expect:
+  value: Mars/Olympus_Mons
+  providerCalls: { account: { acct-1: 1 } }

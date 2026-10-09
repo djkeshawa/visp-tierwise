@@ -25,7 +25,7 @@ FIND-30: "Planned CLI test: explain for a naming rule prints the pattern descrip
 # A URL preset and a path outside the project root are not expressible in a compile case: VEC-92 forbids
 # a case from naming a path that resolves outside its project root (MANIFEST-12).
 MANIFEST-12: "Planned compile-time unit test: a manifest path, or a glob match, that resolves outside the project root after symbolic links are resolved is E_MANIFEST. VEC-92 forbids such a path in a compile case."
-MANIFEST-18: "Blocked on an open point: a project with no declarations has no defined hierarchy. Planned test once settled: a manifest with specVersion alone is accepted."
+MANIFEST-18: "Blocked on a specification gap: no clause says whether a project that declares no decision_hierarchy is valid, so no case can expect a bundle or a finding for a manifest with specVersion alone. Planned test once settled: such a manifest is accepted (MANIFEST-18)."
 
 # Retrieval of URL presets needs a fake retrieval interface, which the suite cannot serve (MANIFEST-27 note).
 MANIFEST-28: "Planned unit test with a fake retrieval interface: retrieved bytes whose SHA-256 differs from the pinned digest are reported as E_PRESET (MANIFEST-28)."
@@ -37,4 +37,3 @@ MANIFEST-33: "Planned compile unit test: a kind replaced by a later layer keeps 
 # Pointer and portability clauses.
 SRC-15: "Pointer clause: a rules file's top-level keys and its one feature are defined by POL-1 and POL-2 in section 7, which the POL compile cases observe."
 SRC-24: "Planned compile unit test with a non-ASCII placeholder capture: a path capture in NFD becomes a node name in NFC (SRC-24). Non-ASCII file names are kept out of the suite."
-SRC-44: "Planned compile unit test: two rules documents for one feature are E_DUPLICATE_DEFINITION (SRC-44, POL-5). It needs a valid rules document from section 7, so it waits for the POL cases."

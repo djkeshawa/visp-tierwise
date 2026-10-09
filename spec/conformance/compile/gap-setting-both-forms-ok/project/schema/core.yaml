@@ -1,0 +1,57 @@
+decision_hierarchy:
+  levels: [global, account]
+  scopes:
+    account: { nodes: open, values: service }
+entity_hierarchy:
+  company: {}
+  customer: { belongs_to: company }
+  order: { belongs_to: customer }
+facts:
+  company.active: { type: boolean }
+  order.label:
+    type: enum
+    values:
+      - "café"
+      - tea
+      - water
+  order.total: { type: decimal }
+  order.units: { type: integer }
+keys:
+  catalog.tags:
+    type: set
+    universe: ["café", "tea"]
+    combine: union
+    settable_at: [global]
+  profile.timezone:
+    type: string
+    format: iana_tz
+    combine: override
+    default: Europe/London
+    on_source_failure: skip
+    settable_at: [account]
+  quota.seats:
+    type: integer
+    min: 1
+    max: 50
+    combine: min
+    on_source_failure: deny
+    settable_at: [account]
+features:
+  checkout.order_gate:
+    decided_per: order
+    returns:
+      enum:
+        - ALLOW
+        - DENY
+    hit_policy: FIRST
+    binding_settable_at: [global]
+    if_fact_missing: DENY
+  checkout.total_probe:
+    decided_per: order
+    returns:
+      enum:
+        - ALLOW
+        - DENY
+    hit_policy: FIRST
+    binding_settable_at: [global]
+    if_fact_missing: DENY
