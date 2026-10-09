@@ -6,7 +6,26 @@ Version 0.1.0 has not been released. It targets specification version **0.1** an
 
 ## [Unreleased]
 
-Nothing yet.
+These changes go into 0.1.0, which has not been released.
+
+### Added
+
+- `tierwise explain naming/<name> [--project DIR]` prints the pattern's declared description, or the family explanation followed by the pattern (FIND-30, ADR 0026). This uses the new `Tierwise.namingPatterns` and `NamingPattern` in tierwise-core.
+- `E_UNKNOWN_KIND` suggestions are now in the FIND-27 table (declared kinds).
+- Tests for every enforcer entry that used to say "Planned". Each entry in `spec/conformance/enforcers*.yaml` now names the Java and JS tests that check it.
+- Compile cases `manifest-specversion-only` and `manifest-specversion-only-preset` (MANIFEST-18).
+- S3 integration tests against a real MinIO (`scripts/s3-it.sh`, CI job `s3-integration`, ADR 0027).
+- CI jobs that run both quickstarts literally, and the GitHub Action with its docker and jar methods.
+
+### Changed
+
+- A provider timeout must be at most 2^53−1 ms in every evaluator (SVC-41, EVAL-28, ADR 0025). The Java evaluator used to accept larger ones.
+- The S3 store writes the `latest` pointer with a trailing newline, like the filesystem store (ADR 0024).
+
+### Fixed
+
+- JS evaluator: a provider that blocked past its timeout and then returned had its result used. Such a result is now a failure (SVC-40, SVC-41).
+- Server: publication records added within the same millisecond could be listed out of order.
 
 ## [0.1.0] - unreleased
 

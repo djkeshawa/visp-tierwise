@@ -52,6 +52,7 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [0024](adr/0024-server-api-and-store-choices.md) | Server API and bundle store choices: publish encoding, `latest`, responses, error codes, record order, pointer bytes |
 | [0025](adr/0025-provider-timeout-upper-bound.md) | A provider timeout is at most 2^53−1 ms in every evaluator |
 | [0026](adr/0026-naming-explanations-and-kind-suggestions.md) | `explain naming/<name>` reads the project's pattern (`Tierwise.namingPatterns`); `E_UNKNOWN_KIND` suggests declared kinds |
+| [0027](adr/0027-s3-integration-verification.md) | S3 modules verified against an official MinIO binary in CI |
 
 ## Browser use
 

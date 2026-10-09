@@ -108,3 +108,4 @@ nav:
       - 0024 Server API and store choices: adr/0024-server-api-and-store-choices.md
       - 0025 Provider timeout upper bound: adr/0025-provider-timeout-upper-bound.md
       - 0026 Naming explanations and kind suggestions: adr/0026-naming-explanations-and-kind-suggestions.md
+      - 0027 S3 integration verification: adr/0027-s3-integration-verification.md
