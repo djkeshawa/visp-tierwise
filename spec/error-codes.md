@@ -989,7 +989,7 @@ resolve({ levels: { root_level: "node_x" } }, "key_x")
 **Meaning:** The options given to create evaluator are invalid.
 **Raised when:**
 - the options are present but are not a map ([EVAL-28]);
-- a timeout is not a positive integer number of milliseconds ([EVAL-28], [SVC-38]);
+- a timeout is not a positive integer number of milliseconds no greater than 2^53−1 ([EVAL-28], [SVC-38], [SVC-41]);
 - a provider is registered for a level that the bundle does not declare, for a declared level that is not service-sourced, or twice for one level ([EVAL-27], [SVC-14]);
 - a provider is registered with no timeout ([SVC-48]).
 
@@ -1285,5 +1285,4 @@ Entries are sorted by code. Clause IDs are the primary defining clauses named in
 ## Open points
 
 - **(OPEN) Default lint severities for the presets `recommended` and `minimal`.** Section 1 states that this specification does not define the contents of the built-in presets ([MANIFEST-21]). The class lines of the lint entries repeat the settings of `presets/recommended.yaml` and `presets/minimal.yaml`, which agree with docs/requirements.md §6.3. They are informative. Recommended resolution: keep them as informative text, and let the preset files be the source of truth.
-- **(OPEN) Stale sentence in [EVAL-28].** [EVAL-28] says that whether a provider registered with no timeout is invalid is open in [SVC-48]. [SVC-48] states that it is invalid (ADR 0014). The `E_EVALUATOR_OPTIONS` entry follows [SVC-48]. Recommended resolution: the owner of section 11 removes the stale sentence from [EVAL-28].
 - **(OPEN) Dot-less fact name in a condition.** [RULE-9] defers a name without the `<entity>.<attribute>` form to [FACT-3], which gives `E_UNKNOWN_ENTITY` for a name with no `.`. [RULE-10] says that `E_UNKNOWN_ENTITY` is not reported for a condition fact. Recommended resolution: state in [RULE-10] that it applies only to a name that has an entity part, so that a dot-less condition name is `E_UNKNOWN_ENTITY`. The entries `E_UNKNOWN_ENTITY` and `E_UNKNOWN_FACT` follow [FACT-3] and [RULE-9] until then.

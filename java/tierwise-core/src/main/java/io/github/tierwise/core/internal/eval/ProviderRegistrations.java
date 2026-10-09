@@ -24,10 +24,13 @@ import java.util.Map;
  *       context will name it.
  * </ol>
  *
- * <p>A timeout is valid only when it is a positive whole number of milliseconds; the evaluator supplies
- * no default (SVC-48).
+ * <p>A timeout is valid only when it is a positive whole number of milliseconds no greater than 2^53-1, the
+ * integer range of TYPE-18 (SVC-41, ADR 0025); the evaluator supplies no default (SVC-48).
  */
 final class ProviderRegistrations {
+
+  /** The largest valid timeout: 2^53-1 milliseconds (SVC-41). */
+  private static final Duration MAX_TIMEOUT = Duration.ofMillis(9_007_199_254_740_991L);
 
   private ProviderRegistrations() {
   }
@@ -68,9 +71,9 @@ final class ProviderRegistrations {
       throw options("the provider for " + registration.level() + " has no timeout");
     }
     boolean wholeMillis = timeout.getNano() % 1_000_000 == 0;
-    if (timeout.isNegative() || timeout.isZero() || !wholeMillis) {
+    if (timeout.isNegative() || timeout.isZero() || !wholeMillis || timeout.compareTo(MAX_TIMEOUT) > 0) {
       throw options("the timeout of the provider for " + registration.level()
-          + " is not a positive whole number of milliseconds");
+          + " is not a positive whole number of milliseconds no greater than 2^53-1");
     }
   }
 

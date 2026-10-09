@@ -65,7 +65,8 @@ class EvaluatorCreationTest {
   @Test
   void EVAL_28_aTimeoutThatIsNotAPositiveWholeNumberOfMillisecondsRaisesEvaluatorOptions() {
     for (Duration invalid : new Duration[] {Duration.ZERO, Duration.ofMillis(-5), Duration.ofNanos(1),
-        Duration.ofNanos(1_500_000), Duration.ofNanos(999_999)}) {
+        Duration.ofNanos(1_500_000), Duration.ofNanos(999_999), Duration.ofMillis(9_007_199_254_740_992L),
+        Duration.ofDays(1_000_000_000L), Duration.ofSeconds(Long.MAX_VALUE)}) {
       EvaluatorOptions options = EvaluatorOptions.builder().provider("account", EMPTY, invalid)
           .provider("seat", EMPTY, Duration.ofSeconds(1)).build();
       assertEquals(Code.E_EVALUATOR_OPTIONS, codeOf(options), invalid.toString());
@@ -74,7 +75,7 @@ class EvaluatorCreationTest {
 
   @Test
   void SVC_38_aPositiveWholeMillisecondTimeoutIsAccepted() {
-    for (Duration valid : new Duration[] {Duration.ofMillis(1), Duration.ofSeconds(30), Duration.ofDays(1_000_000_000L),
+    for (Duration valid : new Duration[] {Duration.ofMillis(1), Duration.ofSeconds(30), Duration.ofMillis(9_007_199_254_740_991L),
         Duration.ofNanos(2_000_000)}) {
       Tierwise.evaluator(builder.loaded(), EvaluatorOptions.builder().provider("account", EMPTY, valid)
           .provider("seat", EMPTY, Duration.ofSeconds(1)).build());
@@ -82,10 +83,16 @@ class EvaluatorCreationTest {
   }
 
   @Test
-  void SVC_41_aTimeoutTooLargeForALongOfMillisecondsIsStillAPositiveTimeout() {
-    Duration huge = Duration.ofSeconds(Long.MAX_VALUE);
-    assertNotNull(Tierwise.evaluator(builder.loaded(), EvaluatorOptions.builder().provider("account", EMPTY, huge)
+  void SVC_41_aTimeoutAbove2To53Minus1MillisecondsRaisesEvaluatorOptions() {
+    // ADR 0025: the bound is the integer range of TYPE-18, so every evaluator accepts the same timeouts.
+    assertNotNull(Tierwise.evaluator(builder.loaded(), EvaluatorOptions.builder()
+        .provider("account", EMPTY, Duration.ofMillis(9_007_199_254_740_991L))
         .provider("seat", EMPTY, Duration.ofSeconds(1)).build()));
+    for (Duration tooLarge : new Duration[] {Duration.ofMillis(9_007_199_254_740_992L), Duration.ofSeconds(Long.MAX_VALUE)}) {
+      EvaluatorOptions options = EvaluatorOptions.builder().provider("account", EMPTY, tooLarge)
+          .provider("seat", EMPTY, Duration.ofSeconds(1)).build();
+      assertEquals(Code.E_EVALUATOR_OPTIONS, codeOf(options), tooLarge.toString());
+    }
   }
 
   @Test

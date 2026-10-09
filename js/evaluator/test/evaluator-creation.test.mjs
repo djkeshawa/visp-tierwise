@@ -43,3 +43,13 @@ test('EVAL-6: create evaluator calls no provider, including a provider that hold
   assert.equal(result.value, false);
   assert.deepEqual(calls, ['low:n1', 'leaf:f1'], 'providers are called only by resolve (SVC-17)');
 });
+
+test('SVC-41: a timeout is valid from 1 ms up to 2^53-1 ms, and not above (ADR 0025)', () => {
+  const fn = async () => ({});
+  for (const timeoutMs of [1, Number.MAX_SAFE_INTEGER]) {
+    assert.equal(typeof createEvaluator(loaded, { providers: { low: { fn, timeoutMs } } }).resolve, 'function', String(timeoutMs));
+  }
+  for (const timeoutMs of [2 ** 53, 2 ** 60, Number.MAX_VALUE]) {
+    assert.throws(() => createEvaluator(loaded, { providers: { low: { fn, timeoutMs } } }), { code: 'E_EVALUATOR_OPTIONS' }, String(timeoutMs));
+  }
+});

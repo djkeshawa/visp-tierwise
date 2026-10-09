@@ -112,7 +112,7 @@ Each outcome applies to one provider call for one level in one evaluation call. 
 
 **[SVC-40]** An evaluator MUST NOT use a provider result that arrives after the call's timeout has expired.
 
-**[SVC-41]** A timeout is a positive integer number of milliseconds. It is measured from the start of the provider call until the provider result is available to the evaluator. The call has returned at the point its result is available to the evaluator.
+**[SVC-41]** A timeout is a positive integer number of milliseconds no greater than 2^53−1 (9007199254740991), the integer range of [TYPE-18] (ADR 0025). It is measured from the start of the provider call until the provider result is available to the evaluator. The call has returned at the point its result is available to the evaluator.
 
 Default timeout values belong to the runtime integration, not to this specification (ADR 0009 §3).
 
