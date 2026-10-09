@@ -3,6 +3,10 @@ package io.github.tierwise.core.internal.bundle;
 import io.github.tierwise.core.internal.model.EntityDef;
 import io.github.tierwise.core.internal.model.FactDef;
 import io.github.tierwise.core.internal.model.TypeDecl;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +44,60 @@ final class DeclarationReader {
       requireDeclared(entity.belongsTo(), out.keySet());
       requireDeclared(entity.hasMany(), out.keySet());
     }
+    requireAcyclic(out);
     return out;
+  }
+
+  /**
+   * Requires that the oriented entity graph has no cycle (ENTITY-14 to ENTITY-17, BUNDLE-118). Every edge runs from
+   * parent to child: from P to E for a {@code belongsTo} member of E, and from P to C for a {@code hasMany} member of
+   * P. A self edge is a cycle. The check removes entities with no incoming edge until none is left, which needs no
+   * recursion, so a long chain cannot exhaust the stack.
+   *
+   * @param entities the declared entities, whose edges name declared entities
+   */
+  private static void requireAcyclic(Map<String, EntityDef> entities) {
+    Map<String, Integer> incoming = new HashMap<>();
+    Map<String, List<String>> outgoing = new HashMap<>();
+    for (String name : entities.keySet()) {
+      incoming.put(name, 0);
+      outgoing.put(name, new ArrayList<>());
+    }
+    for (Map.Entry<String, EntityDef> entry : entities.entrySet()) {
+      for (String parent : entry.getValue().belongsTo()) {
+        addEdge(parent, entry.getKey(), incoming, outgoing);
+      }
+      for (String child : entry.getValue().hasMany()) {
+        addEdge(entry.getKey(), child, incoming, outgoing);
+      }
+    }
+    Deque<String> ready = new ArrayDeque<>();
+    for (String name : entities.keySet()) {
+      if (incoming.get(name) == 0) {
+        ready.push(name);
+      }
+    }
+    int visited = 0;
+    while (!ready.isEmpty()) {
+      String name = ready.pop();
+      visited++;
+      for (String child : outgoing.get(name)) {
+        int left = incoming.get(child) - 1;
+        incoming.put(child, left);
+        if (left == 0) {
+          ready.push(child);
+        }
+      }
+    }
+    if (visited != entities.size()) {
+      throw BundleFault.integrity("the oriented entity graph has a cycle (ENTITY-14, ENTITY-15, ENTITY-16 or ENTITY-17)");
+    }
+  }
+
+  private static void addEdge(String parent, String child, Map<String, Integer> incoming,
+      Map<String, List<String>> outgoing) {
+    outgoing.get(parent).add(child);
+    incoming.put(child, incoming.get(child) + 1);
   }
 
   /**

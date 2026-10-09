@@ -1,0 +1,12 @@
+feature: rich.gate.check
+policies:
+  gate:
+    default: ALLOW
+    rules:
+      - id: paid-orders
+        name: Paid orders pass
+        when:
+          order.paid: true
+        then: ALLOW
+bindings:
+  global: { policy: gate }

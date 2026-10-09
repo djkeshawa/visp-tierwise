@@ -1,0 +1,122 @@
+name: Tierwise
+description: Validate or compile a Tierwise project with the Tierwise CLI, from a Docker image or a released JAR.
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  command:
+    description: "The CLI command to run: validate or compile."
+    required: false
+    default: validate
+  project:
+    description: "The project root (the directory that holds tierwise.yaml), relative to the workspace."
+    required: false
+    default: "."
+  output:
+    description: "For compile: the bundle file to write, relative to the workspace."
+    required: false
+    default: tierwise-bundle.json
+  method:
+    description: "How to run the CLI: docker runs the image in image; jar downloads the JAR at jar-url."
+    required: false
+    default: docker
+  image:
+    description: "The Docker image to run when method is docker. Pin it by digest, for example ghcr.io/OWNER/tierwise@sha256:..."
+    required: false
+    default: ""
+  jar-url:
+    description: "The URL of the released Tierwise CLI JAR, used when method is jar."
+    required: false
+    default: ""
+  jar-sha256:
+    description: "The SHA-256 of the JAR at jar-url. Required when method is jar; a JAR with another hash is not run."
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Check the inputs
+      shell: bash
+      env:
+        TW_COMMAND: ${{ inputs.command }}
+        TW_METHOD: ${{ inputs.method }}
+        TW_IMAGE: ${{ inputs.image }}
+        TW_JAR_URL: ${{ inputs.jar-url }}
+        TW_JAR_SHA256: ${{ inputs.jar-sha256 }}
+        TW_OUTPUT: ${{ inputs.output }}
+      run: |
+        set -euo pipefail
+        case "$TW_COMMAND" in
+          validate|compile) ;;
+          *) echo "::error::command must be validate or compile, not '$TW_COMMAND'" >&2; exit 2 ;;
+        esac
+        case "$TW_METHOD" in
+          docker)
+            if [ -z "$TW_IMAGE" ]; then echo "::error::image is required when method is docker" >&2; exit 2; fi
+            ;;
+          jar)
+            if [ -z "$TW_JAR_URL" ]; then echo "::error::jar-url is required when method is jar" >&2; exit 2; fi
+            if ! printf '%s' "$TW_JAR_SHA256" | tr '[:upper:]' '[:lower:]' | grep -Eq '^[0-9a-f]{64}$'; then
+              echo "::error::jar-sha256 must be the 64-character SHA-256 of the JAR" >&2; exit 2
+            fi
+            ;;
+          *) echo "::error::method must be docker or jar, not '$TW_METHOD'" >&2; exit 2 ;;
+        esac
+        if [ "$TW_COMMAND" = compile ] && [ -z "$TW_OUTPUT" ]; then
+          echo "::error::output is required for compile" >&2; exit 2
+        fi
+
+    - name: Run the Tierwise CLI in Docker
+      if: inputs.method == 'docker'
+      shell: bash
+      env:
+        TW_COMMAND: ${{ inputs.command }}
+        TW_PROJECT: ${{ inputs.project }}
+        TW_OUTPUT: ${{ inputs.output }}
+        TW_IMAGE: ${{ inputs.image }}
+      run: |
+        set -euo pipefail
+        args=("$TW_COMMAND" "$TW_PROJECT")
+        if [ "$TW_COMMAND" = compile ]; then args+=(--output "$TW_OUTPUT"); fi
+        # The user mapping keeps files written to the workspace owned by the runner user.
+        docker run --rm \
+          --user "$(id -u):$(id -g)" \
+          --volume "$GITHUB_WORKSPACE:/work" \
+          --workdir /work \
+          "$TW_IMAGE" "${args[@]}"
+
+    - name: Set up Java for the JAR
+      if: inputs.method == 'jar'
+      uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+      with:
+        distribution: temurin
+        java-version: '21'
+
+    - name: Run the Tierwise CLI JAR
+      if: inputs.method == 'jar'
+      shell: bash
+      env:
+        TW_COMMAND: ${{ inputs.command }}
+        TW_PROJECT: ${{ inputs.project }}
+        TW_OUTPUT: ${{ inputs.output }}
+        TW_JAR_URL: ${{ inputs.jar-url }}
+        TW_JAR_SHA256: ${{ inputs.jar-sha256 }}
+      run: |
+        set -euo pipefail
+        jar="$RUNNER_TEMP/tierwise-cli.jar"
+        curl --fail --location --silent --show-error --output "$jar" "$TW_JAR_URL"
+        expected=$(printf '%s' "$TW_JAR_SHA256" | tr '[:upper:]' '[:lower:]')
+        if command -v sha256sum >/dev/null 2>&1; then
+          actual=$(sha256sum "$jar" | cut -d ' ' -f 1)
+        else
+          actual=$(shasum -a 256 "$jar" | cut -d ' ' -f 1)
+        fi
+        if [ "$actual" != "$expected" ]; then
+          echo "::error::the SHA-256 of $TW_JAR_URL is $actual, not the expected $expected" >&2
+          exit 1
+        fi
+        args=("$TW_COMMAND" "$TW_PROJECT")
+        if [ "$TW_COMMAND" = compile ]; then args+=(--output "$TW_OUTPUT"); fi
+        java -jar "$jar" "${args[@]}"

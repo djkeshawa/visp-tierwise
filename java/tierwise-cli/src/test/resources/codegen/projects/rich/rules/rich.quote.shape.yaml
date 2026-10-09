@@ -1,0 +1,7 @@
+feature: rich.quote.shape
+policies:
+  shape:
+    default: { method: GROUND, days: 5 }
+    rules: []
+bindings:
+  global: { policy: shape }

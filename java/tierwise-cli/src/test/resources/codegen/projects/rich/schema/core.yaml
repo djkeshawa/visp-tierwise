@@ -1,0 +1,77 @@
+decision_hierarchy:
+  levels: [global, division]
+  axes: [seller]
+  scopes:
+    division: { nodes: [north, south], on_unknown_node: error }
+    seller:   { nodes: [acme], on_unknown_node: error }
+entity_hierarchy:
+  order: {}
+  item: {}
+facts:
+  order.paid: { type: boolean }
+  item.kind: { type: enum, values: [BULK, SINGLE] }
+keys:
+  rich.flag.enabled:
+    type: boolean
+    combine: all
+    settable_at: [global, division]
+  rich.limit.count:
+    type: integer
+    min: 0
+    max: 10
+    combine: max
+    settable_at: [global, division]
+  rich.fee.rate:
+    type: decimal
+    combine: override
+    default: "0.5"
+    settable_at: [global]
+  rich.label.text:
+    type: string
+    combine: override
+    default: "x"
+    settable_at: [global]
+  rich.tier.name:
+    type: enum
+    values: [BASIC, PRO]
+    combine: override
+    default: BASIC
+    settable_at: [global]
+  rich.regions.allowed:
+    type: set
+    universe: [EAST, WEST]
+    combine: intersect
+    settable_at: [global, division]
+  rich.codes.blocked:
+    type: list
+    items: { type: string }
+    combine: override
+    default: []
+    settable_at: [global]
+  rich.rules.windows:
+    type: list
+    items:
+      type: object
+      fields:
+        start: { type: integer }
+        note: { type: string, optional: true }
+    combine: override
+    default: []
+    settable_at: [global]
+features:
+  rich.gate.check:
+    decided_per: order
+    returns: { enum: [ALLOW, DENY], nullable: true }
+    hit_policy: FIRST
+    if_fact_missing: DENY
+    binding_settable_at: [global]
+  rich.quote.shape:
+    decided_per: order
+    returns:
+      object:
+        method: { type: enum, values: [GROUND, NEXT_DAY] }
+        days: { type: integer, min: 1, max: 30 }
+        note: { type: string, optional: true }
+    hit_policy: FIRST
+    if_fact_missing: { method: GROUND, days: 5 }
+    binding_settable_at: [global]

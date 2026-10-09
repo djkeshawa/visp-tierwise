@@ -19,7 +19,8 @@ MODULES = {
 # ADR 0012. Later phases extend these sets when their dependencies are approved.
 APPROVED_DEPENDENCIES = {
     "tierwise-core": {"org.snakeyaml:snakeyaml-engine", "com.fasterxml.jackson.core:jackson-core"},
-    "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli"},
+    # The CLI reads rules files for `tierwise test` with snakeyaml-engine, which core already brings in.
+    "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli", "org.snakeyaml:snakeyaml-engine"},
 }
 APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik"}
 # BOMs the parent may import in dependencyManagement. They only pin versions; a module still has to
@@ -86,12 +87,14 @@ def check_java():
 
 
 def check_ci():
-    for workflow in (ROOT / ".github/workflows").glob("*.yml"):
+    for workflow in [*(ROOT / ".github/workflows").glob("*.yml"), ROOT / "action.yml"]:
         text = workflow.read_text()
         for ref in re.findall(r"^\s*- uses: ([^\s#]+)", text, re.MULTILINE):
             require(re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref), f"Unpinned action in {workflow.name}: {ref}")
     ci = (ROOT / ".github/workflows/ci.yml").read_text()
-    for command in ("./mvnw -B -ntp verify", "pnpm --dir js install --frozen-lockfile",
+    for command in ("./mvnw -B -ntp verify -Pconformance",
+                    './mvnw -B -ntp -pl tierwise-core,tierwise-cli -am verify -Pconformance -Djvm="$JAVA_HOME_17_X64/bin/java"',
+                    "pnpm --dir js install --frozen-lockfile",
                     "pnpm --dir js run genericity", "pnpm --dir js run check",
                     "pnpm --dir js run build", "pnpm --dir js test"):
         require(command in ci, f"CI is missing: {command}")

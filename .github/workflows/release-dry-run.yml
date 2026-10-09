@@ -1,0 +1,152 @@
+name: Release dry run
+
+# Builds every release artifact without publishing anything: the JARs and CycloneDX SBOMs, the native binaries
+# on Linux, macOS and Windows, and the Docker image (built, not pushed). Each build then runs the CLI against
+# the samples. The workflow has no secrets and read-only permissions. Signing, publishing and the release
+# itself belong to a later phase (see docs/implementation-plan.md, phase 9).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-dry-run-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Projects the CLI validates and compiles in every build. saas-entitlements is a single-file project.
+  SAMPLES: "commerce retail-pos saas-entitlements"
+
+jobs:
+  jars:
+    name: JARs and SBOMs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      # setup-java puts the last JDK it installs on PATH. JDK 21 comes last, so Maven runs on it (see ci.yml).
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build the JARs
+        working-directory: java
+        run: ./mvnw -B -ntp -DskipTests package
+      # tierwise-cli writes its own SBOM during package (as an application). The other modules get theirs here.
+      # Running makeBom after package in the same invocation keeps the reactor's dependency resolution intact.
+      - name: Build the SBOMs of the other modules
+        working-directory: java
+        run: ./mvnw -B -ntp -DskipTests -pl '!tierwise-cli' package org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeBom
+      - name: Collect the JARs and SBOMs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/sbom
+          for module in java/tierwise-*/; do
+            name=$(basename "$module")
+            for jar in "$module"target/*.jar; do cp "$jar" dist/; done
+            cp "$module"target/bom.json "dist/sbom/$name.cdx.json"
+          done
+          ls -l dist dist/sbom
+      - name: Run the fat JAR against the samples
+        shell: bash
+        run: |
+          set -euo pipefail
+          jar=$(ls java/tierwise-cli/target/tierwise-cli-*-all.jar)
+          for sample in $SAMPLES; do
+            java -jar "$jar" validate "samples/$sample"
+            java -jar "$jar" compile "samples/$sample" --output "$RUNNER_TEMP/$sample-bundle.json"
+          done
+      - name: Upload the JARs and SBOMs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-jars-and-sboms
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  native:
+    name: Native binary (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            binary: tierwise
+          - os: macos-15
+            binary: tierwise
+          - os: windows-2022
+            binary: tierwise.exe
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@0def53c0fd8534bc13416c9469f5be45265824fd # v1.6.3
+        with:
+          distribution: graalvm
+          java-version: '21'
+      - name: Check the native-image tool
+        shell: bash
+        run: native-image --version
+      # native-image on Windows needs the Visual Studio C++ build environment; the other runners already have it.
+      - name: Set up the MSVC build environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+      - name: Build the native binary
+        if: runner.os != 'Windows'
+        working-directory: java
+        shell: bash
+        run: ./mvnw -B -ntp -Pnative -DskipTests -pl tierwise-cli -am package
+      - name: Build the native binary (Windows)
+        if: runner.os == 'Windows'
+        working-directory: java
+        shell: cmd
+        run: mvnw.cmd -B -ntp -Pnative -DskipTests -pl tierwise-cli -am package
+      - name: Run the native binary against the samples
+        shell: bash
+        env:
+          TW_BIN: java/tierwise-cli/target/${{ matrix.binary }}
+        run: |
+          set -euo pipefail
+          for sample in $SAMPLES; do
+            "$TW_BIN" validate "samples/$sample"
+            "$TW_BIN" compile "samples/$sample" --output "$RUNNER_TEMP/$sample-bundle.json"
+          done
+      - name: Upload the native binary
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tierwise-native-${{ matrix.os }}
+          path: java/tierwise-cli/target/${{ matrix.binary }}
+          if-no-files-found: error
+          retention-days: 14
+
+  docker:
+    name: Docker image (not pushed)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Build the image
+        run: docker build --file docker/Dockerfile --tag tierwise:dry-run .
+      - name: Run the image against the samples
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/docker-out"
+          mkdir -p "$out"
+          for sample in $SAMPLES; do
+            docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/work:ro" \
+              tierwise:dry-run validate "samples/$sample"
+            docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/work:ro" --volume "$out:/out" \
+              tierwise:dry-run compile "samples/$sample" --output "/out/$sample-bundle.json"
+          done

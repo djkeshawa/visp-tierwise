@@ -36,7 +36,12 @@ class BundleWriterOrderTest {
 
   private static Model shuffled(Model model) {
     Map<String, EntityDef> entities = new LinkedHashMap<>(model.entities());
-    entities.put("customer", new EntityDef(List.of("order", "customer"), List.of("order", "customer")));
+    // The edges are acyclic (ENTITY-17): the parents and the new child have no edges of their own, and the child
+    // does not parent the customer. Each array holds two names, so the writer has an order to fix.
+    entities.put("alpha", new EntityDef(List.of(), List.of()));
+    entities.put("beta", new EntityDef(List.of(), List.of()));
+    entities.put("invoice", new EntityDef(List.of(), List.of()));
+    entities.put("customer", new EntityDef(List.of("beta", "alpha"), List.of("order", "invoice")));
     Map<String, KeyDef> keys = new LinkedHashMap<>(model.keys());
     KeyDef lead = keys.get("checkout.lead_hours");
     keys.put("checkout.lead_hours", new KeyDef(lead.type(), lead.combine(), lead.defaultValue(),
@@ -64,8 +69,8 @@ class BundleWriterOrderTest {
     Model model = BundleReader.read(bundle(richContent())).model();
     // The reader enforces the orders, so reading the written bytes back proves that the writer produced them.
     Model back = BundleReader.read(BundleWriter.write(shuffled(model)).bytes()).model();
-    assertEquals(List.of("customer", "order"), back.entities().get("customer").belongsTo());
-    assertEquals(List.of("customer", "order"), back.entities().get("customer").hasMany());
+    assertEquals(List.of("alpha", "beta"), back.entities().get("customer").belongsTo());
+    assertEquals(List.of("invoice", "order"), back.entities().get("customer").hasMany());
     assertEquals(List.of("global", "division", "seller"), back.keys().get("checkout.lead_hours").settableAt());
     FeatureDef feature = back.features().get(FEATURE);
     assertEquals(List.of("global", "division"), feature.bindingSettableAt());

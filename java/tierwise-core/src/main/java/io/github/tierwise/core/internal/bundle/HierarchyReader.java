@@ -56,9 +56,19 @@ final class HierarchyReader {
     return new Hierarchy(levels, axes, definitions);
   }
 
+  /**
+   * Requires that the names are distinct and not empty. A level or axis name is never empty (SCOPE-8). The root level
+   * is checked too, because the empty name is a defect whichever scope it names.
+   *
+   * @param names the level or axis names
+   * @param at the location of the list
+   */
   private static void requireDistinctNames(List<String> names, String at) {
     if (new HashSet<>(names).size() != names.size()) {
       throw BundleFault.integrity(at + " repeats a name (SCOPE-3)");
+    }
+    if (names.contains("")) {
+      throw BundleFault.integrity(at + " has an empty name, which a level or axis may not have (SCOPE-8)");
     }
   }
 

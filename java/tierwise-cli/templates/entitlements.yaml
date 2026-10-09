@@ -1,0 +1,60 @@
+# A Tierwise project that extends the built-in preset tierwise:entitlements.
+#
+# The preset supplies three kinds, each with a naming pattern for its keys:
+#   limit   narrowing numbers; the lowest value on the path wins;
+#           keys end in limit, max_<name> or <name>_limit
+#   feature on/off switches; one false turns the feature off;
+#           keys end in enabled or has_<name>
+#   grant   sets that add up; every level adds its members;
+#           keys end in grants or granted_<name>
+# Check this project with: tierwise validate
+#
+# Levels run from least to most specific. The first level is the root.
+
+specVersion: "0.1"
+
+extends:
+  - tierwise:entitlements
+
+schema:
+  decision_hierarchy:
+    levels: [base, group]
+    scopes:
+      group:
+        nodes: [group_a, group_b]
+        on_unknown_node: error
+
+  keys:
+    quota.max_items:
+      kind: limit
+      type: integer
+      min: 0
+      combine: min
+      settable_at: [base, group]
+      description: Most items that may be stored. The lowest limit on the path wins.
+
+    search.has_suggestions:
+      kind: feature
+      type: boolean
+      combine: all
+      settable_at: [base, group]
+      description: Search suggestions. On unless a level on the path sets false.
+
+    search.granted_fields:
+      kind: grant
+      type: set
+      universe: [title, body, tags]
+      combine: union
+      settable_at: [base, group]
+      description: Fields that search may match. Every level on the path adds its fields.
+
+values:
+  base:
+    quota.max_items: 100
+    search.granted_fields: [title]
+  group:
+    group_a:
+      quota.max_items: 25
+    group_b:
+      search.has_suggestions: false
+      search.granted_fields: [body]

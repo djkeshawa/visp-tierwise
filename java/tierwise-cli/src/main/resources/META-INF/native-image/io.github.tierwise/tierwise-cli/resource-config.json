@@ -1,0 +1,12 @@
+{
+  "resources": {
+    "includes": [
+      { "pattern": "io/github/tierwise/cli/version\\.properties" },
+      { "pattern": "io/github/tierwise/cli/error-codes\\.md" },
+      { "pattern": "io/github/tierwise/cli/templates/.*" },
+      { "pattern": "io/github/tierwise/core/internal/check/tz-names\\.txt" },
+      { "pattern": "io/github/tierwise/core/internal/project/presets/[^/]+\\.yaml" }
+    ]
+  },
+  "bundles": []
+}

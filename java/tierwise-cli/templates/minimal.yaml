@@ -1,0 +1,39 @@
+# A Tierwise project that extends the built-in preset tierwise:minimal.
+#
+# The preset has no kinds and no naming checks. Its lint covers only likely bugs:
+# a value that changes nothing, and a rule that can never match.
+# Check this project with: tierwise validate
+#
+# Levels run from least to most specific. The first level is the root. A key says
+# at which levels it may be set (settable_at) and how values combine (combine).
+# Values are written under the level, and under a node of every other level.
+
+specVersion: "0.1"
+
+extends:
+  - tierwise:minimal
+
+schema:
+  decision_hierarchy:
+    levels: [base, group]
+    scopes:
+      group:
+        nodes: [group_a, group_b]
+        on_unknown_node: error
+
+  keys:
+    request.timeout_seconds:
+      type: integer
+      min: 1
+      max: 600
+      combine: override
+      default: 30
+      settable_at: [base, group]
+      description: Seconds to wait for a reply. The most specific value on the path wins.
+
+values:
+  base:
+    request.timeout_seconds: 60
+  group:
+    group_a:
+      request.timeout_seconds: 10

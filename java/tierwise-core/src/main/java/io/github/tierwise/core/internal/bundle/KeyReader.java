@@ -23,6 +23,9 @@ final class KeyReader {
   /** The commutative strategies (MERGE-1). */
   static final Set<String> COMMUTATIVE = Set.of("all", "any", "intersect", "union", "min", "max");
 
+  /** The narrowing strategies (MERGE-2), the only ones that may carry a deny value (SVC-11). */
+  private static final Set<String> NARROWING = Set.of("all", "intersect", "min");
+
   private static final Set<String> ACROSS_AXES = Set.of("axis_wins", "hierarchy_wins", "max", "min");
   private static final Set<String> SOURCE_FAILURE = Set.of("skip", "deny");
 
@@ -72,6 +75,7 @@ final class KeyReader {
     }
     Optional<String> acrossAxes = readAcrossAxes(members, at, orderDependent && settableAtAxis);
     Optional<String> onSourceFailure = readSourceFailure(members, at, settableAtService);
+    requireDenyIsDefined(combine, type, onSourceFailure, at);
     Optional<String> kind = Optional.empty();
     if (members.containsKey("kind")) {
       kind = Optional.of(Members.string(members.get("kind"), at + ".kind"));
@@ -140,6 +144,26 @@ final class KeyReader {
       throw BundleFault.integrity(at + " has onSourceFailure, which it may not have (BUNDLE-59)");
     }
     return Optional.of(Members.oneOf(members.get("onSourceFailure"), SOURCE_FAILURE, at + ".onSourceFailure"));
+  }
+
+  /**
+   * Requires that a key whose failure policy is {@code deny} has a deny value that narrows (SVC-11, SVC-12, BUNDLE-118).
+   * The bundle holds {@code onSourceFailure} exactly for a key settable at a service-sourced level (BUNDLE-59), so the
+   * policy is the one in effect (BUNDLE-61). The narrowing strategies are {@code all}, {@code intersect} and
+   * {@code min} (MERGE-2). A {@code min} key needs a {@code min} member in its type, because its deny value is that
+   * member (SVC-9).
+   */
+  private static void requireDenyIsDefined(String combine, TypeDecl type, Optional<String> onSourceFailure, String at) {
+    if (onSourceFailure.isEmpty() || !"deny".equals(onSourceFailure.get())) {
+      return;
+    }
+    if (!NARROWING.contains(combine)) {
+      throw BundleFault.integrity(at + ": deny needs a narrowing strategy, and " + combine
+          + " is not narrowing (SVC-11, MERGE-2)");
+    }
+    if ("min".equals(combine) && type.min().isEmpty()) {
+      throw BundleFault.integrity(at + ": deny under min needs a min member in the integer type (SVC-12)");
+    }
   }
 
   private static boolean isService(Hierarchy hierarchy, String name) {

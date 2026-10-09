@@ -1,0 +1,53 @@
+name: Nightly differential and benchmarks
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nightly-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  differential:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      # The same toolchain as ci.yml: JDK 21 for the reactor, Node 22 and the pinned pnpm for the JavaScript packages.
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.1.0
+        with:
+          version: '11.3.0'
+          run_install: false
+      - run: pnpm --dir js install --frozen-lockfile
+      # Java generates 10,000 cases, and JavaScript replays every one of them. The seed is the run id, which the log
+      # prints, so a failing night can be reproduced with scripts/differential.sh --seed <run id> --cases 10000.
+      - name: Differential run (10,000 cases)
+        env:
+          RUN_SEED: ${{ github.run_id }}
+        run: bash scripts/differential.sh --seed "$RUN_SEED" --cases 10000
+      - name: Java in-process benchmark
+        working-directory: java
+        env:
+          BENCH_OUT: ${{ runner.temp }}/bench-java.txt
+        run: >-
+          ./mvnw -B -ntp -pl tierwise-core
+          -Dtest=ResolveDecideBenchmarkTest
+          -Dsurefire.failIfNoSpecifiedTests=false
+          -Dtierwise.excludedGroups=
+          -Dtierwise.bench.out="$BENCH_OUT"
+          test
+      - name: JavaScript in-process benchmark
+        env:
+          BENCH_OUT: ${{ runner.temp }}/bench-js.txt
+        run: node js/evaluator/bench/bench.mjs "$BENCH_OUT"

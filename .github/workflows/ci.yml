@@ -30,9 +30,32 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Build and verify
+      - name: Build and verify, with the spec conformance suite
         working-directory: java
-        run: ./mvnw -B -ntp verify
+        run: ./mvnw -B -ntp verify -Pconformance
+  java-runtime-17:
+    # ADR 0012 and requirements section 13: core and CLI target Java 17. The reactor still builds on JDK 21
+    # (above). This job runs their tests on a JDK 17 runtime, so an API that only JDK 21 has cannot pass.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      # setup-java exports JAVA_HOME_17_X64 for the JDK 17 installed here. JDK 21 comes second, so it stays
+      # the default JAVA_HOME and Maven runs on it (the enforcer requires Java 21 for the reactor).
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Test core and CLI on a JDK 17 runtime
+        working-directory: java
+        run: ./mvnw -B -ntp -pl tierwise-core,tierwise-cli -am verify -Pconformance -Djvm="$JAVA_HOME_17_X64/bin/java"
   javascript:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

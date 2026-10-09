@@ -1,0 +1,50 @@
+# Tierwise CLI image: the fat JAR on a JRE 21 base, running as a non-root user.
+#
+# Build from the repository root, because the build context needs java/, presets/ and spec/data/:
+#   docker build --file docker/Dockerfile --tag tierwise:local .
+#
+# Base images are pinned by digest (the digest decides; the tag is for humans). Docker/README.md explains
+# how to read and update them.
+
+# Build stage: the Maven Wrapper builds the fat JAR of the CLI on JDK 21 (ADR 0012).
+FROM eclipse-temurin:21-jdk-noble@sha256:b468c3fc688b14450571494f588bd939378e7fd542ed5a73f8efc13f17872a87 AS build
+
+# tierwise-core reads the built-in presets and the IANA zone names from ../../presets and ../../spec/data
+# (see java/tierwise-core/pom.xml), so they are copied to the same relative places under /src.
+COPY presets /src/presets
+COPY spec/data/tz-names.txt /src/spec/data/tz-names.txt
+COPY java /src/java
+
+WORKDIR /src/java
+# clean drops any target/ directory copied from a local build. Tests run in CI, not in the image build.
+RUN set -eu; \
+    chmod 0755 ./mvnw; \
+    ./mvnw -B -ntp -DskipTests -pl tierwise-cli -am clean package; \
+    jars=$(ls tierwise-cli/target/tierwise-cli-*-all.jar); \
+    test "$(printf '%s\n' "$jars" | wc -l)" -eq 1; \
+    mkdir -p /out; \
+    cp "$jars" /out/tierwise.jar
+
+# Runtime stage: a JRE only, with a fixed non-root user.
+FROM eclipse-temurin:21-jre-noble@sha256:000fd431958bc81a24abe1e8e5f0f0fd3ae365a594bd50aadb20696805f9408c AS runtime
+
+LABEL org.opencontainers.image.title="tierwise" \
+      org.opencontainers.image.description="Tierwise command line: init, validate, lint, test, compile, codegen, explain" \
+      org.opencontainers.image.licenses="Apache-2.0"
+
+# A fixed numeric UID lets a platform verify that the container does not run as root (see USER below).
+RUN groupadd --system --gid 10001 tierwise \
+ && useradd --system --uid 10001 --gid tierwise --no-create-home --shell /usr/sbin/nologin tierwise \
+ && mkdir -p /opt/tierwise /work \
+ && chown tierwise:tierwise /work
+
+COPY --from=build /out/tierwise.jar /opt/tierwise/tierwise.jar
+
+# The `tierwise` command: the fat JAR on the JRE's java launcher, with the arguments passed through.
+RUN printf '%s\n' '#!/bin/sh' 'exec java -jar /opt/tierwise/tierwise.jar "$@"' > /usr/local/bin/tierwise \
+ && chmod 0755 /usr/local/bin/tierwise
+
+WORKDIR /work
+USER 10001:10001
+ENTRYPOINT ["tierwise"]
+CMD ["--help"]

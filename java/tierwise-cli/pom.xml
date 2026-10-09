@@ -12,4 +12,168 @@
   <artifactId>tierwise-cli</artifactId>
   <packaging>jar</packaging>
   <name>tierwise-cli</name>
+  <description>The tierwise command line: init, validate, lint, test, compile, explain.</description>
+
+  <properties>
+    <tierwise.cli.mainClass>io.github.tierwise.cli.Main</tierwise.cli.mainClass>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.tierwise</groupId>
+      <artifactId>tierwise-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+    </dependency>
+    <!-- Reads rules files to list their examples (ADR 0012 approves it; core already brings it in). -->
+    <dependency>
+      <groupId>org.snakeyaml</groupId>
+      <artifactId>snakeyaml-engine</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <!-- Hand-written resources: the init templates. version.properties is filtered below. -->
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/version.properties</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/version.properties</include>
+        </includes>
+      </resource>
+      <!-- The projects that `tierwise init` writes, one for each built-in preset. They are example
+           projects like those in samples/, kept beside the module rather than in the source of the
+           commands, because they name the kinds and keys of the presets and the samples. -->
+      <resource>
+        <directory>${project.basedir}/templates</directory>
+        <includes>
+          <include>*.yaml</include>
+        </includes>
+        <targetPath>io/github/tierwise/cli/templates</targetPath>
+      </resource>
+      <!-- The catalogue that `tierwise explain` prints is copied from the spec at build time (FIND-29). -->
+      <resource>
+        <directory>${project.basedir}/../../spec</directory>
+        <includes>
+          <include>error-codes.md</include>
+        </includes>
+        <targetPath>io/github/tierwise/cli</targetPath>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>fat-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <!-- tierwise-cli-<version>-all.jar next to the plain jar. -->
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>all</shadedClassifierName>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>${tierwise.cli.mainClass}</mainClass>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/versions/*/module-info.class</exclude>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- SBOM of the CLI next to its JARs: target/bom.json (format and version are set in java/pom.xml). -->
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sbom</id>
+            <phase>package</phase>
+            <goals>
+              <goal>makeBom</goal>
+            </goals>
+            <configuration>
+              <projectType>application</projectType>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <!--
+        GraalVM Native Image build of the CLI. It runs in CI only (.github/workflows/release-dry-run.yml), on a
+        GraalVM JDK installed by graalvm/setup-graalvm, so there is no local target for it. Command:
+          ./mvnw -B -ntp -Pnative -DskipTests -pl tierwise-cli -am package
+        The executable is target/tierwise (target/tierwise.exe on Windows).
+
+        Reachability metadata has two sources:
+        - picocli, snakeyaml-engine and jackson-core: metadataRepository below makes the plugin fetch the entries
+          of the GraalVM reachability metadata repository for the versions pinned in ADR 0012.
+        - this module's own classes and classpath resources: META-INF/native-image/io.github.tierwise/tierwise-cli/.
+        Fallback images are disabled, so an image that cannot be fully analysed fails the build instead of
+        becoming a JVM-based launcher.
+      -->
+      <id>native</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <configuration>
+              <imageName>tierwise</imageName>
+              <mainClass>${tierwise.cli.mainClass}</mainClass>
+              <fallback>false</fallback>
+              <metadataRepository>
+                <enabled>true</enabled>
+              </metadataRepository>
+            </configuration>
+            <executions>
+              <execution>
+                <id>build-native</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>compile-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

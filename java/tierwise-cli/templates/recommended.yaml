@@ -1,0 +1,52 @@
+# A Tierwise project that extends the built-in preset tierwise:recommended.
+#
+# The preset supplies the kinds "configuration" and "capability", the naming patterns
+# and strict lint. Key names have three dot-separated segments, and a capability key
+# ends in allowed, allow_<name> or allowed_<name>.
+# Check this project with: tierwise validate
+#
+# Levels run from least to most specific. The first level is the root. A key says
+# at which levels it may be set (settable_at) and how values combine (combine).
+# Values are written under the level, and under a node of every other level.
+
+specVersion: "0.1"
+
+extends:
+  - tierwise:recommended
+
+schema:
+  decision_hierarchy:
+    levels: [base, group]
+    scopes:
+      group:
+        nodes: [group_a, group_b]
+        on_unknown_node: error
+
+  keys:
+    # A configuration key: the most specific value wins. It needs a default.
+    service.request.timeout_seconds:
+      kind: configuration
+      type: integer
+      min: 1
+      max: 600
+      combine: override
+      default: 30
+      settable_at: [base, group]
+      description: Seconds to wait for a reply. The most specific value on the path wins.
+
+    # A capability key: any level that sets false turns it off for everything below.
+    service.upload.allowed:
+      kind: capability
+      type: boolean
+      combine: all
+      settable_at: [base, group]
+      description: Whether uploads are permitted. One false value on the path vetoes it.
+
+values:
+  base:
+    service.request.timeout_seconds: 60
+  group:
+    group_a:
+      service.request.timeout_seconds: 10
+    group_b:
+      service.upload.allowed: false
