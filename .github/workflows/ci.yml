@@ -176,3 +176,29 @@ jobs:
         env:
           OUTCOME: ${{ steps.badsha.outcome }}
         run: test "$OUTCOME" = failure
+  s3-integration:
+    # ADR 0023 and ADR 0027: the S3 modules' conditional requests (If-None-Match, If-Match, 304) run against a real
+    # S3-compatible server. The MinIO server binary comes from MinIO's GitHub release and is checked by SHA-256.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      MINIO_RELEASE: RELEASE.2025-09-07T16-13-09Z
+      MINIO_SHA256: 7c5bd8512c6e966455b1d198209358b2d191c77a83ab377c4073281065fb855f
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Download and check the MinIO server
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/minio" \
+            "https://github.com/minio/minio/releases/download/$MINIO_RELEASE/minio.linux-amd64.$MINIO_RELEASE"
+          echo "$MINIO_SHA256  $RUNNER_TEMP/minio" | sha256sum --check
+          chmod +x "$RUNNER_TEMP/minio"
+      - name: S3 integration tests against MinIO
+        run: MINIO_BIN="$RUNNER_TEMP/minio" S3_IT_MODE=binary scripts/s3-it.sh

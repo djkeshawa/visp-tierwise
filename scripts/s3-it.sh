@@ -9,9 +9,9 @@
 #   -- MAVEN_ARGS...    everything after -- is passed to Maven unchanged
 #
 # Environment:
-#   S3_IT_MODE          docker | binary; default: docker when `docker info` succeeds, otherwise binary
+#   S3_IT_MODE          binary | docker; default: docker when MINIO_IMAGE is set, otherwise binary
 #   MINIO_BIN           the MinIO server binary (binary mode)
-#   MINIO_IMAGE         the container image (docker mode); must be pinned by digest; default: see DEFAULT_IMAGE
+#   MINIO_IMAGE         the container image (docker mode); must be pinned by digest; there is no default (ADR 0027)
 #   MINIO_PORT          the local port (default 19000)
 #
 # 1. Starts MinIO on 127.0.0.1:$MINIO_PORT with throwaway root credentials and an empty temporary data directory.
@@ -25,13 +25,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="target"
 MAVEN_ARGS=()
 
-# The minio/minio repository on Docker Hub no longer exists and dl.min.io answers 410 Gone for every community
-# build: the open-source MinIO server was archived upstream. Checked on 2026-10-10 with the registry API
-# (auth.docker.io token, then HEAD /v2/minio/minio/manifests/latest: 401 insufficient_scope, i.e. no such
-# repository). The default below is Bitnami's frozen build of upstream MinIO RELEASE.2025-07-23
-# (bitnamilegacy/minio:2025.7.23-debian-12-r5, multi-arch index digest resolved the same way on 2026-10-10).
-# Bitnami's entrypoint takes MINIO_ROOT_USER and MINIO_ROOT_PASSWORD and serves S3 on port 9000.
-DEFAULT_IMAGE="bitnamilegacy/minio@sha256:6dabb4a2088c9a79908de3bc05f4586c23ad2182c8908e7e3acbf61c1467fb20"
+# MinIO's own Docker Hub image and dl.min.io downloads are gone (the open-source server was archived upstream), so the
+# default is the official server binary from MinIO's GitHub release, pinned by SHA-256 (ADR 0027; CI downloads it).
+# Docker mode runs whatever image MINIO_IMAGE names, pinned by digest; no third-party image is chosen here.
 
 usage() {
   sed -n "2,21p" "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
@@ -69,7 +65,7 @@ BUCKET="tierwise-it"
 
 MODE="${S3_IT_MODE:-}"
 if [[ -z "$MODE" ]]; then
-  if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+  if [[ -n "${MINIO_IMAGE:-}" ]]; then
     MODE="docker"
   else
     MODE="binary"
@@ -102,7 +98,7 @@ trap 'exit 130' INT TERM
 
 case "$MODE" in
   docker)
-    IMAGE="${MINIO_IMAGE:-$DEFAULT_IMAGE}"
+    IMAGE="${MINIO_IMAGE:-}"
     if [[ "$IMAGE" != *@sha256:* ]]; then
       echo "MINIO_IMAGE must be pinned by digest (name@sha256:...): $IMAGE" >&2
       exit 2
@@ -114,7 +110,7 @@ case "$MODE" in
     ;;
   binary)
     if [[ -z "${MINIO_BIN:-}" || ! -x "${MINIO_BIN}" ]]; then
-      echo "No running docker daemon, and MINIO_BIN does not name an executable MinIO server binary." >&2
+      echo "MINIO_BIN does not name an executable MinIO server binary (or set MINIO_IMAGE for docker mode)." >&2
       exit 2
     fi
     DATA_DIR="$(mktemp -d "${TMPDIR:-/tmp}/tierwise-s3-it.XXXXXX")"
