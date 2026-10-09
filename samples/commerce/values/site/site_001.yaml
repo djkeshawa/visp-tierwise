@@ -1,0 +1,6 @@
+# Path-mapped values file: scope site, node site_001 (SRC-22, SRC-25).
+# site_001 is in catalogs/sites.json, so the value is a member of the closed catalog (SCOPE-43).
+# Min narrowing again, and a partial deep_merge object (MERGE-11).
+checkout.order.allowed_max_lines: 25
+checkout.pickup.window:
+  close: "16:00"
