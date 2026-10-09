@@ -121,7 +121,9 @@ def check_ci():
     for workflow in [*(ROOT / ".github/workflows").glob("*.yml"), ROOT / "action.yml"]:
         text = workflow.read_text()
         for ref in re.findall(r"^\s*(?:- )?uses: ([^\s#]+)", text, re.MULTILINE):
-            require(re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref), f"Unpinned action in {workflow.name}: {ref}")
+            # A local action (./) runs the code of the checked-out commit, so the checkout pins it.
+            require(ref.startswith("./") or re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref),
+                    f"Unpinned action in {workflow.name}: {ref}")
     ci = (ROOT / ".github/workflows/ci.yml").read_text()
     for command in ("./mvnw -B -ntp verify -Pconformance",
                     './mvnw -B -ntp -pl tierwise-core,tierwise-cli -am verify -Pconformance -Djvm="$JAVA_HOME_17_X64/bin/java"',
