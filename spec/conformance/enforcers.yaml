@@ -1,24 +1,27 @@
 # Enforcers for normative clauses that no conformance vector can observe (VEC-125).
 # Each key is a normative clause ID. Each value is one line that names the enforcer.
 # `pnpm spec:check` accepts a clause that a vector cites, or that has an entry here.
-# An entry names a test that the owning implementation has not written yet, so it is a
-# promise to test that clause, not evidence that the clause is tested. COVERAGE.md prints each
-# entry's text, so a planned test shows as "Planned" there.
+# An entry that names Java and JS tests points at tests that exist. An entry that says "Planned" names a test that
+# the owning implementation has not written yet, so it is a promise to test that clause, not evidence that the
+# clause is tested. COVERAGE.md prints each entry's text, so a planned test shows as "Planned" there.
 
-# Timeouts are durations, and VEC-45 keeps durations out of vectors.
-EVAL-28: "Planned evaluator unit test: create-evaluator raises E_EVALUATOR_OPTIONS for a timeout that is not a positive integer number of milliseconds, and for options that are not a map."
+# Timeouts are durations, and VEC-45 keeps durations out of vectors. Java options are a typed object, so options
+# that are not a map cannot be expressed in Java; an omitted (null) options argument counts as empty options.
+EVAL-28: "Java: tierwise-core EvaluatorCreationTest#EVAL_28_aTimeoutThatIsNotAPositiveWholeNumberOfMillisecondsRaisesEvaluatorOptions, EvaluatorCreationTest#EVAL_28_anOmittedOptionsArgumentCountsAsEmptyOptions. JS: js/evaluator/test/evaluator.test.mjs \"options that are present but not an object raise E_EVALUATOR_OPTIONS (EVAL-28)\", \"a provider registration needs a function and a positive integer timeout (SVC-38, SVC-48)\"."
 
 # SVC-38 and SVC-48 state the timeout rules of EVAL-28 for providers. VEC-24 gives every stub provider a timeout of
 # 1000 ms, and VEC-45 keeps durations out of vectors, so no vector can register a provider with a missing or invalid timeout.
-SVC-38: "Planned evaluator unit test: create-evaluator raises E_EVALUATOR_OPTIONS for a provider timeout that is not a positive integer number of milliseconds (EVAL-28)."
-SVC-48: "Planned evaluator unit test: create-evaluator raises E_EVALUATOR_OPTIONS for a provider registered with no timeout, and supplies no default timeout (EVAL-28)."
+SVC-38: "Java: tierwise-core EvaluatorCreationTest#EVAL_28_aTimeoutThatIsNotAPositiveWholeNumberOfMillisecondsRaisesEvaluatorOptions, EvaluatorCreationTest#SVC_38_aPositiveWholeMillisecondTimeoutIsAccepted. JS: js/evaluator/test/evaluator.test.mjs \"a provider registration needs a function and a positive integer timeout (SVC-38, SVC-48)\"."
+SVC-48: "Java: tierwise-core EvaluatorCreationTest#SVC_48_aProviderWithNoTimeoutRaisesEvaluatorOptionsAndNoDefaultIsSupplied. JS: js/evaluator/test/evaluator.test.mjs \"a provider registration needs a function and a positive integer timeout (SVC-38, SVC-48)\"."
 
-# Tool storage: no vector observes whether a sidecar is replaced.
-BUNDLE-147: "Planned provenance-writer unit test: writing a sidecar whose path already exists fails and leaves the existing file unchanged."
+# Tool storage: no vector observes whether a sidecar is replaced. The CLI is the only tool that writes sidecars.
+BUNDLE-147: "Java: tierwise-cli ProvenanceWriterTest#BUNDLE_147_writingASidecarWhosePathExistsFailsAndLeavesTheExistingFileUnchanged, ProvenanceWriterTest#BUNDLE_147_aSidecarThatTheWriterWroteIsNotOverwrittenByASecondWrite, CompileCommandTest#aSidecarIsNeverReplaced."
 
-# Tool storage: a record must not replace another record in the store.
-BUNDLE-148: "Planned provenance-writer unit test: a second record with the same bundleVersion is stored in its own sidecar, and no stored record is replaced."
+# Tool storage: a record must not replace another record in the store. The CLI stores records as sidecars, and the
+# server stores them as publication records in its filesystem or S3 store.
+BUNDLE-148: "Java: tierwise-cli ProvenanceWriterTest#BUNDLE_148_aSecondRecordWithTheSameBundleVersionIsStoredInASidecarOfItsOwn, ProvenanceWriterTest#BUNDLE_148_compilingOneProjectTwiceKeepsBothRecordsOfTheSameBundleVersion; tierwise-server FilesystemBundleStoreTest#recordsAreKeptInTheOrderTheyWereAddedAndNeverReplaced; tierwise-server-s3 S3BundleStoreTest#publicationRecordsTakeFreeSlotsAndNeverReplaceEachOther."
 
 # A vector cannot carry an omitted or non-string key or feature (VEC-29 requires a string). The empty-string case of
-# EVAL-37 is not listed, because a vector can carry an empty string.
-EVAL-37: "Planned evaluator unit test: resolve raises E_UNKNOWN_KEY and decide raises E_UNKNOWN_FEATURE for an omitted or non-string key or feature argument."
+# EVAL-37 is not listed, because a vector can carry an empty string. A Java key or feature is a String, so the
+# non-string case cannot be expressed in Java.
+EVAL-37: "Java: tierwise-core ResolveOrderTest#EVAL_37_anOmittedOrEmptyKeyIsAnUnknownKey, ResolveOrderTest#EVAL_37_anOmittedOrEmptyFeatureIsAnUnknownFeature, ResolveOrderTest#EVAL_37_aNonStringKeyCannotBeExpressedInJavaSoTheTypeSystemEnforcesIt, NameLookupOrderTest#EVAL_37_contextValidationComesBeforeTheLookupOfAnOmittedOrEmptyName, NameLookupOrderTest#EVAL_37_anOmittedOrEmptyKeyIsReportedBeforeTheProviderCheckAndAnyProviderCall, NameLookupOrderTest#EVAL_37_anOmittedOrEmptyFeatureIsReportedBeforeFactSetValidation. JS: js/evaluator/test/evaluator.test.mjs \"an undeclared, omitted, empty or non-string key raises E_UNKNOWN_KEY (EVAL-34, EVAL-37)\", \"an undeclared, omitted, empty or non-string feature raises E_UNKNOWN_FEATURE (EVAL-35, EVAL-37)\"; js/evaluator/test/evaluator-contract.test.mjs \"EVAL-37: an omitted or non-string key or feature is an unknown name, also when the argument is left out\", \"EVAL-37: an omitted or non-string name is reported at the lookup step, after the context and before the rest\"."
