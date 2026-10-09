@@ -85,3 +85,27 @@ jobs:
       - name: Packaging tests (Node 20)
         working-directory: js
         run: node --test test/packaging.test.mjs
+  quickstarts:
+    # Requirements §15: each quickstart runs literally on a clean machine in under five minutes. A hosted runner
+    # is a fresh machine; the script builds the artifacts, then runs both pages in an empty HOME and times them.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.1.0
+        with:
+          version: '11.3.0'
+          run_install: false
+      - run: pnpm --dir js install --frozen-lockfile
+      - name: Run both quickstarts literally
+        run: scripts/quickstart-check.sh
