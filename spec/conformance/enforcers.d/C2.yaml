@@ -6,4 +6,4 @@
 # The same declaration also breaks SCOPE-14 (an axis without a scopes entry) or SCOPE-12 (a scopes entry for the root
 # level), and no clause says whether a compiler reports those findings in addition. The set comparison of VEC-98
 # cannot tell the outcomes apart, so no compile case is written (VEC-114 spirit) until the spec settles the finding set.
-SCOPE-11: "Planned compiler unit test: a hierarchy whose axes list the root level is reported as E_SCOPE_DECLARATION (SCOPE-11, SCOPE-3, SCOPE-4), and never as E_DUPLICATE_DEFINITION. The finding set is not compared by a compile case, because SCOPE-14 and SCOPE-12 may add findings."
+SCOPE-11: "Java: tierwise-core RootLevelAxisTest#SCOPE_11_theRootLevelListedInAxesIsEScopeDeclaration, #SCOPE_11_theRootLevelListedInAxesWithAScopesEntryIsStillOnlyEScopeDeclaration, #SCOPE_11_aHierarchyWithOnlyARootLevelThatIsAlsoAnAxisIsEScopeDeclaration. They require every finding to be E_SCOPE_DECLARATION, none to be E_DUPLICATE_DEFINITION, and one at the repeated axis item; they do not compare the whole finding set."

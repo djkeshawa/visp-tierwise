@@ -2,7 +2,7 @@
 # One line each. An entry that says "Planned" names a test that is not written yet.
 
 # No compile case reaches this clause. Every error that decide can raise for an example's context and FactSet is rejected at compile time by POL-38 to POL-45, so a validation never sees the example's decision raise one.
-POL-46: "Planned evaluator-side unit test: an example whose decide call raises an evaluation error is reported as E_EXAMPLE_FAILED with that error's code in its message; no compile case can reach it, because POL-38 to POL-45 reject every such input first."
+POL-46: "Java: tierwise-core ExampleEvaluationErrorTest#POL_46_everyEvaluationErrorOfDecideIsAnExampleFailureThatNamesTheCode, ExampleRunnerTest#POL_46_AndFIND_34_anEvaluationErrorIsAnExampleFailureThatNamesTheCode."
 
 # This specification defines no test command (section 13, implementation note). A tool's test command is checked by its own unit test against the same example checks that validation runs.
-POL-49: "Planned CLI test: a test command lists each example by name, reports a failing example with E_EXAMPLE_FAILED and runs the same example checks as validation (POL-47)."
+POL-49: "Java: tierwise-cli TestCommandExampleChecksTest#POL_49_theTestCommandReportsTheSameFindingsAsValidation, #POL_49_theFailedExamplesAreExactlyThoseThatValidationReportsAsEExampleFailed, #POL_49_eachExampleIsIdentifiedByItsNameAndAFailureCarriesItsCode, #POL_49_whenValidationPassesEveryExampleIsReportedAsPassed."

@@ -5,13 +5,13 @@
 # does not fix. Entries that say "Planned" name a test that is not written yet.
 
 # The format of the tz name file is a property of the data file, not of any compile result.
-TYPE-36: "Planned spec-tool test: spec/data/tz-names.txt is UTF-8 with LF line endings, one zone or link name per line, with no comment and no blank line, sorted by code point, and the constant in spec/spec.md names the same release."
+TYPE-36: "Spec tool: js/spec-tools/test/tz-names.test.mjs, the four tests named 'TYPE-36: ...' (UTF-8 without a byte-order mark and with LF endings; one name per line, no comment or blank line; code-point order; the spec/spec.md constant names the release that TYPE-80 names)."
 
 # The content of the tz name file is the Zone and Link list of one release, which no compile result exposes.
-TYPE-80: "Planned spec-tool test: spec/data/tz-names.txt lists exactly the Zone and Link names of IANA tz release 2026e in its main files and in backward, excluding Factory and the backzone file."
+TYPE-80: "Opt-in spec-tool test: js/spec-tools/test/tz-names.test.mjs 'TYPE-80: tz-names.txt lists exactly the Zone and Link names of the pinned release' runs only when TIERWISE_TZDATA_DIR names an extracted tzdata release and is skipped otherwise, so CI does not enforce it; its parser test runs every time."
 
 # A key name declared in two files has no first or second declaration, because SRC-37 makes file order irrelevant, and no clause names the node that the finding is located at. The compile cases src-key-declared-twice-files and src-key-declared-twice-preset exercise the same rule through SRC-40 with a stated convention.
-KEY-1: "Planned compiler unit test: a key name declared in two schema files is reported as E_DUPLICATE_DEFINITION (KEY-1, SRC-40, SRC-41). Which declaration carries the finding is not fixed by the spec, so a unit test checks the code and the set of files, and the SRC-40 compile cases src-key-declared-twice-files and src-key-declared-twice-preset check one convention."
+KEY-1: "Java: tierwise-core KeyDuplicateTest#KEY_1_aKeyDeclaredInTwoSchemaFilesIsEDuplicateDefinition, #KEY_1_anIdenticalSecondDeclarationIsStillADuplicate, #KEY_1_aKeyDeclaredInAPresetAndInTheProjectIsADuplicate, #KEY_1_aKeyDeclaredInlineAndInAFileIsReportedInTheFile."
 
 # Two values for one key at one scope and node from two files have no first or second value, and no clause names the node that the finding is located at. The set comparison of VEC-98 would depend on that choice.
-KEY-12: "Planned compiler unit test: two values for one key at one scope and node, from a root values file and a root entry of a multi-node file, or from two files that map to one node, are reported as E_DUPLICATE_VALUE (KEY-12, SRC-42). The finding location is not fixed by the spec, so no compile case compares it."
+KEY-12: "Java: tierwise-core KeyDuplicateTest#KEY_12_aRootValuesFileAndARootEntryOfAMultiNodeFileAreEDuplicateValue, #KEY_12_aPathMappedFileAndAMultiNodeFileForOneNodeAreEDuplicateValue, #KEY_12_twoMultiNodeFilesWithTheSameNodeAreEDuplicateValue, #KEY_12_inlineValuesAndAValuesFileForOneNodeAreReportedInTheFile, #KEY_12_everyValueAfterTheFirstGetsOneFinding."
