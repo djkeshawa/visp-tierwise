@@ -85,6 +85,7 @@ The terms *validation*, *engine check*, *engine error*, *lint rule*, *severity*,
 | Code | Candidate names |
 | --- | --- |
 | `E_UNKNOWN_KEY` | declared keys |
+| `E_UNKNOWN_KIND` | declared kinds |
 | `E_UNKNOWN_SCOPE` | the root level, declared levels and declared axes |
 | `E_UNKNOWN_NODE` | the nodes of the same closed catalog |
 | `E_UNKNOWN_FACT` | declared facts |

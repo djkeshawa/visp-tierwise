@@ -51,6 +51,7 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [0023](adr/0023-s3-module-choices.md) | S3 module choices: location property, region key, HTTP client, conditional requests |
 | [0024](adr/0024-server-api-and-store-choices.md) | Server API and bundle store choices: publish encoding, `latest`, responses, error codes, record order, pointer bytes |
 | [0025](adr/0025-provider-timeout-upper-bound.md) | A provider timeout is at most 2^53−1 ms in every evaluator |
+| [0026](adr/0026-naming-explanations-and-kind-suggestions.md) | `explain naming/<name>` reads the project's pattern (`Tierwise.namingPatterns`); `E_UNKNOWN_KIND` suggests declared kinds |
 
 ## Browser use
 

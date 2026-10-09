@@ -33,7 +33,7 @@ was available; the JAR was.
 | Code | Meaning |
 | --- | --- |
 | `0` | Success. No finding has the severity `error`, and every example passed |
-| `1` | A finding has the severity `error`, an example failed, `lint` was asked to run on a project with an engine finding, or `explain` knows no such code |
+| `1` | A finding has the severity `error`, an example failed, `lint` was asked to run on a project with an engine finding, or `explain` knows no such code or naming pattern |
 | `2` | A usage error (an unknown command or option, a bad option value) or an I/O failure (no such directory, a file that exists) |
 
 ## Output
@@ -256,18 +256,35 @@ core opens no connection, and the digest is checked before the preset is used.
 ## tierwise explain
 
 ```text
-Usage: tierwise explain [-hV] [CODE|RULE]
+Usage: tierwise explain [-hV] [--project=DIR] [CODE|RULE]
 Explain an error code or a lint rule, for example E_UNKNOWN_KEY or
 values/no-op. Without an argument, list them all.
-      [CODE|RULE]   An engine or evaluation error code, or a lint rule
-                      identifier.
-  -h, --help        Show this help message and exit.
-  -V, --version     Print version information and exit.
+      [CODE|RULE]     An engine or evaluation error code, or a lint rule
+                        identifier.
+  -h, --help          Show this help message and exit.
+      --project=DIR   The project whose naming patterns explain naming/<name>
+                        rules (default: the current directory, when it holds
+                        tierwise.yaml).
+  -V, --version       Print version information and exit.
 ```
 
 Prints the catalogue entry of an error code or a lint rule: what it means, when it is raised, a minimal example and how
 to fix it. Without an argument it lists every code and rule, one per line. The text is the specification's
 `error-codes.md`, built into the JAR. A name that is not in the catalogue exits with 1.
+
+A naming rule `naming/<name>` is explained by the pattern that the project declares or inherits from a preset
+(FIND-30, [ADR 0026](../adr/0026-naming-explanations-and-kind-suggestions.md)). The project is the one named by
+`--project`, or the current directory when it holds `tierwise.yaml`. The command prints the pattern's `description`.
+When the pattern has none, it prints the `naming/*` entry followed by the pattern's category and pattern. A project
+with errors still explains the patterns it could read. A naming rule that the project doesn't declare exits with 1 and
+suggests a close pattern name. Without a project, the command prints the `naming/*` entry and a note that the pattern
+needs a project.
+
+```console
+$ java -jar tierwise.jar explain --project samples/commerce naming/key
+naming/key
+Keys have three dot-separated segments. The first is lowercase letters. The other two are lowercase letters and underscores.
+```
 
 ````console
 $ java -jar tierwise.jar explain E_QUANTIFIER_REQUIRED

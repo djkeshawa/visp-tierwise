@@ -15,17 +15,16 @@ FIND-15: "Java: tierwise-core FindingContractTest#FIND_15_everyEngineFindingHasS
 FIND-16: "Java: tierwise-core FindingContractTest#FIND_16_eachLintFindingCarriesTheResolvedSeverityOfItsRule, #FIND_16_theSeverityIsTheOneResolvedAcrossPresetAndManifest, #FIND_16_aRuleThatResolvesToOffReportsNothing."
 FIND-25: "Java: tierwise-core FindingContractTest#FIND_25_twoChecksWithTheSameFindingKeyReportOneFinding, #FIND_25_twoFindingsThatDifferOnlyInCodeOrLineAreTwoFindings."
 FIND-26: "Java: tierwise-core FindingContractTest#FIND_26_theValidationListsItsFindingsByFileLinePathAndCode, #FIND_26_theFindingsOfARealProjectAreInTheOrderOfFind26."
-FIND-28: "Java: tierwise-core FindingContractTest#FIND_28_aSuggestionIsTheExactTextOfADeclaredNameOfTheMatchingCategory, #FIND_28_aSuggestionForAnUnknownLintRuleIsARuleIdentifier."
+FIND-28: "Java: tierwise-core FindingContractTest#FIND_28_aSuggestionIsTheExactTextOfADeclaredNameOfTheMatchingCategory, #FIND_28_aSuggestionForAnUnknownKindIsADeclaredKindName, #FIND_28_aSuggestionForAnUnknownLintRuleIsARuleIdentifier."
 
 # Specification-review rule and the explain command (FIND-14, FIND-29, FIND-30).
 FIND-14: "Specification-review rule: a code keeps its meaning in later versions. It is checked when the catalogue changes, not by a runner."
 FIND-29: "Java: tierwise-cli ExplainCatalogueTest#FIND_29_everyEngineCodeAndLintRuleHasAnEntryWithTheRationaleAndTheFix, #FIND_29_explainPrintsTheCatalogueEntryOfEveryCodeAndRule."
-FIND-30: "Planned CLI test: explain for a naming rule prints the pattern description, or the family explanation followed by the pattern (FIND-30)."
+FIND-30: "Java: tierwise-cli ExplainNamingRuleTest#FIND_30_aPatternWithADescriptionIsExplainedByItsDescription, #FIND_30_aPatternWithoutADescriptionIsExplainedByTheFamilyFollowedByThePattern, #FIND_30_aPatternFromAPresetIsExplainedAndALaterLayerReplacesIt, #FIND_30_aProjectWithErrorFindingsStillExplainsThePatternsItCouldRead, #FIND_30_aNamingRuleThatTheProjectDoesNotDeclareExitsWithOneAndSuggestsACloseName, #FIND_30_withoutAProjectTheFamilyEntryIsPrintedWithANoteThatThePatternNeedsAProject; tierwise-core NamingPatternsTest (ADR 0026)."
 
 # A URL preset and a path outside the project root are not expressible in a compile case: VEC-92 forbids
 # a case from naming a path that resolves outside its project root (MANIFEST-12).
 MANIFEST-12: "Java: tierwise-core ManifestPathEscapeTest (seven MANIFEST_12 tests: a values file, a namespace schema, glob matches, a path-mapped match and a preset directory reached through symbolic links, and the accepted inside cases), PresetRulesTest#MANIFEST_12_aSymbolicLinkToAFileOutsideTheProjectRootIsEManifest, SourceSelectionTest#MANIFEST_12_aGlobMatchThatResolvesOutsideTheProjectRootIsEManifestAtThePattern."
-MANIFEST-18: "Blocked on a specification gap: no clause says whether a project that declares no decision_hierarchy is valid, so no case can expect a bundle or a finding for a manifest with specVersion alone. Planned test once settled: such a manifest is accepted (MANIFEST-18)."
 
 # Retrieval of URL presets needs a fake retrieval interface, which the suite cannot serve (MANIFEST-27 note).
 MANIFEST-28: "Java: tierwise-core UrlPresetDigestTest#MANIFEST_28_retrievedBytesWhoseDigestDiffersAreEPresetAtTheExtendsItem, #MANIFEST_28_theDigestIsComputedOverTheExactRetrievedBytes, #MANIFEST_28_bytesThatMatchTheDigestAreAccepted (fake retrieval through the PresetFetcher of CompileOptions)."

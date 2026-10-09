@@ -8,7 +8,7 @@
 | CLI output | Findings print as `file:line: severity code message`, plus the suggestion when there is one. `--format json` emits `{command, ok, counts, findings, …}`; `test` adds `examples` and `lint` adds `lintRan`. Exit codes: 0 ok, 1 validation failed, 2 usage error. |
 | `lint` with engine findings | Prints a notice and exits 1 without running lint (LINT-11, FIND-5) |
 | `compile` default output | Without `-o`, writes `bundle.json` in the current directory. `--provenance` writes `<stem>.provenance.json`, with `gitCommit` from `GITHUB_SHA` or git, and `createdAt` in UTC. |
-| `explain naming/<name>` | Prints the `naming/*` family entry. Declared pattern descriptions need a project and are deferred. |
+| `explain naming/<name>` | Amended by [ADR 0026](0026-naming-explanations-and-kind-suggestions.md): with a project (`--project DIR`, or the current directory when it holds `tierwise.yaml`) it prints the pattern's `description`, or the `naming/*` family entry followed by the pattern. Without a project it prints the family entry and says that the pattern needs a project. |
 | Init templates | Kept in `java/tierwise-cli/templates/`, outside `src/main`, because they are example projects that name preset kinds |
 | Codegen names | Java constants in `UPPER_SNAKE`, splitting at non-alphanumerics. TypeScript keeps names as string-literal unions. Collisions and names with no ASCII letter or digit fail with exit 1. The default Java package is `tierwise.generated`. `--package` is rejected with `--lang ts`. Codegen never deletes files. |
 | Codegen types | Typed keys and features. FactSets stay untyped, and object values are `Map<String, Object>` or `Record<string, unknown>`. Typed facts are post-0.1. |

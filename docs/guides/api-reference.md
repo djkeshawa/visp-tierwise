@@ -25,7 +25,7 @@ Anything that is not documented as public is internal. The public packages are s
 
 | Module or package | Public entry points |
 | --- | --- |
-| `tierwise-core`, package `io.github.tierwise.core` | `Tierwise` (`compile`, `loadBundle`, `evaluator`), `Evaluator` (`resolve`, `resolveLocal`, `decide`), `Context`, `FactSet`, `EvaluatorOptions`, `LevelValueProvider`, `EvaluationListener`, `Resolved`, `Decision`, `TierwiseException` |
+| `tierwise-core`, package `io.github.tierwise.core` | `Tierwise` (`compile`, `namingPatterns`, `loadBundle`, `evaluator`), `NamingPattern`, `Evaluator` (`resolve`, `resolveLocal`, `decide`), `Context`, `FactSet`, `EvaluatorOptions`, `LevelValueProvider`, `EvaluationListener`, `Resolved`, `Decision`, `TierwiseException` |
 | `tierwise-spring-boot-starter`, package `io.github.tierwise.spring` | `Resolver`, `DecisionEngine`, `TierwiseEvaluators`, `TierwiseProvider`, `BundleSource`, `TierwiseObserver` |
 | `tierwise-openfeature`, package `io.github.tierwise.openfeature` | `TierwiseProvider`, `TierwiseMetadata` |
 | `@tierwise/evaluator` | `loadBundle`, `createEvaluator`, `TierwiseError` |

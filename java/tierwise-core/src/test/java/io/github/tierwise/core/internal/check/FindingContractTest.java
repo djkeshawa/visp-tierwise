@@ -458,6 +458,31 @@ class FindingContractTest {
   }
 
   @Test
+  void FIND_28_aSuggestionForAnUnknownKindIsADeclaredKindName() throws IOException {
+    write(dir, "presets/kinds.yaml", "kinds:\n  inherited_kind: { strategies: [any] }\n");
+    write(dir, "tierwise.yaml", "specVersion: \"0.1\"\nextends:\n  - presets/kinds.yaml\n"
+        + "sources:\n  schema: ['s/*.yaml']\n");
+    write(dir, "s/core.yaml", """
+        decision_hierarchy:
+          levels: [global]
+        kinds:
+          toggle_kind: { strategies: [any, all] }
+        keys:
+          shop.one.flag: { type: boolean, combine: any, settable_at: [global], kind: togle_kind }
+          shop.two.flag: { type: boolean, combine: any, settable_at: [global], kind: inherited_knd }
+          shop.three.flag: { type: boolean, combine: any, settable_at: [global], kind: zzzzzzzzzzzzzz }
+        """);
+    CompileResult result = compile(dir);
+    Map<String, Optional<String>> suggestions = new java.util.TreeMap<>();
+    for (Finding finding : result.findings()) {
+      assertEquals(Code.E_UNKNOWN_KIND, finding.code(), result.findings().toString());
+      suggestions.put((String) finding.path().get(1), finding.suggestion());
+    }
+    assertEquals(Map.of("shop.one.flag", Optional.of("toggle_kind"), "shop.two.flag", Optional.of("inherited_kind"),
+        "shop.three.flag", Optional.empty()), suggestions, "FIND-27, FIND-28: a declared kind name, exactly");
+  }
+
+  @Test
   void FIND_28_aSuggestionForAnUnknownLintRuleIsARuleIdentifier() throws IOException {
     write(dir, "presets/p.yaml", "lint:\n  rules:\n    schema/unusd: warn\n");
     write(dir, "tierwise.yaml", "specVersion: \"0.1\"\nextends:\n  - presets/p.yaml\nlint:\n  rules:\n"

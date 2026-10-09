@@ -2,7 +2,9 @@ package io.github.tierwise.core;
 
 import io.github.tierwise.core.internal.bundle.BundleReader;
 import io.github.tierwise.core.internal.check.Compiler;
+import io.github.tierwise.core.internal.check.DeclaredNamingPatterns;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -10,7 +12,8 @@ import java.util.Objects;
  *
  * <p>{@link #compile(Path)} validates a project and writes the canonical bundle. {@link
  * #loadBundle(byte[])} verifies bundle bytes, and {@link #evaluator(LoadedBundle, EvaluatorOptions)}
- * creates the object that answers {@code resolve} and {@code decide}.
+ * creates the object that answers {@code resolve} and {@code decide}. {@link #namingPatterns(Path,
+ * CompileOptions)} reads the naming patterns that explain the lint rules {@code naming/<name>}.
  */
 public final class Tierwise {
 
@@ -38,6 +41,26 @@ public final class Tierwise {
     Objects.requireNonNull(projectRoot, "projectRoot");
     Objects.requireNonNull(options, "options");
     return Compiler.compile(projectRoot, options);
+  }
+
+  /**
+   * Reads the naming patterns in effect for a project: those its shared schema files and inline schema
+   * declare and those it inherits from its presets, a later layer replacing an earlier pattern of the same
+   * name (LINT-12, LINT-14, MANIFEST-32). A tool uses them to explain the lint rule {@code naming/<name>}
+   * (FIND-30).
+   *
+   * <p>This is not a validation and reports no finding. A project with faults still gives every pattern
+   * whose {@code category} and {@code pattern} are strings; a pattern without them is left out.
+   *
+   * @param projectRoot the directory that contains {@code tierwise.yaml}
+   * @param options the compile options, which supply the fetcher for URL presets
+   * @return an unmodifiable map from pattern name to pattern, in code-point order of the names; empty when
+   *     the project declares no pattern or has no readable manifest
+   */
+  public static Map<String, NamingPattern> namingPatterns(Path projectRoot, CompileOptions options) {
+    Objects.requireNonNull(projectRoot, "projectRoot");
+    Objects.requireNonNull(options, "options");
+    return DeclaredNamingPatterns.read(projectRoot, options);
   }
 
   /**

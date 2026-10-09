@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +17,8 @@ import java.util.Optional;
  *
  * <p>An entry is a third-level heading ({@code ### E_UNKNOWN_KEY}, {@code ### values/no-op}) and the text
  * up to the next heading. Only the entries between {@code ## Engine errors} and {@code ## Index} count.
- * The entry {@code naming/*} explains every naming rule {@code naming/<name>} (FIND-30).
+ * The entry {@code naming/*} explains a naming rule {@code naming/<name>} when no project is given; with a
+ * project, {@link ExplainCommand} uses the declared pattern (FIND-30).
  */
 final class Explanations {
 
@@ -125,11 +127,47 @@ final class Explanations {
         text += "\n\n`" + query.trim() + "` checks the naming pattern called `"
             + query.trim().substring(NAMING_PREFIX.length())
             + "`. The description declared for that pattern in your project or its presets is the"
-            + " explanation of this rule (FIND-30); the text above covers the whole family.";
+            + " explanation of this rule (FIND-30); the text above covers the whole family. The pattern needs a"
+            + " project: run `tierwise explain --project DIR " + query.trim() + "`, or run the command in the"
+            + " project directory.";
       }
       return Optional.of(text);
     }
     return Optional.empty();
+  }
+
+  /**
+   * Returns the text of the naming family entry {@code naming/*}, without its heading (FIND-30).
+   *
+   * @return the entry text
+   * @throws UsageException if the catalogue has no such entry
+   */
+  String namingFamily() {
+    String text = entries.get(NAMING_FAMILY);
+    if (text == null) {
+      throw new UsageException("the error-code catalogue has no entry " + NAMING_FAMILY);
+    }
+    return text;
+  }
+
+  /**
+   * Finds the name closest to an unknown one, by edit distance.
+   *
+   * @param unknown the name that matched nothing
+   * @param candidates the known names
+   * @return the closest candidate within a small distance, or empty when none is close
+   */
+  static Optional<String> closest(String unknown, Collection<String> candidates) {
+    String best = null;
+    int bestDistance = Math.max(2, unknown.length() / 4) + 1;
+    for (String candidate : candidates) {
+      int distance = distance(unknown, candidate);
+      if (distance < bestDistance) {
+        best = candidate;
+        bestDistance = distance;
+      }
+    }
+    return Optional.ofNullable(best);
   }
 
   /**
