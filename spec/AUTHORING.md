@@ -8,8 +8,8 @@ precisely.
 
 1. `docs/adr/0005`, `0007`–`0012`: settled decisions. They win over everything else.
 2. `docs/requirements.md` §4–§6: the normative draft.
-3. `docs/implementation-plan.md` (Phase 1): the bundle `content` layout proposal and
-   the vector formats.
+3. The JSON Schemas in `spec/schemas/`: the bundle `content` layout and the vector
+   formats.
 
 Never invent semantics. If the sources don't decide something a section needs,
 don't guess. Write the clause as `**[AREA-n]** *(OPEN)* <the question>` and list it

@@ -63,7 +63,7 @@ def check_documents():
         "LICENSE", "NOTICE", "README.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md",
         "SECURITY.md", "GOVERNANCE.md", "MAINTAINERS.md", "CHANGELOG.md", "AGENTS.md",
         "docs/vision.md", "docs/requirements.md", "docs/roadmap.md",
-        "docs/implementation-plan.md", "docs/open-questions.md", "mkdocs.yml",
+        "docs/open-questions.md", "mkdocs.yml",
         ".github/PULL_REQUEST_TEMPLATE.md", ".github/ISSUE_TEMPLATE/bug_report.yml",
         ".github/ISSUE_TEMPLATE/feature_request.yml", ".github/dependabot.yml",
     ]

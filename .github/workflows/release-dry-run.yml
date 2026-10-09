@@ -3,7 +3,7 @@ name: Release dry run
 # Builds every release artifact without publishing anything: the JARs and CycloneDX SBOMs, the native binaries
 # on Linux, macOS and Windows, and the Docker image (built, not pushed). Each build then runs the CLI against
 # the samples. The workflow has no secrets and read-only permissions. Signing, publishing and the release
-# itself belong to a later phase (see docs/implementation-plan.md, phase 9).
+# itself belong to release.yml (see docs/release-process.md).
 
 on:
   workflow_dispatch:

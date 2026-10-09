@@ -144,8 +144,8 @@ through an [RFC](docs/rfc-template.md).
 
 ## Security
 
-Report vulnerabilities as described in [SECURITY.md](SECURITY.md). Private
-vulnerability reporting is not configured yet. Enforce every decision on the server,
+Report vulnerabilities privately through GitHub's private vulnerability reporting,
+as described in [SECURITY.md](SECURITY.md). Enforce every decision on the server,
 never in the browser.
 
 ## License

@@ -151,7 +151,7 @@ The workflow uploads with the server id `central`, which is what `central-publis
 
 ### 7. Re-check the names on the registries
 
-Phase 9 of the [implementation plan](implementation-plan.md) asks for a final registry check before the first publish. On 2026-10-09 the Maven Central search for the group answered with no result:
+Phase 9 of the [roadmap](roadmap.md) asks for a final registry check before the first publish. On 2026-10-09 the Maven Central search for the group answered with no result:
 
 ```sh
 curl -s "https://search.maven.org/solrsearch/select?q=g:io.github.tierwise&rows=1&wt=json" | python3 -c "import json,sys; print('numFound', json.load(sys.stdin)['response']['numFound'])"

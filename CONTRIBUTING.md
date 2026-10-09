@@ -1,8 +1,7 @@
 # Contributing to Tierwise
 
 Tierwise is pre-release. Start with the [roadmap](docs/roadmap.md) to see the
-current phase, and with the [implementation plan](docs/implementation-plan.md) for
-its work items.
+current phase and what remains before 0.1.0.
 
 ## Process
 
@@ -46,7 +45,7 @@ signing.
 
 - Non-trivial design decisions need a short ADR in `docs/adr/`. Each new dependency
   needs an ADR before it is added.
-- Once Phase 1 is accepted, spec changes need an RFC: a pull request against
+- Spec changes need an RFC: a pull request against
   `spec/` using the [RFC template](docs/rfc-template.md), with rationale,
   compatibility impact and conformance changes. Breaking changes need a major spec
   version.

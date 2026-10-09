@@ -24,7 +24,7 @@ approved. Raw consultation streams stay outside deliverables.
 Claude recommended complete runtime skipping and an immutable canonical artifact
 with separate provenance. Codex assessed those recommendations against Tierwise's
 existing requirements and an independent consistency review. The selected
-decisions below are integrated into [the amended brief](../history/build-brief-2026-10-07.md).
+decisions below are integrated into the amended brief, which `docs/requirements.md` supersedes.
 
 ## Decision: node admission
 
@@ -100,7 +100,7 @@ These are selected requirements for specification work, not implemented runtime
 behavior. Add shared vectors in Phase 1 for skip equivalence, independent scopes,
 provider call counts, whole-context rejection before calls, strict source
 membership, no effective binding, deterministic artifacts and provenance linkage.
-The [consultation review](../history/claude-consultation.md) records the test inventory.
+The conformance vectors under `spec/conformance/` carry the test inventory.
 
 No production source, build adapter or dependency has changed. Phase 0 acceptance
 and approval of a complete Phase 1 specification remain required by the brief.

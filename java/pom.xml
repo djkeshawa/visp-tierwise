@@ -23,19 +23,16 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <!--
-    Maven Central requires at least one <developers> entry. MAINTAINERS.md says no maintainer is assigned
-    (open question O3), and nobody may be listed without agreeing to it. The owner adds the entry before the
-    first release; the Central validation rejects a release without it. Format:
-      <developers>
-        <developer>
-          <id>github-user-name</id>
-          <name>Full name</name>
-          <url>https://github.com/github-user-name</url>
-        </developer>
-      </developers>
-    Do not add an email address unless the person asks for it: it ends up in the public POM.
-  -->
+  <developers>
+    <developer>
+      <id>djkeshawa</id>
+      <name>djkeshawa</name>
+      <url>https://github.com/djkeshawa</url>
+      <roles>
+        <role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
   <scm>
     <!-- The attributes keep the module POMs from appending their artifactId to these URLs. -->
     <url child.scm.url.inherit.append.path="false">https://github.com/tierwise/tierwise</url>

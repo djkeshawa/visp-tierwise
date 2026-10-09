@@ -2,7 +2,7 @@
 
 - Status: accepted for the Phase 1 specification draft (delegated technical decision)
 - Date: 2026-10-08
-- Resolves: open questions 1 and 13 ([history](../history/open-questions-2026-10-07.md))
+- Resolves: open questions 1 and 13 (Phase 0 review)
 - Builds on: [ADR 0005](0005-node-admission-and-canonical-artifacts.md)
 
 ## Context

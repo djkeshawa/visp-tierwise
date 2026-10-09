@@ -3,11 +3,9 @@
 ## Where things are
 
 - Direction: `docs/vision.md`. Requirements (with the normative draft in §4):
-  `docs/requirements.md`. Sequencing: `docs/roadmap.md`. Work items:
-  `docs/implementation-plan.md`.
+  `docs/requirements.md`. Sequencing: `docs/roadmap.md`.
 - Decisions: `docs/adr/`. Owner-only questions: `docs/open-questions.md`.
-  `docs/history/` is a frozen record; don't edit it.
-- Once Phase 1 is accepted, `spec/spec.md` is authoritative. When code and spec
+- `spec/spec.md` is authoritative. When code and spec
   disagree, the code is wrong.
 
 ## How to work

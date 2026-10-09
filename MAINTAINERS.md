@@ -1,15 +1,14 @@
 # Maintainers
 
-**No maintainers have been assigned.** Do not infer project ownership or release authority from generated files, local paths or commit authors.
-
-| Responsibility | Assigned person or team | Private contact |
+| Responsibility | Maintainer | Private contact |
 | --- | --- | --- |
-| Project stewardship and phase reviews | Unassigned | Unassigned |
-| Specification and RFC approval | Unassigned | Unassigned |
-| Java implementation | Unassigned | Unassigned |
-| JavaScript implementation | Unassigned | Unassigned |
-| Security response | Unassigned | Unassigned |
-| Code of Conduct enforcement | Unassigned | Unassigned |
-| Release signing and publishing | Unassigned | Unassigned |
+| Project lead and stewardship | [@djkeshawa](https://github.com/djkeshawa) | See below |
+| Specification and RFC approval | [@djkeshawa](https://github.com/djkeshawa) | See below |
+| Java implementation | [@djkeshawa](https://github.com/djkeshawa) | See below |
+| JavaScript implementation | [@djkeshawa](https://github.com/djkeshawa) | See below |
+| Security response | [@djkeshawa](https://github.com/djkeshawa) | GitHub private vulnerability reporting ([SECURITY.md](SECURITY.md)) |
+| Code of Conduct enforcement | [@djkeshawa](https://github.com/djkeshawa) | See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md#enforcement-contact) |
+| Release signing and publishing | [@djkeshawa](https://github.com/djkeshawa) | — |
 
-The Phase 0 review must confirm the GitHub home, initial maintainers, governance, conduct enforcement and private reporting channels. Names and contacts must be entered with the people's agreement. Once assigned, maintainers follow `GOVERNANCE.md`.
+Tierwise starts with a single maintainer. New maintainers are appointed as described
+in [GOVERNANCE.md](GOVERNANCE.md), and are listed here only with their agreement.

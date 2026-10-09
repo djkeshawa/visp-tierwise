@@ -49,6 +49,5 @@ before announcing the name, and re-check all registries before the first publish
 ## Consequences
 
 All build coordinates, module directories, package names and docs use the new
-identity. Historical records in `docs/history/` keep the old name as written at the
-time. The local checkout directory was renamed from `strata/` to `tierwise/` on 2026-10-09; renaming it is a local
+identity. The local checkout directory was renamed from `strata/` to `tierwise/` on 2026-10-09; renaming it is a local
 choice with no effect on the project.

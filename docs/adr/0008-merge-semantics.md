@@ -2,7 +2,7 @@
 
 - Status: accepted for the Phase 1 specification draft (delegated technical decision)
 - Date: 2026-10-08
-- Resolves: open questions 3, 4, 5, 6, 7 and 16 ([history](../history/open-questions-2026-10-07.md))
+- Resolves: open questions 3, 4, 5, 6, 7 and 16 (Phase 0 review)
 
 ## Context
 

@@ -2,7 +2,7 @@
 
 - Status: accepted for the Phase 1 specification draft (delegated technical decision)
 - Date: 2026-10-08
-- Resolves: open question 8 ([history](../history/open-questions-2026-10-07.md)) and defines the runtime error model
+- Resolves: open question 8 (Phase 0 review) and defines the runtime error model
 
 ## Context
 

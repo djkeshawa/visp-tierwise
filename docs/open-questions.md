@@ -1,17 +1,16 @@
 # Open questions
 
 All 19 technical questions from the Phase 0 review are resolved by ADRs 0005 and
-0007–0011. The original list is kept in
-[history](history/open-questions-2026-10-07.md). What remains is for the
+0007–0011.  What remains is for the
 **project owner**: ownership, accounts, people and approvals.
 
 | # | Question | Needed by | Proposed answer |
 | --- | --- | --- | --- |
 | ~~O1~~ | ~~Approve the dependency baseline~~ | — | **Approved 2026-10-08** ([ADR 0012](adr/0012-parsing-and-dependency-baseline.md)) |
 | O2 | Claim the `tierwise` GitHub organisation and the `@tierwise` npm scope | Before announcing the name; required by Phase 9 | Claim both now (free) |
-| O3 | Who are the initial maintainers? | Before external contributions | The owner, as sole maintainer to start |
-| O4 | Private security and conduct contacts | Before the repository is public | GitHub private vulnerability reporting, plus a dedicated email |
-| O5 | Governance tie-break and maintainer appointment rules | Before a second maintainer joins | Lazy consensus; the project lead breaks ties until there are three or more maintainers |
+| ~~O3~~ | ~~Who are the initial maintainers?~~ | — | **Answered 2026-10-10:** the owner, [@djkeshawa](https://github.com/djkeshawa), as sole maintainer ([MAINTAINERS.md](https://github.com/tierwise/tierwise/blob/main/MAINTAINERS.md)) |
+| ~~O4~~ | ~~Private security and conduct contacts~~ | — | **Answered 2026-10-10:** GitHub private vulnerability reporting for security; conduct reports to the maintainer through GitHub. No email is published |
+| ~~O5~~ | ~~Governance tie-break and maintainer appointment rules~~ | — | **Adopted 2026-10-10** as proposed: lazy consensus; the project lead breaks ties until there are three or more maintainers ([GOVERNANCE.md](https://github.com/tierwise/tierwise/blob/main/GOVERNANCE.md)) |
 | O6 | Should the repository be public from Phase 1 (developing the spec in the open) or only from release? | Phase 1 start | Public from Phase 1: spec feedback is most valuable before it freezes |
 
 ## Technical decision process

@@ -3,8 +3,7 @@
 Release **0.1.0** ships the full scope in [the requirements](requirements.md). Work
 proceeds in ten phases, and each one ends with a **review stop**: a summary, the
 evidence for its exit criteria, and every decision the requirements didn't dictate.
-Accepting that review authorises the next phase. The detailed plan for the next
-phases is in [the implementation plan](implementation-plan.md).
+Accepting that review authorises the next phase.
 
 ```
  0 Foundations ─► 1 Spec v0.1 ─► 2 Java validation ─► 3 Java evaluation ─┬─► 4 JS evaluator ─┐

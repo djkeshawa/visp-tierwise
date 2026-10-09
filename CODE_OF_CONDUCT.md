@@ -6,8 +6,9 @@ Participation must respect people's dignity and privacy. Harassment, intimidatio
 
 ## Enforcement contact
 
-**Unassigned in Phase 0.** No public repository or private conduct-reporting channel has been configured. Before accepting external contributions, the project owner must appoint enforcement leads in `MAINTAINERS.md` and add a private reporting method here. Do not post private incident details in public issues.
+The enforcement lead is listed in [MAINTAINERS.md](MAINTAINERS.md). To report an
+incident privately, contact [@djkeshawa](https://github.com/djkeshawa) directly
+through GitHub, or use GitHub's [content reporting](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam)
+for abusive content. Do not post private incident details in public issues.
 
-Once appointed, enforcement leads will handle reports confidentially and fairly, use the Covenant's correction, warning, temporary ban and permanent ban guidelines, and explain relevant moderation decisions. A lead involved in an incident must recuse themselves; a separate lead must review it.
-
-The private reporting method and enforcement appointments require Phase 0 review.
+Enforcement leads handle reports confidentially and fairly, use the Covenant's correction, warning, temporary ban and permanent ban guidelines, and explain relevant moderation decisions. A lead involved in an incident must recuse themselves; while the project has a single maintainer, such a report goes to GitHub through content reporting.

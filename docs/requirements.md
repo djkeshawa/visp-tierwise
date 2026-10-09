@@ -1,7 +1,7 @@
 # Tierwise requirements
 
 **Status:** baseline for the Phase 1 specification, 2026-10-08. This document
-consolidates the [original brief](history/build-brief-2026-10-07.md), the applied
+consolidates the original build brief, the applied
 prompt review and ADRs 0005–0012. Section 4 is the **normative draft**. Phase 1
 turns it into `spec/spec.md`, after which the spec is authoritative and this
 section is only background.
@@ -127,7 +127,7 @@ tierwise/
 │   └── openfeature/            @tierwise/openfeature
 ├── presets/                    recommended, minimal, entitlements
 ├── samples/                    commerce, retail-pos, saas-entitlements
-└── docs/                       site source, adr/, history/
+└── docs/                       site source, adr/
 ```
 
 ### 3.2 Components

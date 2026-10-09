@@ -1,11 +1,7 @@
 Tierwise
-
-An unreleased foundation for a layered configuration and decision library.
+Copyright 2026 The Tierwise authors
 
 Licensed under the Apache License, Version 2.0. See LICENSE.
 
-Tierwise is a working name. This notice makes no claim to a registered
-trademark, publishing namespace or public repository identity.
-
-No third-party runtime code is included in the Phase 0 foundation.
-Third-party notices must be reviewed as dependencies are introduced.
+Third-party dependencies and their licenses are listed in the CycloneDX SBOM
+published with each release.

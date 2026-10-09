@@ -17,12 +17,10 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [Changelog](../CHANGELOG.md) | What 0.1.0 contains, by package |
 | [Quickstart: Java](quickstart-java.md), [Quickstart: JavaScript](quickstart-js.md) | A first project in each language (not yet verified on a clean machine) |
 | [CLI reference](guides/cli-reference.md), [Modeling guide](guides/modeling.md) | The `tierwise` commands, and how to describe levels, keys and decisions |
-| [Implementation plan](implementation-plan.md) | Work items for each phase |
 | [Benchmarks](benchmarks.md) | In-process `resolve` and `decide` cost in both evaluators |
 | [Open questions](open-questions.md) | What only the project owner can decide |
 | [Decisions (ADRs)](adr/) | Why each non-obvious choice was made |
 | [Contributing](contributing.md), [RFC template](rfc-template.md) | How to propose changes |
-| [History](history/) | The original brief, prompt review and Phase 0 records (frozen) |
 
 ## Decision index
 
