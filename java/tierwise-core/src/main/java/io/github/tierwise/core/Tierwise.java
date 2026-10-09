@@ -1,5 +1,6 @@
 package io.github.tierwise.core;
 
+import io.github.tierwise.core.internal.bundle.BundleReader;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -47,20 +48,20 @@ public final class Tierwise {
    */
   public static LoadedBundle loadBundle(byte[] bytes) {
     Objects.requireNonNull(bytes, "bytes");
-    throw new UnsupportedOperationException("not implemented: internal.bundle");
+    return BundleReader.read(bytes);
   }
 
   /**
    * Creates an evaluator for a loaded bundle (EVAL-4). It calls no provider.
    *
    * @param bundle a bundle returned by {@link #loadBundle(byte[])}
-   * @param options providers, their timeouts and the listener
+   * @param options providers, their timeouts and the listener; {@code null} counts as empty options
+   *     (EVAL-28)
    * @return the evaluator
    * @throws TierwiseException with {@code E_EVALUATOR_OPTIONS} or {@code E_PROVIDER_MISSING}
    */
   public static Evaluator evaluator(LoadedBundle bundle, EvaluatorOptions options) {
     Objects.requireNonNull(bundle, "bundle");
-    Objects.requireNonNull(options, "options");
-    throw new UnsupportedOperationException("not implemented: internal.eval");
+    return io.github.tierwise.core.internal.eval.EvaluatorImpl.create(bundle, options);
   }
 }

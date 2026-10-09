@@ -25,21 +25,23 @@ class TierwiseTest {
   }
 
   @Test
-  void loadBundleIsNotImplementedYet() {
-    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class,
-        () -> Tierwise.loadBundle(new byte[0]));
-    assertEquals("not implemented: internal.bundle", e.getMessage());
+  void loadBundleRejectsBytesThatAreNotABundle() {
+    TierwiseException e = assertThrows(TierwiseException.class, () -> Tierwise.loadBundle(new byte[0]));
+    assertEquals(Code.E_BUNDLE_INTEGRITY, e.code());
   }
 
   @Test
-  void evaluatorIsNotImplementedYet() {
+  void evaluatorIsCreatedForALoadedBundle() {
     LoadedBundle bundle = new LoadedModel("sha256:" + "0".repeat(64), new Model("1", "0.1",
         new Hierarchy(List.of("level_root"), List.of(), Map.of()), Map.of(), Map.of(), Map.of(), Values.EMPTY,
         Map.of()));
-    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class,
-        () -> Tierwise.evaluator(bundle, EvaluatorOptions.none()));
-    assertEquals("not implemented: internal.eval", e.getMessage());
+    Evaluator evaluator = Tierwise.evaluator(bundle, EvaluatorOptions.none());
     assertEquals("sha256:" + "0".repeat(64), bundle.bundleVersion());
+    assertEquals(Code.E_UNKNOWN_KEY, assertThrows(TierwiseException.class,
+        () -> evaluator.resolve(Context.empty(), "no.such.key")).code());
+    assertEquals(Code.E_UNKNOWN_FEATURE, assertThrows(TierwiseException.class,
+        () -> evaluator.decide(Context.empty(), "no.such.feature", FactSet.empty())).code());
+    assertTrue(Tierwise.evaluator(bundle, null) != null, "omitted options count as empty (EVAL-28)");
   }
 
   @Test

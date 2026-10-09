@@ -86,7 +86,7 @@ Steps 4 to 6 raise no error. A missing fact is not an error ([FACT-21], [RULE-42
 
 **[EVAL-21]** An operation MUST NOT raise an error because no binding applies. A compiled feature always has a selected binding ([BIND-13], ADR 0007 §1), so this specification defines no such error.
 
-**[EVAL-56]** When `bundleFormatVersion` or `specVersion` is missing from `content`, load bundle MUST raise `E_BUNDLE_INTEGRITY`. When either is present with a value other than exactly the string `"1"` or `"0.1"` respectively, whatever its JSON type, load bundle MUST raise `E_BUNDLE_UNSUPPORTED` ([BUNDLE-137]) (ADR 0014).
+**[EVAL-56]** When `bundleFormatVersion` or `specVersion` is missing from `content`, load bundle MUST raise `E_BUNDLE_INTEGRITY`. When either is present with a value other than exactly the string `"1"` or `"0.1"` respectively, whatever its JSON type, load bundle MUST raise `E_BUNDLE_UNSUPPORTED` ([BUNDLE-137]) (ADR 0014). The two members are checked in turn: `bundleFormatVersion` completely first (missing, then unsupported), then `specVersion`. A bundle in an unsupported format therefore reports `E_BUNDLE_UNSUPPORTED` even if `specVersion` is missing (ADR 0018).
 
 ## 11.3 Evaluation errors
 
