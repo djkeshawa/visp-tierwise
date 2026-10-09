@@ -30,8 +30,8 @@ final class CoreSchema {
    * A resolved scalar: its kind and its typed value (see {@link PScalar}).
    *
    * @param kind the kind
-   * @param value the value: {@code null}, a {@code Boolean}, a {@code Long} or {@code BigInteger}, a
-   *     {@code Double}, or a {@code String}
+   * @param value the value: {@code null}, a {@code Boolean}, a {@code Long}, a {@code BigInteger} or
+   *     {@link OutOfRangeInteger#INSTANCE}, a {@code Double}, or a {@code String}
    */
   record Typed(Kind kind, Object value) {
   }
@@ -41,7 +41,8 @@ final class CoreSchema {
    *
    * <p>An integer is a {@code Long} when it fits in 64 bits, and a {@code BigInteger} otherwise. A
    * {@code Long} outside the engine range ({@code 2^53 - 1}) is kept, so that the check of TYPE-20 can
-   * report it (TYPE-18).
+   * report it (TYPE-18). A token of more than 20 digits is not parsed and becomes the marker
+   * {@link OutOfRangeInteger#INSTANCE}.
    *
    * @param text the text of the scalar as written
    * @return the resolved scalar
@@ -54,13 +55,13 @@ final class CoreSchema {
       return new Typed(Kind.BOOLEAN, text.startsWith("t") || text.startsWith("T"));
     }
     if (INTEGER.matcher(text).matches()) {
-      return new Typed(Kind.INTEGER, integer(new BigInteger(text)));
+      return new Typed(Kind.INTEGER, integer(digitsOf(text), text, 10));
     }
     if (HEXADECIMAL.matcher(text).matches()) {
-      return new Typed(Kind.INTEGER, integer(new BigInteger(text.substring(2), 16)));
+      return new Typed(Kind.INTEGER, integer(text.substring(2), text.substring(2), 16));
     }
     if (OCTAL.matcher(text).matches()) {
-      return new Typed(Kind.INTEGER, integer(new BigInteger(text.substring(2), 8)));
+      return new Typed(Kind.INTEGER, integer(text.substring(2), text.substring(2), 8));
     }
     if (FLOAT.matcher(text).matches()) {
       return new Typed(Kind.FLOAT, Double.parseDouble(text));
@@ -75,7 +76,22 @@ final class CoreSchema {
     return new Typed(Kind.STRING, text);
   }
 
-  private static Object integer(BigInteger value) {
+  /** The digits of a decimal token, without its sign. */
+  private static String digitsOf(String text) {
+    char first = text.charAt(0);
+    return first == '-' || first == '+' ? text.substring(1) : text;
+  }
+
+  /**
+   * Converts the digits of an integer token. A token with more than {@link PScalar#MAX_INTEGER_DIGITS}
+   * digits is {@link OutOfRangeInteger#INSTANCE} and is never parsed, so that a very long token costs
+   * linear time (ADR 0018).
+   */
+  private static Object integer(String digits, String token, int radix) {
+    if (digits.length() > PScalar.MAX_INTEGER_DIGITS) {
+      return OutOfRangeInteger.INSTANCE;
+    }
+    BigInteger value = radix == 10 ? new BigInteger(token) : new BigInteger(digits, radix);
     if (value.bitLength() < Long.SIZE) {
       return value.longValue();
     }

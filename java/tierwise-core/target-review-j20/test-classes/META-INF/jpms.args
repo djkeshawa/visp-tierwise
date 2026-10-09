@@ -1,0 +1,4 @@
+--patch-module
+io.github.tierwise.core=_
+--add-reads
+io.github.tierwise.core=ALL-UNNAMED

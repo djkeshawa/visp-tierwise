@@ -1,0 +1,79 @@
+# tierwise:entitlements
+#
+# Built-in preset for plan and entitlement models. It declares three kinds for the
+# usual entitlement shapes, a naming pattern for each kind, and the lint severities
+# of requirements section 6.3 "recommended" column (see README.md for the choice).
+# It declares no engine behaviour and cannot disable an engine error (LINT-8, LINT-9).
+
+kinds:
+  # A numeric cap. The strategy is min, so the identity is absent and no authored value
+  # is a no-op (MERGE-5, LINT-23). A source failure denies with the min bound of the key's
+  # integer type (SVC-9). A key settable at a service-sourced level must declare that
+  # min bound (SVC-12).
+  limit:
+    strategies: [min]
+    on_source_failure: deny
+    naming: limit_key
+
+  # An on/off entitlement. The strategy is all, so a source failure denies with false
+  # (SVC-9, SVC-11).
+  feature:
+    strategies: [all]
+    on_source_failure: deny
+    naming: feature_key
+
+  # A set of granted members. The strategy is union, which is not narrowing. A key
+  # settable at a service-sourced level may not use deny with it (SVC-11), so a source
+  # failure contributes nothing (skip).
+  grant:
+    strategies: [union]
+    on_source_failure: skip
+    naming: grant_key
+
+naming:
+  key:
+    category: key
+    pattern: '^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$'
+    description: "Keys have at least two dot-separated segments. Each segment starts with a lowercase letter and holds lowercase letters, digits and underscores."
+
+  limit_key:
+    category: key
+    pattern: '\.(limit|max_[a-z0-9_]+|[a-z0-9_]+_limit)$'
+    description: "Keys of the limit kind end in limit, max_<name> or <name>_limit."
+
+  feature_key:
+    category: key
+    pattern: '\.(enabled|has_[a-z0-9_]+)$'
+    description: "Keys of the feature kind end in enabled or has_<name>."
+
+  grant_key:
+    category: key
+    pattern: '\.(grants|granted_[a-z0-9_]+)$'
+    description: "Keys of the grant kind end in grants or granted_<name>."
+
+  enum_value:
+    category: enum_value
+    pattern: '^[A-Z][A-Z0-9_]*$'
+    description: "Enum values are upper-case letters, digits and underscores, starting with a letter."
+
+  node_id:
+    category: node_id
+    pattern: '^[a-z][a-z0-9_]*$'
+    description: "Node IDs are lowercase letters, digits and underscores, starting with a letter."
+
+  feature:
+    category: feature
+    pattern: '^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$'
+    description: "Feature names have at least two dot-separated segments, each lowercase letters, digits and underscores."
+
+lint:
+  rules:
+    "naming/*": error
+    values/no-op: error
+    rules/dead-rule: warn
+    examples/required-per-binding: error
+    examples/mixed-collection: warn
+    schema/unused: warn
+    schema/description-required: warn
+    schema/owner-required: error
+    presets/override: info

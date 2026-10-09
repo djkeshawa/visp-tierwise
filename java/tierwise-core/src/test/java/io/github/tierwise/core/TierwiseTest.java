@@ -8,20 +8,31 @@ import io.github.tierwise.core.internal.model.Hierarchy;
 import io.github.tierwise.core.internal.model.LoadedModel;
 import io.github.tierwise.core.internal.model.Model;
 import io.github.tierwise.core.internal.model.Values;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /** The skeleton entry points that later work items implement, and the small value types around them. */
 class TierwiseTest {
 
   @Test
-  void compileIsNotImplementedYet() {
-    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class,
-        () -> Tierwise.compile(Paths.get(".")));
-    assertEquals("not implemented: internal.project", e.getMessage());
+  void compileReportsAMissingManifestAndWritesNoBundle(@TempDir Path directory) {
+    CompileResult result = Tierwise.compile(directory);
+    assertEquals(1, result.findings().size());
+    Finding finding = result.findings().get(0);
+    assertEquals(Code.E_MANIFEST, finding.code());
+    assertEquals("tierwise.yaml", finding.file());
+    assertEquals(List.of(), finding.path());
+    assertEquals(1, finding.line());
+    assertTrue(result.bundle().isEmpty());
+  }
+
+  @Test
+  void compileUsesTheDefaultOptionsWhenNoneAreGiven(@TempDir Path directory) {
+    assertEquals(Tierwise.compile(directory, CompileOptions.defaults()), Tierwise.compile(directory));
   }
 
   @Test

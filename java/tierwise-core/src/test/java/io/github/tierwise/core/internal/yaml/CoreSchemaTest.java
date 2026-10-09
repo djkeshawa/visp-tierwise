@@ -72,8 +72,11 @@ class CoreSchemaTest {
   }
 
   @Test
-  void integersOutsideTheLongRangeAreBigIntegersAndLongRangeIntegersAreKept() {
-    assertEquals(new BigInteger("99999999999999999999999"), CoreSchema.resolve("99999999999999999999999").value());
+  void integersOutsideTheLongRangeAreBigIntegersUpToTwentyDigitsAndLongRangeIntegersAreKept() {
+    assertEquals(new BigInteger("99999999999999999999"), CoreSchema.resolve("99999999999999999999").value());
+    assertEquals(OutOfRangeInteger.INSTANCE, CoreSchema.resolve("999999999999999999999").value());
+    assertEquals(OutOfRangeInteger.INSTANCE, CoreSchema.resolve("-999999999999999999999").value());
+    assertEquals(OutOfRangeInteger.INSTANCE, CoreSchema.resolve("0x" + "f".repeat(21)).value());
     assertEquals(1152921504606846976L, CoreSchema.resolve("1152921504606846976").value());
   }
 

@@ -68,11 +68,14 @@ class YamlNumberRuleTest {
   }
 
   @Test
-  void integerBeyondLongIsABigIntegerWithoutAFinding() {
-    YamlLoadResult result = load("x: 99999999999999999999999\n");
+  void integerBeyondLongIsABigIntegerUpToTwentyDigitsAndAMarkerBeyondThatWithoutAFinding() {
+    YamlLoadResult result = load("x: 99999999999999999999\ny: 99999999999999999999999\n");
     assertNoFindings(result);
     PScalar value = scalar(root(result).get("x").orElseThrow());
     assertEquals(PScalar.Kind.INTEGER, value.kind());
-    assertEquals(new BigInteger("99999999999999999999999"), value.value());
+    assertEquals(new BigInteger("99999999999999999999"), value.value());
+    PScalar long23 = scalar(root(result).get("y").orElseThrow());
+    assertEquals(PScalar.Kind.INTEGER, long23.kind());
+    assertEquals(OutOfRangeInteger.INSTANCE, long23.value());
   }
 }

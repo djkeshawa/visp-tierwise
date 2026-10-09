@@ -37,6 +37,28 @@
   </dependencies>
 
   <build>
+    <resources>
+      <!-- Hand-written resources of the module, if any. -->
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- The built-in presets of MANIFEST-21 are the files of the repository's presets/ directory. -->
+      <resource>
+        <directory>${project.basedir}/../../presets</directory>
+        <includes>
+          <include>*.yaml</include>
+        </includes>
+        <targetPath>io/github/tierwise/core/internal/project/presets</targetPath>
+      </resource>
+      <!-- The IANA zone and link names that an iana_tz value is checked against (TYPE-34). -->
+      <resource>
+        <directory>${project.basedir}/../../spec/data</directory>
+        <includes>
+          <include>tz-names.txt</include>
+        </includes>
+        <targetPath>io/github/tierwise/core/internal/check</targetPath>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

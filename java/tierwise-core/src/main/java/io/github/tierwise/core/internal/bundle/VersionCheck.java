@@ -14,27 +14,26 @@ final class VersionCheck {
   }
 
   /**
-   * Requires that both version members are present and that they name a supported format.
+   * Requires that both version members are present and that they name a supported format. The check runs in
+   * the order of ADR 0018: {@code bundleFormatVersion} completely first, then {@code specVersion}. A bundle of
+   * a future format therefore reports {@code E_BUNDLE_UNSUPPORTED} even when it has no {@code specVersion}.
    *
    * @param content the {@code content} object
    * @throws BundleFault with {@code E_BUNDLE_INTEGRITY} when a version member is missing (EVAL-56), or with
    *     {@code E_BUNDLE_UNSUPPORTED} when a present value is not one of the supported strings (BUNDLE-115)
    */
   static void check(Map<String, Object> content) {
-    // A missing member is integrity; the unsupported-value case follows once both members are present.
-    // EVAL-14 does not order the two cases within this step, so this choice is recorded as an open point.
-    if (!content.containsKey("bundleFormatVersion")) {
-      throw BundleFault.integrity("content lacks bundleFormatVersion (EVAL-56)");
+    requireSupported(content, "bundleFormatVersion", Model.FORMAT_VERSION);
+    requireSupported(content, "specVersion", Model.SPEC_VERSION);
+  }
+
+  private static void requireSupported(Map<String, Object> content, String member, String supported) {
+    if (!content.containsKey(member)) {
+      throw BundleFault.integrity("content lacks " + member + " (EVAL-56)");
     }
-    if (!content.containsKey("specVersion")) {
-      throw BundleFault.integrity("content lacks specVersion (EVAL-56)");
-    }
-    if (!Model.FORMAT_VERSION.equals(content.get("bundleFormatVersion"))) {
+    if (!supported.equals(content.get(member))) {
       throw new BundleFault(Code.E_BUNDLE_UNSUPPORTED,
-          "bundleFormatVersion is not the supported value (BUNDLE-115, BUNDLE-137)");
-    }
-    if (!Model.SPEC_VERSION.equals(content.get("specVersion"))) {
-      throw new BundleFault(Code.E_BUNDLE_UNSUPPORTED, "specVersion is not the supported value (BUNDLE-115, BUNDLE-137)");
+          member + " is not the supported value (BUNDLE-115, BUNDLE-137)");
     }
   }
 }

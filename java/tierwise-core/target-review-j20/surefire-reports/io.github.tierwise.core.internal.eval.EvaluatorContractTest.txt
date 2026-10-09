@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: io.github.tierwise.core.internal.eval.EvaluatorContractTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.458 s -- in io.github.tierwise.core.internal.eval.EvaluatorContractTest

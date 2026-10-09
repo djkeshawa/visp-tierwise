@@ -1196,7 +1196,7 @@ None.
 | FIND-32 | `compile/src-key-declared-twice-files/expected.yaml` | - |
 | FIND-33 | `compile/hierarchy-entity-graph-mixed-oriented-cycle/expected.yaml` | - |
 | FIND-34 | `compile/ex-expect-mismatch/expected.yaml`<br>`compile/pol-duplicate-rules-file/expected.yaml` | - |
-| FIND-35 | `compile/src-service-level-values/expected.yaml` | - |
+| FIND-35 | `compile/hierarchy-service-values-in-source/expected.yaml`<br>`compile/src-service-level-values/expected.yaml` | - |
 
 ### LINT
 

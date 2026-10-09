@@ -1,6 +1,7 @@
 package io.github.tierwise.core;
 
 import io.github.tierwise.core.internal.bundle.BundleReader;
+import io.github.tierwise.core.internal.check.Compiler;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public final class Tierwise {
   public static CompileResult compile(Path projectRoot, CompileOptions options) {
     Objects.requireNonNull(projectRoot, "projectRoot");
     Objects.requireNonNull(options, "options");
-    throw new UnsupportedOperationException("not implemented: internal.project");
+    return Compiler.compile(projectRoot, options);
   }
 
   /**

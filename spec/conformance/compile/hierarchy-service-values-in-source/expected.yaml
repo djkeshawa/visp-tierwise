@@ -1,10 +1,10 @@
 id: hierarchy-service-values-in-source
 specVersion: "0.1"
-clauses: ["SCOPE-47", "SRC-33"]
-description: "A values file that gives a value for a service-sourced level is E_SOURCE_MAPPING at the value."
+clauses: ["SCOPE-47", "SRC-33", "FIND-35"]
+description: "A values file that gives a value for a service-sourced level is E_SOURCE_MAPPING once, at its level entry (FIND-35)."
 expect:
   findings:
     - code: E_SOURCE_MAPPING
       file: "values/accounts.yaml"
-      path: ["account", "acct-1", "checkout.open"]
-      line: 3
+      path: ["account"]
+      line: 1
