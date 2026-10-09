@@ -16,6 +16,11 @@ COPY spec/data/tz-names.txt /src/spec/data/tz-names.txt
 COPY java /src/java
 
 WORKDIR /src/java
+# The Maven Wrapper needs unzip: without it, it switches to the .tar.gz distribution, whose checksum is not the
+# one pinned in maven-wrapper.properties, and stops. The JDK image ships curl and wget but not unzip.
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends unzip \
+ && rm -rf /var/lib/apt/lists/*
 # clean drops any target/ directory copied from a local build. Tests run in CI, not in the image build.
 # The spring-boot-maven-plugin attaches the runnable JAR with the classifier "exec".
 RUN set -eu; \
