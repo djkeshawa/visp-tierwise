@@ -576,9 +576,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
+          # pnpm pack names a tarball after the package: @scope/name becomes scope-name-<version>.tgz.
           # The ./ matters: without it npm reads "rebuilt/<file>" as a GitHub "user/repo" shorthand and runs git.
           for package in evaluator node openfeature; do
-            npm publish "./rebuilt/tierwise-$package-$VERSION.tgz" --provenance --access public
+            tarball=$(node -p "require('./js/$package/package.json').name.replace(/^@/, '').replace('/', '-')")
+            npm publish "./rebuilt/$tarball-$VERSION.tgz" --provenance --access public
           done
 
   github-release:
