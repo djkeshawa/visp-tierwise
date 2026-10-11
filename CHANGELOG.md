@@ -38,10 +38,10 @@ Version 0.1.0 targets specification version **0.1** and bundle format version **
 
 #### JavaScript (`js/`, pnpm workspace)
 
-- `@visplabs/evaluator` (Node 20 or later, and browsers): `loadBundle` (synchronous, verifying the digest and versions), `createEvaluator`, `resolve` and `decide` with their synchronous variants, providers with required timeouts, listener events, and a built-in SHA-256 and canonical JSON. It has no runtime dependencies. It ships ESM, CommonJS and type declarations.
-- `@visplabs/node`: a bundle loader for servers that refreshes with `fetch` and an ETag, swaps atomically, keeps the last good bundle, and reports status and staleness.
-- `@visplabs/openfeature`: a server provider and a web provider for OpenFeature. The SDKs are peer dependencies.
-- `@visplabs/spec-tools` (private): checks the spec suite, and canonicalises content into a bundle.
+- `@visporg/evaluator` (Node 20 or later, and browsers): `loadBundle` (synchronous, verifying the digest and versions), `createEvaluator`, `resolve` and `decide` with their synchronous variants, providers with required timeouts, listener events, and a built-in SHA-256 and canonical JSON. It has no runtime dependencies. It ships ESM, CommonJS and type declarations.
+- `@visporg/node`: a bundle loader for servers that refreshes with `fetch` and an ETag, swaps atomically, keeps the last good bundle, and reports status and staleness.
+- `@visporg/openfeature`: a server provider and a web provider for OpenFeature. The SDKs are peer dependencies.
+- `@visporg/spec-tools` (private): checks the spec suite, and canonicalises content into a bundle.
 
 #### Build, CI and release
 
@@ -77,10 +77,10 @@ Version 0.1.0 targets specification version **0.1** and bundle format version **
 
 ### Changed
 
-- The publication identity moved to the `visplabs` organisation (ADR 0028): the repository is `visplabs/tierwise`, the npm packages are `@visplabs/*`, the Maven group is `io.github.visplabs` and the Java packages are `io.github.visplabs.tierwise.*`. The TypeScript code generator imports from `@visplabs/evaluator`.
+- The publication identity moved to the `visplabs` organisation (ADR 0028): the repository is `visplabs/tierwise`, the npm packages are `@visporg/*` (the npm organisation is `visporg`, ADR 0029), the Maven group is `io.github.visplabs` and the Java packages are `io.github.visplabs.tierwise.*`. The TypeScript code generator imports from `@visporg/evaluator`.
 - A provider timeout must be at most 2^53−1 ms in every evaluator (SVC-41, EVAL-28, ADR 0025). The Java evaluator used to accept larger ones.
 - The S3 store writes the `latest` pointer with a trailing newline, like the filesystem store (ADR 0024).
-- Renamed the project from Strata to Tierwise to avoid a collision with OpenGamma Strata (ADR 0006). It is published under the `visplabs` organisation: npm scope `@visplabs`, Maven group `io.github.visplabs`, Java packages `io.github.visplabs.tierwise.*` (ADR 0028).
+- Renamed the project from Strata to Tierwise to avoid a collision with OpenGamma Strata (ADR 0006). It is published under the `visplabs` organisation: npm scope `@visporg` (ADR 0029), Maven group `io.github.visplabs`, Java packages `io.github.visplabs.tierwise.*` (ADR 0028).
 - Resolved the open semantic questions in ADRs 0007 to 0011 and the spec open points in ADRs 0013 to 0017.
 - Adopted the prompt review recommendations (ADR 0004). The bundle is now a canonical artifact that is hashed on its content, and provenance is kept outside it (ADR 0005).
 - Set the dependency baseline (ADR 0012) and the Spring Boot, AWS SDK and OpenFeature versions (ADR 0020).

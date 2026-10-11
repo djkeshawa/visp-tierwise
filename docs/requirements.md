@@ -69,7 +69,7 @@ domain name in this document (`global`, `division`, `seller`, `order`,
 | Evaluate bundles (`resolve`, `decide`) | ✅ | ✅ Node and browser |
 | CLI: `init`, `validate`, `lint`, `test`, `compile`, `codegen`, `explain` | ✅ fat JAR, native binaries, Docker image, GitHub Action | uses the same CLI |
 | Codegen for typed handles | ✅ Java constants | ✅ TypeScript types (same CLI) |
-| Runtime integration | Spring Boot starter | `@visplabs/node` |
+| Runtime integration | Spring Boot starter | `@visporg/node` |
 | Control plane | ✅ `tierwise-server` | call over HTTP (OpenAPI) |
 | OpenFeature provider | ✅ | ✅ |
 
@@ -122,9 +122,9 @@ tierwise/
 │   ├── tierwise-server/
 │   └── tierwise-openfeature/
 ├── js/                         pnpm workspace, TypeScript
-│   ├── evaluator/              @visplabs/evaluator  (zero runtime deps)
-│   ├── node/                   @visplabs/node
-│   └── openfeature/            @visplabs/openfeature
+│   ├── evaluator/              @visporg/evaluator  (zero runtime deps)
+│   ├── node/                   @visporg/node
+│   └── openfeature/            @visporg/openfeature
 ├── presets/                    recommended, minimal, entitlements
 ├── samples/                    commerce, retail-pos, saas-entitlements
 └── docs/                       site source, adr/
@@ -139,9 +139,9 @@ tierwise/
 | `tierwise-spring-boot-starter` | Bundle loading and refresh; `Resolver` and `DecisionEngine` beans; Micrometer metrics; provider wiring | core, Spring Boot |
 | `tierwise-server` | Control plane (Section 9) | core, Spring Boot |
 | `tierwise-openfeature` | OpenFeature provider | core, OpenFeature Java SDK |
-| `@visplabs/evaluator` | Bundle loading, `resolve`, `decide`, provenance; Node and browser | **none** |
-| `@visplabs/node` | Fetch, ETag refresh, last-known-good, atomic swap | `@visplabs/evaluator` |
-| `@visplabs/openfeature` | OpenFeature provider (server and web SDKs) | `@visplabs/evaluator`, OpenFeature JS SDK |
+| `@visporg/evaluator` | Bundle loading, `resolve`, `decide`, provenance; Node and browser | **none** |
+| `@visporg/node` | Fetch, ETag refresh, last-known-good, atomic swap | `@visporg/evaluator` |
+| `@visporg/openfeature` | OpenFeature provider (server and web SDKs) | `@visporg/evaluator`, OpenFeature JS SDK |
 
 ### 3.3 Architecture
 
@@ -754,7 +754,7 @@ public final class Tierwise {
 ### 7.2 TypeScript
 
 ```ts
-import { loadBundle, createEvaluator } from "@visplabs/evaluator";
+import { loadBundle, createEvaluator } from "@visporg/evaluator";
 
 const bundle = loadBundle(bytesOrString);          // sync; verifies digest and versions
 const tw = createEvaluator(bundle, {
@@ -795,7 +795,7 @@ level's raw value.
   reason, provider failures. Log `bundleVersion` with every decision (log level
   configurable).
 
-### `@visplabs/node`
+### `@visporg/node`
 
 - The same refresh behaviour using built-in `fetch` (Node 20+); no other
   dependencies.
@@ -895,7 +895,7 @@ See [the roadmap](roadmap.md).
 - **Golden validation tests.** Each invalid fixture produces exactly its expected
   codes, files, paths and lines.
 - **Integration tests.**
-  - The starter and `@visplabs/node` against a stub server: refresh, ETag, atomic
+  - The starter and `@visporg/node` against a stub server: refresh, ETag, atomic
     swap under concurrency, last-known-good, startup without a bundle.
   - Provider timeouts follow declared `skip` and `deny`, using custom kinds and
     keys without a kind.
@@ -913,7 +913,7 @@ See [the roadmap](roadmap.md).
 - **Java.** Core, CLI and OpenFeature target Java 17+. The starter and server target
   Spring Boot 4.1 on Java 21 (ADR 0020). Maven via the Maven Wrapper.
 - **JavaScript.** Strict TypeScript; ESM + CJS + types; Node 20+; ES2020 browsers;
-  `@visplabs/evaluator` has zero runtime dependencies.
+  `@visporg/evaluator` has zero runtime dependencies.
 - **Immutability.** Compiled models are immutable and thread-safe (Java) and frozen
   (JS).
 - **Determinism.** The same sources give byte-identical bundles and the same
@@ -926,7 +926,7 @@ See [the roadmap](roadmap.md).
 
 | Question | Decision |
 | --- | --- |
-| Name and coordinates | Tierwise ([ADR 0006](adr/0006-rename-to-tierwise.md)); `@visplabs`, `io.github.visplabs`, `visplabs/tierwise` ([ADR 0028](adr/0028-visplabs-publication-identity.md)) |
+| Name and coordinates | Tierwise ([ADR 0006](adr/0006-rename-to-tierwise.md)); `@visporg`, `io.github.visplabs`, `visplabs/tierwise` ([ADR 0028](adr/0028-visplabs-publication-identity.md), [ADR 0029](adr/0029-npm-scope-visporg.md)) |
 | Contribution sign-off | DCO |
 | Governance | Maintainers file; spec changes by RFC with maintainer approval |
 | Docs site | MkDocs Material |

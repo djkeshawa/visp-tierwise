@@ -53,7 +53,8 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [0025](adr/0025-provider-timeout-upper-bound.md) | A provider timeout is at most 2^53−1 ms in every evaluator |
 | [0026](adr/0026-naming-explanations-and-kind-suggestions.md) | `explain naming/<name>` reads the project's pattern (`Tierwise.namingPatterns`); `E_UNKNOWN_KIND` suggests declared kinds |
 | [0027](adr/0027-s3-integration-verification.md) | S3 modules verified against an official MinIO binary in CI |
-| [0028](adr/0028-visplabs-publication-identity.md) | Published under `visplabs`: `io.github.visplabs`, `@visplabs`, packages `io.github.visplabs.tierwise.*` |
+| [0028](adr/0028-visplabs-publication-identity.md) | Published under `visplabs`: `io.github.visplabs`, `@visporg`, packages `io.github.visplabs.tierwise.*` |
+| [0029](adr/0029-npm-scope-visporg.md) | The npm scope is `@visporg`, after the owner's npm organisation `visporg` |
 
 ## Browser use
 

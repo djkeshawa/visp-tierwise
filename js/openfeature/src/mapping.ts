@@ -4,8 +4,8 @@
 
 import { ErrorCode, StandardResolutionReasons } from '@openfeature/core';
 import type { EvaluationContext, FlagMetadata, ResolutionDetails } from '@openfeature/core';
-import { TierwiseError } from '@visplabs/evaluator';
-import type { Context, Decision, FactSet, JsonValue, Resolved } from '@visplabs/evaluator';
+import { TierwiseError } from '@visporg/evaluator';
+import type { Context, Decision, FactSet, JsonValue, Resolved } from '@visporg/evaluator';
 import { AXES_ATTRIBUTE, FACTS_ATTRIBUTE, LEVELS_ATTRIBUTE, TierwiseMetadata } from './metadata.js';
 
 /** The type an OpenFeature evaluation asks for. */

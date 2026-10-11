@@ -213,7 +213,7 @@ $ curl -sS -X POST "$TIERWISE_SERVER/v1/resolve" -H "Authorization: Bearer $TOKE
 
 gives `{ "bundleVersion": "sha256:…", "results": [ <Resolved>, … ] }`, one result per key in request order, each exactly
 the JSON form of a resolved result (the same as `Resolved.toJson()` in Java and the object that
-`@visplabs/evaluator` returns):
+`@visporg/evaluator` returns):
 
 ```json
 {

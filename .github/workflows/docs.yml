@@ -77,7 +77,7 @@ jobs:
           test "$count" -gt 0
 
       # TypeDoc runs on TypeScript 6 in its own project. The packages are built first, because TypeDoc reads their
-      # package.json files and the declarations of @visplabs/evaluator.
+      # package.json files and the declarations of @visporg/evaluator.
       - name: Build the JavaScript packages
         run: |
           pnpm --dir js install --frozen-lockfile

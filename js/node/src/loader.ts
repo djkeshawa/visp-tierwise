@@ -1,8 +1,8 @@
 // createBundleLoader: fetches a bundle over HTTP with ETag refresh, swaps the evaluator atomically and keeps the last
 // good bundle when a refresh fails (requirements §8).
 
-import { createEvaluator, loadBundle } from '@visplabs/evaluator';
-import type { Context, Decision, Evaluator, FactSet, LoadedBundle, Resolved } from '@visplabs/evaluator';
+import { createEvaluator, loadBundle } from '@visporg/evaluator';
+import type { Context, Decision, Evaluator, FactSet, LoadedBundle, Resolved } from '@visporg/evaluator';
 import { BundleLoaderError } from './errors.js';
 import { fetchBundle } from './fetch.js';
 import { checkOptions } from './options.js';

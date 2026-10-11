@@ -1,7 +1,7 @@
 {
-  "name": "@visplabs/openfeature",
+  "name": "@visporg/openfeature",
   "version": "0.1.0",
-  "description": "OpenFeature server and web providers backed by @visplabs/evaluator",
+  "description": "OpenFeature server and web providers backed by @visporg/evaluator",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -56,7 +56,7 @@
     "test": "pnpm run typecheck && node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@visplabs/evaluator": "workspace:*"
+    "@visporg/evaluator": "workspace:*"
   },
   "peerDependencies": {
     "@openfeature/server-sdk": "^1.23.0",

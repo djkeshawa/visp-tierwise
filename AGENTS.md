@@ -29,7 +29,7 @@
   Kind names and naming patterns belong in presets.
 - Engine guarantees are fixed. No preset or setting may disable an engine error.
 - `tierwise-core`: no Spring, no networking, no logging framework.
-  `@visplabs/evaluator`: zero runtime dependencies. JS never compiles sources in v1.
+  `@visporg/evaluator`: zero runtime dependencies. JS never compiles sources in v1.
 - Java and JS read the same `spec/conformance/` files directly. Never copy vectors.
 - Don't add dependencies, publish, push or open pull requests without the owner's
   approval. Preserve unrelated changes.

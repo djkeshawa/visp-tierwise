@@ -48,7 +48,7 @@ import tools.jackson.databind.node.ObjectNode;
  *
  * <p>Compile the sample project and a modified copy with the core compiler. Publish them, one after the other, to a
  * server running in this process on a random port. A Java service (the Spring Boot starter) and a Node service (a
- * child process running the built {@code @visplabs/node}) read the server's latest bundle on a short refresh interval.
+ * child process running the built {@code @visporg/node}) read the server's latest bundle on a short refresh interval.
  * Both must pick up each new version and answer every case in {@code cases.json} with identical JSON. Then the
  * previous version is promoted, and both must roll back and agree again. The server's own {@code /v1/resolve} and
  * {@code /v1/decide} answer the same cases and must match too (acceptance criterion of requirements section 15).

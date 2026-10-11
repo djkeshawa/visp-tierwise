@@ -2,7 +2,7 @@
 // Provider interfaces of the two SDKs, for the SDK versions that are installed.
 import type { Provider as ServerProvider } from '@openfeature/server-sdk';
 import type { Provider as WebProvider } from '@openfeature/web-sdk';
-import type { Evaluator } from '@visplabs/evaluator';
+import type { Evaluator } from '@visporg/evaluator';
 import { TierwiseServerProvider, TierwiseWebProvider } from '../src/index.js';
 import type { EvaluatorSource } from '../src/index.js';
 

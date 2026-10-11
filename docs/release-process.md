@@ -11,7 +11,7 @@ The steps that need your accounts (1 to 7) cannot be done by a script, so they a
 | Where | What | Who publishes it |
 | --- | --- | --- |
 | Maven Central | `io.github.visplabs:tierwise-core`, `-cli`, `-spring-boot-starter`, `-spring-boot-starter-s3`, `-server`, `-server-s3`, `-openfeature` and the parent `tierwise-parent`. Each has a sources JAR, a Javadoc JAR, a CycloneDX SBOM (`-cyclonedx.json`), PGP signatures and Sigstore bundles. The CLI also has `-all` (the runnable fat JAR) and the server has `-exec` (the runnable Spring Boot JAR) | `publish-maven` uploads and Central validates. You press Publish in the portal (step 12) |
-| npm | `@visplabs/evaluator`, `@visplabs/node`, `@visplabs/openfeature`, each with npm provenance | `publish-npm`, after you remove `"private": true` (step 9) |
+| npm | `@visporg/evaluator`, `@visporg/node`, `@visporg/openfeature`, each with npm provenance | `publish-npm`, after you remove `"private": true` (step 9) |
 | GitHub release | A draft release `v<version>` with the CLI and server JARs, the native binaries for Linux, macOS and Windows, the npm tarballs, every SBOM, the Maven signatures and `SHA256SUMS` | `github-release` creates the draft; you publish it (step 14) |
 
 `tierwise-e2e` is a test module. It sets `maven.deploy.skip`, so the release profile builds no sources or Javadoc JAR for it and leaves it out of the Central bundle. `scripts/check-foundation.py` fails if a module outside its list of published modules does not set that property.
@@ -41,7 +41,7 @@ The three publishing jobs have `if: needs.prepare.outputs.publish == 'true'` and
 
 ### 1. Claim the GitHub organisation (O2)
 
-**Done on 2026-10-11.** The owner created the organisation `visplabs`, and the repository was transferred from `djkeshawa/visp-tierwise` to `visplabs/tierwise` with `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=visplabs -f new_name=tierwise`. GitHub redirects the old URL. [ADR 0028](adr/0028-visplabs-publication-identity.md) records the identity that follows from it: the Maven group id `io.github.visplabs`, the Java packages `io.github.visplabs.tierwise.*` and the npm scope `@visplabs`.
+**Done on 2026-10-11.** The owner created the organisation `visplabs`, and the repository was transferred from `djkeshawa/visp-tierwise` to `visplabs/tierwise` with `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=visplabs -f new_name=tierwise`. GitHub redirects the old URL. [ADR 0028](adr/0028-visplabs-publication-identity.md) records the identity that follows from it: the Maven group id `io.github.visplabs`, the Java packages `io.github.visplabs.tierwise.*` and the npm scope `@visporg`.
 
 After the transfer, private vulnerability reporting and the `release` environment (reviewer @djkeshawa, tags `v*`) were still in place. Secret scanning and push protection had been turned off by the transfer and were turned on again. Update an existing clone with `git remote set-url origin https://github.com/visplabs/tierwise.git`.
 
@@ -68,20 +68,20 @@ In the POM change `url`, `issueManagement` and the three `scm` URLs. In each `pa
 ### 2. Claim the npm scope (O2)
 
 1. Create an npm account if you have none, and turn on two-factor authentication for it.
-2. At npmjs.com create an organisation named `visplabs` (Add Organization). The free plan allows public packages. This reserves the scope `@visplabs`.
+2. At npmjs.com create an organisation named `visporg` (Add Organization). The free plan allows public packages. This reserves the scope `@visporg`. **Done on 2026-10-11:** the owner created the npm organisation `visporg` ([ADR 0029](adr/0029-npm-scope-visporg.md)); the name `visplabs` was not used on npm.
 3. Check that the packages are not taken. On 2026-10-11 the registry answered 404 for them:
 
    ```sh
-   npm view @visplabs/evaluator
+   npm view @visporg/evaluator
    ```
 
    ```text
    npm error code E404
-   npm error 404 Not Found - GET https://registry.npmjs.org/@visplabs%2fevaluator - Not found
+   npm error 404 Not Found - GET https://registry.npmjs.org/@visporg%2fevaluator - Not found
    ```
 
-   A 404 here does not prove that the scope is free: the scope belongs to whoever owns the npm organisation `visplabs`, and npmjs.com blocked the automated check of the organisation page from this machine (HTTP 403). Create the organisation to settle it.
-4. Create an access token for the release (Access Tokens; a granular token with write access to the `@visplabs` packages, valid for a limited time; npm changes its token types, so follow its current documentation). It becomes the `NPM_TOKEN` secret in step 6. Do not paste it anywhere else. *(OPEN)* npm "trusted publishing" would replace the token with the workflow's OIDC identity. The workflow does not use it yet, because it was not possible to test it without the packages.
+   A 404 here does not prove that the scope is free: the scope belongs to whoever owns the npm organisation `visporg`, and npmjs.com blocked the automated check of the organisation page from this machine (HTTP 403). Create the organisation to settle it.
+4. Create an access token for the release (Access Tokens; a granular token with write access to the `@visporg` packages, valid for a limited time; npm changes its token types, so follow its current documentation). It becomes the `NPM_TOKEN` secret in step 6. Do not paste it anywhere else. *(OPEN)* npm "trusted publishing" would replace the token with the workflow's OIDC identity. The workflow does not use it yet, because it was not possible to test it without the packages.
 
 ### 3. Name the maintainers (O3)
 
@@ -206,7 +206,7 @@ What the check covers: all JARs (library, sources, Javadoc, fat CLI, executable 
 
 1. Remove the `"private": true` line from `js/evaluator/package.json`, `js/node/package.json` and `js/openfeature/package.json`. Keep it in `js/package.json` (the workspace root) and `js/spec-tools/package.json`, which are never published. Each package already has `publishConfig` (public access, provenance), `repository`, `homepage`, `bugs`, `keywords` and `files`.
 2. Update the place that asserts the old state: `scripts/check-workspace.mjs` (`manifest.private`, "Phase 0 packages must not be publishable"). Run `pnpm --dir js run check` and `pnpm --dir js test`.
-3. Update the `description` of `@visplabs/node` and `@visplabs/openfeature`, which still say "Phase 0 ... placeholder", because it is the first line users see on npm.
+3. Update the `description` of `@visporg/node` and `@visporg/openfeature`, which still say "Phase 0 ... placeholder", because it is the first line users see on npm.
 
 Each tarball also carries `LICENSE` and `NOTICE`. They live once, at the root; the workflow and the reproducibility script copy them into each package directory before `pnpm pack`. Without that step the tarballs would have neither (`files` lists them, and npm ignores a missing entry).
 
@@ -256,7 +256,7 @@ Each tarball also carries `LICENSE` and `NOTICE`. They live once, at the root; t
 2. The build, reproducibility, native, docker and collect jobs run as in a dry run.
 3. Each publishing job waits for your approval of the `release` environment. Read the run summary first. Approve `publish-maven`.
 4. `publish-maven` uploads the bundle to Central and waits until Central reports it as validated. It does not publish it.
-5. Approve `publish-npm`, which starts only after step 4 succeeded. It publishes `@visplabs/evaluator`, then `@visplabs/node` and `@visplabs/openfeature`, with provenance. **npm releases cannot be replaced.** npm allows an unpublish for a short time after the publish under conditions; read its current policy before you rely on that.
+5. Approve `publish-npm`, which starts only after step 4 succeeded. It publishes `@visporg/evaluator`, then `@visporg/node` and `@visporg/openfeature`, with provenance. **npm releases cannot be replaced.** npm allows an unpublish for a short time after the publish under conditions; read its current policy before you rely on that.
 6. `github-release` creates the draft release.
 
 Central goes first and its upload is not final, so a validation failure stops the release before the npm publish. The two steps that cannot be undone are the npm publish, which the workflow does after your approval, and the Publish button in the Central Portal, which only you press.
@@ -295,7 +295,7 @@ Central goes first and its upload is not final, so a validation failure stops th
 3. npm provenance. Install the package in a clean directory and check the registry signatures and provenance:
 
    ```sh
-   npm install @visplabs/evaluator@0.1.0
+   npm install @visporg/evaluator@0.1.0
    npm audit signatures
    ```
 

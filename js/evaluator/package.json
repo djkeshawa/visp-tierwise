@@ -1,5 +1,5 @@
 {
-  "name": "@visplabs/evaluator",
+  "name": "@visporg/evaluator",
   "version": "0.1.0",
   "description": "Tierwise evaluator: resolve and decide over canonical bundles, in Node and browsers, with zero runtime dependencies",
   "license": "Apache-2.0",

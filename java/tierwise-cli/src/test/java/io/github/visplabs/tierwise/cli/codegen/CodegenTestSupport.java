@@ -251,7 +251,7 @@ final class CodegenTestSupport {
 
   /**
    * Type-checks files of one directory with the workspace compiler and strict options. The module
-   * {@code @visplabs/evaluator} resolves to the evaluator sources of the workspace.
+   * {@code @visporg/evaluator} resolves to the evaluator sources of the workspace.
    *
    * @param directory the directory that holds the files
    * @param files the files, relative to the directory
@@ -275,7 +275,7 @@ final class CodegenTestSupport {
             "exactOptionalPropertyTypes": true,
             "useUnknownInCatchVariables": true,
             "noEmit": true,
-            "paths": { "@visplabs/evaluator": ["%s"] }
+            "paths": { "@visporg/evaluator": ["%s"] }
           },
           "files": [%s]
         }

@@ -1,7 +1,7 @@
 // Type checks of the generated rich module. The codegen tests copy this file next to tierwise.ts and run
 // tsc on both. A line marked @ts-expect-error must fail to compile, so the marker proves the type rule.
 import { TypedEvaluator } from "./tierwise.js";
-import type { Evaluator } from "@visplabs/evaluator";
+import type { Evaluator } from "@visporg/evaluator";
 
 declare const evaluator: Evaluator;
 

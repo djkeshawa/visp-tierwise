@@ -7,7 +7,7 @@ if you want to see it work, and come back here when you want to know why and how
 | --- | --- |
 | [Modeling guide](modeling.md) | How to describe your configuration: levels, axes, keys and merge strategies, kinds and presets, and decisions with quantifiers. Uses the `commerce` and `saas-entitlements` samples |
 | [CLI reference](cli-reference.md) | Every command and option of `tierwise`, with its output and exit codes |
-| [Runtime and operations](runtime-and-operations.md) | Running services on bundles: the Spring Boot starter, `@visplabs/node`, refresh, last-known-good, metrics and providers |
+| [Runtime and operations](runtime-and-operations.md) | Running services on bundles: the Spring Boot starter, `@visporg/node`, refresh, last-known-good, metrics and providers |
 | [Server guide](server.md) | The optional control plane: endpoints, authentication, storage, deployment and S3 |
 | [OpenFeature guide](openfeature.md) | Reading Tierwise keys and decisions through OpenFeature, in Java and JavaScript |
 | [Security model](security-model.md) | Browser display only, who may publish, and what a bundle digest proves |

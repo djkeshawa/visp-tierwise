@@ -19,14 +19,14 @@ name: Release
 # is sent.
 #
 # Owner prerequisites. docs/release-process.md is the step-by-step checklist; in short:
-#   O2  The "@visplabs" npm scope and the io.github.visplabs Central namespace are claimed (the "visplabs"
-#       GitHub organisation is). Until then Central rejects the groupId and npm cannot publish "@visplabs/*".
+#   O2  The "@visporg" npm scope (npm organisation "visporg") and the io.github.visplabs Central namespace are
+#       claimed (the "visplabs" GitHub organisation is). Until then Central rejects the groupId and npm cannot publish "@visporg/*".
 #   O3  A maintainer is named (MAINTAINERS.md) and listed in the <developers> element of java/pom.xml.
 #   O4  A private security contact exists (SECURITY.md), because Central and npm show it to every user.
 # Secrets of the "release" environment:
 #   CENTRAL_USERNAME, CENTRAL_PASSWORD   a Central Portal user token (not the account password)
 #   GPG_PRIVATE_KEY, GPG_PASSPHRASE      the ASCII-armoured release key; the public key must be on a key server
-#   NPM_TOKEN                            an npm automation token with publish rights on the @visplabs scope
+#   NPM_TOKEN                            an npm automation token with publish rights on the @visporg scope
 # Sigstore needs no secret: the publishing job signs with its own OIDC token (id-token: write).
 #
 # Not done by this workflow: pushing the Docker images (no registry is chosen yet) and pressing "Publish" in the
@@ -531,7 +531,7 @@ jobs:
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-          scope: '@visplabs'
+          scope: '@visporg'
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           version: '11.3.0'

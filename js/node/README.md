@@ -1,18 +1,18 @@
-# @visplabs/node
+# @visporg/node
 
 The bundle loader for Node 20 or later. It fetches a compiled bundle over HTTP with `fetch`, refreshes it with an
 ETag, swaps the evaluator atomically, and keeps the last good bundle when a refresh fails. It evaluates with
-[`@visplabs/evaluator`](../evaluator/README.md), and it has no other runtime dependency.
+[`@visporg/evaluator`](../evaluator/README.md), and it has no other runtime dependency.
 
 > **Browser use is for display only.** Enforce every decision on a server with the same bundle. This package is for
 > servers.
 
-Install it from npm as `@visplabs/node`.
+Install it from npm as `@visporg/node`.
 
 ## Usage
 
 ```ts
-import { createBundleLoader, TierwiseError } from '@visplabs/node';
+import { createBundleLoader, TierwiseError } from '@visporg/node';
 
 const loader = createBundleLoader({
   url: 'https://config.example.test/tierwise/bundle.json',
@@ -150,7 +150,7 @@ pnpm --dir js/node run build   # ESM in dist/esm, CommonJS in dist/cjs, types in
 pnpm --dir js/node test        # runs over the built output
 ```
 
-The build needs `@visplabs/evaluator` to be built first. The tests use `node:test`, a `node:http` stub server, and the
+The build needs `@visporg/evaluator` to be built first. The tests use `node:test`, a `node:http` stub server, and the
 conformance bundles in `spec/conformance/bundles/`. They never copy those files. Where a test needs a second bundle,
 it derives one by changing a root value and recomputing the digest, so the derived bundle is a valid bundle.
 

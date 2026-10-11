@@ -1,6 +1,6 @@
 {
   "name": "Tierwise",
-  "identityStatus": "github-claimed; npm scope and Maven namespace pending",
+  "identityStatus": "github-claimed; npm scope claimed (@visporg); Maven namespace pending",
   "packageVersion": "0.1.0",
   "releaseVersion": "0.1.0",
   "releaseStatus": "0.1.0 prepared (2026-10-11); publishing pending",
@@ -9,7 +9,7 @@
   "supportedBundleFormatVersions": ["1"],
   "phase": 9,
   "phaseStatus": "phase-9-in-progress; phases 0-8 complete (phases 0, 4, 5 and 6 with caveats); release 0.1.0 pending owner steps",
-  "npmScope": "@visplabs",
+  "npmScope": "@visporg",
   "mavenGroupId": "io.github.visplabs",
   "githubOwner": "visplabs",
   "decisionRecords": "docs/adr/"

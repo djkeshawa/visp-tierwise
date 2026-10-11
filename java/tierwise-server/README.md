@@ -8,7 +8,7 @@ the latest bundle with an ETag, promotes a stored version to latest (roll back o
   lives in the bundle store.
 - **Never the source of truth.** The configuration repository is. The server holds compiled, content-hashed bundles
   that CI published. It never edits schema or values.
-- **Never on the hot path.** Applications evaluate in-process (`tierwise-spring-boot-starter`, `@visplabs/node`) and
+- **Never on the hot path.** Applications evaluate in-process (`tierwise-spring-boot-starter`, `@visporg/node`) and
   keep serving the bundle they hold when the server is down. The server is for storing, distributing, rolling back,
   and for callers that cannot evaluate in-process.
 

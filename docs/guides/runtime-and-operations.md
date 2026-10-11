@@ -1,7 +1,7 @@
 # Runtime and operations guide
 
 This guide is for the people who run services that evaluate Tierwise bundles. It covers the Spring Boot starter, the
-`@visplabs/node` loader, how a bundle is refreshed, what happens when the source of the bundle is down, the
+`@visporg/node` loader, how a bundle is refreshed, what happens when the source of the bundle is down, the
 metrics to watch, and how providers for service-sourced levels behave.
 
 The principle behind all of it: **evaluation is in-process, and the source of bundles is never on the hot path.**
@@ -21,7 +21,7 @@ git ──► CI: validate · test · compile ──► bundle.json ──► a 
                                   a file, or the classpath of the application
 ```
 
-| Source | Starter | `@visplabs/node` | Change detection |
+| Source | Starter | `@visporg/node` | Change detection |
 | --- | --- | --- | --- |
 | `tierwise-server` (`GET /v1/bundles/latest`) | `tierwise.server.url` | `url` | `ETag` and `If-None-Match`; the server answers `304` from its pointer alone |
 | Any HTTP(S) URL of the bundle bytes | `tierwise.source=https://…` | `url` | `ETag` and `If-None-Match`, if the endpoint supports them; otherwise the loaded `bundleVersion` is compared |
@@ -273,14 +273,14 @@ tests. The `304` path of a conditional `GetObject` has not been checked against 
 Run a check against your store before you rely on it. The module's other open points are in
 `java/tierwise-spring-boot-starter-s3/README.md`.
 
-## `@visplabs/node`
+## `@visporg/node`
 
-`@visplabs/node` is the same behaviour on Node 20 or later, with the built-in `fetch` and no other runtime dependency
-than `@visplabs/evaluator`. It is for servers. (A browser runs the evaluator, not the loader, and only to display; see
+`@visporg/node` is the same behaviour on Node 20 or later, with the built-in `fetch` and no other runtime dependency
+than `@visporg/evaluator`. It is for servers. (A browser runs the evaluator, not the loader, and only to display; see
 the [security model](security-model.md).)
 
 ```ts
-import { createBundleLoader } from '@visplabs/node';
+import { createBundleLoader } from '@visporg/node';
 
 const loader = createBundleLoader({
   url: 'https://tierwise.internal/v1/bundles/latest',

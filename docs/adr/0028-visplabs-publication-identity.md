@@ -3,6 +3,7 @@
 - Status: accepted (owner decision on the owner, the npm scope and the repository name; delegated decision on the
   Java packages)
 - Date: 2026-10-11
+- Superseded in part by [ADR 0029](0029-npm-scope-visporg.md): the npm scope is `@visporg`, not `@visplabs`.
 - Supersedes: the npm scope, Maven `groupId`, Java package and GitHub owner rows of
   [ADR 0006](0006-rename-to-tierwise.md). The project name and every other row of that ADR stay.
 

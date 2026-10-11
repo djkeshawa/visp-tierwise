@@ -15,7 +15,7 @@ enforced: it checks the limit before it creates the project, and it denies the o
 
 ### Browser evaluation is for display only
 
-`@visplabs/evaluator` and the web OpenFeature provider also run in a browser, and they give the same answers as the
+`@visporg/evaluator` and the web OpenFeature provider also run in a browser, and they give the same answers as the
 server for the same bundle. That is useful for showing a user what is likely to be allowed: hiding a button, greying out a
 plan feature, showing a limit. It is not enforcement, for two reasons.
 
@@ -157,7 +157,7 @@ And these are choices that your schema makes, so make them on purpose:
 | A provider is down | The key's `on_source_failure`, recorded as `UNAVAILABLE` in the provenance |
 | A caller passes the wrong tenant | Not detectable by Tierwise. Take the context from your own session |
 | Provenance leaks internal configuration | Authenticated reads; do not return results to untrusted callers |
-| A dependency is compromised | The dependency baseline is small and approved by ADR (`tierwise-core` has two runtime dependencies, `@visplabs/evaluator` has none); SBOMs; actions pinned by commit; base images pinned by digest |
+| A dependency is compromised | The dependency baseline is small and approved by ADR (`tierwise-core` has two runtime dependencies, `@visporg/evaluator` has none); SBOMs; actions pinned by commit; base images pinned by digest |
 
 ## Reporting a problem
 

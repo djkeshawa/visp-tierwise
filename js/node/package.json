@@ -1,5 +1,5 @@
 {
-  "name": "@visplabs/node",
+  "name": "@visporg/node",
   "version": "0.1.0",
   "description": "Tierwise bundle loader for Node: fetch with ETag refresh, last-known-good and atomic swap",
   "license": "Apache-2.0",
@@ -55,6 +55,6 @@
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@visplabs/evaluator": "workspace:*"
+    "@visporg/evaluator": "workspace:*"
   }
 }

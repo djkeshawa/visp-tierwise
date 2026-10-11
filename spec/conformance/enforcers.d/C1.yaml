@@ -6,7 +6,7 @@
 FIND-4: "Java: tierwise-core FindingContractTest#FIND_4_engineFindingsHaveTheSameKeysAndSeveritiesWhateverTheOrderOfFilesAndPatterns, #FIND_4_lintFindingsHaveTheSameKeysAndSeveritiesWhateverTheOrderOfFilesAndPatterns, #FIND_4_aRepeatedRunGivesTheSameFindings."
 
 # Evaluation is not validation, and the evaluate vectors cover the error path (FIND-9, EVAL-22).
-FIND-9: "Java: tierwise-core EvaluationNotValidationTest#FIND_9_everyFailingResolveRaisesAnEvaluationError, #FIND_9_everyFailingDecideRaisesAnEvaluationError, #FIND_9_aResultHasNoFindings, #FIND_9_theEvaluatorInterfaceOffersNoValidation, #FIND_9_theEvaluatorCodeUsesNoValidationCode. JS: @visplabs/evaluator test/evaluation-not-validation.test.mjs (the eight tests named 'FIND-9: ...')."
+FIND-9: "Java: tierwise-core EvaluationNotValidationTest#FIND_9_everyFailingResolveRaisesAnEvaluationError, #FIND_9_everyFailingDecideRaisesAnEvaluationError, #FIND_9_aResultHasNoFindings, #FIND_9_theEvaluatorInterfaceOffersNoValidation, #FIND_9_theEvaluatorCodeUsesNoValidationCode. JS: @visporg/evaluator test/evaluation-not-validation.test.mjs (the eight tests named 'FIND-9: ...')."
 
 # Finding fields other than the finding key are not compared by the suite (VEC-101).
 FIND-10: "Java: tierwise-core FindingContractTest#FIND_10_everyEngineFindingHasCodeSeverityFilePathLineAndMessage, #FIND_10_everyLintFindingHasCodeSeverityFilePathLineAndMessage."

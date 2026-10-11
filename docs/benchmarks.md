@@ -7,7 +7,7 @@ for them, as the plan asks ("don't optimise before measuring").
 
 ## What is measured
 
-| | Java (`tierwise-core`) | JavaScript (`@visplabs/evaluator`) |
+| | Java (`tierwise-core`) | JavaScript (`@visporg/evaluator`) |
 | --- | --- | --- |
 | Source | `ResolveDecideBenchmarkTest` and `BenchModel` in `java/tierwise-core/src/test/java/io/github/visplabs/tierwise/core/bench/` | `js/evaluator/bench/bench.mjs` |
 | Bundle | 1,000 keys, 50 features, 3 levels, 1 axis, 40 zones, 20 units, 4 lanes; no service-sourced level | The same shape (built in the script; the bytes differ from Java's) |

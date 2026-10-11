@@ -82,8 +82,8 @@ These are ordered. When two conflict, the earlier one wins.
 | Stage | What a team gets | Components |
 | --- | --- | --- |
 | 1. Validate | `tierwise validate` / `lint` / `test` in CI on layered YAML: typo-proof keys and nodes, typed values, examples as tests | Spec, Java core, CLI, GitHub Action |
-| 2. Evaluate | The same answers in-process in Java services, Node services and browsers (browser for display only) | Java evaluator, `@visplabs/evaluator`, codegen |
-| 3. Operate | Hot refresh, last-known-good, metrics, OpenFeature integration | Spring Boot starter, `@visplabs/node`, OpenFeature providers |
+| 2. Evaluate | The same answers in-process in Java services, Node services and browsers (browser for display only) | Java evaluator, `@visporg/evaluator`, codegen |
+| 3. Operate | Hot refresh, last-known-good, metrics, OpenFeature integration | Spring Boot starter, `@visporg/node`, OpenFeature providers |
 | 4. Govern | Versioned bundles, rollback, cross-language `/resolve` and `/decide` | `tierwise-server` |
 
 A team can stop at any stage and still get value. Stage 1 alone (CLI-only adoption)

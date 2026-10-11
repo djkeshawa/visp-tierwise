@@ -28,14 +28,14 @@ test('the built ESM imports only its own files, the evaluator and the one Node b
   for (const name of files) {
     for (const specifier of specifiersOf(readFileSync(join(distEsm, name), 'utf8'))) {
       const own = /^\.\/[a-z]+\.js$/.test(specifier);
-      const allowed = specifier === '@visplabs/evaluator' || specifier === 'node:fs/promises';
+      const allowed = specifier === '@visporg/evaluator' || specifier === 'node:fs/promises';
       assert.ok(own || allowed, `${name} imports ${specifier}`);
     }
   }
 });
 
 test('the runtime dependency is the evaluator alone', () => {
-  assert.deepEqual(Object.keys(manifest.dependencies ?? {}), ['@visplabs/evaluator']);
+  assert.deepEqual(Object.keys(manifest.dependencies ?? {}), ['@visporg/evaluator']);
 });
 
 test('the CommonJS build loads, and it serves a snapshot', async () => {

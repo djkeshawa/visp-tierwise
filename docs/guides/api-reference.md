@@ -8,7 +8,7 @@ one artifact, with this layout:
 | --- | --- | --- |
 | `site/` | This documentation | `mkdocs build --strict` (MkDocs Material 9.7.7) |
 | `site/api/java/<module>/` | The Javadoc of each Java module, with an index page that lists the modules | `./mvnw compile javadoc:javadoc` (maven-javadoc-plugin 3.12.0) |
-| `site/api/js/` | The TypeDoc output for `@visplabs/evaluator`, `@visplabs/node` and `@visplabs/openfeature` | `pnpm run build` in `docs/tools/typedoc` (TypeDoc 0.28.20 on TypeScript 6.0.3, ADR 0022) |
+| `site/api/js/` | The TypeDoc output for `@visporg/evaluator`, `@visporg/node` and `@visporg/openfeature` | `pnpm run build` in `docs/tools/typedoc` (TypeDoc 0.28.20 on TypeScript 6.0.3, ADR 0022) |
 
 Javadoc is built for each module and not aggregated: `javadoc:aggregate` refuses a reactor in which `tierwise-core` has a
 module descriptor and the other modules have none ("Creating an aggregated report for both named and unnamed modules
@@ -28,9 +28,9 @@ Anything that is not documented as public is internal. The public packages are s
 | `tierwise-core`, package `io.github.visplabs.tierwise.core` | `Tierwise` (`compile`, `namingPatterns`, `loadBundle`, `evaluator`), `NamingPattern`, `Evaluator` (`resolve`, `resolveLocal`, `decide`), `Context`, `FactSet`, `EvaluatorOptions`, `LevelValueProvider`, `EvaluationListener`, `Resolved`, `Decision`, `TierwiseException` |
 | `tierwise-spring-boot-starter`, package `io.github.visplabs.tierwise.spring` | `Resolver`, `DecisionEngine`, `TierwiseEvaluators`, `TierwiseProvider`, `BundleSource`, `TierwiseObserver` |
 | `tierwise-openfeature`, package `io.github.visplabs.tierwise.openfeature` | `TierwiseProvider`, `TierwiseMetadata` |
-| `@visplabs/evaluator` | `loadBundle`, `createEvaluator`, `TierwiseError` |
-| `@visplabs/node` | `createBundleLoader`, `TierwiseError`, `BundleLoaderError` |
-| `@visplabs/openfeature` | `TierwiseServerProvider`, `TierwiseWebProvider`, `TierwiseMetadata` |
+| `@visporg/evaluator` | `loadBundle`, `createEvaluator`, `TierwiseError` |
+| `@visporg/node` | `createBundleLoader`, `TierwiseError`, `BundleLoaderError` |
+| `@visporg/openfeature` | `TierwiseServerProvider`, `TierwiseWebProvider`, `TierwiseMetadata` |
 
 The Java module `tierwise-core` exports only `io.github.visplabs.tierwise.core`; everything under `io.github.visplabs.tierwise.core.internal`
 is an implementation detail. The `tierwise-cli` module is a command line and exports no API; use the
