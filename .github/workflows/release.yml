@@ -30,8 +30,7 @@ name: Release
 # Sigstore needs no secret: the publishing job signs with its own OIDC token (id-token: write).
 #
 # Not done by this workflow: pushing the Docker images (no registry is chosen yet) and pressing "Publish" in the
-# Central Portal (autoPublish is false on purpose). The npm packages are still marked "private": true, and
-# `npm publish` refuses them until the owner removes that line (docs/release-process.md, step 9).
+# Central Portal (autoPublish is false on purpose).
 
 on:
   workflow_dispatch:
@@ -553,8 +552,8 @@ jobs:
             cmp "$file" "rebuilt/$(basename "$file")"
           done
           echo "All tarballs match the tested build."
-      # The packages are still "private": true. npm refuses to publish a private package, and this step stops with
-      # the reason instead of letting that error scroll by. Step 9 of docs/release-process.md removes the line.
+      # npm refuses to publish a private package. If one is marked "private": true again, this step stops with the
+      # reason instead of letting that error scroll by (docs/release-process.md, step 9).
       - name: Check that the packages may be published
         if: env.DRY_RUN == 'false' && env.HAVE_NPM == 'true'
         shell: bash

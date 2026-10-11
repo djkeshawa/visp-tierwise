@@ -1,7 +1,6 @@
 {
   "name": "@visplabs/openfeature",
   "version": "0.1.0",
-  "private": true,
   "description": "OpenFeature server and web providers backed by @visplabs/evaluator",
   "license": "Apache-2.0",
   "repository": {

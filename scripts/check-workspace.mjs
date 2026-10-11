@@ -16,7 +16,9 @@ for (const name of ['evaluator', 'node', 'openfeature']) {
   const manifest = readJson(`${name}/package.json`);
   assert.equal(manifest.name, `@visplabs/${name}`);
   assert.equal(manifest.version, workspace.version);
-  assert.equal(manifest.private, true, 'Phase 0 packages must not be publishable.');
+  // Published packages: not private, public access, provenance (docs/release-process.md, step 9).
+  assert.equal(manifest.private, undefined, `${manifest.name} must not be private: it is published.`);
+  assert.equal(manifest.publishConfig?.access, 'public', `${manifest.name} must publish with public access.`);
   assert.equal(manifest.license, 'Apache-2.0');
   // The evaluator has zero runtime dependencies; the other packages depend only on it (requirements §3.2).
   const allowed = name === 'evaluator' ? {} : { '@visplabs/evaluator': 'workspace:*' };
@@ -28,6 +30,6 @@ for (const name of ['evaluator', 'node', 'openfeature']) {
   assert.equal(readJson(`${name}/tsconfig.json`).extends, '../tsconfig.base.json');
   assert.equal(readJson(`${name}/tsconfig.cjs.json`).extends, './tsconfig.json');
   assert.deepEqual(manifest.devDependencies ?? {}, {}, 'Declare development tools once, at the workspace root.');
-  console.log(`Checked ${manifest.name}: private, strict TypeScript, no runtime dependencies.`);
+  console.log(`Checked ${manifest.name}: publishable, strict TypeScript, no runtime dependencies.`);
 }
 console.log(`Workspace metadata verified at ${fileURLToPath(root)}. Run pnpm build and pnpm test to compile and load the packages.`);

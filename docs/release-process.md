@@ -202,7 +202,7 @@ What the check covers: all JARs (library, sources, Javadoc, fat CLI, executable 
 
 ### 9. Make the npm packages publishable
 
-The three packages are `"private": true` today, on purpose. `npm publish` refuses a private package, and the `publish-npm` job stops with a message if it finds one. Do this on the release commit, after steps 2 and 6:
+**Done for 0.1.0.** The three packages were `"private": true` until the release commit. `npm publish` refuses a private package, and the `publish-npm` job stops with a message if it finds one. Do this on the release commit, after steps 2 and 6:
 
 1. Remove the `"private": true` line from `js/evaluator/package.json`, `js/node/package.json` and `js/openfeature/package.json`. Keep it in `js/package.json` (the workspace root) and `js/spec-tools/package.json`, which are never published. Each package already has `publishConfig` (public access, provenance), `repository`, `homepage`, `bugs`, `keywords` and `files`.
 2. Update the place that asserts the old state: `scripts/check-workspace.mjs` (`manifest.private`, "Phase 0 packages must not be publishable"). Run `pnpm --dir js run check` and `pnpm --dir js test`.

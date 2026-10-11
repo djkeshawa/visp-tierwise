@@ -87,7 +87,7 @@ each one is meant to take under five minutes.
 | [`js/openfeature`](js/openfeature) (`@visplabs/openfeature`) | Node 20+, browsers | Server and web OpenFeature providers | Tested |
 | [`js/spec-tools`](js/spec-tools) | Node 22+ | Private: checks the spec suite and canonicalises content | Tested |
 
-The packages are private and are not published. The Maven artifacts use the group
+Version 0.1.0 is the first release. The Maven artifacts use the group
 `io.github.visplabs`, and the npm scope is `@visplabs`.
 
 ## Repository

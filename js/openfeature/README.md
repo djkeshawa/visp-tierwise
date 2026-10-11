@@ -11,7 +11,7 @@ codes is defined in [`docs/openfeature-mapping.md`](../../docs/openfeature-mappi
 > likely to be, such as hiding a button. Enforce every decision on a server, with the same bundle, through the
 > server provider or the evaluator.
 
-This package is private. Phase reviews precede publication. The OpenFeature packages are peer dependencies
+Install it from npm as `@visplabs/openfeature`. The OpenFeature packages are peer dependencies
 (`@openfeature/core` always, plus the SDK you use), so one build serves both SDKs and the application chooses
 the versions.
 

@@ -1,7 +1,6 @@
 {
   "name": "@visplabs/evaluator",
   "version": "0.1.0",
-  "private": true,
   "description": "Tierwise evaluator: resolve and decide over canonical bundles, in Node and browsers, with zero runtime dependencies",
   "license": "Apache-2.0",
   "repository": {

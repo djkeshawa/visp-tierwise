@@ -8,7 +8,7 @@ and in browsers.
 > controls that browser. Use it to show what a decision is likely to be. Enforce every decision on a server,
 > with the same bundle.
 
-This package is private. Phase reviews precede publication.
+Install it from npm as `@visplabs/evaluator`.
 
 ## Supported versions
 

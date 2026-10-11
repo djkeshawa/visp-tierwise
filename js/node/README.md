@@ -7,7 +7,7 @@ ETag, swaps the evaluator atomically, and keeps the last good bundle when a refr
 > **Browser use is for display only.** Enforce every decision on a server with the same bundle. This package is for
 > servers.
 
-This package is private. Phase reviews precede publication.
+Install it from npm as `@visplabs/node`.
 
 ## Usage
 

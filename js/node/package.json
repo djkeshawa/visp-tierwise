@@ -1,7 +1,6 @@
 {
   "name": "@visplabs/node",
   "version": "0.1.0",
-  "private": true,
   "description": "Tierwise bundle loader for Node: fetch with ETag refresh, last-known-good and atomic swap",
   "license": "Apache-2.0",
   "repository": {
