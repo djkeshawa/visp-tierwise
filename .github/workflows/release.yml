@@ -576,8 +576,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
+          # The ./ matters: without it npm reads "rebuilt/<file>" as a GitHub "user/repo" shorthand and runs git.
           for package in evaluator node openfeature; do
-            npm publish "rebuilt/tierwise-$package-$VERSION.tgz" --provenance --access public
+            npm publish "./rebuilt/tierwise-$package-$VERSION.tgz" --provenance --access public
           done
 
   github-release:
