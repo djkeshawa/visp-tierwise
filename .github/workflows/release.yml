@@ -463,8 +463,11 @@ jobs:
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         # autoPublish is false: Central validates the bundle and waits for a person to press Publish in the portal.
+        # tierwise-e2e is left out of the reactor: it builds no JAR, and central-publishing-maven-plugin 0.11.0 stops
+        # on a module without one ("did not assign a file to the build artifact") before it reads skipPublishing.
+        # The upload then happens in the last module that remains.
         run: >-
-          ./mvnw -B -ntp -DskipTests deploy -Prelease
+          ./mvnw -B -ntp -DskipTests deploy -Prelease -pl '!tierwise-e2e'
           -Dtierwise.gpg.skip=false -Dtierwise.sigstore.skip=false
       - name: Collect the signatures
         if: env.DRY_RUN == 'false' && env.HAVE_CENTRAL == 'true' && env.HAVE_GPG == 'true'
