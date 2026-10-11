@@ -179,15 +179,25 @@ def check_release_poms():
         require(f"<artifactId>{coordinate.split(':')[1]}</artifactId>" in release,
                 f"The release profile does not use {coordinate}")
     # Test-only modules publish nothing; published modules do not set the switch.
+    # A test-only module builds no JAR, and Sigstore stops the deploy on a module without one, so it skips
+    # both signing plugins with a literal true (the workflow's -D switches override a property). A published
+    # module never skips signing.
+    signing = ("org.apache.maven.plugins:maven-gpg-plugin", "dev.sigstore:sigstore-maven-plugin")
     for name in MODULES:
         model = ET.parse(ROOT / "java" / name / "pom.xml").getroot()
         skip = pom_properties(model).get("maven.deploy.skip")
+        signing_skipped = {coordinate_of(plugin) for plugin in model.findall("m:build/m:plugins/m:plugin", NS)
+                           if plugin.findtext("m:configuration/m:skip", namespaces=NS) == "true"}
         if name in PUBLISHED:
             require(skip != "true", f"{name} is published and must not set maven.deploy.skip")
             require(model.findtext("m:name", namespaces=NS) and model.findtext("m:description", namespaces=NS),
                     f"{name} needs a <name> and a <description> for Maven Central")
+            for coordinate in signing:
+                require(coordinate not in signing_skipped, f"{name} is published and must not skip {coordinate}")
         else:
             require(skip == "true", f"{name} is not published and must set maven.deploy.skip to true")
+            for coordinate in signing:
+                require(coordinate in signing_skipped, f"{name} is not published and must skip {coordinate}")
     server = ET.parse(ROOT / "java/tierwise-server/pom.xml").getroot()
     repackage = [goal.text for goal in server.findall(
         "m:build/m:plugins/m:plugin/m:executions/m:execution/m:goals/m:goal", NS)]

@@ -98,6 +98,25 @@
           <skipIfEmpty>true</skipIfEmpty>
         </configuration>
       </plugin>
+      <plugin>
+        <!--
+          No JAR to sign. The release workflow turns signing on with -Dtierwise.sigstore.skip=false and
+          -Dtierwise.gpg.skip=false, and a command-line property overrides a POM property, so the skip is literal.
+          Without it, sigstore stops the deploy with "The project artifact has not been assembled yet".
+        -->
+        <groupId>dev.sigstore</groupId>
+        <artifactId>sigstore-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
