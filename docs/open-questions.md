@@ -11,7 +11,7 @@ All 19 technical questions from the Phase 0 review are resolved by ADRs 0005 and
 | ~~O3~~ | ~~Who are the initial maintainers?~~ | — | **Answered 2026-10-10:** the owner, [@djkeshawa](https://github.com/djkeshawa), as sole maintainer ([MAINTAINERS.md](https://github.com/tierwise/tierwise/blob/main/MAINTAINERS.md)) |
 | ~~O4~~ | ~~Private security and conduct contacts~~ | — | **Answered 2026-10-10:** GitHub private vulnerability reporting for security; conduct reports to the maintainer through GitHub. No email is published |
 | ~~O5~~ | ~~Governance tie-break and maintainer appointment rules~~ | — | **Adopted 2026-10-10** as proposed: lazy consensus; the project lead breaks ties until there are three or more maintainers ([GOVERNANCE.md](https://github.com/tierwise/tierwise/blob/main/GOVERNANCE.md)) |
-| O6 | Should the repository be public from Phase 1 (developing the spec in the open) or only from release? | Phase 1 start | Public from Phase 1: spec feedback is most valuable before it freezes |
+| ~~O6~~ | ~~Should the repository be public from Phase 1 or only from release?~~ | — | **Answered 2026-10-11:** public now, as `djkeshawa/visp-tierwise`; the transfer to `tierwise/tierwise` (O2) follows, and GitHub redirects the old URL |
 
 ## Technical decision process
 

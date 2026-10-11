@@ -141,9 +141,9 @@ Every remaining item is an owner action or a scheduled run. The steps are in [`d
 | --- | --- | --- | --- |
 | O-10 | The first scheduled nightly differential run (cron 03:17 UTC) passing. | CI, then a check | Criterion 3 |
 | O2 | Create the `tierwise` GitHub organisation and transfer the repository to it; claim the `@tierwise` npm scope. | Owner | Publishing, criterion 13 |
-| O6 | Decide whether the repository is public now or at release. | Owner | Announcing |
+| ~~O6~~ | **Done 2026-10-11:** the repository is public, as `djkeshawa/visp-tierwise`. | Owner | — |
 | O-12 | Register the Maven Central namespace `io.github.tierwise`. Create the release secrets: Central token, GPG key, npm token. Then run `release.yml` with `dry_run=false`. | Owner | Criterion 13, publication |
-| O-SEC | Turn on private vulnerability reporting, and create the `release` environment with you as the required reviewer. GitHub allows both only on a public repository (or, for the reviewers, a paid plan). The API refused both for the private repository on 2026-10-10. | Owner, after O6 | `SECURITY.md` routing; protected publishing |
+| ~~O-SEC~~ | **Done 2026-10-11:** private vulnerability reporting is on, and the `release` environment has @djkeshawa as the required reviewer and deploys only from tags matching `v*`. Secret scanning and push protection are on. Check all four again after the transfer (O2). | Owner | — |
 | O-4 | Confirm that enforcer-only clauses (VEC-125) meet criterion 1. | Owner | Criterion 1 wording |
 | O-3 | Accept phases 0 and 4 to 8, including `tierwise-e2e` as the Phase 7 exit test, and Phase 9. | Owner | Phase acceptance |
 | O-15 | Accept the plain benchmark harness in place of JMH for Phase 3 (ADR 0021). | Owner | Phase 3 wording |

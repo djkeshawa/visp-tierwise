@@ -42,7 +42,7 @@ The three publishing jobs have `if: needs.prepare.outputs.publish == 'true'` and
 ### 1. Claim the GitHub organisation (O2)
 
 1. Sign in to GitHub with the account that will own the project and create the organisation `tierwise` (github.com/account/organizations/new, the free plan is enough). On 2026-10-09 neither an organisation nor a user named `tierwise` existed: `https://api.github.com/orgs/tierwise` and `https://api.github.com/users/tierwise` both answered 404. Check again before you start.
-2. Move the existing repository there instead of pushing a new one, so its history, issues and Dependabot PRs come along: in `djkeshawa/visp-tierwise`, open Settings, then Transfer ownership, choose `tierwise`, and then rename the repository to `tierwise` (or run `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=tierwise -f new_name=tierwise`). GitHub redirects the old URL. Update your clone with `git remote set-url origin https://github.com/tierwise/tierwise.git`. Decide in this step whether it is public from now on (open question O6).
+2. Move the existing repository there instead of pushing a new one, so its history, issues and Dependabot PRs come along: in `djkeshawa/visp-tierwise`, open Settings, then Transfer ownership, choose `tierwise`, and then rename the repository to `tierwise` (or run `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=tierwise -f new_name=tierwise`). GitHub redirects the old URL. Update your clone with `git remote set-url origin https://github.com/tierwise/tierwise.git`. The repository has been public since 2026-10-11 (O6). After the transfer, check that private vulnerability reporting, secret scanning, push protection and the `release` environment's reviewer and tag rule are still in place.
 3. If you choose another organisation or repository name, change the URLs before anything else. These files carry the URL today:
 
    ```sh
@@ -88,7 +88,7 @@ The Maven group id `io.github.tierwise` is verified against this organisation in
 
 `SECURITY.md` routes reports through GitHub private vulnerability reporting, and `CODE_OF_CONDUCT.md` routes conduct reports to the maintainer through GitHub. No email address is published. What remains:
 
-1. Enable private vulnerability reporting once the repository is in its final home (Settings, Code security, or `gh api -X PUT repos/tierwise/tierwise/private-vulnerability-reporting`), and check that the maintainer is notified. GitHub offers it only on public repositories: on 2026-10-10 the call answered 404 for the private `djkeshawa/visp-tierwise`. Do this step after the repository is public (O6).
+1. **Done on 2026-10-11.** Private vulnerability reporting is enabled on the public `djkeshawa/visp-tierwise` (`gh api repos/djkeshawa/visp-tierwise/private-vulnerability-reporting` answers `{"enabled":true}`). GitHub offers it only on public repositories; on 2026-10-10 the same call answered 404 while the repository was private. After the transfer (step 1), check it with `gh api repos/tierwise/tierwise/private-vulnerability-reporting`, and check that the maintainer is notified of a report.
 
 ### 5. Register the Maven Central namespace and create a token
 
@@ -121,7 +121,7 @@ The workflow uploads with the server id `central`, which is what `central-publis
    gpg --armor --export-secret-keys <KEYID>
    ```
 
-4. In the repository settings create the environment `release`. Required reviewers need a public repository or a paid plan: on 2026-10-10 the API refused them for the private `djkeshawa/visp-tierwise` (422, "billing plan"), so create the environment after the repository is public or in an organisation on a plan that supports them. Add required reviewers (you), so that every publishing job waits for an approval, and restrict the deployment to tags that match `v*`. A job that uses `environment: release` gets the environment's secrets only after the approval.
+4. **Done on 2026-10-11.** The environment `release` exists with @djkeshawa as the required reviewer, so every publishing job waits for an approval, and its deployments are restricted to tags that match `v*`. (Required reviewers need a public repository or a paid plan: on 2026-10-10 the API refused them for the then-private repository with 422, "billing plan".) A job that uses `environment: release` gets the environment's secrets only after the approval.
 5. Add these secrets to the **environment** (not to the repository):
 
    | Secret | Value |
