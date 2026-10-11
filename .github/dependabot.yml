@@ -8,6 +8,10 @@ updates:
     directory: /java
     schedule:
       interval: weekly
+    ignore:
+      # Maven 3.10 leaves local-repository files in the Central bundle and Central rejects it (ADR 0030).
+      - dependency-name: org.apache.maven:apache-maven
+        versions: ['>= 3.10.0']
   - package-ecosystem: npm
     directory: /js
     schedule:

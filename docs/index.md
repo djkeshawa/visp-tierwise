@@ -55,6 +55,7 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [0027](adr/0027-s3-integration-verification.md) | S3 modules verified against an official MinIO binary in CI |
 | [0028](adr/0028-visplabs-publication-identity.md) | Published under `visplabs`: `io.github.visplabs`, `@visporg`, packages `io.github.visplabs.tierwise.*` |
 | [0029](adr/0029-npm-scope-visporg.md) | The npm scope is `@visporg`, after the owner's npm organisation `visporg` |
+| [0030](adr/0030-maven-3-9-for-central.md) | Maven stays on 3.9.x: with 3.10 the Central bundle is rejected |
 
 ## Browser use
 
