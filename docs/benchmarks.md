@@ -7,9 +7,9 @@ for them, as the plan asks ("don't optimise before measuring").
 
 ## What is measured
 
-| | Java (`tierwise-core`) | JavaScript (`@tierwise/evaluator`) |
+| | Java (`tierwise-core`) | JavaScript (`@visplabs/evaluator`) |
 | --- | --- | --- |
-| Source | `ResolveDecideBenchmarkTest` and `BenchModel` in `java/tierwise-core/src/test/java/io/github/tierwise/core/bench/` | `js/evaluator/bench/bench.mjs` |
+| Source | `ResolveDecideBenchmarkTest` and `BenchModel` in `java/tierwise-core/src/test/java/io/github/visplabs/tierwise/core/bench/` | `js/evaluator/bench/bench.mjs` |
 | Bundle | 1,000 keys, 50 features, 3 levels, 1 axis, 40 zones, 20 units, 4 lanes; no service-sourced level | The same shape (built in the script; the bytes differ from Java's) |
 | Operations | `resolve(context, key)` and `decide(context, feature, facts)` | `resolveSync`, `resolve` (async API) and `decideSync` |
 | Warm-up | 50,000 operations of each kind, untimed | 50,000 operations of each kind, untimed |

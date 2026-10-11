@@ -1,10 +1,10 @@
 package rich.gen;
 
-import io.github.tierwise.core.Context;
-import io.github.tierwise.core.EvaluatorOptions;
-import io.github.tierwise.core.FactSet;
-import io.github.tierwise.core.LoadedBundle;
-import io.github.tierwise.core.Tierwise;
+import io.github.visplabs.tierwise.core.Context;
+import io.github.visplabs.tierwise.core.EvaluatorOptions;
+import io.github.visplabs.tierwise.core.FactSet;
+import io.github.visplabs.tierwise.core.LoadedBundle;
+import io.github.visplabs.tierwise.core.Tierwise;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;

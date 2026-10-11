@@ -1,6 +1,6 @@
 {
   "name": "Tierwise",
-  "identityStatus": "chosen-unclaimed",
+  "identityStatus": "github-claimed; npm scope and Maven namespace pending",
   "packageVersion": "0.1.0-dev.0",
   "releaseVersion": "0.1.0",
   "releaseStatus": "unreleased; release steps pending (docs/release-0.1.0-checklist.md)",
@@ -9,8 +9,8 @@
   "supportedBundleFormatVersions": ["1"],
   "phase": 9,
   "phaseStatus": "phase-9-in-progress; phases 0-8 complete (phases 0, 4, 5 and 6 with caveats); release 0.1.0 pending owner steps",
-  "npmScope": "@tierwise",
-  "mavenGroupId": "io.github.tierwise",
-  "githubOwner": "tierwise (proposed, unclaimed)",
+  "npmScope": "@visplabs",
+  "mavenGroupId": "io.github.visplabs",
+  "githubOwner": "visplabs",
   "decisionRecords": "docs/adr/"
 }

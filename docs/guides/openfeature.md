@@ -6,8 +6,8 @@ without learning another API:
 
 | Language | Package | Provider |
 | --- | --- | --- |
-| Java 17 or later | `io.github.tierwise:tierwise-openfeature` | `io.github.tierwise.openfeature.TierwiseProvider` |
-| JavaScript and TypeScript | `@tierwise/openfeature` | `TierwiseServerProvider` for `@openfeature/server-sdk`, `TierwiseWebProvider` for `@openfeature/web-sdk` |
+| Java 17 or later | `io.github.visplabs:tierwise-openfeature` | `io.github.visplabs.tierwise.openfeature.TierwiseProvider` |
+| JavaScript and TypeScript | `@visplabs/openfeature` | `TierwiseServerProvider` for `@openfeature/server-sdk`, `TierwiseWebProvider` for `@openfeature/web-sdk` |
 
 Both implement one mapping, defined in [OpenFeature mapping](../openfeature-mapping.md). That page is the reference:
 this guide shows how to use the providers and what to expect, and does not repeat the clauses.
@@ -119,8 +119,8 @@ A supplier that returns `null` makes evaluations fail with `PROVIDER_NOT_READY`.
 ```ts
 import { readFileSync } from 'node:fs';
 import { OpenFeature } from '@openfeature/server-sdk';
-import { createEvaluator, loadBundle } from '@tierwise/evaluator';
-import { TierwiseServerProvider } from '@tierwise/openfeature';
+import { createEvaluator, loadBundle } from '@visplabs/evaluator';
+import { TierwiseServerProvider } from '@visplabs/openfeature';
 
 const providers = { account: { fn: async () => ({}), timeoutMs: 200 }, user: { fn: async () => ({}), timeoutMs: 200 } };
 const evaluator = createEvaluator(loadBundle(readFileSync('commerce.json')), { providers });
@@ -152,10 +152,10 @@ contributions = []
 ```
 
 Use `details.flagMetadata.bundleVersion` and `details.flagMetadata.contributions` (a JSON string). The OpenFeature
-packages are **peer dependencies** of `@tierwise/openfeature` (`@openfeature/core` always, plus the SDK you use), so one
+packages are **peer dependencies** of `@visplabs/openfeature` (`@openfeature/core` always, plus the SDK you use), so one
 build serves both SDKs and your application chooses the versions.
 
-With `@tierwise/node`, give the provider a function that returns the current evaluator, so that a refreshed bundle
+With `@visplabs/node`, give the provider a function that returns the current evaluator, so that a refreshed bundle
 is used by the next evaluation:
 
 ```ts
@@ -170,7 +170,7 @@ The web SDK keeps one static context, and its evaluations are synchronous:
 
 ```ts
 import { OpenFeature } from '@openfeature/web-sdk';
-import { TierwiseWebProvider } from '@tierwise/openfeature';
+import { TierwiseWebProvider } from '@visplabs/openfeature';
 
 await OpenFeature.setProviderAndWait(new TierwiseWebProvider(evaluator), context);
 const showButton = OpenFeature.getClient().getBooleanValue('checkout.container_order.allowed', false);

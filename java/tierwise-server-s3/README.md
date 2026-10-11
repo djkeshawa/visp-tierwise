@@ -1,7 +1,7 @@
 # tierwise-server-s3
 
 Optional S3 bundle store for the Tierwise server (ADR 0020, requirements section 9). It implements the server's
-`io.github.tierwise.server.store.BundleStore` SPI and keeps canonical bundles, publication records and the latest
+`io.github.visplabs.tierwise.server.store.BundleStore` SPI and keeps canonical bundles, publication records and the latest
 pointer in a bucket. Every change is a conditional S3 write, so concurrent publishers and promoters cannot overwrite
 each other's stored bytes.
 
@@ -104,7 +104,7 @@ never falls back to an unconditional write. Reads after writes are strongly cons
 This module uses the server's SPI directly. The provisional copy has been removed:
 
 1. The module's own `BundleStore`, `BundleConflictException`, `BundleStoreException` and `BundleNotFoundException` are
-   deleted. The store implements `io.github.tierwise.server.store.BundleStore` and throws the server's exceptions.
+   deleted. The store implements `io.github.visplabs.tierwise.server.store.BundleStore` and throws the server's exceptions.
 2. The SPI signatures are used: `boolean putBundle`, `Optional<byte[]> getBundle`, `void addRecord`,
    `List<PublicationRecord> records`, `List<PublicationRecord> allRecords`, `Optional<String> latest` and
    `void setLatest`. `PutOutcome` and `publishedVersions` are gone.

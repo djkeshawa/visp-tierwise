@@ -18,8 +18,8 @@ on that build. The projects in the examples are the samples of the repository (`
 | GitHub Action | `uses: <owner>/tierwise@<sha>` with `command: validate` or `compile` | A GitHub Actions runner. Runs the Docker image, or a released JAR checked against a SHA-256 you give it |
 | Native binary | `tierwise <command>` | Nothing. Built in the release dry run for Linux, macOS and Windows |
 
-*(OPEN)* Nothing is published, so there is no download address and no image name yet. They depend on the GitHub
-organisation that the project owner has not claimed (open question O2 in [open questions](../open-questions.md)). Build
+*(OPEN)* Nothing is published, so there is no download yet. The JAR will be attached to the releases at
+<https://github.com/visplabs/tierwise/releases>; the image name waits for a registry to be chosen. Build
 the JAR from a checkout (`cd java && ./mvnw -B -ntp -DskipTests package`) and find it at
 `java/tierwise-cli/target/tierwise-cli-<version>-all.jar`. The page uses `java -jar tierwise.jar` for the command
 line, as the quickstarts do.
@@ -359,4 +359,4 @@ the bundle only from the build of the main branch (see the [server guide](server
 
 ## Open points
 
-- *(OPEN)* The download address of the JAR and the name of the Docker image (open question O2).
+- *(OPEN)* The name of the Docker image. It waits for a registry to be chosen (for example `ghcr.io/visplabs/tierwise`). The JAR will be attached to the releases at <https://github.com/visplabs/tierwise/releases>.

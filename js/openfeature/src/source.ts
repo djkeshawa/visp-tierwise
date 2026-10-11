@@ -1,4 +1,4 @@
-import type { Evaluator } from '@tierwise/evaluator';
+import type { Evaluator } from '@visplabs/evaluator';
 
 /**
  * Where a provider gets its evaluator: one fixed evaluator, or a function that returns the current one on every

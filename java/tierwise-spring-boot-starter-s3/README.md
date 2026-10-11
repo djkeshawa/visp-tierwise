@@ -5,7 +5,7 @@ that depends on the AWS SDK. The core starter and the server stay SDK-free.
 
 The module contains:
 
-- `S3BundleSource`, a `io.github.tierwise.spring.BundleSource` that reads one bundle object with a conditional
+- `S3BundleSource`, a `io.github.visplabs.tierwise.spring.BundleSource` that reads one bundle object with a conditional
   `GetObject`;
 - `S3Location`, the parser of `s3://bucket/key`;
 - `S3BundleSourceAutoConfiguration`, which creates the S3 client and the source when the configuration asks
@@ -67,7 +67,7 @@ It then defines:
 - an `S3BundleSource`, which is a `BundleSource` bean, unless the application defines any `BundleSource` bean.
 
 A malformed `s3://` value fails the application context at startup. The configuration is ordered before
-`io.github.tierwise.spring.TierwiseAutoConfiguration`, so the starter sees the source bean when it decides
+`io.github.visplabs.tierwise.spring.TierwiseAutoConfiguration`, so the starter sees the source bean when it decides
 whether to use its default source.
 
 ## Dependencies
@@ -78,7 +78,7 @@ Declared in this module only, as ADR 0020 requires:
   `software.amazon.awssdk:bom` import (2.55.0);
 - `org.springframework.boot:spring-boot-autoconfigure`, with the versions of the `spring-boot-dependencies`
   import (4.1.1);
-- `io.github.tierwise:tierwise-spring-boot-starter`, which brings `tierwise-core`.
+- `io.github.visplabs:tierwise-spring-boot-starter`, which brings `tierwise-core`.
 
 The module imports the Spring Boot BOM first, then the AWS BOM. The Spring Boot BOM manages JUnit 6, and it
 wins over the parent's `junit-bom` 5.x import because a child's `dependencyManagement` is processed before the

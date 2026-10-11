@@ -1,6 +1,6 @@
 # OpenFeature mapping
 
-This appendix defines how a Tierwise evaluator is exposed as an OpenFeature provider: which flags exist and what types they have, which evaluation-context attributes carry the Tierwise context and facts, how provenance becomes a resolution reason, which flag metadata is set, and how Tierwise errors become OpenFeature error codes. It does not define the evaluator operations (section 11), the provenance shape (section 9) or the value encoding (section 10). It reads their results and maps them. Requirements §8 ("OpenFeature providers") asks for this appendix, and the provider for each language implements it: `tierwise-openfeature` for the JVM and `@tierwise/openfeature` for JavaScript (a server provider and a web provider).
+This appendix defines how a Tierwise evaluator is exposed as an OpenFeature provider: which flags exist and what types they have, which evaluation-context attributes carry the Tierwise context and facts, how provenance becomes a resolution reason, which flag metadata is set, and how Tierwise errors become OpenFeature error codes. It does not define the evaluator operations (section 11), the provenance shape (section 9) or the value encoding (section 10). It reads their results and maps them. Requirements §8 ("OpenFeature providers") asks for this appendix, and the provider for each language implements it: `tierwise-openfeature` for the JVM and `@visplabs/openfeature` for JavaScript (a server provider and a web provider).
 
 The clauses follow the conventions of `spec/AUTHORING.md`. The area prefix is `OFMAP`. The appendix is not yet part of the numbered specification (see Open points). Its clause IDs may be renumbered until it is accepted.
 
@@ -214,7 +214,7 @@ OpenFeature merges the contexts of its layers (API, transaction, client, invocat
 
 **[OFMAP-44]** The documentation of such a provider MUST state that it is for display only: a result computed in a browser can be tampered with, so every decision that matters is enforced on a server with the same bundle (requirements §1, §3.2).
 
-> Implementation note: the web provider of `@tierwise/openfeature` is the only such provider. Its context is the static context that the web SDK holds, so a change of context takes effect on the next evaluation.
+> Implementation note: the web provider of `@visplabs/openfeature` is the only such provider. Its context is the static context that the web SDK holds, so a change of context takes effect on the next evaluation.
 
 ## 8 Consistency between languages
 

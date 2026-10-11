@@ -3,7 +3,7 @@
 // refuse to run before a bundle is loaded (requirements §8 and §12).
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createEvaluator, loadBundle } from '@tierwise/evaluator';
+import { createEvaluator, loadBundle } from '@visplabs/evaluator';
 import { api, conformanceText, fromText, sleep, startStub, withRootValue } from './support.mjs';
 
 const { createBundleLoader } = api;

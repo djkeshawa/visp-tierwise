@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.github.tierwise</groupId>
+    <groupId>io.github.visplabs</groupId>
     <artifactId>tierwise-parent</artifactId>
     <version>0.1.0-dev.0</version>
     <relativePath>../pom.xml</relativePath>
@@ -15,12 +15,12 @@
   <description>The tierwise command line: init, validate, lint, test, compile, codegen and explain. Published as a library JAR and as a runnable all-in-one JAR.</description>
 
   <properties>
-    <tierwise.cli.mainClass>io.github.tierwise.cli.Main</tierwise.cli.mainClass>
+    <tierwise.cli.mainClass>io.github.visplabs.tierwise.cli.Main</tierwise.cli.mainClass>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>io.github.tierwise</groupId>
+      <groupId>io.github.visplabs</groupId>
       <artifactId>tierwise-core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -65,7 +65,7 @@
         <includes>
           <include>*.yaml</include>
         </includes>
-        <targetPath>io/github/tierwise/cli/templates</targetPath>
+        <targetPath>io/github/visplabs/tierwise/cli/templates</targetPath>
       </resource>
       <!-- The catalogue that `tierwise explain` prints is copied from the spec at build time (FIND-29). -->
       <resource>
@@ -73,7 +73,7 @@
         <includes>
           <include>error-codes.md</include>
         </includes>
-        <targetPath>io/github/tierwise/cli</targetPath>
+        <targetPath>io/github/visplabs/tierwise/cli</targetPath>
       </resource>
     </resources>
     <plugins>
@@ -144,7 +144,7 @@
         Reachability metadata has two sources:
         - picocli, snakeyaml-engine and jackson-core: metadataRepository below makes the plugin fetch the entries
           of the GraalVM reachability metadata repository for the versions pinned in ADR 0012.
-        - this module's own classes and classpath resources: META-INF/native-image/io.github.tierwise/tierwise-cli/.
+        - this module's own classes and classpath resources: META-INF/native-image/io.github.visplabs/tierwise-cli/.
         Fallback images are disabled, so an image that cannot be fully analysed fails the build instead of
         becoming a JVM-based launcher.
       -->

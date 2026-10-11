@@ -1,4 +1,4 @@
-# @tierwise/spec-tools
+# @visplabs/spec-tools
 
 Private tools that check the spec suite under `spec/`, and that canonicalise content into a
 bundle. The package has no dependencies of its own. It uses the `yaml` and `ajv` packages pinned in the

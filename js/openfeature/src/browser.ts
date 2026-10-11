@@ -1,5 +1,5 @@
 import type { EvaluationContext, JsonValue, Logger, ProviderMetadata, ResolutionDetails } from '@openfeature/core';
-import type { Evaluator, Resolved } from '@tierwise/evaluator';
+import type { Evaluator, Resolved } from '@visplabs/evaluator';
 import {
   contextOf,
   decisionDetails,

@@ -2,6 +2,7 @@
 
 - Status: accepted (owner decision, 2026-10-08)
 - Supersedes: the naming part of [ADR 0003](0003-provisional-identity.md)
+- Superseded in part by [ADR 0028](0028-visplabs-publication-identity.md): the npm scope, Maven `groupId`, Java packages and GitHub owner
 
 ## Context
 

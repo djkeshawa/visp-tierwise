@@ -6,7 +6,7 @@
 #   1. It builds the artifacts the quickstarts install from a release, from this working tree:
 #        - tierwise-core and tierwise-cli with ./mvnw install, into a temporary local Maven repository
 #          (the fat JAR is java/tierwise-cli/<build dir>/tierwise-cli-<version>-all.jar);
-#        - @tierwise/evaluator with pnpm, so that the quickstart can depend on it with a file: specifier.
+#        - @visplabs/evaluator with pnpm, so that the quickstart can depend on it with a file: specifier.
 #   2. It extracts the marked fenced blocks of each page (see "Markers") and runs them, in order, in one
 #      shell in an empty temporary directory, with an empty HOME and an empty npm cache.
 #   3. It compares the output of each block that is followed by an expected-output block, line by line, and
@@ -109,10 +109,10 @@ if [ "$want_java" = 1 ] || [ "$want_js" = 1 ]; then
 fi
 
 if [ "$want_js" = 1 ]; then
-  echo "== build: @tierwise/evaluator"
+  echo "== build: @visplabs/evaluator"
   build_start=$(now)
   pnpm --dir "$ROOT/js" install --frozen-lockfile --silent
-  pnpm --dir "$ROOT/js" --filter @tierwise/evaluator run build > /dev/null
+  pnpm --dir "$ROOT/js" --filter @visplabs/evaluator run build > /dev/null
   [ -f "$ROOT/js/evaluator/dist/esm/index.js" ] || die "the evaluator build wrote no dist/esm/index.js"
   echo "   built in $(elapsed "$build_start" "$(now)") s"
 fi

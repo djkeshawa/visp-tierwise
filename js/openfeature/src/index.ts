@@ -1,4 +1,4 @@
-// @tierwise/openfeature: OpenFeature providers over a Tierwise evaluator (docs/openfeature-mapping.md).
+// @visplabs/openfeature: OpenFeature providers over a Tierwise evaluator (docs/openfeature-mapping.md).
 //
 // The package imports only types and constants from @openfeature/core, which is a peer dependency, so one
 // build serves both SDKs: install @openfeature/server-sdk for the server provider or @openfeature/web-sdk for

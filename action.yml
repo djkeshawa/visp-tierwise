@@ -22,7 +22,7 @@ inputs:
     required: false
     default: docker
   image:
-    description: "The Docker image to run when method is docker. Pin it by digest, for example ghcr.io/OWNER/tierwise@sha256:..."
+    description: "The Docker image to run when method is docker. Pin it by digest, for example ghcr.io/visplabs/tierwise@sha256:..."
     required: false
     default: ""
   jar-url:

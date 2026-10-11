@@ -2,7 +2,7 @@
 // Do not edit: regenerate it with tierwise codegen.
 package com.example.retailpos;
 
-import io.github.tierwise.core.Resolved;
+import io.github.visplabs.tierwise.core.Resolved;
 
 /**
  * The result of resolving a key, typed by the key.

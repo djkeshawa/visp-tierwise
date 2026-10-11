@@ -7,7 +7,7 @@ last bundle it loaded.
 
 ```xml
 <dependency>
-  <groupId>io.github.tierwise</groupId>
+  <groupId>io.github.visplabs</groupId>
   <artifactId>tierwise-spring-boot-starter</artifactId>
 </dependency>
 ```
@@ -183,7 +183,7 @@ Registered when `micrometer-core` is on the classpath and exactly one (or one pr
 
 ## Logging
 
-Each decision is logged by the logger `io.github.tierwise.spring.DecisionEngine` at `tierwise.decision-log-level`:
+Each decision is logged by the logger `io.github.visplabs.tierwise.spring.DecisionEngine` at `tierwise.decision-log-level`:
 
 ```
 tierwise decision feature=checkout.order_submission reason=RULE rule=express-ok effect=ALLOW bundleVersion=sha256:...
@@ -191,7 +191,7 @@ tierwise decision feature=checkout.order_submission reason=RULE rule=express-ok 
 
 The line holds the feature, the reason, the rule that won, the effect when it is a plain string, and the
 `bundleVersion`. It never holds the context or the facts. Bundle loads, swaps and refresh failures are logged by
-`io.github.tierwise.spring.TierwiseEvaluators`.
+`io.github.visplabs.tierwise.spring.TierwiseEvaluators`.
 
 ## Tests
 

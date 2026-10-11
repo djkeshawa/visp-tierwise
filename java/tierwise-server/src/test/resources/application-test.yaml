@@ -6,8 +6,8 @@ spring:
 logging:
   level:
     root: warn
-    io.github.tierwise: warn
+    io.github.visplabs.tierwise: warn
     # Expected: tests that make the store fail, and the fail-closed decoder that the test profile runs on.
-    io.github.tierwise.server.web.ApiExceptionHandler: "off"
-    io.github.tierwise.server.security.TierwiseSecurityAutoConfiguration: error
-    io.github.tierwise.server.service.ProviderWiring: error
+    io.github.visplabs.tierwise.server.web.ApiExceptionHandler: "off"
+    io.github.visplabs.tierwise.server.security.TierwiseSecurityAutoConfiguration: error
+    io.github.visplabs.tierwise.server.service.ProviderWiring: error

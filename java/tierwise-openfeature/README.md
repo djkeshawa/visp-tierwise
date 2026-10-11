@@ -3,7 +3,7 @@
 An [OpenFeature](https://openfeature.dev) provider over the Tierwise evaluator, for Java 17 and later. A flag is
 the name of a Tierwise key or feature. The mapping of types, evaluation-context attributes, reasons, flag
 metadata and error codes is defined in [`docs/openfeature-mapping.md`](../../docs/openfeature-mapping.md), and
-the JavaScript package `@tierwise/openfeature` implements the same mapping.
+the JavaScript package `@visplabs/openfeature` implements the same mapping.
 
 The module depends on `tierwise-core` and on the OpenFeature Java SDK (`dev.openfeature:sdk`, version in ADR 0020).
 It does not depend on Spring.
@@ -12,8 +12,8 @@ It does not depend on Spring.
 
 ```java
 import dev.openfeature.sdk.*;
-import io.github.tierwise.core.*;
-import io.github.tierwise.openfeature.TierwiseProvider;
+import io.github.visplabs.tierwise.core.*;
+import io.github.visplabs.tierwise.openfeature.TierwiseProvider;
 
 Evaluator evaluator = Tierwise.evaluator(Tierwise.loadBundle(bundleBytes), EvaluatorOptions.none());
 

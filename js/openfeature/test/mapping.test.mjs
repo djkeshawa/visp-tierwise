@@ -111,7 +111,7 @@ test('the CommonJS build works with the CommonJS SDK', async () => {
 
 test('the package declares the OpenFeature SDKs as peer dependencies and nothing else at run time', () => {
   const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.deepEqual(Object.keys(manifest.dependencies), ['@tierwise/evaluator']);
+  assert.deepEqual(Object.keys(manifest.dependencies), ['@visplabs/evaluator']);
   assert.deepEqual(Object.keys(manifest.peerDependencies).sort(), ['@openfeature/core', '@openfeature/server-sdk', '@openfeature/web-sdk']);
 });
 
@@ -122,5 +122,5 @@ test('the build imports only the evaluator and @openfeature/core', () => {
     for (const match of text.matchAll(/from\s+'([^']+)'/g)) imports.add(match[1]);
   }
   const external = [...imports].filter((name) => !name.startsWith('./')).sort();
-  assert.deepEqual(external, ['@openfeature/core', '@tierwise/evaluator']);
+  assert.deepEqual(external, ['@openfeature/core', '@visplabs/evaluator']);
 });

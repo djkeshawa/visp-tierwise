@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.github.tierwise</groupId>
+    <groupId>io.github.visplabs</groupId>
     <artifactId>tierwise-parent</artifactId>
     <version>0.1.0-dev.0</version>
     <relativePath>../pom.xml</relativePath>
@@ -16,7 +16,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.tierwise</groupId>
+      <groupId>io.github.visplabs</groupId>
       <artifactId>tierwise-core</artifactId>
       <version>${project.version}</version>
     </dependency>

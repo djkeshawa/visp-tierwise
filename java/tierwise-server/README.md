@@ -8,7 +8,7 @@ the latest bundle with an ETag, promotes a stored version to latest (roll back o
   lives in the bundle store.
 - **Never the source of truth.** The configuration repository is. The server holds compiled, content-hashed bundles
   that CI published. It never edits schema or values.
-- **Never on the hot path.** Applications evaluate in-process (`tierwise-spring-boot-starter`, `@tierwise/node`) and
+- **Never on the hot path.** Applications evaluate in-process (`tierwise-spring-boot-starter`, `@visplabs/node`) and
   keep serving the bundle they hold when the server is down. The server is for storing, distributing, rolling back,
   and for callers that cannot evaluate in-process.
 
@@ -99,7 +99,7 @@ FactSet; it may be omitted.
 **Providers for service-sourced levels.** `/resolve` runs on the server, so the server needs the values of
 service-sourced levels itself:
 
-- Define one `io.github.tierwise.core.LevelValueProvider` bean for each level you can serve. **The bean name is the level
+- Define one `io.github.visplabs.tierwise.core.LevelValueProvider` bean for each level you can serve. **The bean name is the level
   name.** `tierwise.server.provider-timeout` (default 200 ms) bounds each call (SVC-48).
 - A service-sourced level without a bean gets a provider that always fails. Its keys come back with `UNAVAILABLE`
   contributions and the `onSourceFailure` behaviour of the key (`skip` or `deny`), as requirements section 9 states.
@@ -185,7 +185,7 @@ To replace the rules entirely, define your own `SecurityFilterChain` bean; the d
 
 ### Storage
 
-`BundleStore` (`io.github.tierwise.server.store`) is the storage SPI. The contract is in its Javadoc: bundle bytes are written
+`BundleStore` (`io.github.visplabs.tierwise.server.store`) is the storage SPI. The contract is in its Javadoc: bundle bytes are written
 once and never modified; a reader sees complete bundles only; publication records are never replaced; the `latest`
 pointer is the only mutable datum.
 

@@ -2,12 +2,12 @@
 
 This page takes you from nothing to a Node script that reads a Tierwise bundle and resolves a key, in about five
 minutes. You install the command line, write a small project from a preset, change one value, validate it,
-compile it to a bundle, and load the bundle with `@tierwise/evaluator`.
+compile it to a bundle, and load the bundle with `@visplabs/evaluator`.
 
 The names in this page (`quota.max_items`, `group_a`, …) come from the template that `tierwise init` writes.
 They are examples. Tierwise itself knows no such names; you declare your own levels, keys and decisions.
 
-> **Browser use is for display only.** `@tierwise/evaluator` also runs in a browser, and a result that is computed
+> **Browser use is for display only.** `@visplabs/evaluator` also runs in a browser, and a result that is computed
 > in a browser can be changed by anyone who controls that browser. Use it there to show what a decision is likely
 > to be, for example to hide a button. Enforce every decision on a server, with the same bundle. See the
 > [security model](guides/security-model.md).
@@ -36,14 +36,14 @@ mkdir tierwise-quickstart && cd tierwise-quickstart
 The command line is one JAR file with its dependencies inside. Download `tierwise-cli-0.1.0-all.jar` from the
 release, check its SHA-256 sum against the `SHA256SUMS` file of the release, and call it `tierwise.jar`:
 
-<!-- qs:skip no release exists yet, so there is nothing to download (open question O2) -->
+<!-- qs:skip no release exists yet, so there is nothing to download -->
 ```sh
 curl -fsSL -o tierwise.jar "$TIERWISE_RELEASE_URL/tierwise-cli-0.1.0-all.jar"
 ```
 
-*(OPEN)* Nothing is published yet. The download location depends on the GitHub organisation that the project
-owner has not claimed (open question O2 in [open questions](open-questions.md)), so the page uses the variable
-`TIERWISE_RELEASE_URL` and does not name a host.
+*(OPEN)* Nothing is published yet. Releases will be at <https://github.com/visplabs/tierwise/releases>, so
+`TIERWISE_RELEASE_URL` will be `https://github.com/visplabs/tierwise/releases/download/v0.1.0`. Until then the page
+keeps the variable.
 
 To use a build from source instead (the path this page is checked on), build the JAR in a checkout of the
 repository and point `TIERWISE_CLI_JAR` at it:
@@ -195,11 +195,11 @@ Install the evaluator. It has no runtime dependencies:
 
 <!-- qs:skip the package is private until the first release, so there is nothing to install from a registry -->
 ```sh
-npm install @tierwise/evaluator
+npm install @visplabs/evaluator
 ```
 
-*(OPEN)* `@tierwise/evaluator` is private and not published. It will be installable from the npm registry after
-the first release, once the project owner has claimed the `@tierwise` scope (open question O2). Until then, depend
+*(OPEN)* `@visplabs/evaluator` is private and not published. It will be installable from the npm registry after
+the first release, once the project owner has claimed the `@visplabs` scope (open question O2). Until then, depend
 on the package directory of a checkout. This is the path this page is checked on:
 
 <!-- qs:run -->
@@ -216,7 +216,7 @@ resolves `quota.max_items` for each group:
 <!-- qs:file app/resolve.mjs -->
 ```js
 import { readFileSync } from 'node:fs';
-import { createEvaluator, loadBundle } from '@tierwise/evaluator';
+import { createEvaluator, loadBundle } from '@visplabs/evaluator';
 
 const bundle = loadBundle(readFileSync(process.argv[2]));
 const evaluator = createEvaluator(bundle, {});
@@ -278,7 +278,7 @@ java -jar tierwise.jar compile "$TIERWISE_REPO/samples/commerce" -o commerce.jso
 <!-- qs:file app/decide.mjs -->
 ```js
 import { readFileSync } from 'node:fs';
-import { createEvaluator, loadBundle } from '@tierwise/evaluator';
+import { createEvaluator, loadBundle } from '@visplabs/evaluator';
 
 const bundle = loadBundle(readFileSync(process.argv[2]));
 // Each service-sourced level needs a provider and a timeout.
@@ -319,7 +319,7 @@ case worth testing.
 
 - [Modeling guide](guides/modeling.md): levels, axes, keys, strategies, kinds, decisions.
 - [CLI reference](guides/cli-reference.md): every command and option.
-- [Runtime and operations](guides/runtime-and-operations.md): `@tierwise/node` refreshes a bundle over HTTP, swaps
+- [Runtime and operations](guides/runtime-and-operations.md): `@visplabs/node` refreshes a bundle over HTTP, swaps
   it atomically and keeps the last good one.
 - [OpenFeature guide](guides/openfeature.md): serve the same answers through OpenFeature.
 - [Security model](guides/security-model.md): where to enforce a decision and what a bundle digest proves.
@@ -331,7 +331,7 @@ an empty `HOME` and an empty npm cache, and compares the output of each block wi
 difference fails the check. It differs from your machine in three ways, and no more:
 
 1. The release downloads are skipped, because nothing is released yet. The script builds the command line from
-   the working tree (`./mvnw install`) and `@tierwise/evaluator` (`pnpm run build`), and sets `TIERWISE_REPO` and
+   the working tree (`./mvnw install`) and `@visplabs/evaluator` (`pnpm run build`), and sets `TIERWISE_REPO` and
    `TIERWISE_CLI_JAR` for the build-from-source path. npm installs the evaluator from its directory with a `file:`
    specifier.
 2. The evaluator has no dependencies, so npm downloads nothing in this run.
@@ -353,5 +353,5 @@ The check fails if the steps take more than 300 seconds.
 
 ## Open points
 
-- *(OPEN)* The location of the release download of the command line (open question O2).
-- *(OPEN)* Installing `@tierwise/evaluator` from the npm registry. The package is private until the first release and the `@tierwise` scope is not claimed (open question O2).
+- *(OPEN)* The release download of the command line. It will be at <https://github.com/visplabs/tierwise/releases> once 0.1.0 is published.
+- *(OPEN)* Installing `@visplabs/evaluator` from the npm registry. The package is private until the first release and the `@visplabs` scope is not claimed (open question O2).

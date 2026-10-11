@@ -82,13 +82,13 @@ each one is meant to take under five minutes.
 | [`java/tierwise-server`](java/tierwise-server) | Java 21 | Control plane: publish, history, promote, `/v1/resolve`, `/v1/decide`, OpenAPI | Tested |
 | [`java/tierwise-server-s3`](java/tierwise-server-s3) | Java 21 | Optional S3 bundle store | Tested against an in-process fake |
 | [`java/tierwise-openfeature`](java/tierwise-openfeature) | Java 17 | OpenFeature provider over the core | Tested |
-| [`js/evaluator`](js/evaluator) (`@tierwise/evaluator`) | Node 20+, browsers | `loadBundle`, `resolve`, `decide`; no runtime dependencies | Tested; conformance suite passes |
-| [`js/node`](js/node) (`@tierwise/node`) | Node 20+ | Bundle loader with ETag refresh, atomic swap and last-known-good | Tested |
-| [`js/openfeature`](js/openfeature) (`@tierwise/openfeature`) | Node 20+, browsers | Server and web OpenFeature providers | Tested |
+| [`js/evaluator`](js/evaluator) (`@visplabs/evaluator`) | Node 20+, browsers | `loadBundle`, `resolve`, `decide`; no runtime dependencies | Tested; conformance suite passes |
+| [`js/node`](js/node) (`@visplabs/node`) | Node 20+ | Bundle loader with ETag refresh, atomic swap and last-known-good | Tested |
+| [`js/openfeature`](js/openfeature) (`@visplabs/openfeature`) | Node 20+, browsers | Server and web OpenFeature providers | Tested |
 | [`js/spec-tools`](js/spec-tools) | Node 22+ | Private: checks the spec suite and canonicalises content | Tested |
 
 The packages are private and are not published. The Maven artifacts use the group
-`io.github.tierwise`, and the npm scope is `@tierwise`.
+`io.github.visplabs`, and the npm scope is `@visplabs`.
 
 ## Repository
 

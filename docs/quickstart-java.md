@@ -28,14 +28,14 @@ mkdir tierwise-quickstart && cd tierwise-quickstart
 The command line is one JAR file with its dependencies inside. Download `tierwise-cli-0.1.0-all.jar` from the
 release, check its SHA-256 sum against the `SHA256SUMS` file of the release, and call it `tierwise.jar`:
 
-<!-- qs:skip no release exists yet, so there is nothing to download (open question O2) -->
+<!-- qs:skip no release exists yet, so there is nothing to download -->
 ```sh
 curl -fsSL -o tierwise.jar "$TIERWISE_RELEASE_URL/tierwise-cli-0.1.0-all.jar"
 ```
 
-*(OPEN)* Nothing is published yet. The download location depends on the GitHub organisation that the project
-owner has not claimed (open question O2 in [open questions](open-questions.md)), so the page uses the variable
-`TIERWISE_RELEASE_URL` and does not name a host. The Docker image and the GitHub Action are the other two ways to
+*(OPEN)* Nothing is published yet. Releases will be at <https://github.com/visplabs/tierwise/releases>, so
+`TIERWISE_RELEASE_URL` will be `https://github.com/visplabs/tierwise/releases/download/v0.1.0`. Until then the page
+keeps the variable. The Docker image and the GitHub Action are the other two ways to
 run the same command line; see the [CLI reference](guides/cli-reference.md).
 
 To use a build from source instead (the path this page is checked on), build the JAR in a checkout of the
@@ -184,7 +184,7 @@ mkdir app
   <version>1.0</version>
   <dependencies>
     <dependency>
-      <groupId>io.github.tierwise</groupId>
+      <groupId>io.github.visplabs</groupId>
       <artifactId>tierwise-core</artifactId>
       <version>0.1.0</version>
     </dependency>
@@ -192,18 +192,18 @@ mkdir app
 </project>
 ```
 
-With Gradle, the dependency is `implementation("io.github.tierwise:tierwise-core:0.1.0")`.
+With Gradle, the dependency is `implementation("io.github.visplabs:tierwise-core:0.1.0")`.
 
 Create `app/Quickstart.java`. It loads the bundle, which checks the digest and the versions, creates an
 evaluator, and resolves `quota.max_items` for each group:
 
 <!-- qs:file app/Quickstart.java -->
 ```java
-import io.github.tierwise.core.Context;
-import io.github.tierwise.core.Evaluator;
-import io.github.tierwise.core.EvaluatorOptions;
-import io.github.tierwise.core.Resolved;
-import io.github.tierwise.core.Tierwise;
+import io.github.visplabs.tierwise.core.Context;
+import io.github.visplabs.tierwise.core.Evaluator;
+import io.github.visplabs.tierwise.core.EvaluatorOptions;
+import io.github.visplabs.tierwise.core.Resolved;
+import io.github.visplabs.tierwise.core.Tierwise;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -270,12 +270,12 @@ java -jar tierwise.jar compile "$TIERWISE_REPO/samples/commerce" -o commerce.jso
 
 <!-- qs:file app/Decide.java -->
 ```java
-import io.github.tierwise.core.Context;
-import io.github.tierwise.core.Decision;
-import io.github.tierwise.core.Evaluator;
-import io.github.tierwise.core.EvaluatorOptions;
-import io.github.tierwise.core.FactSet;
-import io.github.tierwise.core.Tierwise;
+import io.github.visplabs.tierwise.core.Context;
+import io.github.visplabs.tierwise.core.Decision;
+import io.github.visplabs.tierwise.core.Evaluator;
+import io.github.visplabs.tierwise.core.EvaluatorOptions;
+import io.github.visplabs.tierwise.core.FactSet;
+import io.github.visplabs.tierwise.core.Tierwise;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -365,4 +365,4 @@ read. The check fails if the steps take more than 300 seconds.
 
 ## Open points
 
-- *(OPEN)* The location of the release download of the command line. It depends on the GitHub organisation that the project owner has not claimed (open question O2).
+- *(OPEN)* The release download of the command line. It will be at <https://github.com/visplabs/tierwise/releases> once 0.1.0 is published.

@@ -2,11 +2,11 @@
 // Do not edit: regenerate it with tierwise codegen.
 package tierwise.generated;
 
-import io.github.tierwise.core.Context;
-import io.github.tierwise.core.Decision;
-import io.github.tierwise.core.Evaluator;
-import io.github.tierwise.core.FactSet;
-import io.github.tierwise.core.Resolved;
+import io.github.visplabs.tierwise.core.Context;
+import io.github.visplabs.tierwise.core.Decision;
+import io.github.visplabs.tierwise.core.Evaluator;
+import io.github.visplabs.tierwise.core.FactSet;
+import io.github.visplabs.tierwise.core.Resolved;
 import java.util.Objects;
 
 /**

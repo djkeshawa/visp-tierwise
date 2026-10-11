@@ -1,4 +1,4 @@
-# @tierwise/evaluator
+# @visplabs/evaluator
 
 The Tierwise evaluator for JavaScript and TypeScript. It loads a compiled bundle, resolves keys over a
 context, and decides features over a FactSet. It has no runtime dependencies, and it runs in Node 20 or later
@@ -27,7 +27,7 @@ JavaScript never compiles sources. Bundles come from the compiler in `tierwise-c
 ## Usage
 
 ```ts
-import { loadBundle, createEvaluator, TierwiseError } from '@tierwise/evaluator';
+import { loadBundle, createEvaluator, TierwiseError } from '@visplabs/evaluator';
 
 // Synchronous. Verifies the bytes, the versions, the digest and the structure.
 const bundle = loadBundle(bytesOrString); // Uint8Array, ArrayBuffer or string

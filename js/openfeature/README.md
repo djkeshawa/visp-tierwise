@@ -1,6 +1,6 @@
-# @tierwise/openfeature
+# @visplabs/openfeature
 
-[OpenFeature](https://openfeature.dev) providers over the Tierwise evaluator (`@tierwise/evaluator`): a server
+[OpenFeature](https://openfeature.dev) providers over the Tierwise evaluator (`@visplabs/evaluator`): a server
 provider for `@openfeature/server-sdk` and a web provider for `@openfeature/web-sdk`. A flag is the name of a
 Tierwise key or feature. The mapping of types, evaluation-context attributes, reasons, flag metadata and error
 codes is defined in [`docs/openfeature-mapping.md`](../../docs/openfeature-mapping.md), and the Java module
@@ -19,8 +19,8 @@ the versions.
 
 ```ts
 import { OpenFeature } from '@openfeature/server-sdk';
-import { createEvaluator, loadBundle } from '@tierwise/evaluator';
-import { TierwiseServerProvider } from '@tierwise/openfeature';
+import { createEvaluator, loadBundle } from '@visplabs/evaluator';
+import { TierwiseServerProvider } from '@visplabs/openfeature';
 
 const evaluator = createEvaluator(loadBundle(bundleBytes), { providers: { /* service-sourced levels */ } });
 await OpenFeature.setProviderAndWait(new TierwiseServerProvider(evaluator));
@@ -50,7 +50,7 @@ The web SDK keeps one static context, and its evaluations are synchronous:
 
 ```ts
 import { OpenFeature } from '@openfeature/web-sdk';
-import { TierwiseWebProvider } from '@tierwise/openfeature';
+import { TierwiseWebProvider } from '@visplabs/openfeature';
 
 await OpenFeature.setProviderAndWait(new TierwiseWebProvider(evaluator), context);
 const showButton = OpenFeature.getClient().getBooleanValue('checkout.container_order.allowed', false);

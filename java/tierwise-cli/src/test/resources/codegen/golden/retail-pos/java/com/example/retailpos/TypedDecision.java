@@ -2,7 +2,7 @@
 // Do not edit: regenerate it with tierwise codegen.
 package com.example.retailpos;
 
-import io.github.tierwise.core.Decision;
+import io.github.visplabs.tierwise.core.Decision;
 
 /**
  * The result of deciding a feature, typed by the feature.

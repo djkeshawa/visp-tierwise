@@ -1,7 +1,7 @@
 // Checks the options of createBundleLoader at the call, so that a mistake is reported where it is made and not at the
 // first refresh. A wrong option is a TypeError, as for any programming error.
 
-import type { EvaluatorOptions } from '@tierwise/evaluator';
+import type { EvaluatorOptions } from '@visplabs/evaluator';
 import type { FetchFunction, SnapshotSource } from './types.js';
 
 /** The longest delay that setTimeout honours. A longer one fires at once, so larger values are refused. */

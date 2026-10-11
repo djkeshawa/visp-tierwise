@@ -1,0 +1,12 @@
+{
+  "resources": {
+    "includes": [
+      { "pattern": "io/github/visplabs/tierwise/cli/version\\.properties" },
+      { "pattern": "io/github/visplabs/tierwise/cli/error-codes\\.md" },
+      { "pattern": "io/github/visplabs/tierwise/cli/templates/.*" },
+      { "pattern": "io/github/visplabs/tierwise/core/internal/check/tz-names\\.txt" },
+      { "pattern": "io/github/visplabs/tierwise/core/internal/project/presets/[^/]+\\.yaml" }
+    ]
+  },
+  "bundles": []
+}

@@ -131,7 +131,7 @@ Local runs on 2026-10-10 (Linux, JDK 21.0.10, Node 26, pnpm 11.3.0):
 - `pnpm --dir js run spec:check -- --strict`: check passed, 0 uncovered.
 - `scripts/quickstart-check.sh`: passed.
 - `scripts/s3-it.sh` with the MinIO binary: 16 of 16.
-- The registry checks: the GitHub organisation and user `tierwise`, npm `tierwise` and `@tierwise/evaluator`, the Maven Central group `io.github.tierwise`, PyPI `tierwise` and crates.io `tierwise` were all still free (404 or 0 results).
+- The registry checks: the GitHub organisation and user `tierwise`, npm `tierwise` and `@tierwise/evaluator`, the Maven Central group `io.github.tierwise`, PyPI `tierwise` and crates.io `tierwise` were all still free (404 or 0 results). The coordinates have since moved to `visplabs` (ADR 0028). On 2026-10-11 npm `@visplabs/evaluator` answered 404 and the Maven Central group `io.github.visplabs` had 0 results.
 
 ## 4. What is left
 
@@ -140,10 +140,10 @@ Every remaining item is an owner action or a scheduled run. The steps are in [`d
 | ID | Item | Who | Blocks |
 | --- | --- | --- | --- |
 | O-10 | The first scheduled nightly differential run (cron 03:17 UTC) passing. | CI, then a check | Criterion 3 |
-| O2 | Create the `tierwise` GitHub organisation and transfer the repository to it; claim the `@tierwise` npm scope. | Owner | Publishing, criterion 13 |
+| O2 | **GitHub done 2026-10-11:** the organisation is `visplabs` and the repository was transferred to `visplabs/tierwise` (ADR 0028). Still open: claim the `@visplabs` npm scope. | Owner | Publishing, criterion 13 |
 | ~~O6~~ | **Done 2026-10-11:** the repository is public, as `djkeshawa/visp-tierwise`. | Owner | — |
-| O-12 | Register the Maven Central namespace `io.github.tierwise`. Create the release secrets: Central token, GPG key, npm token. Then run `release.yml` with `dry_run=false`. | Owner | Criterion 13, publication |
-| ~~O-SEC~~ | **Done 2026-10-11:** private vulnerability reporting is on, and the `release` environment has @djkeshawa as the required reviewer and deploys only from tags matching `v*`. Secret scanning and push protection are on. Check all four again after the transfer (O2). | Owner | — |
+| O-12 | Register the Maven Central namespace `io.github.visplabs`. Create the release secrets: Central token, GPG key, npm token. Then run `release.yml` with `dry_run=false`. | Owner | Criterion 13, publication |
+| ~~O-SEC~~ | **Done 2026-10-11:** private vulnerability reporting is on, and the `release` environment has @djkeshawa as the required reviewer and deploys only from tags matching `v*`. Secret scanning and push protection are on. Checked after the transfer on 2026-10-11: secret scanning and push protection had been turned off by it and were turned on again. | Owner | — |
 | O-4 | Confirm that enforcer-only clauses (VEC-125) meet criterion 1. | Owner | Criterion 1 wording |
 | O-3 | Accept phases 0 and 4 to 8, including `tierwise-e2e` as the Phase 7 exit test, and Phase 9. | Owner | Phase acceptance |
 | O-15 | Accept the plain benchmark harness in place of JMH for Phase 3 (ADR 0021). | Owner | Phase 3 wording |

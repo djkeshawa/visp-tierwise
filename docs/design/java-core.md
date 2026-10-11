@@ -23,17 +23,17 @@ that several contributors can implement the core in parallel.
 ## Module
 
 ```
-module io.github.tierwise.core {
+module io.github.visplabs.tierwise.core {
   requires org.snakeyaml.engine;
   requires com.fasterxml.jackson.core;
-  exports io.github.tierwise.core;
+  exports io.github.visplabs.tierwise.core;
 }
 ```
 
 Runtime dependencies are snakeyaml-engine and jackson-core (ADR 0012). Tests use
 JUnit Jupiter and jqwik.
 
-## Public API (`io.github.tierwise.core`)
+## Public API (`io.github.visplabs.tierwise.core`)
 
 | Type | Contract |
 | --- | --- |
@@ -56,7 +56,7 @@ JUnit Jupiter and jqwik.
 Typed `Key<T>` and `Feature<R>` handles (requirements §7.1) are added by codegen in
 Phase 5, on top of this string API.
 
-## Internal packages (`io.github.tierwise.core.internal.*`)
+## Internal packages (`io.github.visplabs.tierwise.core.internal.*`)
 
 | Package | Responsibility | Spec |
 | --- | --- | --- |

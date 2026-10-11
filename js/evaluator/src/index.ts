@@ -1,4 +1,4 @@
-// The public API of @tierwise/evaluator: load a bundle, create an evaluator, resolve and decide. Callers go only
+// The public API of @visplabs/evaluator: load a bundle, create an evaluator, resolve and decide. Callers go only
 // through resolve and decide. No API exposes one scope's raw value (EVAL-13).
 
 export { loadBundle, SUPPORTED_BUNDLE_FORMAT_VERSION, SUPPORTED_SPEC_VERSION } from './bundle.js';

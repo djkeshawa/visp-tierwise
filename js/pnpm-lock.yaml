@@ -37,7 +37,7 @@ importers:
 
   node:
     dependencies:
-      '@tierwise/evaluator':
+      '@visplabs/evaluator':
         specifier: workspace:*
         version: link:../evaluator
 
@@ -52,7 +52,7 @@ importers:
       '@openfeature/web-sdk':
         specifier: ^1.10.0
         version: 1.10.0(@openfeature/core@1.12.0)
-      '@tierwise/evaluator':
+      '@visplabs/evaluator':
         specifier: workspace:*
         version: link:../evaluator
 

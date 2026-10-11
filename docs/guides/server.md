@@ -213,7 +213,7 @@ $ curl -sS -X POST "$TIERWISE_SERVER/v1/resolve" -H "Authorization: Bearer $TOKE
 
 gives `{ "bundleVersion": "sha256:…", "results": [ <Resolved>, … ] }`, one result per key in request order, each exactly
 the JSON form of a resolved result (the same as `Resolved.toJson()` in Java and the object that
-`@tierwise/evaluator` returns):
+`@visplabs/evaluator` returns):
 
 ```json
 {
@@ -271,7 +271,7 @@ HTTP/1.1 400
 
 `/resolve` runs on the server, so the server needs the values of service-sourced levels itself:
 
-- Define one `io.github.tierwise.core.LevelValueProvider` bean for each level you can serve. **The bean name is the level
+- Define one `io.github.visplabs.tierwise.core.LevelValueProvider` bean for each level you can serve. **The bean name is the level
   name.** `tierwise.server.provider-timeout` (default 200 ms) bounds each call.
 - A service-sourced level without a bean gets a provider that always fails. Its keys come back with `UNAVAILABLE`
   contributions and the `onSourceFailure` behaviour of the key (`skip` or `deny`).
@@ -305,7 +305,7 @@ Every error is JSON `{ "code": "...", "message": "..." }` and nothing else.
 
 ## Storage
 
-`BundleStore` (`io.github.tierwise.server.store`) is the storage interface. Its contract: bundle bytes are written once
+`BundleStore` (`io.github.visplabs.tierwise.server.store`) is the storage interface. Its contract: bundle bytes are written once
 and never modified; a reader sees complete bundles only; publication records are never replaced; the `latest`
 pointer is the only mutable datum.
 

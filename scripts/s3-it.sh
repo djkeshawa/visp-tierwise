@@ -155,8 +155,8 @@ cd "$ROOT/java"
 # A class that the environment condition disabled would leave Maven green, so check that both really ran.
 status=0
 for report in \
-  "tierwise-server-s3:io.github.tierwise.server.s3.S3BundleStoreIntegrationTest" \
-  "tierwise-spring-boot-starter-s3:io.github.tierwise.spring.s3.S3BundleSourceIntegrationTest"; do
+  "tierwise-server-s3:io.github.visplabs.tierwise.server.s3.S3BundleStoreIntegrationTest" \
+  "tierwise-spring-boot-starter-s3:io.github.visplabs.tierwise.spring.s3.S3BundleSourceIntegrationTest"; do
   module="${report%%:*}"
   class="${report#*:}"
   if [[ "$BUILD_DIR" = /* ]]; then

@@ -3,18 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.github.tierwise</groupId>
+  <groupId>io.github.visplabs</groupId>
   <artifactId>tierwise-parent</artifactId>
   <version>0.1.0-dev.0</version>
   <packaging>pom</packaging>
   <name>Tierwise</name>
   <description>Tierwise parent POM: the Java reference toolchain, runtimes and control plane for tiered feature and entitlement configuration.</description>
   <!--
-    The GitHub organisation is not claimed yet (open question O2). Until it is, the URLs below are the
-    proposed home. If the owner picks another home, change url and the three scm URLs together, and
-    docs/release-process.md step 1 explains the checks.
+    The project's home is github.com/visplabs/tierwise (ADR 0028). If it moves, change url, issueManagement
+    and the three scm URLs together; docs/release-process.md step 1 explains the checks.
   -->
-  <url>https://github.com/tierwise/tierwise</url>
+  <url>https://github.com/visplabs/tierwise</url>
   <inceptionYear>2026</inceptionYear>
   <licenses>
     <license>
@@ -35,14 +34,14 @@
   </developers>
   <scm>
     <!-- The attributes keep the module POMs from appending their artifactId to these URLs. -->
-    <url child.scm.url.inherit.append.path="false">https://github.com/tierwise/tierwise</url>
-    <connection child.scm.connection.inherit.append.path="false">scm:git:https://github.com/tierwise/tierwise.git</connection>
-    <developerConnection child.scm.developerConnection.inherit.append.path="false">scm:git:ssh://git@github.com/tierwise/tierwise.git</developerConnection>
+    <url child.scm.url.inherit.append.path="false">https://github.com/visplabs/tierwise</url>
+    <connection child.scm.connection.inherit.append.path="false">scm:git:https://github.com/visplabs/tierwise.git</connection>
+    <developerConnection child.scm.developerConnection.inherit.append.path="false">scm:git:ssh://git@github.com/visplabs/tierwise.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/tierwise/tierwise/issues</url>
+    <url>https://github.com/visplabs/tierwise/issues</url>
   </issueManagement>
   <modules>
     <module>tierwise-core</module>

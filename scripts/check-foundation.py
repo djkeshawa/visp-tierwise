@@ -37,15 +37,15 @@ RELEASE_PLUGINS = {
 APPROVED_DEPENDENCIES = {
     "tierwise-core": {"org.snakeyaml:snakeyaml-engine", "com.fasterxml.jackson.core:jackson-core"},
     # The CLI reads rules files for `tierwise test` with snakeyaml-engine, which core already brings in.
-    "tierwise-spring-boot-starter": {"io.github.tierwise:tierwise-core", "org.springframework.boot:*", "io.micrometer:*"},
-    "tierwise-spring-boot-starter-s3": {"io.github.tierwise:tierwise-spring-boot-starter", "software.amazon.awssdk:*", "org.springframework.boot:*"},
-    "tierwise-server": {"io.github.tierwise:tierwise-core", "org.springframework.boot:*"},
-    "tierwise-server-s3": {"io.github.tierwise:tierwise-server", "software.amazon.awssdk:*", "org.springframework.boot:*"},
-    "tierwise-openfeature": {"io.github.tierwise:tierwise-core", "dev.openfeature:sdk"},
-    "tierwise-cli": {"io.github.tierwise:tierwise-core", "info.picocli:picocli", "org.snakeyaml:snakeyaml-engine"},
+    "tierwise-spring-boot-starter": {"io.github.visplabs:tierwise-core", "org.springframework.boot:*", "io.micrometer:*"},
+    "tierwise-spring-boot-starter-s3": {"io.github.visplabs:tierwise-spring-boot-starter", "software.amazon.awssdk:*", "org.springframework.boot:*"},
+    "tierwise-server": {"io.github.visplabs:tierwise-core", "org.springframework.boot:*"},
+    "tierwise-server-s3": {"io.github.visplabs:tierwise-server", "software.amazon.awssdk:*", "org.springframework.boot:*"},
+    "tierwise-openfeature": {"io.github.visplabs:tierwise-core", "dev.openfeature:sdk"},
+    "tierwise-cli": {"io.github.visplabs:tierwise-core", "info.picocli:picocli", "org.snakeyaml:snakeyaml-engine"},
     # The end-to-end test runs the server and the starter in one JVM, all in test scope.
-    "tierwise-e2e": {"io.github.tierwise:tierwise-core", "io.github.tierwise:tierwise-server",
-                     "io.github.tierwise:tierwise-spring-boot-starter", "org.springframework.boot:*"},
+    "tierwise-e2e": {"io.github.visplabs:tierwise-core", "io.github.visplabs:tierwise-server",
+                     "io.github.visplabs:tierwise-spring-boot-starter", "org.springframework.boot:*"},
 }
 APPROVED_TEST_DEPENDENCIES = {"org.junit.jupiter:junit-jupiter", "net.jqwik:jqwik", "org.springframework.security:spring-security-test"}
 # BOMs the parent may import in dependencyManagement. They only pin versions; a module still has to

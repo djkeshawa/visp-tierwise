@@ -1,17 +1,17 @@
 {
-  "name": "@tierwise/openfeature",
+  "name": "@visplabs/openfeature",
   "version": "0.1.0-dev.0",
   "private": true,
-  "description": "OpenFeature server and web providers backed by @tierwise/evaluator",
+  "description": "OpenFeature server and web providers backed by @visplabs/evaluator",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tierwise/tierwise.git",
+    "url": "git+https://github.com/visplabs/tierwise.git",
     "directory": "js/openfeature"
   },
-  "homepage": "https://github.com/tierwise/tierwise/tree/main/js/openfeature#readme",
+  "homepage": "https://github.com/visplabs/tierwise/tree/main/js/openfeature#readme",
   "bugs": {
-    "url": "https://github.com/tierwise/tierwise/issues"
+    "url": "https://github.com/visplabs/tierwise/issues"
   },
   "keywords": [
     "tierwise",
@@ -57,7 +57,7 @@
     "test": "pnpm run typecheck && node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@tierwise/evaluator": "workspace:*"
+    "@visplabs/evaluator": "workspace:*"
   },
   "peerDependencies": {
     "@openfeature/server-sdk": "^1.23.0",

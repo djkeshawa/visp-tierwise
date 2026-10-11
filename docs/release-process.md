@@ -4,21 +4,21 @@ This is the owner's checklist from "nothing is claimed yet" to the first publish
 
 The steps that need your accounts (1 to 7) cannot be done by a script, so they are written out as steps. Steps 8 to 14 use the workflow. [ADR 0022](adr/0022-release-tooling.md) fixes the tools and versions. The open questions O2, O3 and O4 in [open-questions.md](open-questions.md) are the first steps below. [release-0.1.0-checklist.md](release-0.1.0-checklist.md) tracks the acceptance criteria of requirements section 15; this page is only the mechanics of publishing.
 
-**How this page was checked.** Every command that is shown with output was run in this checkout on 2026-10-09 (Linux, JDK 21, Node 22, pnpm 11.3.0). A command without output was not run here, and the text says why: it needs your account, it would publish something, or it needs a hosted runner. The repository has no remote yet, so the workflow itself has never run on GitHub. What was run is the shell of its `build` and `collect` jobs, step by step, in a copy of the tree at version 0.1.0, and the Maven release profile with a throwaway PGP key. The native, docker and publishing jobs were not run: Docker was not available here, and the rest needs a hosted runner or your secrets. Sigstore signing could not be run, because it needs a GitHub OIDC token.
+**How this page was checked.** Every command that is shown with output was run in this checkout on 2026-10-09 (Linux, JDK 21, Node 22, pnpm 11.3.0). A command without output was not run here, and the text says why: it needs your account, it would publish something, or it needs a hosted runner. The dry run of the workflow has since run on GitHub (run `37995425223`, 2026-10-09, all non-publishing jobs green). Before that, what was run here is the shell of its `build` and `collect` jobs, step by step, in a copy of the tree at version 0.1.0, and the Maven release profile with a throwaway PGP key. The native, docker and publishing jobs were not run: Docker was not available here, and the rest needs a hosted runner or your secrets. Sigstore signing could not be run, because it needs a GitHub OIDC token.
 
 ## What the release publishes
 
 | Where | What | Who publishes it |
 | --- | --- | --- |
-| Maven Central | `io.github.tierwise:tierwise-core`, `-cli`, `-spring-boot-starter`, `-spring-boot-starter-s3`, `-server`, `-server-s3`, `-openfeature` and the parent `tierwise-parent`. Each has a sources JAR, a Javadoc JAR, a CycloneDX SBOM (`-cyclonedx.json`), PGP signatures and Sigstore bundles. The CLI also has `-all` (the runnable fat JAR) and the server has `-exec` (the runnable Spring Boot JAR) | `publish-maven` uploads and Central validates. You press Publish in the portal (step 12) |
-| npm | `@tierwise/evaluator`, `@tierwise/node`, `@tierwise/openfeature`, each with npm provenance | `publish-npm`, after you remove `"private": true` (step 9) |
+| Maven Central | `io.github.visplabs:tierwise-core`, `-cli`, `-spring-boot-starter`, `-spring-boot-starter-s3`, `-server`, `-server-s3`, `-openfeature` and the parent `tierwise-parent`. Each has a sources JAR, a Javadoc JAR, a CycloneDX SBOM (`-cyclonedx.json`), PGP signatures and Sigstore bundles. The CLI also has `-all` (the runnable fat JAR) and the server has `-exec` (the runnable Spring Boot JAR) | `publish-maven` uploads and Central validates. You press Publish in the portal (step 12) |
+| npm | `@visplabs/evaluator`, `@visplabs/node`, `@visplabs/openfeature`, each with npm provenance | `publish-npm`, after you remove `"private": true` (step 9) |
 | GitHub release | A draft release `v<version>` with the CLI and server JARs, the native binaries for Linux, macOS and Windows, the npm tarballs, every SBOM, the Maven signatures and `SHA256SUMS` | `github-release` creates the draft; you publish it (step 14) |
 
 `tierwise-e2e` is a test module. It sets `maven.deploy.skip`, so the release profile builds no sources or Javadoc JAR for it and leaves it out of the Central bundle. `scripts/check-foundation.py` fails if a module outside its list of published modules does not set that property.
 
 Not published by the workflow:
 
-- **Docker images.** The CLI image (`docker/Dockerfile`) and the server image (`docker/server.Dockerfile`) are built and smoke-tested on the runner and never pushed, because no registry has been chosen. *(OPEN)* Pick one (for example `ghcr.io/tierwise`) and add a push job; the `action.yml` default for `image` already names the pattern `ghcr.io/OWNER/tierwise`.
+- **Docker images.** The CLI image (`docker/Dockerfile`) and the server image (`docker/server.Dockerfile`) are built and smoke-tested on the runner and never pushed, because no registry has been chosen. *(OPEN)* Pick one (for example `ghcr.io/visplabs`) and add a push job; the `action.yml` description of `image` already names `ghcr.io/visplabs/tierwise`.
 - **The documentation site** (MkDocs, Javadoc, TypeDoc). ADR 0022 builds it in CI only.
 
 ## The release jobs
@@ -41,44 +41,47 @@ The three publishing jobs have `if: needs.prepare.outputs.publish == 'true'` and
 
 ### 1. Claim the GitHub organisation (O2)
 
-1. Sign in to GitHub with the account that will own the project and create the organisation `tierwise` (github.com/account/organizations/new, the free plan is enough). On 2026-10-09 neither an organisation nor a user named `tierwise` existed: `https://api.github.com/orgs/tierwise` and `https://api.github.com/users/tierwise` both answered 404. Check again before you start.
-2. Move the existing repository there instead of pushing a new one, so its history, issues and Dependabot PRs come along: in `djkeshawa/visp-tierwise`, open Settings, then Transfer ownership, choose `tierwise`, and then rename the repository to `tierwise` (or run `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=tierwise -f new_name=tierwise`). GitHub redirects the old URL. Update your clone with `git remote set-url origin https://github.com/tierwise/tierwise.git`. The repository has been public since 2026-10-11 (O6). After the transfer, check that private vulnerability reporting, secret scanning, push protection and the `release` environment's reviewer and tag rule are still in place.
-3. If you choose another organisation or repository name, change the URLs before anything else. These files carry the URL today:
+**Done on 2026-10-11.** The owner created the organisation `visplabs`, and the repository was transferred from `djkeshawa/visp-tierwise` to `visplabs/tierwise` with `gh api -X POST repos/djkeshawa/visp-tierwise/transfer -f new_owner=visplabs -f new_name=tierwise`. GitHub redirects the old URL. [ADR 0028](adr/0028-visplabs-publication-identity.md) records the identity that follows from it: the Maven group id `io.github.visplabs`, the Java packages `io.github.visplabs.tierwise.*` and the npm scope `@visplabs`.
 
-   ```sh
-   grep -rln "github.com/tierwise/tierwise" --exclude-dir=node_modules --exclude-dir='target*' --exclude-dir=dist --exclude-dir=.git .
-   ```
+After the transfer, private vulnerability reporting and the `release` environment (reviewer @djkeshawa, tags `v*`) were still in place. Secret scanning and push protection had been turned off by the transfer and were turned on again. Update an existing clone with `git remote set-url origin https://github.com/visplabs/tierwise.git`.
 
-   ```text
-   docs/release-process.md
-   java/pom.xml
-   js/openfeature/package.json
-   js/evaluator/package.json
-   js/node/package.json
-   ```
+If the repository moves again, change the URLs before anything else. These files carry the URL:
 
-   (This page is listed too, because it quotes the command, and the order of the lines can differ on your machine.) In the POM change `url`, `issueManagement` and the three `scm` URLs. In each `package.json` change `repository`, `homepage` and `bugs`. npm checks `repository.url` against the repository that runs the workflow when it validates provenance, so a mismatch makes `npm publish --provenance` fail.
-4. Update `project-metadata.json` (`githubOwner`, `identityStatus`) and strike O2 through in `open-questions.md` when both claims (this step and step 2) are done.
+```sh
+grep -rln "github.com/visplabs/tierwise" --exclude-dir=node_modules --exclude-dir='target*' --exclude-dir=dist --exclude-dir=.git .
+```
 
-The Maven group id `io.github.tierwise` is verified against this organisation in step 5, so the organisation name decides the group id. If you cannot get `tierwise`, the group id and every `io.github.tierwise` string in the repository change as well; that is an ADR, not a find-and-replace.
+```text
+docs/guides/cli-reference.md
+docs/open-questions.md
+docs/quickstart-java.md
+docs/quickstart-js.md
+docs/release-process.md
+java/pom.xml
+js/evaluator/package.json
+js/node/package.json
+js/openfeature/package.json
+```
+
+In the POM change `url`, `issueManagement` and the three `scm` URLs. In each `package.json` change `repository`, `homepage` and `bugs`. npm checks `repository.url` against the repository that runs the workflow when it validates provenance, so a mismatch makes `npm publish --provenance` fail. Moving to another organisation also changes the group id, because Central verifies `io.github.<name>` against the GitHub account `<name>` (step 5). That is an ADR, not a find-and-replace.
 
 ### 2. Claim the npm scope (O2)
 
 1. Create an npm account if you have none, and turn on two-factor authentication for it.
-2. At npmjs.com create an organisation named `tierwise` (Add Organization). The free plan allows public packages. This reserves the scope `@tierwise`.
-3. Check that the packages are not taken. On 2026-10-09 the registry answered 404 for them:
+2. At npmjs.com create an organisation named `visplabs` (Add Organization). The free plan allows public packages. This reserves the scope `@visplabs`.
+3. Check that the packages are not taken. On 2026-10-11 the registry answered 404 for them:
 
    ```sh
-   npm view @tierwise/evaluator
+   npm view @visplabs/evaluator
    ```
 
    ```text
-   npm error 404 Note that you can also install from a
-   npm error 404 tarball, folder, http url, or git url.
+   npm error code E404
+   npm error 404 Not Found - GET https://registry.npmjs.org/@visplabs%2fevaluator - Not found
    ```
 
-   A 404 here does not prove that the scope is free: the scope belongs to whoever owns the organisation `tierwise`, and npmjs.com blocked the automated check of the organisation page from this machine (HTTP 403). Create the organisation to settle it.
-4. Create an access token for the release (Access Tokens; a granular token with write access to the `@tierwise` packages, valid for a limited time; npm changes its token types, so follow its current documentation). It becomes the `NPM_TOKEN` secret in step 6. Do not paste it anywhere else. *(OPEN)* npm "trusted publishing" would replace the token with the workflow's OIDC identity. The workflow does not use it yet, because it was not possible to test it without the packages.
+   A 404 here does not prove that the scope is free: the scope belongs to whoever owns the npm organisation `visplabs`, and npmjs.com blocked the automated check of the organisation page from this machine (HTTP 403). Create the organisation to settle it.
+4. Create an access token for the release (Access Tokens; a granular token with write access to the `@visplabs` packages, valid for a limited time; npm changes its token types, so follow its current documentation). It becomes the `NPM_TOKEN` secret in step 6. Do not paste it anywhere else. *(OPEN)* npm "trusted publishing" would replace the token with the workflow's OIDC identity. The workflow does not use it yet, because it was not possible to test it without the packages.
 
 ### 3. Name the maintainers (O3)
 
@@ -88,12 +91,12 @@ The Maven group id `io.github.tierwise` is verified against this organisation in
 
 `SECURITY.md` routes reports through GitHub private vulnerability reporting, and `CODE_OF_CONDUCT.md` routes conduct reports to the maintainer through GitHub. No email address is published. What remains:
 
-1. **Done on 2026-10-11.** Private vulnerability reporting is enabled on the public `djkeshawa/visp-tierwise` (`gh api repos/djkeshawa/visp-tierwise/private-vulnerability-reporting` answers `{"enabled":true}`). GitHub offers it only on public repositories; on 2026-10-10 the same call answered 404 while the repository was private. After the transfer (step 1), check it with `gh api repos/tierwise/tierwise/private-vulnerability-reporting`, and check that the maintainer is notified of a report.
+1. **Done on 2026-10-11.** Private vulnerability reporting is enabled on the public repository (`gh api repos/visplabs/tierwise/private-vulnerability-reporting` answers `{"enabled":true}`, checked again after the transfer). GitHub offers it only on public repositories; on 2026-10-10 the same call answered 404 while the repository was private. Check that the maintainer is notified of a report.
 
 ### 5. Register the Maven Central namespace and create a token
 
 1. Sign in at central.sonatype.com with the GitHub account that owns the organisation.
-2. Register the namespace `io.github.tierwise` (Namespaces). Central verifies an `io.github.*` namespace by asking you to create a temporary public repository, with a key it shows you, in the matching GitHub account. Remove the repository when Central says the namespace is verified.
+2. Register the namespace `io.github.visplabs` (Namespaces). Central verifies an `io.github.*` namespace by asking you to create a temporary public repository, with a key it shows you, in the matching GitHub account. Remove the repository when Central says the namespace is verified.
 3. Generate a user token (your account menu, "View Account", "Generate User Token"). Central shows a username and a password once. They become `CENTRAL_USERNAME` and `CENTRAL_PASSWORD` in step 6. They are not your account password. The labels in the portal change from time to time; the Central documentation is the authority.
 
 The workflow uploads with the server id `central`, which is what `central-publishing-maven-plugin` reads from `settings.xml`. `actions/setup-java` writes that file on the runner from the two secrets.
@@ -135,10 +138,10 @@ The workflow uploads with the server id `central`, which is what `central-publis
 
 ### 7. Re-check the names on the registries
 
-Phase 9 of the [roadmap](roadmap.md) asks for a final registry check before the first publish. On 2026-10-09 the Maven Central search for the group answered with no result:
+Phase 9 of the [roadmap](roadmap.md) asks for a final registry check before the first publish. On 2026-10-11 the Maven Central search for the group answered with no result:
 
 ```sh
-curl -s "https://search.maven.org/solrsearch/select?q=g:io.github.tierwise&rows=1&wt=json" | python3 -c "import json,sys; print('numFound', json.load(sys.stdin)['response']['numFound'])"
+curl -s "https://search.maven.org/solrsearch/select?q=g:io.github.visplabs&rows=1&wt=json" | python3 -c "import json,sys; print('numFound', json.load(sys.stdin)['response']['numFound'])"
 ```
 
 ```text
@@ -151,7 +154,7 @@ Run it, the `npm view` of step 2 and `npm view tierwise name` again on the day. 
 
 A dry run needs none of the previous steps. It can run at any time and as often as you like.
 
-1. Start the workflow with `dry_run` on (the default). In GitHub: Actions, "Release", Run workflow, `version` = `0.1.0`. From a terminal with the GitHub CLI (not run here, because the repository has no remote):
+1. Start the workflow with `dry_run` on (the default). In GitHub: Actions, "Release", Run workflow, `version` = `0.1.0`. From a terminal with the GitHub CLI:
 
    ```sh
    gh workflow run release.yml --field version=0.1.0 --field dry_run=true
@@ -203,7 +206,7 @@ The three packages are `"private": true` today, on purpose. `npm publish` refuse
 
 1. Remove the `"private": true` line from `js/evaluator/package.json`, `js/node/package.json` and `js/openfeature/package.json`. Keep it in `js/package.json` (the workspace root) and `js/spec-tools/package.json`, which are never published. Each package already has `publishConfig` (public access, provenance), `repository`, `homepage`, `bugs`, `keywords` and `files`.
 2. Update the place that asserts the old state: `scripts/check-workspace.mjs` (`manifest.private`, "Phase 0 packages must not be publishable"). Run `pnpm --dir js run check` and `pnpm --dir js test`.
-3. Update the `description` of `@tierwise/node` and `@tierwise/openfeature`, which still say "Phase 0 ... placeholder", because it is the first line users see on npm.
+3. Update the `description` of `@visplabs/node` and `@visplabs/openfeature`, which still say "Phase 0 ... placeholder", because it is the first line users see on npm.
 
 Each tarball also carries `LICENSE` and `NOTICE`. They live once, at the root; the workflow and the reproducibility script copy them into each package directory before `pnpm pack`. Without that step the tarballs would have neither (`files` lists them, and npm ignores a missing entry).
 
@@ -253,7 +256,7 @@ Each tarball also carries `LICENSE` and `NOTICE`. They live once, at the root; t
 2. The build, reproducibility, native, docker and collect jobs run as in a dry run.
 3. Each publishing job waits for your approval of the `release` environment. Read the run summary first. Approve `publish-maven`.
 4. `publish-maven` uploads the bundle to Central and waits until Central reports it as validated. It does not publish it.
-5. Approve `publish-npm`, which starts only after step 4 succeeded. It publishes `@tierwise/evaluator`, then `@tierwise/node` and `@tierwise/openfeature`, with provenance. **npm releases cannot be replaced.** npm allows an unpublish for a short time after the publish under conditions; read its current policy before you rely on that.
+5. Approve `publish-npm`, which starts only after step 4 succeeded. It publishes `@visplabs/evaluator`, then `@visplabs/node` and `@visplabs/openfeature`, with provenance. **npm releases cannot be replaced.** npm allows an unpublish for a short time after the publish under conditions; read its current policy before you rely on that.
 6. `github-release` creates the draft release.
 
 Central goes first and its upload is not final, so a validation failure stops the release before the npm publish. The two steps that cannot be undone are the npm publish, which the workflow does after your approval, and the Publish button in the Central Portal, which only you press.
@@ -269,7 +272,7 @@ Central goes first and its upload is not final, so a validation failure stops th
 1. Maven Central. Not run here: nothing is published.
 
    ```sh
-   curl -sI https://repo1.maven.org/maven2/io/github/tierwise/tierwise-core/0.1.0/tierwise-core-0.1.0.jar | head -1
+   curl -sI https://repo1.maven.org/maven2/io/github/visplabs/tierwise-core/0.1.0/tierwise-core-0.1.0.jar | head -1
    ```
 
 2. Signatures. Download a JAR and its `.asc` and `.sigstore.json` from the draft release or from Central. PGP:
@@ -283,7 +286,7 @@ Central goes first and its upload is not final, so a validation failure stops th
    ```sh
    cosign verify-blob \
      --bundle tierwise-core-0.1.0.jar.sigstore.json \
-     --certificate-identity "https://github.com/tierwise/tierwise/.github/workflows/release.yml@refs/tags/v0.1.0" \
+     --certificate-identity "https://github.com/visplabs/tierwise/.github/workflows/release.yml@refs/tags/v0.1.0" \
      --certificate-oidc-issuer https://token.actions.githubusercontent.com \
      tierwise-core-0.1.0.jar
    ```
@@ -292,7 +295,7 @@ Central goes first and its upload is not final, so a validation failure stops th
 3. npm provenance. Install the package in a clean directory and check the registry signatures and provenance:
 
    ```sh
-   npm install @tierwise/evaluator@0.1.0
+   npm install @visplabs/evaluator@0.1.0
    npm audit signatures
    ```
 

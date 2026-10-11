@@ -1,6 +1,6 @@
 # TypeDoc project
 
-Builds the TypeScript API reference of `@tierwise/evaluator`, `@tierwise/node` and `@tierwise/openfeature`. It is a
+Builds the TypeScript API reference of `@visplabs/evaluator`, `@visplabs/node` and `@visplabs/openfeature`. It is a
 separate project, outside the `js/` workspace, because TypeDoc needs the TypeScript compiler API, which the native
 TypeScript 7 does not provide (ADR 0022). The packages themselves still build with TypeScript 7. This project pins
 `typedoc` 0.28.20 and `typescript` 6.0.3, and has its own lockfile.

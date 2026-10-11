@@ -1,7 +1,7 @@
-// The public types of @tierwise/node: the options of createBundleLoader, the status of the held bundle and the
-// loader itself. The evaluation types come from @tierwise/evaluator and are not redefined here.
+// The public types of @visplabs/node: the options of createBundleLoader, the status of the held bundle and the
+// loader itself. The evaluation types come from @visplabs/evaluator and are not redefined here.
 
-import type { Context, Decision, Evaluator, EvaluatorOptions, FactSet, Resolved } from '@tierwise/evaluator';
+import type { Context, Decision, Evaluator, EvaluatorOptions, FactSet, Resolved } from '@visplabs/evaluator';
 
 /**
  * The function that fetches the bundle. It has the signature of the built-in fetch, and it is called with the URL as

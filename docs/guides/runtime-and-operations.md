@@ -1,7 +1,7 @@
 # Runtime and operations guide
 
 This guide is for the people who run services that evaluate Tierwise bundles. It covers the Spring Boot starter, the
-`@tierwise/node` loader, how a bundle is refreshed, what happens when the source of the bundle is down, the
+`@visplabs/node` loader, how a bundle is refreshed, what happens when the source of the bundle is down, the
 metrics to watch, and how providers for service-sourced levels behave.
 
 The principle behind all of it: **evaluation is in-process, and the source of bundles is never on the hot path.**
@@ -21,7 +21,7 @@ git ──► CI: validate · test · compile ──► bundle.json ──► a 
                                   a file, or the classpath of the application
 ```
 
-| Source | Starter | `@tierwise/node` | Change detection |
+| Source | Starter | `@visplabs/node` | Change detection |
 | --- | --- | --- | --- |
 | `tierwise-server` (`GET /v1/bundles/latest`) | `tierwise.server.url` | `url` | `ETag` and `If-None-Match`; the server answers `304` from its pointer alone |
 | Any HTTP(S) URL of the bundle bytes | `tierwise.source=https://…` | `url` | `ETag` and `If-None-Match`, if the endpoint supports them; otherwise the loaded `bundleVersion` is compared |
@@ -41,7 +41,7 @@ starts, keeps it fresh, and gives you a `Resolver` and a `DecisionEngine`.
 
 ```xml
 <dependency>
-  <groupId>io.github.tierwise</groupId>
+  <groupId>io.github.visplabs</groupId>
   <artifactId>tierwise-spring-boot-starter</artifactId>
   <version>0.1.0</version>
 </dependency>
@@ -222,7 +222,7 @@ costs nothing, and many failures in a row mean the service is running on an old 
 
 ### Logging
 
-Each decision is logged by the logger `io.github.tierwise.spring.DecisionEngine` at `tierwise.decision-log-level`:
+Each decision is logged by the logger `io.github.visplabs.tierwise.spring.DecisionEngine` at `tierwise.decision-log-level`:
 
 ```text
 tierwise decision feature=checkout.order_submission reason=RULE rule=express-ok effect=ALLOW bundleVersion=sha256:…
@@ -230,7 +230,7 @@ tierwise decision feature=checkout.order_submission reason=RULE rule=express-ok 
 
 The line holds the feature, the reason, the rule that won, the effect when it is a plain string, and the
 `bundleVersion`. It never holds the context or the facts. Bundle loads, swaps and refresh failures are logged by
-`io.github.tierwise.spring.TierwiseEvaluators`.
+`io.github.visplabs.tierwise.spring.TierwiseEvaluators`.
 
 ### Another source
 
@@ -273,14 +273,14 @@ tests. The `304` path of a conditional `GetObject` has not been checked against 
 Run a check against your store before you rely on it. The module's other open points are in
 `java/tierwise-spring-boot-starter-s3/README.md`.
 
-## `@tierwise/node`
+## `@visplabs/node`
 
-`@tierwise/node` is the same behaviour on Node 20 or later, with the built-in `fetch` and no other runtime dependency
-than `@tierwise/evaluator`. It is for servers. (A browser runs the evaluator, not the loader, and only to display; see
+`@visplabs/node` is the same behaviour on Node 20 or later, with the built-in `fetch` and no other runtime dependency
+than `@visplabs/evaluator`. It is for servers. (A browser runs the evaluator, not the loader, and only to display; see
 the [security model](security-model.md).)
 
 ```ts
-import { createBundleLoader } from '@tierwise/node';
+import { createBundleLoader } from '@visplabs/node';
 
 const loader = createBundleLoader({
   url: 'https://tierwise.internal/v1/bundles/latest',

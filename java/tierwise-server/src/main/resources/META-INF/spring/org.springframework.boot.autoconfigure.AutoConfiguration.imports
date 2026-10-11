@@ -1,2 +1,2 @@
-io.github.tierwise.server.TierwiseServerAutoConfiguration
-io.github.tierwise.server.security.TierwiseSecurityAutoConfiguration
+io.github.visplabs.tierwise.server.TierwiseServerAutoConfiguration
+io.github.visplabs.tierwise.server.security.TierwiseSecurityAutoConfiguration

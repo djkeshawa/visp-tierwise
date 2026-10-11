@@ -1,4 +1,4 @@
-// Shared helpers for the tests of @tierwise/node: the built package, the conformance bundles on disk, a serialiser that
+// Shared helpers for the tests of @visplabs/node: the built package, the conformance bundles on disk, a serialiser that
 // derives new bundles from them, and a node:http stub server that speaks the ETag contract (ETag = bundleVersion).
 //
 // The tests run over the built output in dist/, never over src/, so they check what ships. The names in the bundles
