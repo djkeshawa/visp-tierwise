@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Tierwise server API
-  version: 0.1.0-dev.0
+  version: 0.1.0
   summary: The control plane of Tierwise (requirements section 9).
   description: |
     The server stores every published bundle version, serves the latest bundle with an ETag, promotes a

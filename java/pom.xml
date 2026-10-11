@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.visplabs</groupId>
   <artifactId>tierwise-parent</artifactId>
-  <version>0.1.0-dev.0</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
   <name>Tierwise</name>
   <description>Tierwise parent POM: the Java reference toolchain, runtimes and control plane for tiered feature and entitlement configuration.</description>

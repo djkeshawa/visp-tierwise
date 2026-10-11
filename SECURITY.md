@@ -4,7 +4,7 @@
 
 | Line | Specification | Bundle format | Status |
 | --- | --- | --- | --- |
-| 0.1.x | `specVersion` 0.1 | `bundleFormatVersion` 1 | Supported once 0.1.0 is released |
+| 0.1.x | `specVersion` 0.1 | `bundleFormatVersion` 1 | Supported |
 
 Until 1.0, security fixes go into the latest 0.x minor line only.
 

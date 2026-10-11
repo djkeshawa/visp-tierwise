@@ -2,33 +2,11 @@
 
 This project uses the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) structure. Package releases follow Semantic Versioning. The specification and the bundle format are versioned separately.
 
-Version 0.1.0 has not been released. It targets specification version **0.1** and bundle format version **1**. Every package is private or unpublished, and the release steps are listed in the [release checklist](docs/release-0.1.0-checklist.md).
+Version 0.1.0 targets specification version **0.1** and bundle format version **1**.
 
 ## [Unreleased]
 
-These changes go into 0.1.0, which has not been released.
-
-### Added
-
-- `tierwise explain naming/<name> [--project DIR]` prints the pattern's declared description, or the family explanation followed by the pattern (FIND-30, ADR 0026). This uses the new `Tierwise.namingPatterns` and `NamingPattern` in tierwise-core.
-- `E_UNKNOWN_KIND` suggestions are now in the FIND-27 table (declared kinds).
-- Tests for every enforcer entry that used to say "Planned". Each entry in `spec/conformance/enforcers*.yaml` now names the Java and JS tests that check it.
-- Compile cases `manifest-specversion-only` and `manifest-specversion-only-preset` (MANIFEST-18).
-- S3 integration tests against a real MinIO (`scripts/s3-it.sh`, CI job `s3-integration`, ADR 0027).
-- CI jobs that run both quickstarts literally, and the GitHub Action with its docker and jar methods.
-
-### Changed
-
-- The publication identity moved to the `visplabs` organisation (ADR 0028): the repository is `visplabs/tierwise`, the npm packages are `@visplabs/*`, the Maven group is `io.github.visplabs` and the Java packages are `io.github.visplabs.tierwise.*`. The TypeScript code generator imports from `@visplabs/evaluator`.
-- A provider timeout must be at most 2^53−1 ms in every evaluator (SVC-41, EVAL-28, ADR 0025). The Java evaluator used to accept larger ones.
-- The S3 store writes the `latest` pointer with a trailing newline, like the filesystem store (ADR 0024).
-
-### Fixed
-
-- JS evaluator: a provider that blocked past its timeout and then returned had its result used. Such a result is now a failure (SVC-40, SVC-41).
-- Server: publication records added within the same millisecond could be listed out of order.
-
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-10-11
 
 ### Added
 
@@ -80,6 +58,15 @@ These changes go into 0.1.0, which has not been released.
 - A `release` Maven profile with Javadoc and source JARs, GPG and Sigstore signing, a CycloneDX SBOM and Central publishing with `autoPublish` set to false. It has not been run.
 - A genericity check (`js/scripts/check-genericity.mjs`) that fails when a sample domain name appears in production code.
 
+#### Tooling and tests added late in the release
+
+- `tierwise explain naming/<name> [--project DIR]` prints the pattern's declared description, or the family explanation followed by the pattern (FIND-30, ADR 0026). This uses the new `Tierwise.namingPatterns` and `NamingPattern` in tierwise-core.
+- `E_UNKNOWN_KIND` suggestions are now in the FIND-27 table (declared kinds).
+- Tests for every enforcer entry that used to say "Planned". Each entry in `spec/conformance/enforcers*.yaml` now names the Java and JS tests that check it.
+- Compile cases `manifest-specversion-only` and `manifest-specversion-only-preset` (MANIFEST-18).
+- S3 integration tests against a real MinIO (`scripts/s3-it.sh`, CI job `s3-integration`, ADR 0027).
+- CI jobs that run both quickstarts literally, and the GitHub Action with its docker and jar methods.
+
 #### Documentation
 
 - Vision, requirements (with the normative draft in §4 and the acceptance criteria in §15), roadmap, implementation plan, open questions, benchmarks and the OpenFeature mapping.
@@ -90,6 +77,9 @@ These changes go into 0.1.0, which has not been released.
 
 ### Changed
 
+- The publication identity moved to the `visplabs` organisation (ADR 0028): the repository is `visplabs/tierwise`, the npm packages are `@visplabs/*`, the Maven group is `io.github.visplabs` and the Java packages are `io.github.visplabs.tierwise.*`. The TypeScript code generator imports from `@visplabs/evaluator`.
+- A provider timeout must be at most 2^53−1 ms in every evaluator (SVC-41, EVAL-28, ADR 0025). The Java evaluator used to accept larger ones.
+- The S3 store writes the `latest` pointer with a trailing newline, like the filesystem store (ADR 0024).
 - Renamed the project from Strata to Tierwise to avoid a collision with OpenGamma Strata (ADR 0006). It is published under the `visplabs` organisation: npm scope `@visplabs`, Maven group `io.github.visplabs`, Java packages `io.github.visplabs.tierwise.*` (ADR 0028).
 - Resolved the open semantic questions in ADRs 0007 to 0011 and the spec open points in ADRs 0013 to 0017.
 - Adopted the prompt review recommendations (ADR 0004). The bundle is now a canonical artifact that is hashed on its content, and provenance is kept outside it (ADR 0005).
@@ -98,6 +88,11 @@ These changes go into 0.1.0, which has not been released.
 ### Removed
 
 - The Phase 0 installed-compiler build adapters (`scripts/build-java.mjs`, `scripts/build-js.mjs`), replaced by the Maven Wrapper and the pinned TypeScript compiler.
+
+### Fixed
+
+- JS evaluator: a provider that blocked past its timeout and then returned had its result used. Such a result is now a failure (SVC-40, SVC-41).
+- Server: publication records added within the same millisecond could be listed out of order.
 
 ### Security
 

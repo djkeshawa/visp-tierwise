@@ -1,9 +1,9 @@
 {
   "name": "Tierwise",
   "identityStatus": "github-claimed; npm scope and Maven namespace pending",
-  "packageVersion": "0.1.0-dev.0",
+  "packageVersion": "0.1.0",
   "releaseVersion": "0.1.0",
-  "releaseStatus": "unreleased; release steps pending (docs/release-0.1.0-checklist.md)",
+  "releaseStatus": "0.1.0 prepared (2026-10-11); publishing pending",
   "proposedSpecVersion": "0.1",
   "supportedSpecVersions": ["0.1"],
   "supportedBundleFormatVersions": ["1"],
