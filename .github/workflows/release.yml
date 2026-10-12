@@ -26,7 +26,8 @@ name: Release
 # Secrets of the "release" environment:
 #   CENTRAL_USERNAME, CENTRAL_PASSWORD   a Central Portal user token (not the account password)
 #   GPG_PRIVATE_KEY, GPG_PASSPHRASE      the ASCII-armoured release key; the public key must be on a key server
-#   NPM_TOKEN                            an npm automation token with publish rights on the @visporg scope
+#   NPM_TOKEN                            an npm granular token that can stage on the @visporg scope, WITHOUT
+#                                        "Bypass two-factor authentication" (ADR 0031)
 # Sigstore needs no secret: the publishing job signs with its own OIDC token (id-token: write).
 #
 # Not done by this workflow: pushing the Docker images (no registry is chosen yet) and pressing "Publish" in the
@@ -501,7 +502,7 @@ jobs:
   # npm cannot replace a published version, so it goes after Central has validated the bundle. A failure in
   # publish-maven therefore stops the release before anything irreversible happens.
   publish-npm:
-    name: Publish to npm (with provenance)
+    name: Stage on npm (approve with 2FA)
     needs: [prepare, collect, publish-maven]
     if: needs.prepare.outputs.publish == 'true'
     runs-on: ubuntu-24.04
@@ -568,20 +569,45 @@ jobs:
               exit 1
             fi
           done
-      # The evaluator goes first: the other two packages depend on it.
-      - name: Publish the packages
+      # Staged publishing (ADR 0031): the packages need 2FA to publish, so this job stages them, with provenance, and a
+      # maintainer publishes each one with "npm stage approve <id>" and a one-time password. npm 11.15.0 added
+      # "npm stage"; the Node 22 runner ships an older npm, so this pins one. The tarballs were rebuilt and compared
+      # with the tested build above, before the npm version changes.
+      - name: Install npm with staged publishing
+        if: env.DRY_RUN == 'false' && env.HAVE_NPM == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global npm@11.21.0
+          npm --version
+      # The evaluator goes first: the other two packages depend on it, so approve it first too.
+      - name: Stage the packages
         if: env.DRY_RUN == 'false' && env.HAVE_NPM == 'true'
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
-          # pnpm pack names a tarball after the package: @scope/name becomes scope-name-<version>.tgz.
-          # The ./ matters: without it npm reads "rebuilt/<file>" as a GitHub "user/repo" shorthand and runs git.
+          {
+            echo "## npm: staged, waiting for approval"
+            echo
+            echo "Nothing is public yet. Approve in this order, with npm 11.15.0 or later and your one-time password:"
+            echo
+            echo '```sh'
+          } >> "$GITHUB_STEP_SUMMARY"
           for package in evaluator node openfeature; do
+            # pnpm pack names a tarball after the package: @scope/name becomes scope-name-<version>.tgz.
+            # The ./ matters: without it npm reads "rebuilt/<file>" as a GitHub "user/repo" shorthand and runs git.
             tarball=$(node -p "require('./js/$package/package.json').name.replace(/^@/, '').replace('/', '-')")
-            npm publish "./rebuilt/$tarball-$VERSION.tgz" --provenance --access public
+            npm stage publish "./rebuilt/$tarball-$VERSION.tgz" --provenance --access public | tee staged.txt
+            id=$(sed -n 's/.*(staged with id \([0-9a-fA-F-]*\)).*/\1/p' staged.txt)
+            if [ -z "$id" ]; then
+              echo "::error::npm did not report a stage id for $tarball."
+              exit 1
+            fi
+            echo "npm stage approve $id   # $(node -p "require('./js/$package/package.json').name")@$VERSION" >> "$GITHUB_STEP_SUMMARY"
           done
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
   github-release:
     name: Create the GitHub release (draft)

@@ -32,7 +32,7 @@ Not published by the workflow:
 | `docker` | yes | Builds both images (no push), runs the CLI image against the samples, checks that both images run as `10001:10001`, starts the server image and reads `/openapi.yaml` |
 | `collect` | yes | Downloads the results, writes `SHA256SUMS`, uploads the `tierwise-release-assets` artifact |
 | `publish-maven` | no | Rebuilds unsigned and compares every JAR with the tested build, then runs `deploy -Prelease` with PGP and Sigstore signing on. Central validates the bundle and waits (`autoPublish` is false) |
-| `publish-npm` | no | Runs after `publish-maven` succeeds. Rebuilds the tarballs, compares them with the tested build, refuses private packages, then `npm publish --provenance --access public` in dependency order |
+| `publish-npm` | no | Runs after `publish-maven` succeeds. Rebuilds the tarballs, compares them with the tested build, refuses private packages, then `npm stage publish --provenance --access public` in dependency order. The run summary lists the `npm stage approve` command of each package (ADR 0031) |
 | `github-release` | no | Runs after both. Creates a draft release with the notes from the `CHANGELOG.md` section of the version |
 
 The three publishing jobs have `if: needs.prepare.outputs.publish == 'true'` and run in the `release` environment. Each of their steps also checks `env.DRY_RUN == 'false'` and that its secrets exist. A missing secret stops the job with a message before anything is sent. `scripts/check-foundation.py` (the CI "foundation" job) checks that these guards are present, that `dry_run` defaults to true, that only these three jobs use secrets or write permissions, and that every action is pinned by commit SHA.
@@ -81,7 +81,7 @@ In the POM change `url`, `issueManagement` and the three `scm` URLs. In each `pa
    ```
 
    A 404 here does not prove that the scope is free: the scope belongs to whoever owns the npm organisation `visporg`, and npmjs.com blocked the automated check of the organisation page from this machine (HTTP 403). Create the organisation to settle it.
-4. Create an access token for the release (Access Tokens; a granular token with write access to the `@visporg` packages, valid for a limited time; npm changes its token types, so follow its current documentation). It becomes the `NPM_TOKEN` secret in step 6. Do not paste it anywhere else. *(OPEN)* npm "trusted publishing" would replace the token with the workflow's OIDC identity. The workflow does not use it yet, because it was not possible to test it without the packages.
+4. Create an access token for the release (Access Tokens, Generate New Token; a granular token, valid for a limited time). Under Packages and scopes choose **Read and write (stage only)** and the scope `@visporg`. Leave **Bypass two-factor authentication** unchecked: the workflow only stages, and you publish each package with your own 2FA ([ADR 0031](adr/0031-npm-staged-publishing.md)). It becomes the `NPM_TOKEN` secret in step 6. Do not paste it anywhere else. *(OPEN)* npm "trusted publishing" would replace the token with the workflow's OIDC identity. It is configured in the settings of a package that already exists, so it can follow the first release: add a trust relationship that allows only `npm stage publish`, then delete the token.
 
 ### 3. Name the maintainers (O3)
 
@@ -256,10 +256,19 @@ Each tarball also carries `LICENSE` and `NOTICE`. They live once, at the root; t
 2. The build, reproducibility, native, docker and collect jobs run as in a dry run.
 3. Each publishing job waits for your approval of the `release` environment. Read the run summary first. Approve `publish-maven`.
 4. `publish-maven` uploads the bundle to Central and waits until Central reports it as validated. It does not publish it.
-5. Approve `publish-npm`, which starts only after step 4 succeeded. It publishes `@visporg/evaluator`, then `@visporg/node` and `@visporg/openfeature`, with provenance. **npm releases cannot be replaced.** npm allows an unpublish for a short time after the publish under conditions; read its current policy before you rely on that.
-6. `github-release` creates the draft release.
+5. Approve `publish-npm`, which starts only after step 4 succeeded. It **stages** `@visporg/evaluator`, `@visporg/node` and `@visporg/openfeature`, with provenance. Nothing is public yet: npm requires 2FA to publish, and staging defers it to you ([ADR 0031](adr/0031-npm-staged-publishing.md)).
+6. Publish each staged package with your one-time password. The run summary of the job lists the three commands with their stage ids. They need npm 11.15.0 or later (`npm --version`); if yours is older, prefix them with `npx -y npm@11.21.0`:
 
-Central goes first and its upload is not final, so a validation failure stops the release before the npm publish. The two steps that cannot be undone are the npm publish, which the workflow does after your approval, and the Publish button in the Central Portal, which only you press.
+   ```sh
+   npm login                       # once, if you are not logged in
+   npm stage list @visporg/evaluator
+   npm stage approve <stage-id>    # evaluator first, then node and openfeature; npm asks for the one-time password
+   ```
+
+   **npm releases cannot be replaced.** npm allows an unpublish for a short time after the publish under conditions; read its current policy before you rely on that. A staged package you do not want is removed with `npm stage reject <stage-id>`.
+7. `github-release` creates the draft release. It does not wait for the npm approvals.
+
+Central goes first and its upload is not final, so a validation failure stops the release before the npm publish. The two steps that cannot be undone are `npm stage approve` and the Publish button in the Central Portal, and only you can do either.
 
 ### 12. Publish in the Central Portal
 
@@ -321,7 +330,8 @@ Central goes first and its upload is not final, so a validation failure stops th
 | Central says "Developers information is missing" | Add `<developers>` to `java/pom.xml` (step 3) |
 | Central says a signature or public key is missing | The public key is not on a key server Central reads (step 6, part 2) |
 | `publish-npm` stops: "is still private" | Step 9 |
-| `npm publish` fails on provenance | The `repository.url` in `package.json` does not match the repository that runs the workflow (step 1, part 3), or the job lacks `id-token: write` |
+| `npm` fails with `EOTP` ("requires a one-time password") | The workflow ran `npm publish` with a token that does not bypass 2FA. It stages instead since ADR 0031; run the release from a commit that has the stage step |
+| `npm stage publish` fails on provenance | The `repository.url` in `package.json` does not match the repository that runs the workflow (step 1, part 3), or the job lacks `id-token: write` |
 | The Sigstore step fails | It needs the OIDC token of the job, so it cannot run on a fork or from a runner outside GitHub Actions. Check the job permissions |
 
 ## Reference

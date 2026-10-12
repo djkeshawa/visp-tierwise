@@ -228,7 +228,7 @@ def check_release_workflow():
             "release.yml: the dry_run input must default to true")
     require(re.search(r"^permissions:\n  contents: read$", code, re.MULTILINE),
             "release.yml must default to read-only permissions")
-    publishing = re.compile(r"mvnw[^\n]*\sdeploy\s|npm publish|gh release create|docker push|central-publishing")
+    publishing = re.compile(r"mvnw[^\n]*\sdeploy\s|npm (?:stage )?publish|gh release create|docker push|central-publishing")
     published_jobs = 0
     for job, body in split_jobs(code).items():
         steps = re.split(r"\n      - ", body)
@@ -240,14 +240,16 @@ def check_release_workflow():
             for step in steps:
                 if publishing.search(step):
                     require("env.DRY_RUN == 'false'" in step, f"release.yml: a publishing step of {job} lacks the DRY_RUN guard")
-                    if "npm publish" in step or "mvnw" in step:
+                    if "npm stage publish" in step or "npm publish" in step or "mvnw" in step:
                         require("env.HAVE_" in step, f"release.yml: a publishing step of {job} does not check its secrets")
         else:
             require("secrets." not in body, f"release.yml: job {job} does not publish and must not use secrets")
             require("id-token: write" not in body and "contents: write" not in body,
                     f"release.yml: job {job} does not publish and must stay read-only")
     require(published_jobs == 3, "release.yml: expected exactly three publishing jobs (Central, npm, GitHub release)")
-    require("npm publish" in code and "--provenance" in code, "release.yml must publish npm packages with --provenance")
+    # npm packages need 2FA to publish, so the workflow stages them and a maintainer approves each one (ADR 0031).
+    require(re.search(r"npm stage publish [^\n]*--provenance", code) and not re.search(r"npm publish\s", code),
+            "release.yml must stage npm packages with npm stage publish --provenance, not npm publish")
     require("-Dtierwise.gpg.skip=false" in code, "release.yml must turn signing on explicitly in the publishing job")
 
 

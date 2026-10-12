@@ -56,6 +56,7 @@ criterion and its status. See the [roadmap](roadmap.md) for each phase.
 | [0028](adr/0028-visplabs-publication-identity.md) | Published under `visplabs`: `io.github.visplabs`, `@visporg`, packages `io.github.visplabs.tierwise.*` |
 | [0029](adr/0029-npm-scope-visporg.md) | The npm scope is `@visporg`, after the owner's npm organisation `visporg` |
 | [0030](adr/0030-maven-3-9-for-central.md) | Maven stays on 3.9.x: with 3.10 the Central bundle is rejected |
+| [0031](adr/0031-npm-staged-publishing.md) | CI stages the npm packages; a maintainer publishes each with `npm stage approve` and 2FA |
 
 ## Browser use
 
